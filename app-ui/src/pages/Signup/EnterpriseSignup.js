@@ -157,7 +157,7 @@ const EnterpriseSignup = () => {
               <div className="text-sm mt-3 pb-10">
                 <p className="text-gray-400">
                   Already Registered?
-                  <Link to="/" className="text-blue-400 pl-1">
+                  <Link to="/employer/dashboard" className="text-blue-400 pl-1">
                     Login
                   </Link>
                 </p>
