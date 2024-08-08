@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const recruitingagencySchema=mongoose.Schema({
+const recruitingagencySchema=new mongoose.Schema({
     full_name:{
         type:String,
         required:true
@@ -8,6 +8,10 @@ const recruitingagencySchema=mongoose.Schema({
     email:{
         type:String,
         required:true
+    },
+    password:{
+      type:String,
+      required:true
     },
     mobileno:{
         type:String,
@@ -18,10 +22,10 @@ const recruitingagencySchema=mongoose.Schema({
         required:true
     },
     company_size:{
-        type:Number,
+        type:String,
         required:true
     },
-    desination:{
+    designation:{
         type:String,
         required:true
     },
@@ -30,8 +34,7 @@ const recruitingagencySchema=mongoose.Schema({
         required:true
     },
     firm_type:{
-        type:String,
-        required:true
+        type:[String]
     },
     country:{
         type:String,
@@ -47,7 +50,27 @@ const recruitingagencySchema=mongoose.Schema({
     },
     domains:{
         type:[String]
+    },
+    email_verified:{
+        type:String,
+        default:false
+    },
+    kyc_verified:{
+        type:String,
+        default:false
+    },
+    kyc_details:{
+        entity_type:String,
+        pancard_number:String,
+        pancard_document:String
+    },
+    account_status:{
+        type:String,
+        default:"Active"
     }
+
     
 
 })
+
+export default mongoose.model("Recruiting",recruitingagencySchema)
