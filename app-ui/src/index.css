@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -19,7 +19,7 @@
     .input-label{
         @apply text-sm text-black-700 
     }
-=======
+}
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -40,5 +40,5 @@
     .input-label{
         @apply text-sm text-black-700 
     }
->>>>>>> 55ace1d8c646a38019fa96549957de98489ae890
+
 }
