@@ -9,6 +9,10 @@ const recruitingagencySchema=mongoose.Schema({
         type:String,
         required:true
     },
+    password:{
+      type:String,
+      required:true
+    },
     mobileno:{
         type:String,
         required:true
@@ -47,7 +51,23 @@ const recruitingagencySchema=mongoose.Schema({
     },
     domains:{
         type:[String]
+    },
+    email_verified:{
+        type:String,
+        default:false
+    },
+    kyc_verified:{
+        type:String,
+        default:false
+    },
+    kyc_details:{
+        entity_type:String,
+        pancard_number:String,
+        pancard_document:String
     }
+
     
 
 })
+
+export default mongoose.model("Recruiting",recruitingagencySchema)
