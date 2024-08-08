@@ -9,7 +9,9 @@ import cors from 'cors'
 
 import cookieParser from "cookie-parser"
 
-
+//importing routers
+import authRecruitingRoute from './routes/authRecruiting.js'
+import mailRoute from './routes/mail.js'
 
 
 const app=express()
@@ -33,9 +35,16 @@ const corsOptions={
 app.use(cors(corsOptions));
 
 
+
+//this middleware for authentication
+app.use(cookieParser())
+//using json middleware where we can easily get our json data
+app.use(express.json())
+
+
+
+
 //connecting with mongodb atlas
-
-
 
 const connect=async ()=>{
     try{
@@ -52,16 +61,14 @@ mongoose.connection.on("connected",()=>{
     console.log("mongodb connected")
 })
 
+//middleware
+
+app.use('/api/auth',authRecruitingRoute)
+app.use('/api/mail',mailRoute)
 
 app.get('/',(req,res)=>{
     res.send("Bahut maja ara hai bhai🐱")
 })
-
-//this middleware for authentication
-app.use(cookieParser())
-//using json middleware where we can easily get our json data
-app.use(express.json())
-
 
 
 

@@ -1,18 +1,16 @@
-import RECRUITING from "../models/RECRUITING";
+import RECRUITING from "../models/RECRUITING.js";
 
 import bcrypt from 'bcryptjs'
 
 import jwt from 'jsonwebtoken'
-import { error } from "../utils/error";
+import { error } from "../utils/error.js";
 
 
 //for register Recruiting agency
-export const Register=async (req,res,next)=>{
-
+export const register=async (req,res,next)=>{
     // Generate a salt and hash the password synchronously
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync('uphire', salt);
-    
    try{
     const newuser=new RECRUITING({...req.body,password:hash})
     await newuser.save()
@@ -25,8 +23,14 @@ export const Register=async (req,res,next)=>{
 }
 
 //for kyc details submission
-export const KycSubmission=async (req,res,next)=>{
-       
+export const kycSubmission=async (req,res,next)=>{
+       try{
+           const r_id=req.params.id
+           await RECRUITING.findByIdAndUpdate(r_id,{$set:{kyc_details:req.body}})
+           res.status(200).json("KYC Details Submited successfully")
+       }catch(err){
+        next(err)
+       }
 }
 
 //for check mail is already presant or not
