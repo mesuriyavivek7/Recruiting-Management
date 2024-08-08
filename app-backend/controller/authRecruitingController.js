@@ -1,4 +1,5 @@
 import RECRUITING from "../models/RECRUITING.js";
+import RECRUITINGTEAM from "../models/RECRUITINGTEAM.js";
 
 import bcrypt from 'bcryptjs'
 
@@ -12,10 +13,15 @@ export const register=async (req,res,next)=>{
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync('uphire', salt);
    try{
+
     const newuser=new RECRUITING({...req.body,password:hash})
     await newuser.save()
 
-    res.status(200).json("New Recruiting Agency Create Successfully")
+    //added into team member list
+    const newteammember=new RECRUITINGTEAM({recruiting_agency_id:newuser._id,full_name:newuser.full_name,email:newuser.email,mobileno:newuser.mobileno,password:hash,isAdmin:true})
+    newteammember.save()
+    
+    res.status(200).json("New Recruiting Agency Created with Added into team member Successfully")
       
    }catch(err){
      next(err)

@@ -12,6 +12,7 @@ import cookieParser from "cookie-parser"
 //importing routers
 import authRecruitingRoute from './routes/authRecruiting.js'
 import mailRoute from './routes/mail.js'
+import authEnterpriseRoute from './routes/authEnterprise.js'
 
 
 const app=express()
@@ -63,8 +64,9 @@ mongoose.connection.on("connected",()=>{
 
 //middleware
 
-app.use('/api/auth',authRecruitingRoute)
+app.use('/api/authrecruiting',authRecruitingRoute)
 app.use('/api/mail',mailRoute)
+app.use('/api/authenterprise',authEnterpriseRoute)
 
 app.get('/',(req,res)=>{
     res.send("Bahut maja ara hai bhai🐱")

@@ -1,7 +1,7 @@
 import mongoose, { mongo } from "mongoose";
 
 
-const recruitingteamSchema=mongoose.Schema({
+const recruitingteamSchema=new mongoose.Schema({
     recruiting_agency_id:{
         type:String,
         required:true
@@ -13,6 +13,10 @@ const recruitingteamSchema=mongoose.Schema({
     email:{
         type:String,
         required:true
+    },
+    mobileno:{
+      type:String,
+      required:true
     },
     password:{
         type:String,
