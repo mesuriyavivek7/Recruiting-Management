@@ -151,13 +151,13 @@ const EnterpriseSignup = () => {
                   type="submit"
                   className="w-full py-3 my-3 bg-orange-800 text-white rounded-md text-xl  "
                 >
-                  Sign Up
+                  Sign Up   
                 </button>
               </form>
               <div className="text-sm mt-3 pb-10">
                 <p className="text-gray-400">
                   Already Registered?
-                  <Link to="/employer/dashboard" className="text-blue-400 pl-1">
+                  <Link to="/" className="text-blue-400 pl-1">
                     Login
                   </Link>
                 </p>

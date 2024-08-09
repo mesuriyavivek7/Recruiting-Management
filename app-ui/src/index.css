@@ -9,6 +9,7 @@
     box-sizing: border-box;
 }
 
+  
 @layer components{
     .flex-start{
         @apply flex flex-col place-items-start;

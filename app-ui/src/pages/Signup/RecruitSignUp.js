@@ -1,29 +1,155 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import asset3 from "../../assets/asset 3.svg"
+import asset3 from "../../assets/asset 3.svg";
 import asset4 from "../../assets/asset 4.svg";
 import asset7 from "../../assets/asset 7.svg";
 import asset8 from "../../assets/asset 8.svg";
 import asset9 from "../../assets/asset 9.svg";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
 
 const RecruitSignUp = () => {
   const [activeState, setActiveState] = useState(1);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phoneNumber: "",
+    company: "",
+    size: "",
+    designation: "",
+    linkedinUrl: "",
+    firm: [],
+    country: "",
+    state: "",
+    city: "",
+  });
+  const [errors, setErrors] = useState({});
+  const [countries, setCountries] = useState([]);
+  const [states, setStates] = useState([]);
+  const [cities, setCities] = useState([]);
+  const [selectedCountry, setSelectedCountry] = useState("");
+  const [selectedState, setSelectedState] = useState("");
+  const [selectedCity, setSelectedCity] = useState("");
 
-  // Handle navigation to the next step
+  useEffect(() => {
+    getCountries();
+    getStates();
+    getCities();
+  }, []);
+
+  const getCountries = async () => {
+    try {
+      const response = await fetch("/tbl_country.json");
+      const result = await response.json();
+      setCountries(result);
+    } catch (error) {
+      console.log("Error while fetching countries", error);
+    }
+  };
+
+  const getStates = async () => {
+    try {
+      const response = await fetch("/tbl_state.json");
+      const result = await response.json();
+      setStates(result);
+    } catch (error) {
+      console.log("Error while fetching states", error);
+    }
+  };
+
+  const getCities = async () => {
+    try {
+      const response = await fetch("/tbl_city.json");
+      const result = await response.json();
+      setCities(result);
+    } catch (error) {
+      console.log("Error while fetching cities", error);
+    }
+  };
+
+  const handleCountryChange = (event) => {
+    const selectedCountryId = parseInt(event.target.value);
+    setSelectedCountry(selectedCountryId);
+    setSelectedState("");
+    setSelectedCity("");
+    setFormData((prevData) => ({ ...prevData, country: selectedCountryId }));
+  };
+
+  const handleStateChange = (event) => {
+    const selectedStateId = parseInt(event.target.value);
+    setSelectedState(selectedStateId);
+    setSelectedCity("");
+    setFormData((prevData) => ({ ...prevData, state: selectedStateId }));
+  };
+
+  const handleCityChange = (event) => {
+    const selectedCityId = parseInt(event.target.value);
+    setSelectedCity(selectedCityId);
+    setFormData((prevData) => ({ ...prevData, city: selectedCityId }));
+  };
+
+  const handleChange = (e) => {
+    const { name, value, type, checked, options } = e.target;
+    if (type === "checkbox") {
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: checked
+          ? [...prevData[name], value]
+          : prevData[name].filter((item) => item !== value),
+      }));
+    } else if (type === "select-multiple") {
+      const selectedValues = Array.from(options)
+        .filter((option) => option.selected)
+        .map((option) => option.value);
+      setFormData((prevData) => ({ ...prevData, [name]: selectedValues }));
+    } else {
+      setFormData((prevData) => ({ ...prevData, [name]: value }));
+    }
+  };
+
+  const validateForm = () => {
+    let newErrors = {};
+    switch (activeState) {
+      case 1:
+        if (!formData.name) newErrors.name = "Full Name is required";
+        if (!formData.email) newErrors.email = "Official Email is required";
+        if (!formData.phoneNumber)
+          newErrors.phoneNumber = "Phone Number is required";
+        break;
+      case 2:
+        if (!formData.company) newErrors.company = "Company Name is required";
+        if (!formData.size) newErrors.size = "Company Size is required";
+        if (!formData.designation)
+          newErrors.designation = "Designation is required";
+        if (!formData.linkedinUrl)
+          newErrors.linkedinUrl = "LinkedIn Url is required";
+        if (formData.firm.length === 0)
+          newErrors.firm = "At least one Firm Type is required";
+        break;
+      case 3:
+        if (!formData.country) newErrors.country = "Country is required";
+        if (!formData.state) newErrors.state = "State is required";
+        if (!formData.city) newErrors.city = "City is required";
+        if (formData.firm.length === 0)
+          newErrors.firm = "At least one Domain is required";
+        break;
+      default:
+        break;
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const nextStep = () => {
-    if (activeState < 3) {
-      setActiveState((prevState) => prevState + 1); 
+    if (validateForm()) {
+      setActiveState((prev) => prev + 1);
     }
   };
 
-  // Handle navigation to the previous step
   const prevStep = () => {
-    if (activeState > 1) {
-      setActiveState((prevState) => prevState - 1);
-    }
+    setActiveState((prev) => prev - 1);
   };
 
-  // Render form steps based on the active step
   const renderFormStep = () => {
     switch (activeState) {
       case 1:
@@ -38,9 +164,13 @@ const RecruitSignUp = () => {
                   type="text"
                   name="name"
                   id="name"
-                  required
+                  value={formData.name}
+                  onChange={handleChange}
                   className="input-field"
                 />
+                {errors.name && (
+                  <p className="text-red-600 text-xs">{errors.name}</p>
+                )}
               </div>
               <div className="flex-start gap-2 w-full">
                 <label htmlFor="email" className="input-label">
@@ -50,21 +180,32 @@ const RecruitSignUp = () => {
                   type="email"
                   name="email"
                   id="email"
+                  value={formData.email}
+                  onChange={handleChange}
                   className="input-field"
-                  required
                 />
+                {errors.email && (
+                  <p className="text-red-600 text-xs">{errors.email}</p>
+                )}
               </div>
               <div className="flex-start gap-2 w-full">
-                <label htmlFor="phonenumber" className="input-label">
+                <label htmlFor="phoneNumber" className="input-label">
                   Phone Number <span className="text-orange-800">*</span>
                 </label>
-                <input
-                  type="tel"
-                  name="phonenumber"
-                  id="phonenumber"
-                  className="input-field"
-                  required
+                <PhoneInput
+                  country={"in"}
+                  value={formData.phoneNumber}
+                  onChange={(phone) =>
+                    setFormData((prevData) => ({
+                      ...prevData,
+                      phoneNumber: phone,
+                    }))
+                  }
+                  containerStyle={{ width: "100%" }}
                 />
+                {errors.phoneNumber && (
+                  <p className="text-red-600 text-xs">{errors.phoneNumber}</p>
+                )}
               </div>
               <button
                 type="button"
@@ -88,9 +229,13 @@ const RecruitSignUp = () => {
                   type="text"
                   name="company"
                   id="company"
-                  required
+                  value={formData.company}
+                  onChange={handleChange}
                   className="input-field"
                 />
+                {errors.company && (
+                  <p className="text-red-600 text-xs">{errors.company}</p>
+                )}
               </div>
               <div className="flex-start gap-2 w-full">
                 <label htmlFor="size" className="input-label">
@@ -99,8 +244,11 @@ const RecruitSignUp = () => {
                 <select
                   name="size"
                   id="size"
+                  value={formData.size}
+                  onChange={handleChange}
                   className="input-field custom-select"
                 >
+                  <option value="">Select Company Size</option>
                   <option value="Self Employed">Self Employed</option>
                   <option value="2-10 Employees">2-10 Employees</option>
                   <option value="11-50 Employees">11-50 Employees</option>
@@ -108,6 +256,9 @@ const RecruitSignUp = () => {
                   <option value="201-500 Employees">201-500 Employees</option>
                   <option value="501+ Employees">501+ Employees</option>
                 </select>
+                {errors.size && (
+                  <p className="text-red-600 text-xs">{errors.size}</p>
+                )}
               </div>
               <div className="flex-start gap-2 w-full">
                 <label htmlFor="designation" className="input-label">
@@ -117,71 +268,85 @@ const RecruitSignUp = () => {
                   type="text"
                   name="designation"
                   id="designation"
+                  value={formData.designation}
+                  onChange={handleChange}
                   className="input-field"
-                  required
                 />
+                {errors.designation && (
+                  <p className="text-red-600 text-xs">{errors.designation}</p>
+                )}
               </div>
               <div className="flex-start gap-2 w-full">
-                <label htmlFor="linkedin-url" className="input-label">
-                  LinkedIn Url <span className="text-orange-800">*</span>
+                <label htmlFor="linkedinUrl" className="input-label">
+                  LinkedIn URL <span className="text-orange-800">*</span>
                 </label>
                 <input
                   type="url"
-                  name="linkedin-url"
-                  id="linkedin-url"
+                  name="linkedinUrl"
+                  id="linkedinUrl"
+                  value={formData.linkedinUrl}
+                  onChange={handleChange}
                   className="input-field"
-                  required
                 />
+                {errors.linkedinUrl && (
+                  <p className="text-red-600 text-xs">{errors.linkedinUrl}</p>
+                )}
               </div>
-              <fieldset className="flex-start gap-2 w-full relative text-sm">
-                <legend>
-                  Firm Type <span className="text-orange-800">*</span>{" "}
-                </legend>
-                <div className="grid grid-cols-2 gap-4 w-full mt-1 p-2">
-                  <div className="flex place-items-center gap-1">
+              <div className="flex-start gap-2 w-full">
+                <label className="input-label">
+                  Firm Type(s) <span className="text-orange-800">*</span>
+                </label>
+                <div className="grid w-full grid-cols-2 gap-4">
+                  <label>
                     <input
-                      type="radio"
-                      id="Permanent Hiring"
+                      type="checkbox"
                       name="firm"
                       value="Permanent Hiring"
+                      checked={formData.firm.includes("Permanent Hiring")}
+                      onChange={handleChange}
                     />
-                    <label for="Permanent Hiring">Permanent Hiring</label>
-                  </div>
-                  <div className="flex place-items-center gap-1">
+                    <span className="pl-1">Permanent Hiring</span>
+                  </label>
+                  <label>
                     <input
-                      type="radio"
-                      id="contract Staffing"
+                      type="checkbox"
                       name="firm"
-                      value="contract Staffingy"
+                      value="Contract Staffing"
+                      checked={formData.firm.includes("Contract Staffing")}
+                      onChange={handleChange}
                     />
-                    <label for="contract Staffing">Contract Staffing</label>
-                  </div>
-                  <div className="flex place-items-center gap-1">
+                    <span className="pl-1">Contract Staffing</span>
+                  </label>
+                  <label>
                     <input
-                      type="radio"
-                      id="Executive Search"
+                      type="checkbox"
                       name="firm"
                       value="Executive Search"
+                      checked={formData.firm.includes("Executive Search")}
+                      onChange={handleChange}
                     />
-                    <label for="Executive Search">Executive Search</label>
-                  </div>
-                  <div className="flex place-items-center gap-1">
+                    <span className="pl-1">Executive Search</span>
+                  </label>
+                  <label>
                     <input
-                      type="radio"
-                      id="Only Payrolling"
+                      type="checkbox"
                       name="firm"
                       value="Only Payrolling"
+                      checked={formData.firm.includes("Only Payrolling")}
+                      onChange={handleChange}
                     />
-                    <label for="Only Payrolling">Only Payrolling</label>
-                  </div>
+                    <span className="pl-1">Only Payrolling</span>
+                  </label>
                 </div>
-              </fieldset>
-
-              <div className="flex justify-between gap-4">
+                {errors.firm && (
+                  <p className="text-red-600 text-xs">{errors.firm}</p>
+                )}
+              </div>
+              <div className="flex gap-4 w-full ">
                 <button
                   type="button"
                   onClick={prevStep}
-                  className="w-full py-3 my-3 border border-orange-800 text-orange-800 rounded-md text-xl "
+                  className="w-full py-3 my-3 border border-orange-800 text-orange-800 rounded-md text-xl"
                 >
                   <img
                     src={asset7}
@@ -194,7 +359,7 @@ const RecruitSignUp = () => {
                 <button
                   type="button"
                   onClick={nextStep}
-                  className="w-full py-3 my-3 bg-orange-800 text-white rounded-md text-xl  "
+                  className="w-full py-3 my-3 bg-orange-800 text-white rounded-md text-xl"
                 >
                   Next
                 </button>
@@ -213,15 +378,20 @@ const RecruitSignUp = () => {
                 <select
                   name="country"
                   id="country"
+                  value={selectedCountry}
+                  onChange={handleCountryChange}
                   className="input-field custom-select"
                 >
-                  <option value="Self Employed">Self Employed</option>
-                  <option value="2-10 Employees">2-10 Employees</option>
-                  <option value="11-50 Employees">11-50 Employees</option>
-                  <option value="51-200 Employees">51-200 Employees</option>
-                  <option value="201-500 Employees">201-500 Employees</option>
-                  <option value="501+ Employees">501+ Employees</option>
+                  <option value="">Select Country</option>
+                  {countries.map((country) => (
+                    <option key={country.country_id} value={country.country_id}>
+                      {country.country_name}
+                    </option>
+                  ))}
                 </select>
+                {errors.country && (
+                  <p className="text-red-600 text-xs">{errors.country}</p>
+                )}
               </div>
               <div className="flex-start gap-2 w-full">
                 <label htmlFor="state" className="input-label">
@@ -230,15 +400,24 @@ const RecruitSignUp = () => {
                 <select
                   name="state"
                   id="state"
+                  value={selectedState}
+                  onChange={handleStateChange}
                   className="input-field custom-select"
                 >
-                  <option value="Self Employed">Self Employed</option>
-                  <option value="2-10 Employees">2-10 Employees</option>
-                  <option value="11-50 Employees">11-50 Employees</option>
-                  <option value="51-200 Employees">51-200 Employees</option>
-                  <option value="201-500 Employees">201-500 Employees</option>
-                  <option value="501+ Employees">501+ Employees</option>
+                  <option value="">Select State</option>
+                  {states
+                    .filter(
+                      (state) => parseInt(state.country_id) === selectedCountry
+                    )
+                    .map((state) => (
+                      <option key={state.state_id} value={state.state_id}>
+                        {state.state_name}
+                      </option>
+                    ))}
                 </select>
+                {errors.state && (
+                  <p className="text-red-600 text-xs">{errors.state}</p>
+                )}
               </div>
               <div className="flex-start gap-2 w-full">
                 <label htmlFor="city" className="input-label">
@@ -247,38 +426,28 @@ const RecruitSignUp = () => {
                 <select
                   name="city"
                   id="city"
+                  value={selectedCity}
+                  onChange={handleCityChange}
                   className="input-field custom-select"
                 >
-                  <option value="Self Employed">Self Employed</option>
-                  <option value="2-10 Employees">2-10 Employees</option>
-                  <option value="11-50 Employees">11-50 Employees</option>
-                  <option value="51-200 Employees">51-200 Employees</option>
-                  <option value="201-500 Employees">201-500 Employees</option>
-                  <option value="501+ Employees">501+ Employees</option>
+                  <option value="">Select City</option>
+                  {cities
+                    .filter((city) => parseInt(city.state_id) === selectedState)
+                    .map((city) => (
+                      <option key={city.city_id} value={city.city_id}>
+                        {city.city_name}
+                      </option>
+                    ))}
                 </select>
+                {errors.city && (
+                  <p className="text-red-600 text-xs">{errors.city}</p>
+                )}
               </div>
-              <div className="flex-start gap-2 w-full">
-                <label htmlFor="domain" className="input-label">
-                  Domains (Select up to 10 Domains) <span className="text-orange-800">*</span>
-                </label>
-                <select
-                  name="domain"
-                  id="domain"
-                  className="input-field custom-select"
-                >
-                  <option value="Self Employed">Self Employed</option>
-                  <option value="2-10 Employees">2-10 Employees</option>
-                  <option value="11-50 Employees">11-50 Employees</option>
-                  <option value="51-200 Employees">51-200 Employees</option>
-                  <option value="201-500 Employees">201-500 Employees</option>
-                  <option value="501+ Employees">501+ Employees</option>
-                </select>
-              </div>
-              <div className="flex justify-between gap-4">
+              <div className="flex gap-4 w-full">
                 <button
                   type="button"
                   onClick={prevStep}
-                  className="w-full py-3 my-3 border border-orange-800 text-orange-800 rounded-md text-xl "
+                  className="w-full py-3 my-3 border border-orange-800 text-orange-800 rounded-md text-xl"
                 >
                   <img
                     src={asset7}
@@ -289,8 +458,9 @@ const RecruitSignUp = () => {
                   Back
                 </button>
                 <button
-                  type="submit"
-                  className="w-full py-3 my-3 bg-orange-800 text-white rounded-md text-xl  "
+                  type="button"
+                  onClick={nextStep}
+                  className="w-full py-3 my-3 bg-orange-800 text-white rounded-md text-xl"
                 >
                   Submit
                 </button>
@@ -309,24 +479,24 @@ const RecruitSignUp = () => {
         return (
           <img
             src={asset4}
-            alt="login-image"
-            className="relative p-20 h-full mx-auto"
+            alt="form-step-1"
+            className="relative w-full object-contain "
           />
         );
       case 2:
         return (
           <img
             src={asset8}
-            alt="login-image"
-            className="relative p-20 h-full mx-auto"
+            alt="form-step-2"
+            className="relative w-full  object-contain"
           />
         );
       case 3:
         return (
           <img
             src={asset9}
-            alt="login-image"
-            className="relative p-20 h-full mx-auto"
+            alt="form-step-3"
+            className="relative  w-full object-contain"
           />
         );
       default:
@@ -345,7 +515,6 @@ const RecruitSignUp = () => {
                 Sign Up as a Recruiting Firm (Talent Supplier)
               </h1>
             </div>
-            <div className=""></div>
             <div className="w-full relative flex gap-1 mt-5 place-items-center">
               <div
                 className={`w-4/12 h-1 ${
@@ -374,7 +543,7 @@ const RecruitSignUp = () => {
             </div>
           </div>
         </div>
-        <div className="login-image w-[62%] h-screen relative bg-gradient-to-b from-orange-800 to-black-900">
+        <div className="login-image w-[62%] h-screen relative bg-gradient-to-b p-20 from-orange-800 to-black-900 flex place-items-center">
           {renderFormImage()}
         </div>
       </div>
