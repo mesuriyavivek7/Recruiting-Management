@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import asset3 from "../../assets/asset 3.svg";
 import asset4 from "../../assets/asset 4.svg";
 import asset7 from "../../assets/asset 7.svg";
@@ -9,6 +9,7 @@ import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 
 const RecruitSignUp = () => {
+  const navigate = useNavigate();
   const [activeState, setActiveState] = useState(1);
   const [formData, setFormData] = useState({
     name: "",
@@ -370,7 +371,7 @@ const RecruitSignUp = () => {
       case 3:
         return (
           <div className="w-full relative mt-6">
-            <form className="flex flex-col gap-4">
+            <form className="flex flex-col gap-4" onSubmit={handleFormSubmit}>
               <div className="flex-start gap-2 w-full">
                 <label htmlFor="country" className="input-label">
                   Country <span className="text-orange-800">*</span>
@@ -458,8 +459,7 @@ const RecruitSignUp = () => {
                   Back
                 </button>
                 <button
-                  type="button"
-                  onClick={nextStep}
+                  type="submit" 
                   className="w-full py-3 my-3 bg-orange-800 text-white rounded-md text-xl"
                 >
                   Submit
@@ -480,7 +480,7 @@ const RecruitSignUp = () => {
           <img
             src={asset4}
             alt="form-step-1"
-            className="relative w-full object-contain "
+           className="relative p-20 h-full mx-auto"
           />
         );
       case 2:
@@ -488,7 +488,7 @@ const RecruitSignUp = () => {
           <img
             src={asset8}
             alt="form-step-2"
-            className="relative w-full  object-contain"
+            className="relative p-20 h-full mx-auto"
           />
         );
       case 3:
@@ -496,7 +496,7 @@ const RecruitSignUp = () => {
           <img
             src={asset9}
             alt="form-step-3"
-            className="relative  w-full object-contain"
+           className="relative p-20 h-full mx-auto"
           />
         );
       default:
@@ -504,6 +504,9 @@ const RecruitSignUp = () => {
     }
   };
 
+  const handleFormSubmit=()=>{
+    navigate("/signup/supplier/success")
+  }
   return (
     <main>
       <div className="recruit-content-container h-screen flex relative overflow-hidden">
@@ -543,7 +546,7 @@ const RecruitSignUp = () => {
             </div>
           </div>
         </div>
-        <div className="login-image w-[62%] h-screen relative bg-gradient-to-b p-20 from-orange-800 to-black-900 flex place-items-center">
+        <div className="login-image w-[62%] h-screen relative bg-gradient-to-b from-orange-800 to-black-900">
           {renderFormImage()}
         </div>
       </div>
