@@ -7,30 +7,36 @@ import asset8 from "../../assets/asset 8.svg";
 import asset9 from "../../assets/asset 9.svg";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
+import Multiselect from 'multiselect-react-dropdown';
+
+//importing axios
+import axios from 'axios'
+
 
 const RecruitSignUp = () => {
   const navigate = useNavigate();
   const [activeState, setActiveState] = useState(1);
   const [formData, setFormData] = useState({
-    name: "",
+    full_name: "",
     email: "",
-    phoneNumber: "",
-    company: "",
-    size: "",
+    mobileno: "",
+    company_name: "",
+    company_size: "",
     designation: "",
-    linkedinUrl: "",
-    firm: [],
+    linkedin_url: "",
+    firm_type: [],
     country: "",
     state: "",
     city: "",
+    domains:[]
   });
   const [errors, setErrors] = useState({});
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
-  const [selectedCountry, setSelectedCountry] = useState("");
-  const [selectedState, setSelectedState] = useState("");
-  const [selectedCity, setSelectedCity] = useState("");
+  const [selectedCountry, setSelectedCountry] = useState('');
+  const [selectedState, setSelectedState] = useState('');
+  const [selectedCity, setSelectedCity] = useState('');
 
   useEffect(() => {
     getCountries();
@@ -67,30 +73,47 @@ const RecruitSignUp = () => {
       console.log("Error while fetching cities", error);
     }
   };
-
+  
+  
   const handleCountryChange = (event) => {
     const selectedCountryId = parseInt(event.target.value);
     setSelectedCountry(selectedCountryId);
-    setSelectedState("");
-    setSelectedCity("");
-    setFormData((prevData) => ({ ...prevData, country: selectedCountryId }));
+    setSelectedState('');
+    setSelectedCity('')
+    for(let i of countries){
+       if(parseInt(i.country_id)===selectedCountryId){
+        setFormData((prevData) => ({ ...prevData, country: i.country_name}));
+        break;
+       }
+    }
+    
   };
 
   const handleStateChange = (event) => {
     const selectedStateId = parseInt(event.target.value);
     setSelectedState(selectedStateId);
-    setSelectedCity("");
-    setFormData((prevData) => ({ ...prevData, state: selectedStateId }));
+    setSelectedCity('')
+    for(let i of states){
+      if(parseInt(i.state_id)===selectedStateId){
+       setFormData((prevData) => ({ ...prevData, state: i.state_name}));
+       break;
+      }
+   }
   };
 
   const handleCityChange = (event) => {
     const selectedCityId = parseInt(event.target.value);
     setSelectedCity(selectedCityId);
-    setFormData((prevData) => ({ ...prevData, city: selectedCityId }));
+    for(let i of cities){
+      if(parseInt(i.city_id)===selectedCityId){
+       setFormData((prevData) => ({ ...prevData, city: i.city_name}));
+       break;
+      }
+   }
   };
 
   const handleChange = (e) => {
-    const { name, value, type, checked, options } = e.target;
+    const { name, value, type,checked, options } = e.target;
     if (type === "checkbox") {
       setFormData((prevData) => ({
         ...prevData,
@@ -98,41 +121,48 @@ const RecruitSignUp = () => {
           ? [...prevData[name], value]
           : prevData[name].filter((item) => item !== value),
       }));
-    } else if (type === "select-multiple") {
+    }else if (type === "select-multiple") {
       const selectedValues = Array.from(options)
         .filter((option) => option.selected)
         .map((option) => option.value);
       setFormData((prevData) => ({ ...prevData, [name]: selectedValues }));
-    } else {
+    }else{
       setFormData((prevData) => ({ ...prevData, [name]: value }));
     }
   };
 
+  const domainchange=(selectedList)=>{
+       setFormData((prev)=>({...prev,domains:selectedList}))
+  }
+
+
+  
   const validateForm = () => {
     let newErrors = {};
     switch (activeState) {
       case 1:
-        if (!formData.name) newErrors.name = "Full Name is required";
+        if (!formData.full_name) newErrors.name = "Full Name is required";
         if (!formData.email) newErrors.email = "Official Email is required";
-        if (!formData.phoneNumber)
+        if (!formData.mobileno)
           newErrors.phoneNumber = "Phone Number is required";
         break;
       case 2:
-        if (!formData.company) newErrors.company = "Company Name is required";
-        if (!formData.size) newErrors.size = "Company Size is required";
+        if (!formData.company_name) newErrors.company = "Company Name is required";
+        if (!formData.company_size) newErrors.size = "Company Size is required";
         if (!formData.designation)
           newErrors.designation = "Designation is required";
-        if (!formData.linkedinUrl)
+        if (!formData.linkedin_url)
           newErrors.linkedinUrl = "LinkedIn Url is required";
-        if (formData.firm.length === 0)
+        if (formData.firm_type.length === 0)
           newErrors.firm = "At least one Firm Type is required";
         break;
       case 3:
         if (!formData.country) newErrors.country = "Country is required";
         if (!formData.state) newErrors.state = "State is required";
         if (!formData.city) newErrors.city = "City is required";
-        if (formData.firm.length === 0)
-          newErrors.firm = "At least one Domain is required";
+        if (formData.firm_type.length === 0) newErrors.firm = "At least one Domain is required";
+        if (formData.domains.length<10) newErrors.domains= "Please select up to 10 domains";
+        
         break;
       default:
         break;
@@ -151,6 +181,15 @@ const RecruitSignUp = () => {
     setActiveState((prev) => prev - 1);
   };
 
+
+ const onSubmission = async () =>{
+   if(validateForm()){
+       await axios.post(`${process.env.REACT_APP_API_BASE_URL}/authrecruiting/register`,formData,{withCredentials:true})
+       console.log("Registeration successfully")
+   }
+ }
+
+
   const renderFormStep = () => {
     switch (activeState) {
       case 1:
@@ -163,7 +202,7 @@ const RecruitSignUp = () => {
                 </label>
                 <input
                   type="text"
-                  name="name"
+                  name="full_name"
                   id="name"
                   value={formData.name}
                   onChange={handleChange}
@@ -199,7 +238,7 @@ const RecruitSignUp = () => {
                   onChange={(phone) =>
                     setFormData((prevData) => ({
                       ...prevData,
-                      phoneNumber: phone,
+                      mobileno: phone,
                     }))
                   }
                   containerStyle={{ width: "100%" }}
@@ -228,9 +267,9 @@ const RecruitSignUp = () => {
                 </label>
                 <input
                   type="text"
-                  name="company"
+                  name="company_name"
                   id="company"
-                  value={formData.company}
+                  value={formData.company_name}
                   onChange={handleChange}
                   className="input-field"
                 />
@@ -243,9 +282,9 @@ const RecruitSignUp = () => {
                   Company Size <span className="text-orange-800">*</span>
                 </label>
                 <select
-                  name="size"
+                  name="company_size"
                   id="size"
-                  value={formData.size}
+                  value={formData.company_size}
                   onChange={handleChange}
                   className="input-field custom-select"
                 >
@@ -283,9 +322,9 @@ const RecruitSignUp = () => {
                 </label>
                 <input
                   type="url"
-                  name="linkedinUrl"
+                  name="linkedin_url"
                   id="linkedinUrl"
-                  value={formData.linkedinUrl}
+                  value={formData.linkedin_url}
                   onChange={handleChange}
                   className="input-field"
                 />
@@ -301,9 +340,9 @@ const RecruitSignUp = () => {
                   <label>
                     <input
                       type="checkbox"
-                      name="firm"
+                      name="firm_type"
                       value="Permanent Hiring"
-                      checked={formData.firm.includes("Permanent Hiring")}
+                      checked={formData.firm_type.includes("Permanent Hiring")}
                       onChange={handleChange}
                     />
                     <span className="pl-1">Permanent Hiring</span>
@@ -311,9 +350,9 @@ const RecruitSignUp = () => {
                   <label>
                     <input
                       type="checkbox"
-                      name="firm"
+                      name="firm_type"
                       value="Contract Staffing"
-                      checked={formData.firm.includes("Contract Staffing")}
+                      checked={formData.firm_type.includes("Contract Staffing")}
                       onChange={handleChange}
                     />
                     <span className="pl-1">Contract Staffing</span>
@@ -321,9 +360,9 @@ const RecruitSignUp = () => {
                   <label>
                     <input
                       type="checkbox"
-                      name="firm"
+                      name="firm_type"
                       value="Executive Search"
-                      checked={formData.firm.includes("Executive Search")}
+                      checked={formData.firm_type.includes("Executive Search")}
                       onChange={handleChange}
                     />
                     <span className="pl-1">Executive Search</span>
@@ -331,9 +370,9 @@ const RecruitSignUp = () => {
                   <label>
                     <input
                       type="checkbox"
-                      name="firm"
+                      name="firm_type"
                       value="Only Payrolling"
-                      checked={formData.firm.includes("Only Payrolling")}
+                      checked={formData.firm_type.includes("Only Payrolling")}
                       onChange={handleChange}
                     />
                     <span className="pl-1">Only Payrolling</span>
@@ -435,7 +474,7 @@ const RecruitSignUp = () => {
                   {cities
                     .filter((city) => parseInt(city.state_id) === selectedState)
                     .map((city) => (
-                      <option key={city.city_id} value={city.city_id}>
+                      <option key={city.city_id}  value={city.city_id}>
                         {city.city_name}
                       </option>
                     ))}
@@ -444,6 +483,80 @@ const RecruitSignUp = () => {
                   <p className="text-red-600 text-xs">{errors.city}</p>
                 )}
               </div>
+              <div className="flex-start gap-2 w-full">
+                <label htmlFor="city" className="input-label">
+                  Domains (Select up to 10 Domains) <span className="text-orange-800">*</span>
+                </label>
+                <Multiselect
+                    style={{
+                      multiselectContainer: {
+                        "width":"365px",
+                      },
+                      inputField:{
+                        "width":"100%",
+                        "color":"black"
+                      },
+                      chips:{
+                        "backgroundColor":"gray"
+                      },
+                      option:{
+                        "backgroundColor":"white",
+                        "color":"black"
+                      }
+                    }}
+                    isObject={false}
+                    onRemove={domainchange}
+                    onSelect={domainchange}
+                    placeholder="Select..."
+                    options={[
+                      "Accounting/Corporate Finance", 
+                      "Administrative/Generalist", 
+                      "Advertising/Event Management/PR/MR", 
+                      "Aerospace", 
+                      "Agriculture/Dairy/Fishing", 
+                      "Allied Healthcare",
+                      "Architecture/Interior Design", 
+                      "Automotive/Ancillaries",
+                      "Information technology (IT)", 
+                      "Legal/Law/Secretarial",
+                      "Logistics/Supply Chain", 
+                      "Maid Services",
+                      "Manufacturing/Industrial/Production/Machinery", 
+                      "Petroleum/Oil & Gases/Energy/Utilities",
+                      "Pharmaceuticals/Biotechnology/Clinical Research", 
+                      "Real Estate/Property",
+                      "Banking/Financial Services/Insurance",
+                      "BPO/KPO/ITES/CRM/Transcription/E-Learning",
+                      "Broadcasting",
+                      "Chemicals/Fertilizers/Polymer/Plastic/Rubber",
+                      "Communication/Telcom/ISP",
+                      "Construction/Cement/Metals/Infrastructure",
+                      "Consulting/Strategy",
+                      "Courier/Freight/Transportation",
+                      "Food Processing/Beverages/Nutrition",
+                      "Hardware/Chip Design & Embedded Software",
+                      "HealthCare -Doctors/Surgeons/physicians",
+                      "Healthcare- Hospital Administration",
+                      "Healthcare- Nurses & Support Workers",
+                      "Hospitality/Airlines/Travel/Tourism",
+                      "Human Resources/Talent Acquisition",
+                      "Information security/Cyber Security/IT security and Audit",
+                      "Information technology (IT)",
+                      "Legal/Law/Secretarial",
+                      "Logistics/Supply Chain",
+                      "Maid Services",
+                      "Manufacturing/Industrial/Production/Machinery",
+                      "Petroleum/Oil & Gases/Energy/Utilities",
+                      "Pharmaceuticals/Biotechnology/Clinical Research",
+                      "Real Estate/Property",
+                      "Shipping/Marine"
+                   ]}
+                 />
+                {errors.domains && (
+                  <p className="text-red-600 text-xs">{errors.domains}</p>
+                )}
+              </div>
+              
               <div className="flex gap-4 w-full">
                 <button
                   type="button"
@@ -460,6 +573,8 @@ const RecruitSignUp = () => {
                 </button>
                 <button
                   type="submit" 
+                  type="button"
+                  onClick={onSubmission}
                   className="w-full py-3 my-3 bg-orange-800 text-white rounded-md text-xl"
                 >
                   Submit
