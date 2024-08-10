@@ -3,6 +3,7 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Login from "./pages/Login/Login";
 import RecruitSignUp from "./pages/Signup/RecruitSignUp";
 import EnterpriseSignup from "./pages/Signup/EnterpriseSignup";
+import KYC from "./components/KYC";
 
 const App = () =>{
   const AppRouter = createBrowserRouter(
@@ -18,7 +19,12 @@ const App = () =>{
       {
         path:"/signup/employer",
         element: <EnterpriseSignup/>
+      },
+      {
+        path:"/signup/supplier/success",
+        element: <KYC/>
       }
+
     ]
   );
   return (
