@@ -4,6 +4,7 @@ import Login from "./pages/Login/Login";
 import RecruitSignUp from "./pages/Signup/RecruitSignUp";
 import EnterpriseSignup from "./pages/Signup/EnterpriseSignup";
 import KYC from "./components/KYC";
+import Enterprisedashboard from "./pages/Dashboard/Enterprisedashboard";
 
 const App = () =>{
   const AppRouter = createBrowserRouter(
@@ -23,6 +24,10 @@ const App = () =>{
       {
         path:"/signup/supplier/kyc",
         element: <KYC/>
+      },
+      {
+        path:"/employer/dashboard",
+        element: <Enterprisedashboard/>
       }
 
     ]

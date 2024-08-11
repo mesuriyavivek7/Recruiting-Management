@@ -1,9 +1,58 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import asset2 from "../../assets/asset 2.png";
 import asset1 from "../../assets/asset 1.png";
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
+
+import axios from "axios";
+import {AuthContext} from '../../context/AuthContext'
+
 
 const Login = () => {
+  const navigate=useNavigate()
+  const {user,dispatch,loading}=useContext(AuthContext)
+
+  useEffect(()=>{
+     if(user){
+        navigate('/employer/dashboard')
+     }
+  },[])
+
+  const [errors,setErrors]=useState({})
+  const [formData,setFormData]=useState({
+    email:"",
+    password:"",
+  })
+
+  const handleChange=(e)=>{
+    const {name,value}=e.target
+    setFormData((prevData)=>({...prevData,[name]:value}))
+  }
+
+  const validateForm=()=>{
+    let newErrors={}
+    if(!formData.email) newErrors.email="Email address is required"
+    if(!formData.password) newErrors.password="Password is required"
+    setErrors(newErrors)
+
+    return Object.keys(newErrors).length===0
+
+    
+  }
+
+  const handleSubmit=async ()=>{
+    if(validateForm()){
+       dispatch({type:"LOGIN_START"})
+      //login user
+      const user=await axios.post(`${process.env.REACT_APP_API_BASE_URL}/auth/login`,formData,{withCredentials:true})
+
+      dispatch({type:"LOGIN_SUCCESS",payload:user.data.details})
+
+      //navigate to dashboard
+      navigate('/employer/dashboard')
+       
+    }
+  }
+
   return (
     <div className="login max-w-full h-full relative overflow-hidden">
       <div className="login-content-container flex  place-items-center relative">
@@ -27,9 +76,16 @@ const Login = () => {
                     type="email"
                     name="email"
                     id="email"
+                    value={formData.email}
                     required
                     className="input-field"
+                    onChange={handleChange}
                   />
+                  {
+                    errors.email && (
+                      <p className="text-red-600 text-xs">{errors.email}</p>
+                    ) 
+                  }
                 </div>
                 <div className="flex-start gap-2 w-full">
                   <label id="password" className="input-label">
@@ -40,8 +96,16 @@ const Login = () => {
                     name="password"
                     id="password"
                     className="input-field"
+                    value={formData.password}
+                    onChange={handleChange}
                     required
                   />
+                  {
+                    errors.password && (
+                      <p className="text-red-600 text-xs">{errors.password}</p>
+                    )
+
+                  }
                 </div>
                 <p className="text-end my-3">
                   <Link
@@ -51,7 +115,7 @@ const Login = () => {
                     Forgot your password?
                   </Link>
                 </p>
-                <button type="submit" className="w-full py-[6px] bg-blue-400 text-white rounded-md" >Login</button>
+                <button disabled={loading} type="button" onClick={handleSubmit} className="w-full py-[6px] bg-blue-400 text-white rounded-md disabled:bg-gray-400 disabled:cursor-not-allowed disabled:opacity-50" >Login</button>
               </form>
               <div className="text-sm mt-6">
                 <p className="text-gray-400">
