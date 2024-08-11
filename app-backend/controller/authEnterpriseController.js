@@ -69,3 +69,18 @@ export const checkMail=async (req,res,next)=>{
        next(err)
     }
 }
+
+
+//check for mobile no
+export const checkMobileNo=async (req,res,next)=>{
+  try{
+     const mobileno=await ENTERPRISE.find({mobileno:req.body.mobileno})
+     if(mobileno){
+      res.status(200).json(true)
+     }
+
+     res.status(200).json(false)
+  }catch(err){
+    next(err)
+  }
+}
