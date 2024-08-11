@@ -189,9 +189,10 @@ const RecruitSignUp = () => {
 
  const onSubmission = async () =>{
    if(validateForm()){
+       let newErrors={}
        setLoad(true)
+       try{
        const recruitinguser=await axios.post(`${process.env.REACT_APP_API_BASE_URL}/authrecruiting/register`,formData,{withCredentials:true})
-       console.log("Registeration successfully")
 
        //sending mails for notify user
        const notifymail={
@@ -212,6 +213,10 @@ const RecruitSignUp = () => {
       
        //navigate user to kyc page
        navigate("/signup/supplier/kyc",{state:{recruiting_id:recruitinguser.data._id}})
+      }catch(err){
+        newErrors.internal="There is something wrong";
+        setErrors(newErrors)
+      }
    }
    
 
@@ -608,6 +613,11 @@ const RecruitSignUp = () => {
                   Submit
                 </button>
               </div>
+              {
+                errors.internal && (
+                  <p className="text-red-600 text-xs">{errors.internal}</p>
+                )
+              }
             </form>
           </div>
         );
