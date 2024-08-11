@@ -21,7 +21,7 @@ const App = () =>{
         element: <EnterpriseSignup/>
       },
       {
-        path:"/signup/supplier/success",
+        path:"/signup/supplier/kyc",
         element: <KYC/>
       }
 

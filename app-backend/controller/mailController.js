@@ -51,13 +51,16 @@ export const sendVerificationMail=async (req,res,next)=>{
     const token=jwt.sign(req.body,process.env.JWT)
 
     const mailConfigurations={
-       from:'vivekmesuriya110@gmail.com',
+       from:{
+        name:"Uphire",
+        address:'vivekmesuriya110@gmail.com'
+       },
        to:req.body.email,
        subject:'Uphire:Verify your email address',
        text:`Hi! ${req.body.name}, You have recently created you 
-       account at uphire.
-       Please follow the given link to verify your email
-       http://localhost:8080/api/mail/verifyemail/${token} 
+    account at uphire.
+    Please follow the given link to verify your email
+    http://localhost:8080/api/mail/verifymail/${token} 
        Thanks`
     }
 
@@ -77,12 +80,31 @@ export const verifyemail=async (req,res,next)=>{
 
     jwt.verify(token,process.env.JWT,async (err,decoded)=>{
         if(err){
-            return next(createError(404,"Email verification failed, possibly the link is invalid or expire...!"))
+            return next(createError(404,"Email verification failed, possibly the link is invalid...!"))
         }else{
              console.log(decoded)
              try{
                 await RECRUITING.updateOne({email:decoded.email},{$set:{email_verified:true}})
-                res.status(200).send("Verification and updatation successfully. now go to our website and refresh page.")
+                res.status(200).send(`<!DOCTYPE html>
+                <html lang="en">
+                <head>
+                  <meta charset="UTF-8">
+                  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                  <title>Email Verification Page</title>
+                  <style>
+                    body { font-family: Arial, sans-serif; background-color: #f4f4f4; display:flex; align-items:center; justify-content:center; margin:5rem; }
+                    h1 { color: #333; }
+                  </style>
+                </head>
+                <body>
+                  <div>
+                  <h1>Welcome to <span style="color:green;">Uphire</span></h1>
+                  <br></br>
+                  <p>Email verification done successfully</p>
+                  <a hreaf='http://localhost:3000/'>Go To Login</a>
+                  </div>
+                </body>
+                </html>`)
              }catch(err){
                  next(err)
              }

@@ -21,23 +21,13 @@ export const register=async (req,res,next)=>{
     const newteammember=new RECRUITINGTEAM({recruiting_agency_id:newuser._id,full_name:newuser.full_name,email:newuser.email,mobileno:newuser.mobileno,password:hash,isAdmin:true})
     newteammember.save()
     
-    res.status(200).json("New Recruiting Agency Created with Added into team member Successfully")
+    res.status(200).json(newuser)
       
    }catch(err){
      next(err)
    }
 }
 
-//for kyc details submission
-export const kycSubmission=async (req,res,next)=>{
-       try{
-           const r_id=req.params.id
-           await RECRUITING.findByIdAndUpdate(r_id,{$set:{kyc_details:req.body}})
-           res.status(200).json("KYC Details Submited successfully")
-       }catch(err){
-        next(err)
-       }
-}
 
 //for check mail is already presant or not
 export const checkMail=async (req,res,next)=>{
