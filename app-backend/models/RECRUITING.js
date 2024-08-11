@@ -62,7 +62,11 @@ const recruitingagencySchema=new mongoose.Schema({
     kyc_details:{
         entity_type:String,
         pancard_number:String,
-        pancard_document:String
+    },
+    kyc_documents:{
+      filename:String,
+      filepath:String,
+      filetype:String
     },
     account_status:{
         type:String,

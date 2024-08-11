@@ -13,6 +13,8 @@ import Multiselect from 'multiselect-react-dropdown';
 import axios from 'axios'
 
 
+
+
 const RecruitSignUp = () => {
   const navigate = useNavigate();
   const [activeState, setActiveState] = useState(1);
@@ -37,6 +39,7 @@ const RecruitSignUp = () => {
   const [selectedCountry, setSelectedCountry] = useState('');
   const [selectedState, setSelectedState] = useState('');
   const [selectedCity, setSelectedCity] = useState('');
+  const [load,setLoad]=useState(false)
 
   useEffect(() => {
     getCountries();
@@ -145,6 +148,7 @@ const RecruitSignUp = () => {
         if (!formData.email) newErrors.email = "Official Email is required";
         if (!formData.mobileno)
           newErrors.phoneNumber = "Phone Number is required";
+        if(formData.mobileno.length<12) newErrors.phoneNumber="Phone Number is invalid";
         break;
       case 2:
         if (!formData.company_name) newErrors.company = "Company Name is required";
@@ -161,7 +165,7 @@ const RecruitSignUp = () => {
         if (!formData.state) newErrors.state = "State is required";
         if (!formData.city) newErrors.city = "City is required";
         if (formData.firm_type.length === 0) newErrors.firm = "At least one Domain is required";
-        if (formData.domains.length<10) newErrors.domains= "Please select up to 10 domains";
+        if (formData.domains.length===0) newErrors.domains= "Please select up to 10 domains";
         
         break;
       default:
@@ -182,11 +186,35 @@ const RecruitSignUp = () => {
   };
 
 
+
  const onSubmission = async () =>{
    if(validateForm()){
-       await axios.post(`${process.env.REACT_APP_API_BASE_URL}/authrecruiting/register`,formData,{withCredentials:true})
+       setLoad(true)
+       const recruitinguser=await axios.post(`${process.env.REACT_APP_API_BASE_URL}/authrecruiting/register`,formData,{withCredentials:true})
        console.log("Registeration successfully")
+
+       //sending mails for notify user
+       const notifymail={
+         to:formData.email,
+         subject:"Welcome To Uphire",
+         body:`<h1 style="text-align:center;color:green">UPHIRE</h1><br></br><br></br><p style="text-align:center;">You are now a part of the fastest-growing network of Recruiting firms in the world.Your credentials for accessing uphire dashboard platform are given below</p><br></br><br></br><span style="text-align:center;">username:</span><br></br><span style='text-align:center;'>${formData.email}</span><br></br><span style="text-align:center;">Password</span><br></br><span style="text-align:center;">cbrex</span>`
+       }
+       await axios.post(`${process.env.REACT_APP_API_BASE_URL}/mail/sendmail`,notifymail)
+
+       //sending mail for email verification
+       const emailverify={
+         name:formData.full_name,
+         email:formData.email
+       }
+
+       await axios.post(`${process.env.REACT_APP_API_BASE_URL}/mail/sendverifymail`,emailverify)
+       setLoad(false)
+      
+       //navigate user to kyc page
+       navigate("/signup/supplier/kyc",{state:{recruiting_id:recruitinguser.data._id}})
    }
+   
+
  }
 
 
@@ -209,7 +237,7 @@ const RecruitSignUp = () => {
                   className="input-field"
                 />
                 {errors.name && (
-                  <p className="text-red-600 text-xs">{errors.name}</p>
+                  <p className="text-red-600 text-xs my-2">{errors.name}</p>
                 )}
               </div>
               <div className="flex-start gap-2 w-full">
@@ -410,7 +438,7 @@ const RecruitSignUp = () => {
       case 3:
         return (
           <div className="w-full relative mt-6">
-            <form className="flex flex-col gap-4" onSubmit={handleFormSubmit}>
+            <form className="flex flex-col gap-4">
               <div className="flex-start gap-2 w-full">
                 <label htmlFor="country" className="input-label">
                   Country <span className="text-orange-800">*</span>
@@ -572,10 +600,10 @@ const RecruitSignUp = () => {
                   Back
                 </button>
                 <button
-                  type="submit" 
+                  disabled={load}
                   type="button"
                   onClick={onSubmission}
-                  className="w-full py-3 my-3 bg-orange-800 text-white rounded-md text-xl"
+                  className="w-full py-3 my-3 bg-orange-800 text-white rounded-md text-xl disabled:bg-gray-400 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   Submit
                 </button>
@@ -619,9 +647,7 @@ const RecruitSignUp = () => {
     }
   };
 
-  const handleFormSubmit=()=>{
-    navigate("/signup/supplier/success")
-  }
+
   return (
     <main>
       <div className="recruit-content-container h-screen flex relative overflow-hidden">
