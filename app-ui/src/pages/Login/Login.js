@@ -136,7 +136,7 @@ const Login = () => {
               <div className="text-sm mt-6">
                 <p className="text-gray-400">
                   Not registered as Channel Partner?
-                  <Link to="/" className="text-blue-400 pl-1">
+                  <Link to="/employer" className="text-blue-400 pl-1">
                     Create Account
                   </Link>
                 </p>

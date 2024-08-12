@@ -5,6 +5,9 @@ import RecruitSignUp from "./pages/Signup/RecruitSignUp";
 import EnterpriseSignup from "./pages/Signup/EnterpriseSignup";
 import KYC from "./components/KYC";
 import Enterprisedashboard from "./pages/Dashboard/Enterprisedashboard";
+import Settings from "./pages/Settings";
+import Dashboard from "./pages/Dashboard";
+import PostJob from "./pages/PostJob";
 
 const App = () =>{
   const AppRouter = createBrowserRouter(
@@ -26,8 +29,22 @@ const App = () =>{
         element: <KYC/>
       },
       {
-        path:"/employer/dashboard",
-        element: <Enterprisedashboard/>
+        path:"/employer",
+        element: <Enterprisedashboard/>,
+        children: [
+          {
+            path: "dashboard",
+            element: <Dashboard />,
+          },
+          {
+            path: "settings",
+            element: <Settings />,
+          },
+          {
+            path: "postjob",
+            element:<PostJob/>
+          }
+        ],
       }
 
     ]
