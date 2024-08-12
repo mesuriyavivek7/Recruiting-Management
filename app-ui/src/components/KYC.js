@@ -12,6 +12,7 @@ const KYC = () => {
   useEffect(()=>{
     if(!location.state){
        navigate('/')
+       
     }
   },[])
 
@@ -92,6 +93,9 @@ const KYC = () => {
              await axios.post(`${process.env.REACT_APP_API_BASE_URL}/recruiting/kycdocs/${location.state.recruiting_id}`,formdata,{headers: {
               'Content-Type': 'multipart/form-data',
           }})
+          
+          //after successfully kyc details submitesd user redirect to login page
+          navigate('/',{state:{message:"Successfully Registered, Please Login Now."}})
           setLoad(false)
 
           }catch(err){

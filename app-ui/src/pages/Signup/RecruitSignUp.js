@@ -137,7 +137,16 @@ const RecruitSignUp = () => {
   const domainchange=(selectedList)=>{
        setFormData((prev)=>({...prev,domains:selectedList}))
   }
+ 
 
+  const checkURL=(url)=>{
+     try{
+       new URL(url)
+       return true
+     }catch(err){
+      return false
+     }
+  }
 
   
   const validateForm = () => {
@@ -157,6 +166,7 @@ const RecruitSignUp = () => {
           newErrors.designation = "Designation is required";
         if (!formData.linkedin_url)
           newErrors.linkedinUrl = "LinkedIn Url is required";
+        if(!checkURL(formData.linkedin_url)) newErrors.linkedinUrl="Linkedin URL is invalid";
         if (formData.firm_type.length === 0)
           newErrors.firm = "At least one Firm Type is required";
         break;
@@ -198,7 +208,7 @@ const RecruitSignUp = () => {
        const notifymail={
          to:formData.email,
          subject:"Welcome To Uphire",
-         body:`<h1 style="text-align:center;color:green">UPHIRE</h1><br></br><br></br><p style="text-align:center;">You are now a part of the fastest-growing network of Recruiting firms in the world.Your credentials for accessing uphire dashboard platform are given below</p><br></br><br></br><span style="text-align:center;">username:</span><br></br><span style='text-align:center;'>${formData.email}</span><br></br><span style="text-align:center;">Password</span><br></br><span style="text-align:center;">cbrex</span>`
+         name:formData.full_name
        }
        await axios.post(`${process.env.REACT_APP_API_BASE_URL}/mail/sendmail`,notifymail)
 
@@ -208,7 +218,7 @@ const RecruitSignUp = () => {
          email:formData.email
        }
 
-       await axios.post(`${process.env.REACT_APP_API_BASE_URL}/mail/sendverifymail`,emailverify)
+       await axios.post(`${process.env.REACT_APP_API_BASE_URL}/mail/sendverificaitionrecruiting`,emailverify)
        setLoad(false)
       
        //navigate user to kyc page

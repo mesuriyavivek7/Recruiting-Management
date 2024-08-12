@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import asset2 from "../../assets/asset 2.png";
 import asset1 from "../../assets/asset 1.png";
-import { Link,useNavigate } from "react-router-dom";
+import { Link,useNavigate,useLocation } from "react-router-dom";
 
 import axios from "axios";
 import {AuthContext} from '../../context/AuthContext'
@@ -9,7 +9,9 @@ import {AuthContext} from '../../context/AuthContext'
 
 const Login = () => {
   const navigate=useNavigate()
+  const location=useLocation()
   const {user,dispatch,loading}=useContext(AuthContext)
+  
 
   useEffect(()=>{
      if(user){
@@ -66,6 +68,14 @@ const Login = () => {
               />
               <h1 className="text-3xl mt-6 font-medium text-gray-900">Login</h1>
             </div>
+            {
+              (location.state && location.state.message) && (
+                <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-2 mt-2 rounded relative" role="alert">
+                    <span className="block sm:inline">{location.state.message}</span>
+                </div>
+              )
+            }
+          
             <div className="w-full relative mt-8">
               <form className="flex flex-col gap-3">
                 <div className="flex-start gap-2 w-full">

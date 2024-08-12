@@ -12,10 +12,9 @@ export const login=async (req,res,next)=>{
         const enterpriseuser=await ENTERPRISETEAM.findOne({email:req.body.email})
         const recruitinguser=await RECRUITINGTEAM.findOne({email:req.body.email})
         if(enterpriseuser){
-            console.log(enterpriseuser)
             user=enterpriseuser
             const isPasswordCorrect=await bcrypt.compare(req.body.password,enterpriseuser.password)
-            console.log(isPasswordCorrect)
+            
             if(!isPasswordCorrect){
                return next(error(404,"Password is incorrect"))
             }
