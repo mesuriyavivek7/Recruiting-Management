@@ -1,14 +1,14 @@
 import React,{useEffect,useState} from "react";
 import asset3 from "../../assets/asset 3.svg";
 import asset10 from "../../assets/asset 10.svg";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 
 import axios from "axios";
 
 const EnterpriseSignup = () => {
-
+  const navigate=useNavigate()
   const [formData,setFormData]=useState({
     full_name:'',
     email:'',
@@ -127,7 +127,6 @@ const EnterpriseSignup = () => {
     setFormData((prevData)=>({...prevData,[name]:value}))
   }
   
-  console.log(formData)
  
   const handleSubmit=async ()=>{
      if(validateForm()){
@@ -142,7 +141,7 @@ const EnterpriseSignup = () => {
             const notifymail={
                 to:formData.email,
                 subject:"Welcome To Uphire",
-                body:`<h1 style="text-align:center;color:green">UPHIRE</h1><br></br><br></br><p style="text-align:center;">You are now a part of the fastest-growing network of Recruiting firms in the world.Your credentials for accessing uphire dashboard platform are given below</p><br></br><br></br><span style="text-align:center;">username:</span><br></br><span style='text-align:center;'>${formData.email}</span><br></br><span style="text-align:center;">Password</span><br></br><span style="text-align:center;">cbrex</span>`
+                name:formData.full_name
             }
             await axios.post(`${process.env.REACT_APP_API_BASE_URL}/mail/sendmail`,notifymail)
 
@@ -152,9 +151,12 @@ const EnterpriseSignup = () => {
                email:formData.email
            }
 
-           await axios.post(`${process.env.REACT_APP_API_BASE_URL}/mail/sendverifymail`,emailverify)
+           await axios.post(`${process.env.REACT_APP_API_BASE_URL}/mail/sendverificationenterprise`,emailverify)
            setLoad(false)
+           
 
+           //redirect to login page with successfull message
+           navigate('/',{state:{message:"Registerd Successfully, Now Please Login."}})
 
           }catch(err){
                newErrors.internal="There is something wrong."
