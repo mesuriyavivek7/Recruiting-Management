@@ -1,5 +1,5 @@
 import express from 'express'
-import { sendMail, sendVerificationMail, verifyemail } from '../controller/mailController.js'
+import { sendMail,sendVerificationMailRecruiting,sendVerificationMailEnterprise,verifyemailEnterprise,verifyemailRecruiting } from '../controller/mailController.js'
 
 
 const router=express.Router()
@@ -8,10 +8,16 @@ const router=express.Router()
 
 router.post('/sendmail',sendMail)
 
-//sending mail for verification
-router.post('/sendverifymail',sendVerificationMail)
+//sending verification mail for enterprise
+router.post('/sendverificationenterprise',sendVerificationMailEnterprise)
 
-//verify mail for verification
-router.get('/verifymail/:token',verifyemail)
+//sending verification mail for recruiting
+router.post('/sendverificaitionrecruiting',sendVerificationMailRecruiting)
+
+//verify mail for recruiting verification
+router.get('/recruitingverifymail/:token',verifyemailRecruiting)
+
+//verify mail for enterprise verification
+router.get('/enterpriseverifymail/:token',verifyemailEnterprise)
 
 export default router
