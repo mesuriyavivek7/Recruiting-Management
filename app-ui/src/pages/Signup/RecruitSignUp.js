@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import asset3 from "../../assets/asset 3.svg";
+import asset1 from "../../assets/asset 1.png";
 import asset4 from "../../assets/asset 4.svg";
 import asset7 from "../../assets/asset 7.svg";
 import asset8 from "../../assets/asset 8.svg";
@@ -674,7 +674,7 @@ const RecruitSignUp = () => {
         <div className="recruit-form w-[38%] h-full overflow-y-scroll relative">
           <div className="w-8/12 h-full py-16 flex flex-col place-items-start mx-auto">
             <div className="flex flex-col place-items-start w-full">
-              <img src={asset3} alt="company-logo" className="w-32" />
+              <img src={asset1} alt="company-logo" className="w-32" />
               <h1 className="text-3xl mt-8 font-medium text-gray-900 w-8/12 leading-9">
                 Sign Up as a Recruiting Firm (Talent Supplier)
               </h1>
