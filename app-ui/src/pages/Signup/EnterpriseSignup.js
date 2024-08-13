@@ -1,5 +1,5 @@
 import React,{useEffect,useState} from "react";
-import asset3 from "../../assets/asset 3.svg";
+import asset1 from "../../assets/asset 1.png";
 import asset10 from "../../assets/asset 10.svg";
 import { Link, useNavigate } from "react-router-dom";
 import PhoneInput from "react-phone-input-2";
@@ -177,7 +177,7 @@ const EnterpriseSignup = () => {
           <div className="w-8/12 h-full py-16 flex flex-col place-items-start mx-auto">
             <div className="flex flex-col place-items-start w-full">
               <img
-                src={asset3}
+                src={asset1}
                 alt="company-logo"
                 className="w-32 h-32 rounded-sm"
               />

@@ -17,21 +17,26 @@ const SideNavbar = () => {
       <div className="hover:bg-gray-400 rounded-md p-2">
         <ExpandIcon className="w-[24px] text-white" />
       </div>
-      <Link to="/employer/dashboard/">
+      <Link to="dashboard">
         <div className="hover:bg-gray-400 rounded-md p-2">
           <DashboardIcon className="w-[24px] text-white" />
         </div>
       </Link>
-
-      <div className="hover:bg-gray-400 rounded-md p-2">
-        <JobsIcon className="w-[24px] text-white" />
-      </div>
-      <div className="hover:bg-gray-400 rounded-md p-2">
-        <CandidatesIcon className="w-[24px] text-white" />
-      </div>
-      <div className="hover:bg-gray-400 rounded-md p-2">
-        <PostIcon className="w-[24px] text-white" />
-      </div>
+      <Link to="jobform2">
+        <div className="hover:bg-gray-400 rounded-md p-2">
+          <JobsIcon className="w-[24px] text-white" />
+        </div>
+      </Link>
+      <Link to="jobform3">
+        <div className="hover:bg-gray-400 rounded-md p-2">
+          <CandidatesIcon className="w-[24px] text-white" />
+        </div>
+      </Link>
+      <Link to="jobform4">
+        <div className="hover:bg-gray-400 rounded-md p-2">
+          <PostIcon className="w-[24px] text-white" />
+        </div>
+      </Link>
       <div className="hover:bg-gray-400 rounded-md p-2">
         <ActionIcon className="w-[24px] text-white" />
       </div>
