@@ -15,6 +15,7 @@ import mailRoute from './routes/mail.js'
 import authEnterpriseRoute from './routes/authEnterprise.js'
 import recruitingRoutes from './routes/recruiting.js'
 import authRoute from './routes/auth.js'
+import enterpriseRoute from './routes/enterprise.js'
 
 const app=express()
 dotenv.config()
@@ -70,6 +71,7 @@ app.use('/api/mail',mailRoute)
 app.use('/api/authenterprise',authEnterpriseRoute)
 app.use('/api/recruiting',recruitingRoutes)
 app.use('/api/auth',authRoute)
+app.use('/api/enterprise',enterpriseRoute)
 
 app.get('/',(req,res)=>{
     res.send("Bahut maja ara hai bhai🐱")

@@ -1,5 +1,5 @@
 import React,{useEffect,useState} from "react";
-import asset3 from "../../assets/asset 3.svg";
+import asset3 from "../../assets/asset 1.png";
 import asset10 from "../../assets/asset 10.svg";
 import { Link, useNavigate } from "react-router-dom";
 import PhoneInput from "react-phone-input-2";

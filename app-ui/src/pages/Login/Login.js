@@ -43,11 +43,11 @@ const Login = () => {
 
   const handleSubmit=async ()=>{
     if(validateForm()){
-       dispatch({type:"LOGIN_START"})
+       dispatch({type:"USER_FETCH_START"})
       //login user
       const user=await axios.post(`${process.env.REACT_APP_API_BASE_URL}/auth/login`,formData,{withCredentials:true})
 
-      dispatch({type:"LOGIN_SUCCESS",payload:user.data.details})
+      dispatch({type:"USER_FETCH_SUCCESS",payload:user.data.details})
 
       //navigate to dashboard
       navigate('/employer/dashboard')
