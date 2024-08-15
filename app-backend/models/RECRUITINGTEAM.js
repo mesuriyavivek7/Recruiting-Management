@@ -26,6 +26,10 @@ const recruitingteamSchema=new mongoose.Schema({
         type:Boolean,
         default:false
     },
+    email_verified:{
+       type:Boolean,
+       dafault:false
+    },
     hide_commision:{
         type:Boolean,
         default:false

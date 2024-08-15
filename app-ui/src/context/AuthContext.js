@@ -26,7 +26,6 @@ const AuthReducer=(state,action)=>{
 
         case "USER_FETCH_START":
             return{
-                user:null,
                 loading:true,
                 error:null
             }
