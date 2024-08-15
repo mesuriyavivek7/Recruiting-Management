@@ -9,11 +9,11 @@ const AdminDashboard = () => {
   return (
     <div className='relative '>
     
-    <div className='px-10 py-10  w-full' >
+    <div className=' py-10  w-full' >
       <div className="grid grid-cols-1  gap-9 ">
         
         {/* Add Component */}
-        <div className="shadow-lg  md:col-span-3">
+        <div className=" md:col-span-3">
           <Add/>
         </div>
 

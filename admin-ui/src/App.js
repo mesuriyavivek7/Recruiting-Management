@@ -23,7 +23,7 @@ function App() {
             element: <AdminDashboard/>,
            },
           {
-            path: "/admin/enterprice",
+            path: "/admin/enterprise",
             element: <EnterpriceTable/>,
           },
         

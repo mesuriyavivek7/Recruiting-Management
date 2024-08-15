@@ -36,7 +36,7 @@ const SideNavbar = () => {
         {isOpen && <span className="text-white">Dashboard</span>}
       </NavLink>
       <NavLink
-        to="/admin/enterprice"
+        to="/admin/enterprise"
         className={({ isActive }) => `hover:bg-gray-400 rounded-md p-2 ${!isOpen && "justify-center"} flex gap-2 ${isActive ? 'bg-gray-400' : ''}`}
       >
         <JobsIcon className="w-[24px] text-white" />
