@@ -30,17 +30,7 @@ const Navbar = () => {
         </div>
       </div>
       <div className="flex place-items-center gap-4">
-        <Link to="postjob">
-          <button
-            type="button"
-            className="bg-white rounded-md py-1 px-2 flex place-items-center gap-3"
-          >
-            {/* <img src={asset18} alt="plus-icon" width={16} className="text-black" /> */}
-            {/* <AddIcon/> */}
-            <span className="text-black"> +</span>
-            <span className="text-black">Post a Job</span>
-          </button>
-        </Link>
+        
 
         <Link to="/">
           <img src={asset29} alt="notification" width={26} />
