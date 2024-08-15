@@ -1,6 +1,11 @@
 
+
 import React, { useState } from 'react';
-import { Avatar, Button, Card, CardHeader, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, TablePagination } from '@mui/material';
+
+import {
+  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button,Card,TablePagination,
+  Dialog, DialogTitle, DialogContent, DialogActions, FormControl, InputLabel, Select, MenuItem
+} from '@mui/material';
 import { styled, alpha } from '@mui/material/styles';
 import Menu from '@mui/material/Menu';
 
@@ -46,7 +51,26 @@ const StyledMenu = styled((props) => (
   },
 }));
 
-const AllEnterpriseData = () => {
+const NewEnterpriseData = () => {
+
+  const [open, setOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedManager, setSelectedManager] = useState('');
+
+  const handleClickOpen = (item) => {
+    setSelectedItem(item);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setSelectedManager('');
+  };
+
+  const handleManagerChange = (event) => {
+    setSelectedManager(event.target.value);
+  };
+
   const products = [
     {
       _id: '1',
@@ -137,7 +161,7 @@ const AllEnterpriseData = () => {
               {paginatedRows.map((item) => (
               
                 <TableRow key={item._id}>
-  <TableCell align="left" sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px' } }}>
+  <TableCell align="left" className="" sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px' },cursor: 'pointer', }} onClick={() => handleClickOpen(item)}>
     {item._id}
   </TableCell>
   <TableCell align="left" sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px' } }}>
@@ -192,9 +216,55 @@ const AllEnterpriseData = () => {
               ))}
             </TableBody>
           </Table>
-        </TableContainer>
-
-      
+        </TableContainer> 
+        
+       
+        <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm" sx={{fontSize:{sm:'16px',xl:'20px'}}}>
+        <DialogTitle sx={{fontSize:{sm:'20px',xl:'25px'},borderBottom: '2px solid black', // Add this line for the border
+    paddingBottom: '8px', }}>Details for {selectedItem?.full_name}</DialogTitle>
+        <DialogContent>
+          <div className="space-y-6  space-x-2 pt-4 grid grid-cols-2">
+            <p className='pt-6 pl-3'><strong>Id:</strong> {selectedItem?._id}</p>
+            <p><strong>Email:</strong> {selectedItem?.email}</p>
+            <p><strong>Mobile No:</strong> {selectedItem?.mobile_no}</p>
+            <p><strong>Company:</strong> {selectedItem?.company_name}</p>
+            <p><strong>Designation:</strong> {selectedItem?.designation}</p>
+            
+            <p><strong>Company Size:</strong> {selectedItem?.company_size}</p>
+            <p><strong>Country:</strong> {selectedItem?.country}</p>
+            <p><strong>State:</strong> {selectedItem?.state}</p>
+            <p><strong>City:</strong> {selectedItem?.city}</p>
+            <p><strong>Email verification:</strong> {selectedItem?.email_verification}</p>
+            
+          </div>
+          <FormControl fullWidth sx={{ mt: 6 }}>
+              <InputLabel id="manager-select-label">Select Account Manager</InputLabel>
+              <Select
+                labelId="manager-select-label"
+                value={selectedManager}
+                label="Select Account Manager"
+                onChange={handleManagerChange}
+              >
+                <MenuItem value="Manager 1">Manager 1</MenuItem>
+                <MenuItem value="Manager 2">Manager 2</MenuItem>
+                <MenuItem value="Manager 3">Manager 3</MenuItem>
+              </Select>
+            </FormControl>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="contained"
+            disabled={!selectedManager}
+            onClick={handleClose}
+            sx={{ backgroundColor: selectedManager ? '#315370' : 'gray', color: 'white' }}
+          >
+            Assign
+          </Button>
+          <Button onClick={handleClose} color="secondary">
+            Cancel
+          </Button>
+        </DialogActions>
+      </Dialog>
         
       </Card>
       <TablePagination
@@ -211,4 +281,4 @@ const AllEnterpriseData = () => {
   );
 };
 
-export default AllEnterpriseData;
+export default NewEnterpriseData;
