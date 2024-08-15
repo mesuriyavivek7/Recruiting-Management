@@ -89,40 +89,106 @@ const AllEnterpriseData = () => {
     <div className=''>
      
 
-      <Card className='mt-7 font-sans'>
-        <CardHeader title="All Enterprise" style={{ fontSize: '40px', fontWeight: 'bold',fontFamily:'monospace' }} />
+      <Card className='mt-9 font-sans'>
+        <h className='text-lg xl:text-2xl'>All Enterprise</h>
+       
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
+           
               <TableRow>
-                <TableCell sx={{ fontSize: '20px', fontWeight: 'bold' }}>ID</TableCell>
-                <TableCell sx={{ fontSize: '20px', fontWeight: 'bold' }}>Full Name</TableCell>
-                <TableCell sx={{ fontSize: '20px', fontWeight: 'bold' }} align="left">Email</TableCell>
-                <TableCell sx={{ fontSize: '20px', fontWeight: 'bold' }} align="left">Mobile No.</TableCell>
-                <TableCell sx={{ fontSize: '20px', fontWeight: 'bold' }} align="left">Designation</TableCell>
-                <TableCell sx={{ fontSize: '20px', fontWeight: 'bold' }} align="left">Company Name</TableCell>
-                <TableCell sx={{ fontSize: '20px', fontWeight: 'bold' }} align="left">Company Size</TableCell>
-                <TableCell sx={{ fontSize: '20px', fontWeight: 'bold' }} align="left">Country</TableCell>
-                <TableCell sx={{ fontSize: '20px', fontWeight: 'bold' }} align="left">State</TableCell>
-                <TableCell sx={{ fontSize: '20px', fontWeight: 'bold' }} align="left">City</TableCell>
-                <TableCell sx={{ fontSize: '20px', fontWeight: 'bold' }} align="left">Email verification</TableCell>
-              </TableRow>
+  <TableCell sx={{ fontSize: { xs: '16px', xl: '20px' }, fontWeight: 'bold', whiteSpace: 'nowrap' }}>
+    ID
+  </TableCell>
+  <TableCell sx={{ fontSize: {  xs: '16px', xl: '20px' }, fontWeight: 'bold', whiteSpace: 'nowrap' }}>
+    Full Name
+  </TableCell>
+  <TableCell sx={{ fontSize: {  xs: '16px', xl: '20px' }, fontWeight: 'bold', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} align="left">
+    Email
+  </TableCell>
+  <TableCell sx={{ fontSize: {  xs: '16px', xl: '20px' }, fontWeight: 'bold', whiteSpace: 'nowrap' }} align="left">
+    Mobile No.
+  </TableCell>
+  <TableCell sx={{ fontSize: {  xs: '16px', xl: '20px' }, fontWeight: 'bold', whiteSpace: 'nowrap' }} align="left">
+    Designation
+  </TableCell>
+  <TableCell sx={{ fontSize: {  xs: '16px', xl: '20px' }, fontWeight: 'bold', whiteSpace: 'nowrap' }} align="left">
+    Company Name
+  </TableCell>
+  <TableCell sx={{ fontSize: {  xs: '16px', xl: '20px' }, fontWeight: 'bold', whiteSpace: 'nowrap' }} align="left">
+    Company Size
+  </TableCell>
+  <TableCell sx={{ fontSize: { xs: '12px', sm: '16px', lg: '17px', xl: '20px' }, fontWeight: 'bold', whiteSpace: 'nowrap' }} align="left">
+    Country
+  </TableCell>
+  <TableCell sx={{ fontSize: { xs: '12px', sm: '16px', lg: '17px', xl: '20px' }, fontWeight: 'bold', whiteSpace: 'nowrap' }} align="left">
+    State
+  </TableCell>
+  <TableCell sx={{ fontSize: { xs: '12px', sm: '16px', lg: '17px', xl: '20px' }, fontWeight: 'bold', whiteSpace: 'nowrap' }} align="left">
+    City
+  </TableCell>
+  <TableCell sx={{ fontSize: { xs: '12px', sm: '16px', lg: '17px', xl: '20px' }, fontWeight: 'bold', whiteSpace: 'nowrap' }} align="left">
+    Email verification
+  </TableCell>
+</TableRow>
+
             </TableHead>
             <TableBody>
               {paginatedRows.map((item) => (
+              
                 <TableRow key={item._id}>
-                  <TableCell align="left" >{item._id}</TableCell>
-                  <TableCell align="left" sx={{ fontSize: '17px',  }}>{item.full_name}</TableCell>
-                  <TableCell align='left' component="th" scope="row" sx={{ fontSize: '17px',  }}>{item.email}</TableCell>
-                  <TableCell align="left" sx={{ fontSize: '17px', }}>{item.mobile_no}</TableCell>
-                  <TableCell align="left" sx={{ fontSize: '17px',  }}>{item.designation}</TableCell>
-                  <TableCell align="left" sx={{ fontSize: '17px',  }}>{item.company_name}</TableCell>
-                  <TableCell align="left" sx={{ fontSize: '17px',  }}>{item.company_size}</TableCell>
-                  <TableCell align="left" sx={{ fontSize: '17px',  }}>{item.country}</TableCell>
-                  <TableCell align="left" sx={{ fontSize: '17px', }}>{item.state}</TableCell>
-                  <TableCell align="left" sx={{ fontSize: '17px',  }}>{item.city}</TableCell>
-                  <TableCell align="left" sx={{ fontSize: '17px', textAlign: 'center' }}>{item.email_verification}</TableCell>
-                </TableRow>
+  <TableCell align="left" sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px' } }}>
+    {item._id}
+  </TableCell>
+  <TableCell align="left" sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px' } }}>
+    {item.full_name}
+  </TableCell>
+  <TableCell align="left" component="th" scope="row" sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px' } }}>
+    {item.email}
+  </TableCell>
+  <TableCell align="left" sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px'} }}>
+    {item.mobile_no}
+  </TableCell>
+  <TableCell align="left" sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px' } }}>
+    {item.designation}
+  </TableCell>
+  <TableCell align="left" sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px' } }}>
+    {item.company_name}
+  </TableCell>
+  <TableCell align="left" sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px' } }}>
+    {item.company_size}
+  </TableCell>
+  <TableCell align="left" sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px'} }}>
+    {item.country}
+  </TableCell>
+  <TableCell align="left" sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px' } }}>
+    {item.state}
+  </TableCell>
+  <TableCell align="left" sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px' } }}>
+    {item.city}
+  </TableCell>
+  
+  <TableCell align="left" sx={{ textAlign: 'center', }}>
+  <Button
+    variant="contained" 
+    sx={{
+      fontSize: { xs: '12px', sm: '14px',  xl: '17px' },
+      width: { xl:'90px',sm: '50px' }, 
+      
+      backgroundColor: item.email_verification === "yes" ? "green" : "red",
+      color: "white",
+      '&:hover': {
+        backgroundColor: item.email_verification === "yes" ? "darkgreen" : "darkred",
+      },
+      textTransform: 'none',
+    }}
+  >
+    {item.email_verification}
+  </Button>
+</TableCell>
+
+</TableRow>
+
               ))}
             </TableBody>
           </Table>

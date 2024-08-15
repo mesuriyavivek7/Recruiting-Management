@@ -4,7 +4,7 @@ import React from 'react'
 
 const Add = () => {
   return (
-    <div className='relative h-20 px-5 flex items-center font-medium text-lg  bg-blue-120 '>
+    <div className='relative h-16 xl:h-20 px-5 flex items-center font-medium xl:text-lg  bg-blue-120 '>
       {/* Centered Links */}
       <div className=' flex justify-center gap-5'>
         <a href='#' className= 'hover:border-b-2 hover:border-blue-230 transition duration-300'>My Dashboard</a>
@@ -15,7 +15,7 @@ const Add = () => {
       <div className='absolute right-4 flex items-center gap-2'>
         {/* <AddIcon/> */}
         +
-        <span>Add Enterprise </span>
+        <span>Add Account Manager </span>
       </div>
     </div>
   )
