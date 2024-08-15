@@ -1,5 +1,4 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import logo from './logo.svg';
 import Admin from './Pages/Dashboard/Admin';
 import EnterpriceTable from './Pages/EnterPriceTable';
 import AdminDashboard from './Components/AdminDashboard';
