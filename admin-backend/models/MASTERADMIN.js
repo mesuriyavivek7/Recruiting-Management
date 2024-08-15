@@ -24,6 +24,13 @@ const masteradminSchema=new mongoose.Schema({
     },
     verified_recruiting_agency:{
         type:[String]
+    },
+    admin_type:{
+       type:[String]
+    },
+    master_admin_type:{
+        type:String,
+        required:true
     }
 
 })
