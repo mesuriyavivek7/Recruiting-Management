@@ -1,20 +1,22 @@
 import React, { useState } from 'react'
-
+import { useDispatch } from 'react-redux';
 import axios from 'axios'
 //importing images
 import asset2 from '../../assets/asset 2.png'
 import { useNavigate } from "react-router-dom";
+import { setUserData } from '../../State/Admin/Action';
 
 
 export default function Login() {
-  const navigate=useNavigate()
+  const navigate=useNavigate();
   const [load,setLoad]=useState(false)
   const [errors,setErrors]=useState(false)
   const [formData,setFormData]=useState({
     email:"",
     password:"",
     admin_type:""
-  })
+  });
+  const dispatch=useDispatch();
 
   const handlechange=(e)=>{
     const {name,value}=e.target
@@ -41,15 +43,23 @@ export default function Login() {
       setLoad(true)
       let newErros={}
       try{
-        await axios.post(`${process.env.REACT_APP_API_BASE_URL}/auth/login`,formData,{withCredentials:true})
+        const response=await axios.post(`${process.env.REACT_APP_API_BASE_URL}/auth/login`,formData,{withCredentials:true})
+      
+
+         console.log(response);
+           dispatch(setUserData(response.data));
+           console.log(response.data);
+           
         navigate('/admin/dashboard')
       }catch(err){  
+        console.log(err);
         if(err.response.status===404){
           newErros.autherr="Invalid email address or password"
         }else{
         newErros.internal="Something went wrong....!"
         }
       }
+      
       setLoad(false)
       setErrors(newErros)
     }
