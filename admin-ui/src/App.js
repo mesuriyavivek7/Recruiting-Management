@@ -35,7 +35,7 @@ function App() {
             element: <EnterpriceTable/>,
           },
           {
-            path: "/admin/recruiting-agency",
+            path: "recruiting-agency",
             element: <RecruitingAgencyData/>,
           },
         
