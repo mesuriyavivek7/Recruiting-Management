@@ -11,6 +11,7 @@ import cookieParser from "cookie-parser"
 
 //import routers
 import authRoute from './routes/auth.js'
+import masteradminRoute from './routes/masteradmin.js'
 
 const app=express()
 dotenv.config()
@@ -65,7 +66,7 @@ mongoose.connection.on("connected",()=>{
 
 //middlewares
 app.use('/api/auth',authRoute)
-
+app.use('/api/masteradmin',masteradminRoute)
 
 
 

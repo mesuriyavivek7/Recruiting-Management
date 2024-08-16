@@ -8,6 +8,7 @@ import "react-phone-input-2/lib/style.css";
 import axios from "axios";
 
 const EnterpriseSignup = () => {
+  console.log(process.env.REACT_APP_API_ADMIN_URL)
   const navigate=useNavigate()
   const [formData,setFormData]=useState({
     full_name:'',
@@ -134,9 +135,8 @@ const EnterpriseSignup = () => {
           setLoad(true)
           try{
             //register for enterprise
-            axios.post(`${process.env.REACT_APP_API_BASE_URL}/authenterprise/register`,formData,{withCredentials:true})
-            
-
+            const res=await axios.post(`${process.env.REACT_APP_API_BASE_URL}/authenterprise/register`,formData,{withCredentials:true})
+           
             //sending mails for notify user
             const notifymail={
                 to:formData.email,
@@ -153,6 +153,9 @@ const EnterpriseSignup = () => {
 
            await axios.post(`${process.env.REACT_APP_API_BASE_URL}/mail/sendverificationenterprise`,emailverify)
            
+           
+           //update master admin pending list
+           await axios.post(`${process.env.REACT_APP_API_ADMIN_URL}/masteradmin/addenterprise`,{country:res.data.country,id:res.data._id})
            
 
            //redirect to login page with successfull message

@@ -49,9 +49,20 @@ const enterpriseSchema=new mongoose.Schema({
     account_status:{
         type:String,
         default:"Active"
+    },
+    admin_verified:{
+        type:Boolean,
+        default:false
+    },
+    allocated_account_manager:{
+        type:String,
+    },
+    account_manager_verified:{
+        type:Boolean,
+        default:false
     }
 
-})
+},{timestamps:true})
 
 
 export default mongoose.model("enterprises",enterpriseSchema)
