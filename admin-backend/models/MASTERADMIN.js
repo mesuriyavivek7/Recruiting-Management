@@ -2,6 +2,12 @@ import mongoose from "mongoose";
 
 
 const masteradminSchema=new mongoose.Schema({
+    full_name:{
+       type:String
+    },
+    mobileno:{
+       type:String
+    },
     email:{
         type:String,
         required:true
@@ -26,7 +32,8 @@ const masteradminSchema=new mongoose.Schema({
         type:[String]
     },
     admin_type:{
-       type:[String]
+       type:String,
+       required:true
     },
     master_admin_type:{
         type:String,

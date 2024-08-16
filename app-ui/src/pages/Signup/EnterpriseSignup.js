@@ -152,7 +152,7 @@ const EnterpriseSignup = () => {
            }
 
            await axios.post(`${process.env.REACT_APP_API_BASE_URL}/mail/sendverificationenterprise`,emailverify)
-           setLoad(false)
+           
            
 
            //redirect to login page with successfull message
@@ -162,7 +162,7 @@ const EnterpriseSignup = () => {
                newErrors.internal="There is something wrong."
                setErrors(newErrors)
           }
-          
+          setLoad(false)
           
 
 
