@@ -54,18 +54,9 @@ const StyledMenu = styled((props) => (
 const NewEnterpriseData = () => {
 
   const [open, setOpen] = useState(false);
-  const [selectedItem, setSelectedItem] = useState(null);
+ 
   const [selectedManager, setSelectedManager] = useState('');
 
-  const handleClickOpen = (item) => {
-    setSelectedItem(item);
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-    setSelectedManager('');
-  };
 
   const handleManagerChange = (event) => {
     setSelectedManager(event.target.value);
@@ -92,11 +83,10 @@ const NewEnterpriseData = () => {
     _id: String(index + 1),
   }));
 
-  // State for pagination
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  // Handle pagination change
+ 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -104,6 +94,18 @@ const NewEnterpriseData = () => {
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
+  };
+
+  const [selectedRow, setSelectedRow] = useState(null);
+  const handleRowClick = (item) => {
+    setSelectedRow(item);  
+    setOpen(true); 
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setSelectedManager('');
+    setSelectedRow(null)
   };
 
   // Calculate the rows to display
@@ -158,10 +160,16 @@ const NewEnterpriseData = () => {
 
             </TableHead>
             <TableBody>
-              {paginatedRows.map((item) => (
+              {paginatedRows.map((item,index) => (
               
-                <TableRow key={item._id}>
-  <TableCell align="left" className="" sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px' },cursor: 'pointer', }} onClick={() => handleClickOpen(item)}>
+                <TableRow key={item._id} onClick={() => handleRowClick(item)}
+                sx={{
+                  cursor: 'pointer',
+                  backgroundColor: selectedRow === index ? '#f0f0f0' : 'inherit',
+                  '&:hover': {
+                    backgroundColor: '#e0e0e0',
+                  }}}>
+  <TableCell align="left" className="" sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px' },cursor: 'pointer', }} >
     {item._id}
   </TableCell>
   <TableCell align="left" sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px' } }}>
@@ -218,23 +226,23 @@ const NewEnterpriseData = () => {
           </Table>
         </TableContainer> 
         
-       
+       {selectedRow && (
         <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm" sx={{fontSize:{sm:'16px',xl:'20px'}}}>
         <DialogTitle sx={{fontSize:{sm:'20px',xl:'25px'},borderBottom: '2px solid black', // Add this line for the border
-    paddingBottom: '8px', }}>Details for {selectedItem?.full_name}</DialogTitle>
+    paddingBottom: '8px', }}>Details for {selectedRow?.full_name}</DialogTitle>
         <DialogContent>
           <div className="space-y-6  space-x-2 pt-4 grid grid-cols-2">
-            <p className='pt-6 pl-3'><strong>Id:</strong> {selectedItem?._id}</p>
-            <p><strong>Email:</strong> {selectedItem?.email}</p>
-            <p><strong>Mobile No:</strong> {selectedItem?.mobile_no}</p>
-            <p><strong>Company:</strong> {selectedItem?.company_name}</p>
-            <p><strong>Designation:</strong> {selectedItem?.designation}</p>
+            <p className='pt-6 pl-3'><strong>Id:</strong> {selectedRow?._id}</p>
+            <p><strong>Email:</strong> {selectedRow?.email}</p>
+            <p><strong>Mobile No:</strong> {selectedRow?.mobile_no}</p>
+            <p><strong>Company:</strong> {selectedRow?.company_name}</p>
+            <p><strong>Designation:</strong> {selectedRow?.designation}</p>
             
-            <p><strong>Company Size:</strong> {selectedItem?.company_size}</p>
-            <p><strong>Country:</strong> {selectedItem?.country}</p>
-            <p><strong>State:</strong> {selectedItem?.state}</p>
-            <p><strong>City:</strong> {selectedItem?.city}</p>
-            <p><strong>Email verification:</strong> {selectedItem?.email_verification}</p>
+            <p><strong>Company Size:</strong> {selectedRow?.company_size}</p>
+            <p><strong>Country:</strong> {selectedRow?.country}</p>
+            <p><strong>State:</strong> {selectedRow?.state}</p>
+            <p><strong>City:</strong> {selectedRow?.city}</p>
+            <p><strong>Email verification:</strong> {selectedRow?.email_verification}</p>
             
           </div>
           <FormControl fullWidth sx={{ mt: 6 }}>
@@ -265,7 +273,7 @@ const NewEnterpriseData = () => {
           </Button>
         </DialogActions>
       </Dialog>
-        
+        )}
       </Card>
       <TablePagination
           component="div"

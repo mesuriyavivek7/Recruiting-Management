@@ -41,7 +41,7 @@ const SideNavbar = () => {
       >
         <JobsIcon className="w-[24px] text-white" />
         <span className=""></span>
-        {isOpen && <span className="text-white">EnterPrice</span>}
+        {isOpen && <span className="text-white">Enterprise</span>}
       </NavLink>
       <NavLink
         to="/admin/candidates"
@@ -60,12 +60,12 @@ const SideNavbar = () => {
         {isOpen && <span className="text-white">Post a Job</span>}
       </NavLink>
       <NavLink
-        to="/admin/action"
+        to="/admin/recruiting-agency"
         className={({ isActive }) => `hover:bg-gray-400 rounded-md p-2 ${!isOpen && "justify-center"} flex gap-2 ${isActive ? 'bg-gray-400' : ''}`}
       >
         <ActionIcon className="w-[24px] text-white" />
         <span className=""></span>
-        {isOpen && <span className="text-white">Bulk Actions</span>}
+        {isOpen && <span className="text-white">Recruiting Agency</span>}
       </NavLink>
       <NavLink
         to="/admin/offers"

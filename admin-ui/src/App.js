@@ -2,7 +2,13 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Admin from './Pages/Dashboard/Admin';
 import EnterpriceTable from './Pages/EnterPriceTable';
 import AdminDashboard from './Components/AdminDashboard';
+
+
+import RecruitingAgencyData from './Pages/RecruitingAgency/RecruitingAgencyData';
+
+
 import Login from './Pages/Login/Login';
+
 
 function App() {
 
@@ -27,6 +33,10 @@ function App() {
           {
             path: "enterprise",
             element: <EnterpriceTable/>,
+          },
+          {
+            path: "/admin/recruiting-agency",
+            element: <RecruitingAgencyData/>,
           },
         
        ],

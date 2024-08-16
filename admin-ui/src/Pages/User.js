@@ -3,7 +3,7 @@ import React from "react";
 import { ReactComponent as JobsIcon } from "../assets/asset21.svg";
 import { ReactComponent as ActionIcon } from "../assets/asset23.svg";
 import { ReactComponent as CandidatesIcon } from "../assets/asset20.svg";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 const User = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2  xl:grid-cols-4  gap-6 p-3 ">
@@ -17,8 +17,7 @@ const User = () => {
           </div>
           <p className="text-gray-700 mb-4 font-bold pt-3 xl:pt-6  text-xl xl:text-2xl">788</p>
           <div className="flex justify-between items-center space-x-10 pt-8">
-            <a href="#" className="inline-block  bg-blue-230 text-white py-2 px-4 rounded hover:bg-gray-400 text-xs xl:text-lg">See all </a>
-           
+          <Link to="/admin/enterprise" className="inline-block  bg-blue-230 text-white py-2 px-4 rounded hover:bg-gray-400 text-xs xl:text-lg">see all</Link>
             <img  height="50" src="https://img.icons8.com/ios-filled/50/company.png" alt="company" className="w-10"/>
           </div>
         </div>
@@ -33,7 +32,8 @@ const User = () => {
           </div>
           <p className="text-gray-700 mb-4 font-bold pt-3 xl:pt-6 text-xl xl:text-2xl">788</p>
           <div className="flex justify-between items-center space-x-10 pt-8">
-            <a href="#" className="inline-block  bg-blue-230 text-white py-2 px-4 rounded hover:bg-gray-400 text-xs xl:text-lg">See all </a>
+           
+            <Link to="/admin/recruiting-agency" className="inline-block  bg-blue-230 text-white py-2 px-4 rounded hover:bg-gray-400 text-xs xl:text-lg">see all</Link>
            <ActionIcon className="w-9 xl:w-11"/>
           </div>
         </div>
