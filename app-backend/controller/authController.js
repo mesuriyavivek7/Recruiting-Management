@@ -1,7 +1,7 @@
 import ENTERPRISETEAM from "../models/ENTERPRISETEAM.js"
 import RECRUITINGTEAM from "../models/RECRUITINGTEAM.js"
 
-
+import { error } from "../utils/error.js";
 import bcrypt from 'bcryptjs'
 
 import jwt from 'jsonwebtoken'

@@ -10,7 +10,7 @@ import cors from 'cors'
 import cookieParser from "cookie-parser"
 
 //import routers
-
+import authRoute from './routes/auth.js'
 
 const app=express()
 dotenv.config()
@@ -63,7 +63,8 @@ mongoose.connection.on("connected",()=>{
 })
 
 
-
+//middlewares
+app.use('/api/auth',authRoute)
 
 
 
