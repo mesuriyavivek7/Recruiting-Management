@@ -1,4 +1,5 @@
 
+
 import React, { useState } from 'react';
 
 import {
@@ -50,12 +51,19 @@ const StyledMenu = styled((props) => (
   },
 }));
 
-const RecruitingAgencyData = () => {
+const NewRecruitingAgencyData = () => {
+
+  const [open, setOpen] = useState(false);
+ 
+  const [selectedManager, setSelectedManager] = useState('');
+  
+
+
+  const handleManagerChange = (event) => {
+    setSelectedManager(event.target.value);
+  };
 
  
-
- 
-
  
   const products = [
     {
@@ -81,7 +89,6 @@ const RecruitingAgencyData = () => {
     _id: String(index + 1),
   }));
 
-
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -89,27 +96,33 @@ const RecruitingAgencyData = () => {
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
-  
-
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
 
+  const [selectedRow, setSelectedRow] = useState(null);
+  const handleRowClick = (item) => {
+    setSelectedRow(item);  
+    setOpen(true); 
+  };
 
+  const handleClose = () => {
+    setOpen(false);
+    setSelectedManager('');
+    setSelectedRow(null)
+  };
 
-
-  
+  // Calculate the rows to display
   const paginatedRows = repeatedProducts.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   return (
-    <div className='pt-6'>
+    <div className=''>
      
-     <h className='text-lg xl:text-2xl '>All Recruiting Agency Data</h>
-       
+
       <Card className='mt-9 font-sans'>
-       
+        <h className='text-lg xl:text-2xl'>New Recruiting Agency</h>
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
@@ -162,9 +175,15 @@ const RecruitingAgencyData = () => {
 
             </TableHead>
             <TableBody>
-              {paginatedRows.map((item,index) => (
+              {paginatedRows.map((item) => (
               
-                <TableRow key={item._id} 
+                <TableRow key={item._id}  onClick={() => handleRowClick(item)}
+                sx={{
+                  cursor: 'pointer',
+                  '&:hover': {
+                    backgroundColor: '#e0e0e0',
+                  },
+                }}
                 >
   <TableCell align="left" className="" sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px' },cursor: 'pointer', }}>
     {item._id}
@@ -242,7 +261,68 @@ const RecruitingAgencyData = () => {
           </Table>
         </TableContainer> 
         
-       
+       {selectedRow && (
+        <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm" sx={{fontSize:{sm:'16px',xl:'20px'}}}>
+        <DialogTitle sx={{fontSize:{sm:'20px',xl:'25px'},borderBottom: '2px solid black', // Add this line for the border
+    paddingBottom: '8px', }}>Details for {selectedRow?.full_name}</DialogTitle>
+        <DialogContent>
+          <div className="space-y-6  space-x-2 pt-4 grid grid-cols-2">
+            <p className='pt-6 pl-3'><strong>Id:</strong> {selectedRow?._id}</p>
+            <p><strong>Email:</strong> {selectedRow?.email}</p>
+            <p><strong>Company:</strong> {selectedRow?.company_name}</p>
+    
+            
+            <p><strong>Company Size:</strong> {selectedRow?.company_size}</p>
+              <p><strong>Designation:</strong> {selectedRow?.designation}</p>
+                <p><strong>Linkedin URL:</strong> {selectedRow?.Linkedin_url}</p>
+                  <p><strong>Interested in:</strong> {selectedRow?.interested_in}</p>
+            <p><strong>Country:</strong> {selectedRow?.country}</p>
+            <p><strong>State:</strong> {selectedRow?.state}</p>
+            <p><strong>City:</strong> {selectedRow?.city}</p>
+              <p><strong>Domains:</strong> {selectedRow?.domains.map((domain, index) => (
+    typeof domain === 'string' ? 
+      <div key={index}>
+        {domain}{index < selectedRow.domains.length - 1 ? ',' : ''}
+      </div> : 
+      Object.entries(domain).map(([key, value]) => (
+        <div key={index}>
+          {key}: {value}{index < selectedRow.domains.length - 1 ? ',' : ''}
+        </div>
+      ))
+  ))}</p>
+            <p><strong>Email verified:</strong> {selectedRow?.email_verified}</p>
+              <p><strong>Pancard Number:</strong> {selectedRow?.pancard_no}</p>
+            
+          </div>
+          <FormControl fullWidth sx={{ mt: 6 }}>
+              <InputLabel id="manager-select-label">Select Account Manager</InputLabel>
+              <Select
+                labelId="manager-select-label"
+                value={selectedManager}
+                label="Select Account Manager"
+                onChange={handleManagerChange}
+              >
+                <MenuItem value="Manager 1">Manager 1</MenuItem>
+                <MenuItem value="Manager 2">Manager 2</MenuItem>
+                <MenuItem value="Manager 3">Manager 3</MenuItem>
+              </Select>
+            </FormControl>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="contained"
+            disabled={!selectedManager}
+            onClick={handleClose}
+            sx={{ backgroundColor: selectedManager ? '#315370' : 'gray', color: 'white' }}
+          >
+            Assign
+          </Button>
+          <Button onClick={handleClose} color="secondary">
+            Cancel
+          </Button>
+        </DialogActions>
+      </Dialog>
+        )}
       </Card>
       <TablePagination
           component="div"
@@ -258,4 +338,4 @@ const RecruitingAgencyData = () => {
   );
 };
 
-export default RecruitingAgencyData;
+export default NewRecruitingAgencyData;

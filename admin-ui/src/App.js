@@ -4,10 +4,12 @@ import EnterpriceTable from './Pages/EnterPriceTable';
 import AdminDashboard from './Components/AdminDashboard';
 
 
-import RecruitingAgencyData from './Pages/RecruitingAgency/RecruitingAgencyData';
+
 
 
 import Login from './Pages/Login/Login';
+import RecruitingAgencyTable from './Pages/RecruitingAgencyTable';
+import AccountManagerDashboard from './Components/AccountManagerDashboard';
 
 
 function App() {
@@ -35,8 +37,12 @@ function App() {
             element: <EnterpriceTable/>,
           },
           {
-            path: "/admin/recruiting-agency",
-            element: <RecruitingAgencyData/>,
+            path: "recruiting-agency",
+            element: <RecruitingAgencyTable/>,
+          },
+          {
+            path: "account-manager",
+            element: <AccountManagerDashboard/>,
           },
         
        ],
