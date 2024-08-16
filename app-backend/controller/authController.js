@@ -1,7 +1,7 @@
 import ENTERPRISETEAM from "../models/ENTERPRISETEAM.js"
 import RECRUITINGTEAM from "../models/RECRUITINGTEAM.js"
 
-
+import { error } from "../utils/error.js";
 import bcrypt from 'bcryptjs'
 
 import jwt from 'jsonwebtoken'
@@ -35,7 +35,7 @@ export const login=async (req,res,next)=>{
         }
 
         const token=jwt.sign({id:user._id,isAdmin:user.isAdmin},process.env.JWT)
-        const {password,isAdmin,hide_commision,...otherDetails}=user._doc
+        const {password,email_verified,isAdmin,hide_commision,...otherDetails}=user._doc
         res.cookie("t_user",token,{expires:new Date(Date.now()+2592000000),httpOnly:false,secure:true,sameSite:'none'}).status(200).json({details:{...otherDetails}})
 
     }catch(err){

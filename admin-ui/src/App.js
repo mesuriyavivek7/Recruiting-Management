@@ -1,19 +1,25 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import logo from './logo.svg';
 import Admin from './Pages/Dashboard/Admin';
 import EnterpriceTable from './Pages/EnterPriceTable';
 import AdminDashboard from './Components/AdminDashboard';
 
+
 import RecruitingAgencyData from './Pages/RecruitingAgency/RecruitingAgencyData';
+
+
+import Login from './Pages/Login/Login';
 
 
 function App() {
 
   const AppRouter = createBrowserRouter(
     [
-      
       {
         path:"/",
+        element:<Login></Login>
+      },
+      {
+        path:"/admin",
         element: <Admin/>,
         children: [
           {
@@ -21,11 +27,11 @@ function App() {
             element: <AdminDashboard />,
           },
           {
-            path: "/admin/dashboard",
+            path: "dashboard",
             element: <AdminDashboard/>,
            },
           {
-            path: "/admin/enterprise",
+            path: "enterprise",
             element: <EnterpriceTable/>,
           },
           {

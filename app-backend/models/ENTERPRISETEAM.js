@@ -21,6 +21,10 @@ const enterpriseteamSchema=new mongoose.Schema({
     isAdmin:{
         type:Boolean,
         default:false
+    },
+    email_verified:{
+        type:Boolean,
+        default:false
     }
 
 })
