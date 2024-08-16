@@ -50,25 +50,29 @@ const StyledMenu = styled((props) => (
   },
 }));
 
-const AllEnterpriseData = () => {
+const RecruitingAgencyData = () => {
 
+ 
 
+ 
 
-
-
+ 
   const products = [
     {
       _id: '1',
       full_name: "zigo",
       email: "xyz@gmail.com",
-      mobile_no: 67656456447,
       company_name: "heryo",
-      designation: "software development",
       company_size: 30,
+      designation: "software development",
+      Linkedin_url:"www.linkedin.com",
+      interested_in:["Permanent Hiring"],
       country: "India",
       state: "Gujrat",
       city: "Gandhinagar",
-      email_verification: "yes",
+      domains: ["IT Recruitment", "Executive Search", "Temporary Staffing",  { Education: "B.Tech" }],
+      email_verified: "yes",
+      pancard_no:"76556556655"
     },
   ];
 
@@ -77,29 +81,34 @@ const AllEnterpriseData = () => {
     _id: String(index + 1),
   }));
 
-  // State for pagination
+
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  // Handle pagination change
+ 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
+  
+
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
 
-  // Calculate the rows to display
+
+
+
+  
   const paginatedRows = repeatedProducts.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   return (
-    <div className=''>
+    <div className='pt-6'>
      
-
+     <h className='text-lg xl:text-2xl '>All Recruiting Agency Data</h>
+       
       <Card className='mt-9 font-sans'>
-        <h className='text-lg xl:text-2xl'>All Enterprise</h>
        
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -115,11 +124,15 @@ const AllEnterpriseData = () => {
   <TableCell sx={{ fontSize: {  xs: '16px', xl: '20px' }, fontWeight: 'bold', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} align="left">
     Email
   </TableCell>
-  <TableCell sx={{ fontSize: {  xs: '16px', xl: '20px' }, fontWeight: 'bold', whiteSpace: 'nowrap' }} align="left">
-    Mobile No.
-  </TableCell>
+ 
   <TableCell sx={{ fontSize: {  xs: '16px', xl: '20px' }, fontWeight: 'bold', whiteSpace: 'nowrap' }} align="left">
     Designation
+  </TableCell>
+  <TableCell sx={{ fontSize: {  xs: '16px', xl: '20px' }, fontWeight: 'bold', whiteSpace: 'nowrap' }} align="left">
+    Linkedin_url
+  </TableCell>
+  <TableCell sx={{ fontSize: {  xs: '16px', xl: '20px' }, fontWeight: 'bold', whiteSpace: 'nowrap' }} align="left">
+    Interested_in
   </TableCell>
   <TableCell sx={{ fontSize: {  xs: '16px', xl: '20px' }, fontWeight: 'bold', whiteSpace: 'nowrap' }} align="left">
     Company Name
@@ -136,17 +149,24 @@ const AllEnterpriseData = () => {
   <TableCell sx={{ fontSize: { xs: '12px', sm: '16px', lg: '17px', xl: '20px' }, fontWeight: 'bold', whiteSpace: 'nowrap' }} align="left">
     City
   </TableCell>
+  <TableCell sx={{ fontSize: {  xs: '16px', xl: '20px' }, fontWeight: 'bold', whiteSpace: 'nowrap' }} align="left">
+    Domains
+  </TableCell>
   <TableCell sx={{ fontSize: { xs: '12px', sm: '16px', lg: '17px', xl: '20px' }, fontWeight: 'bold', whiteSpace: 'nowrap' }} align="left">
-    Email verification
+    Email verified
+  </TableCell>
+  <TableCell sx={{ fontSize: {  xs: '16px', xl: '20px' }, fontWeight: 'bold', whiteSpace: 'nowrap' }} align="left">
+    Pancard Number
   </TableCell>
 </TableRow>
 
             </TableHead>
             <TableBody>
-              {paginatedRows.map((item) => (
+              {paginatedRows.map((item,index) => (
               
-                <TableRow key={item._id}>
-  <TableCell align="left" className="" sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px' }}} >
+                <TableRow key={item._id} 
+                >
+  <TableCell align="left" className="" sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px' },cursor: 'pointer', }}>
     {item._id}
   </TableCell>
   <TableCell align="left" sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px' } }}>
@@ -155,11 +175,15 @@ const AllEnterpriseData = () => {
   <TableCell align="left" component="th" scope="row" sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px' } }}>
     {item.email}
   </TableCell>
-  <TableCell align="left" sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px'} }}>
-    {item.mobile_no}
-  </TableCell>
+ 
   <TableCell align="left" sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px' } }}>
     {item.designation}
+  </TableCell>
+  <TableCell align="left" sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px'} }}>
+    {item.Linkedin_url}
+  </TableCell>
+  <TableCell align="left" sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px'} }}>
+    {item.interested_in}
   </TableCell>
   <TableCell align="left" sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px' } }}>
     {item.company_name}
@@ -176,7 +200,19 @@ const AllEnterpriseData = () => {
   <TableCell align="left" sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px' } }}>
     {item.city}
   </TableCell>
-  
+  <TableCell align="left" sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px'},whiteSpace: 'nowrap' }}>
+  {item.domains.map((domain, index) => (
+    typeof domain === 'string' ? 
+      <div key={index}>
+        {domain}{index < item.domains.length - 1 ? ',' : ''}
+      </div> : 
+      Object.entries(domain).map(([key, value]) => (
+        <div key={index}>
+          {key}: {value}{index < item.domains.length - 1 ? ',' : ''}
+        </div>
+      ))
+  ))}
+  </TableCell>
   <TableCell align="left" sx={{ textAlign: 'center', }}>
   <Button
     variant="contained" 
@@ -184,17 +220,20 @@ const AllEnterpriseData = () => {
       fontSize: { xs: '12px', sm: '14px',  xl: '17px' },
       width: { xl:'90px',sm: '50px' }, 
       
-      backgroundColor: item.email_verification === "yes" ? "green" : "red",
+      backgroundColor: item.email_verified === "yes" ? "green" : "red",
       color: "white",
       '&:hover': {
-        backgroundColor: item.email_verification === "yes" ? "darkgreen" : "darkred",
+        backgroundColor: item.email_verified === "yes" ? "darkgreen" : "darkred",
       },
       textTransform: 'none',
     }}
   >
-    {item.email_verification}
+    {item.email_verified}
   </Button>
 </TableCell>
+<TableCell align="left" sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px'} }}>
+    {item.pancard_no}
+  </TableCell>
 
 </TableRow>
 
@@ -204,8 +243,6 @@ const AllEnterpriseData = () => {
         </TableContainer> 
         
        
-      
-        
       </Card>
       <TablePagination
           component="div"
@@ -221,4 +258,4 @@ const AllEnterpriseData = () => {
   );
 };
 
-export default AllEnterpriseData;
+export default RecruitingAgencyData;
