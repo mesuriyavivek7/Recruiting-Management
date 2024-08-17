@@ -1,16 +1,20 @@
 import express from 'express'
-import { login, register } from '../controller/authController.js'
+import { acRegister, login, madminRegister } from '../controller/authController.js'
 
 
 const router=express.Router()
 
 
-//login admin 
+//login admin
 router.post('/login',login)
 
 
 //register new masteradmin
-router.post('/register',register)
+router.post('/madminregister',madminRegister)
+
+
+//register new account manager
+router.post('/acmanagerregister',acRegister)
 
 
 export default router

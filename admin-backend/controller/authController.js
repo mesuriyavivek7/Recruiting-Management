@@ -1,4 +1,5 @@
 import MASTERADMIN from "../models/MASTERADMIN.js"
+import ACCOUNTMANAGER from "../models/ACCOUNTMANAGER.js"
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { error } from "../utils/error.js"
@@ -17,6 +18,7 @@ export const login=async (req,res,next)=>{
             break;
         
            case "account_manager":
+            admin=await ACCOUNTMANAGER.findOne({email:req.body.email})
             break;
       }
       if(admin){
@@ -34,7 +36,7 @@ export const login=async (req,res,next)=>{
    }
 }
 
-export const register=async (req,res,next)=>{
+export const madminRegister=async (req,res,next)=>{
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(req.body.password,salt);
     try{  
@@ -44,4 +46,17 @@ export const register=async (req,res,next)=>{
     }catch(err){
       next(err)
     }
+}
+
+
+export const acRegister=async (req,res,next)=>{
+   const salt = bcrypt.genSaltSync(10);
+   const hash = bcrypt.hashSync(req.body.password,salt);
+   try{
+      const acmanager=new ACCOUNTMANAGER({...req.body,password:hash})
+       await acmanager.save()
+       res.status(200).json("New Account manager created successfully")
+   }catch(err){
+      next(err)
+   }
 }
