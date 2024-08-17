@@ -4,7 +4,8 @@ import React, { useState } from 'react';
 
 import {
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button,Card,TablePagination,
-  Dialog, DialogTitle, DialogContent, DialogActions, FormControl, InputLabel, Select, MenuItem
+  Dialog, DialogTitle, DialogContent,DialogContentText, DialogActions, FormControl, InputLabel, Select, MenuItem,
+  TextField
 } from '@mui/material';
 import { styled, alpha } from '@mui/material/styles';
 import Menu from '@mui/material/Menu';
@@ -56,10 +57,24 @@ const NewEnterpriseData = () => {
   const [open, setOpen] = useState(false);
  
   const [selectedManager, setSelectedManager] = useState('');
+  const [openpopup, setOpenpopup] = useState(false);
+  const [reason, setReason] = useState("");
 
-
+  const handleClickButton = (event) => {
+    event.stopPropagation();  
+    setOpenpopup(true);
+  };
+  const handleCloseButton = () => {
+    setOpenpopup(false);
+  };
   const handleManagerChange = (event) => {
     setSelectedManager(event.target.value);
+  };
+
+  const handleSubmitButton = () => {
+    // Handle the reason submission logic here
+    console.log("Reason for inactivation:", reason);
+    setOpenpopup(false);
   };
 
   const products = [
@@ -75,6 +90,10 @@ const NewEnterpriseData = () => {
       state: "Gujrat",
       city: "Gandhinagar",
       email_verification: "yes",
+      created_at:"22-10-2023",
+      account_status:"pending",
+      action:"inactive",
+      
     },
   ];
 
@@ -156,6 +175,15 @@ const NewEnterpriseData = () => {
   <TableCell sx={{ fontSize: { xs: '12px', sm: '16px', lg: '17px', xl: '20px' }, fontWeight: 'bold', whiteSpace: 'nowrap' }} align="left">
     Email verification
   </TableCell>
+  <TableCell sx={{ fontSize: { xs: '12px', sm: '16px', lg: '17px', xl: '20px' }, fontWeight: 'bold', whiteSpace: 'nowrap' }} align="left">
+    Created At
+  </TableCell>
+  <TableCell sx={{ fontSize: { xs: '12px', sm: '16px', lg: '17px', xl: '20px' }, fontWeight: 'bold', whiteSpace: 'nowrap' }} align="left">
+    Account Status
+  </TableCell>
+  <TableCell sx={{ fontSize: { xs: '12px', sm: '16px', lg: '17px', xl: '20px' }, fontWeight: 'bold', whiteSpace: 'nowrap' }} align="left">
+    Action
+  </TableCell>
 </TableRow>
 
             </TableHead>
@@ -201,23 +229,37 @@ const NewEnterpriseData = () => {
   </TableCell>
   
   <TableCell align="left" sx={{ textAlign: 'center', }}>
-  <Button
-    variant="contained" 
-    sx={{
-      fontSize: { xs: '12px', sm: '14px',  xl: '17px' },
-      width: { xl:'90px',sm: '50px' }, 
-      
-      backgroundColor: item.email_verification === "yes" ? "green" : "red",
-      color: "white",
-      '&:hover': {
-        backgroundColor: item.email_verification === "yes" ? "darkgreen" : "darkred",
-      },
-      textTransform: 'none',
-    }}
-  >
-    {item.email_verification}
-  </Button>
+  <h className="px-3 py-2 text-sm text-white" style={{ backgroundColor: item.email_verification === "yes" ? "green" : "red" }}>
+  {item.email_verification}
+</h>
+
 </TableCell>
+<TableCell align="left" sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px' } }}>
+    {item.created_at}
+  </TableCell>
+  <TableCell align="left" sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px' },textAlign: "center" }}>
+    {item.account_status}
+  </TableCell>
+  
+  
+                  <TableCell align="left" sx={{ textAlign: "center" }}>
+                    <Button  onClick={handleClickButton}
+                      variant="contained"
+                      sx={{
+                        fontSize: { xs: "12px", sm: "14px", xl: "17px" },
+                        width: { xl: "90px", sm: "50px" },
+
+                        backgroundColor:
+                          "#315370",
+                        "&:hover": {
+                          backgroundColor:"gray"
+                        },
+                        textTransform: "none",
+                      }}
+                    >
+                      {item.action}
+                    </Button>
+                  </TableCell>
 
 </TableRow>
 
@@ -225,6 +267,53 @@ const NewEnterpriseData = () => {
             </TableBody>
           </Table>
         </TableContainer> 
+
+      <Dialog open={openpopup} onClose={handleCloseButton}>
+        <DialogTitle>Inactivate Enterprise</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Please provide a reason why you want to inactivate this enterprise.
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Reason"
+            type="text"
+            fullWidth
+            variant="outlined"
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseButton}  sx={{
+                        fontSize: { xs: "12px", sm: "14px", xl: "17px" },
+                        width: { xl: "80px", sm: "40px" },
+                        color:'white',
+                        backgroundColor:
+                          "#315370",
+                        "&:hover": {
+                          backgroundColor:"gray"
+                        },
+                        textTransform: "none",
+                      }}>
+            Cancel
+          </Button>
+          <Button onClick={handleSubmitButton}  sx={{
+                        fontSize: { xs: "12px", sm: "14px", xl: "17px" },
+                        width: { xl: "80px", sm: "40px" },
+                       color:'white',
+                        backgroundColor:
+                          "#315370",
+                        "&:hover": {
+                          backgroundColor:"gray"
+                        },
+                        textTransform: "none",
+                      }}>
+            Submit
+          </Button>
+        </DialogActions>
+      </Dialog>
         
        {selectedRow && (
         <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm" sx={{fontSize:{sm:'16px',xl:'20px'}}}>
