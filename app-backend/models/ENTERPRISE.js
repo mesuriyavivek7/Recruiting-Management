@@ -47,8 +47,12 @@ const enterpriseSchema=new mongoose.Schema({
         default:false
     },
     account_status:{
-        type:String,
-        default:"Active"
+        type:Object,
+        default:{
+            status:"Active",
+            remark:"",
+            admin_id:""
+        }
     },
     admin_verified:{
         type:Boolean,

@@ -1,7 +1,8 @@
 
 
-import React, { useState } from 'react';
-
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import axios from 'axios'
 import {
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button,Card,TablePagination,
   Dialog, DialogTitle, DialogContent,DialogContentText, DialogActions, FormControl, InputLabel, Select, MenuItem,
@@ -54,53 +55,78 @@ const StyledMenu = styled((props) => (
 
 const NewEnterpriseData = () => {
 
+  const myValue=useSelector((state) => state.admin);
+  
+
   const [open, setOpen] = useState(false);
- 
+  const [newEnterprise,setNewEnterprise]=useState([])
+  const [acManager,setAcManager]=useState([])
   const [selectedManager, setSelectedManager] = useState('');
   const [openpopup, setOpenpopup] = useState(false);
   const [reason, setReason] = useState("");
 
-  const handleClickButton = (event) => {
-    event.stopPropagation();  
-    setOpenpopup(true);
+  const fetchEnterprise=async ()=>{
+     try{
+        const response=await axios.get(`${process.env.REACT_APP_API_APP_URL}/enterprise/adminpending`)
+        setNewEnterprise(response.data)
+     }catch(err){
+
+     }
+  }
+
+  const fetchAccountManager=async ()=>{
+    try{
+       const response=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/accountmanager/madmin/66befbd900f8f947fb41fc91`)
+       setAcManager(response.data)
+    }catch(err){
+
+    }
+  }
+
+
+  useEffect(()=>{
+       fetchEnterprise()
+       fetchAccountManager()
+  },[])
+ 
+  const [selectInactive,setSelectInactive]=useState(null)
+  
+  const handleInactivateButton =(e,item) => {  
+    e.stopPropagation();  
+    setSelectInactive(item)
+    if(item.account_status.status==="Active"){
+      setOpenpopup(true);
+    }else{
+      console.log("Request gone")
+      handleSubmitButton()
+      console.log("Status changed")
+      
+    }
   };
-  const handleCloseButton = () => {
+  const handleCloseInactivateButton = () => {
+    setSelectInactive(null)
     setOpenpopup(false);
   };
   const handleManagerChange = (event) => {
     setSelectedManager(event.target.value);
   };
 
-  const handleSubmitButton = () => {
+  const handleSubmitButton =async  () => {
+    console.log("Submit button clicked")
     // Handle the reason submission logic here
-    console.log("Reason for inactivation:", reason);
-    setOpenpopup(false);
+  
+      //please change here admin id with my_value id
+      try{
+        console.log(selectInactive)
+        await axios.post(`${process.env.REACT_APP_API_APP_URL}/enterprise/changestatus`,{id:selectInactive._id,status:selectInactive.account_status.status,reason,admin_id:'66befbd900f8f947fb41fc91'})
+        console.log("Status request get")
+        fetchEnterprise()
+        setOpenpopup(false);
+      }catch(err){
+
+      }
   };
 
-  const products = [
-    {
-      _id: '1',
-      full_name: "zigo",
-      email: "xyz@gmail.com",
-      mobile_no: 67656456447,
-      company_name: "heryo",
-      designation: "software development",
-      company_size: 30,
-      country: "India",
-      state: "Gujrat",
-      city: "Gandhinagar",
-      email_verification: "yes",
-      created_at:"22-10-2023",
-      account_status:"pending",
-      action:"inactive",
-      
-    },
-  ];
-
-  const repeatedProducts = Array(10).fill(null).map((_, index) => ({
-    ...products[0],
-    _id: String(index + 1),
-  }));
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -128,14 +154,14 @@ const NewEnterpriseData = () => {
   };
 
   // Calculate the rows to display
-  const paginatedRows = repeatedProducts.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+  const paginatedRows = newEnterprise.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   return (
     <div className=''>
      
 
       <Card className='mt-9 font-sans'>
-        <h className='text-lg xl:text-2xl'>New Enterprise</h>
+        <h1 className='text-lg xl:text-2xl'>New Enterprise</h1>
        
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -207,7 +233,7 @@ const NewEnterpriseData = () => {
     {item.email}
   </TableCell>
   <TableCell align="left" sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px'} }}>
-    {item.mobile_no}
+    {`+${item.mobileno}`}
   </TableCell>
   <TableCell align="left" sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px' } }}>
     {item.designation}
@@ -229,25 +255,25 @@ const NewEnterpriseData = () => {
   </TableCell>
   
   <TableCell align="left" sx={{ textAlign: 'center', }}>
-  <h className="px-3 py-2 text-sm text-white" style={{ backgroundColor: item.email_verification === "yes" ? "green" : "red" }}>
-  {item.email_verification}
-</h>
+  <h1 className={`px-2 py-2 rounded-2xl text-sm text-white  ${(item.email_verified)?("bg-green-500"):"bg-red-500"} `} >
+  {(item.email_verified)?"Yes":"No"}
+  </h1>
 
 </TableCell>
-<TableCell align="left" sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px' } }}>
-    {item.created_at}
+  <TableCell align="left" sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px' } }}>
+    {item.createdAt}
   </TableCell>
-  <TableCell align="left" sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px' },textAlign: "center" }}>
-    {item.account_status}
+  <TableCell align="left"  sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px' },textAlign: "center" }}>
+    <h1 className={`px-2 py-2 rounded-2xl text-sm text-white ${(item.account_status.status==="Active")?("bg-green-500"):"bg-red-500"}`}>{item.account_status.status}</h1>
   </TableCell>
   
   
                   <TableCell align="left" sx={{ textAlign: "center" }}>
-                    <Button  onClick={handleClickButton}
+                    <Button  onClick={(e)=>handleInactivateButton(e,item)}
                       variant="contained"
                       sx={{
-                        fontSize: { xs: "12px", sm: "14px", xl: "17px" },
-                        width: { xl: "90px", sm: "50px" },
+                        fontSize: { xs: "12px", sm: "16px", xl: "18px" },
+                        width: { xl: "120px", sm: "120px" },
 
                         backgroundColor:
                           "#315370",
@@ -257,7 +283,7 @@ const NewEnterpriseData = () => {
                         textTransform: "none",
                       }}
                     >
-                      {item.action}
+                      {(item.account_status.status==="Active")?("Inactivate"):("Activate")}
                     </Button>
                   </TableCell>
 
@@ -268,11 +294,11 @@ const NewEnterpriseData = () => {
           </Table>
         </TableContainer> 
 
-      <Dialog open={openpopup} onClose={handleCloseButton}>
+      <Dialog open={openpopup} onClose={handleCloseInactivateButton}>
         <DialogTitle>Inactivate Enterprise</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Please provide a reason why you want to inactivate this enterprise.
+            Please provide a reason why you want to inactivate this account.
           </DialogContentText>
           <TextField
             autoFocus
@@ -286,7 +312,7 @@ const NewEnterpriseData = () => {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseButton}  sx={{
+          <Button onClick={handleCloseInactivateButton}  sx={{
                         fontSize: { xs: "12px", sm: "14px", xl: "17px" },
                         width: { xl: "80px", sm: "40px" },
                         color:'white',
@@ -323,7 +349,7 @@ const NewEnterpriseData = () => {
           <div className="space-y-6  space-x-2 pt-4 grid grid-cols-2">
             <p className='pt-6 pl-3'><strong>Id:</strong> {selectedRow?._id}</p>
             <p><strong>Email:</strong> {selectedRow?.email}</p>
-            <p><strong>Mobile No:</strong> {selectedRow?.mobile_no}</p>
+            <p><strong>Mobile No:</strong> {selectedRow?.mobileno}</p>
             <p><strong>Company:</strong> {selectedRow?.company_name}</p>
             <p><strong>Designation:</strong> {selectedRow?.designation}</p>
             
@@ -331,42 +357,58 @@ const NewEnterpriseData = () => {
             <p><strong>Country:</strong> {selectedRow?.country}</p>
             <p><strong>State:</strong> {selectedRow?.state}</p>
             <p><strong>City:</strong> {selectedRow?.city}</p>
-            <p><strong>Email verification:</strong> {selectedRow?.email_verification}</p>
+            <p><strong>Email Verified:</strong> {(selectedRow?.email_verified)?("Yes"):("No")}</p>
             
           </div>
-          <FormControl fullWidth sx={{ mt: 6 }}>
-              <InputLabel id="manager-select-label">Select Account Manager</InputLabel>
-              <Select
-                labelId="manager-select-label"
-                value={selectedManager}
-                label="Select Account Manager"
-                onChange={handleManagerChange}
-              >
-                <MenuItem value="Manager 1">Manager 1</MenuItem>
-                <MenuItem value="Manager 2">Manager 2</MenuItem>
-                <MenuItem value="Manager 3">Manager 3</MenuItem>
-              </Select>
+          {
+            (selectedRow?.account_status.status==="Active") && (
+             <FormControl fullWidth sx={{ mt: 6 }}>
+                <InputLabel id="manager-select-label">Select Account Manager</InputLabel>
+                  <Select
+                  labelId="manager-select-label"
+                  value={selectedManager}
+                  label="Select Account Manager"
+                  onChange={handleManagerChange}
+                >
+                 {
+                   acManager.map((item,i)=>(
+                     <MenuItem key={i} value={item._id}>{item.full_name}</MenuItem>
+                   ))
+                 }
+               
+                </Select>
             </FormControl>
+            )
+          }
+          { 
+            (selectedRow?.account_status.status==="Inactive") && (
+               <div className='my-6'>
+                  <p className='text-red-500 text-xl text-center'>This Account is Inactivated</p>
+               </div>)
+          }
         </DialogContent>
-        <DialogActions>
-          <Button
-            variant="contained"
-            disabled={!selectedManager}
-            onClick={handleClose}
-            sx={{ backgroundColor: selectedManager ? '#315370' : 'gray', color: 'white' }}
-          >
-            Assign
-          </Button>
-          <Button onClick={handleClose} color="secondary">
-            Cancel
-          </Button>
-        </DialogActions>
+
+        {   (selectedRow?.account_status.status==="Active") &&
+            ( <DialogActions>
+                 <Button
+                   variant="contained"
+                   disabled={!selectedManager}
+                   onClick={handleClose}
+                   sx={{ backgroundColor: selectedManager ? '#315370' : 'gray', color: 'white' }}
+                 >
+                   Assign
+                 </Button>
+                 <Button onClick={handleClose} color="secondary">
+                   Cancel
+                 </Button>
+               </DialogActions> )
+        }
       </Dialog>
         )}
       </Card>
       <TablePagination
           component="div"
-          count={repeatedProducts.length}
+          count={newEnterprise.length}
           page={page}
           onPageChange={handleChangePage}
           rowsPerPage={rowsPerPage}

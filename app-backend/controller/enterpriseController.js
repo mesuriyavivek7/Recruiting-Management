@@ -81,3 +81,18 @@ export const getAllPendingMadminVerifyEnterprise=async (req,res,next)=>{
     next(err)
   }
 }
+
+
+export const changeAccountStatus=async (req,res,next)=>{
+  console.log(req.body.status)
+  try{
+       if(req.body.status==="Active"){
+         await ENTERPRISE.findByIdAndUpdate(req.body.id,{$set:{account_status:{status:"Inactive",remark:req.body.reason,admin_id:req.body.admin_id}}})
+       }else{
+         await ENTERPRISE.findByIdAndUpdate(req.body.id,{$set:{account_status:{status:"Active",remark:"",admin_id:""}}})
+       }
+       res.status(200).json("Status changes successfully")
+  }catch(err){
+    next(err)
+  }
+}
