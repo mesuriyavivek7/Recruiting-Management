@@ -40,8 +40,7 @@ function App() {
             element: <EnterpriceTable/>,
           },
           {
-            path: "recruiting-agency",
-            element: <RecruitingAgencyData/>,
+          
             path: "recruiting-agency",
             element: <RecruitingAgencyTable/>,
           },
