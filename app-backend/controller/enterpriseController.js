@@ -62,3 +62,22 @@ export const changepassword=async (req,res,next)=>{
       next(err)
   }
 }
+
+
+export const getEnterprise=async (req,res,next)=>{
+    try{
+       const enterprise=await ENTERPRISE.findById(req.params.id)
+       res.status(200).json(enterprise)
+    }catch(err){
+      next(err)
+    }
+}
+
+export const getAllPendingMadminVerifyEnterprise=async (req,res,next)=>{
+  try{
+     const pendingenterprise=await ENTERPRISE.find({admin_verified:false})
+     res.status(200).json(pendingenterprise)
+  }catch(err){
+    next(err)
+  }
+}

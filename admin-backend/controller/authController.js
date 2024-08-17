@@ -14,7 +14,6 @@ export const login=async (req,res,next)=>{
 
            case "master_admin":
             admin=await MASTERADMIN.findOne({email:req.body.email})
-            console.log(admin)
             break;
         
            case "account_manager":
@@ -28,7 +27,6 @@ export const login=async (req,res,next)=>{
         res.cookie("admin_user",token,{expires:new Date(Date.now()+2592000000),httpOnly:false,secure:true,sameSite:'none'}).status(200).json({details:{_id,email,admin_type}})
 
       }else{
-         console.log("admin not found")
          return next(error(404,"User not found by this emial address"))
       }
    }catch(err){
