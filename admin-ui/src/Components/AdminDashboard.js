@@ -1,9 +1,8 @@
 import React from 'react'
 
-import Resumes from '../Pages/Resumes'
 
-import User from '../Pages/User'
-import Add from '../Pages/Add'
+import User from '../Pages/PagesForAdmin/User'
+import Add from '../Pages/PagesForAdmin/Add'
 
 const AdminDashboard = () => {
   return (

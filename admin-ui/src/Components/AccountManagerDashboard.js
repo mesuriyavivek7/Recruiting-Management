@@ -2,8 +2,8 @@ import React from 'react'
 
 
 
-import User from '../Pages/User'
-import Add from '../Pages/Add'
+import User from '../Pages/PagesForAdmin/User'
+import Add from '../Pages/PagesForAdmin/Add'
 
 const AccountManagerDashboard= () => {
   return (

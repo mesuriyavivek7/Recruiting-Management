@@ -1,15 +1,14 @@
 import React from "react";
-
-// import { Outlet } from "react-router-dom";
 import SideNavbar from "../../Components/SideNavbar";
 import Navbar from "../../Components/Navbar";
+
 
 
 
 import { Outlet } from "react-router-dom";
 
 
-const Admin = () => {
+const AccountManager = () => {
   return ( 
     <div className="flex flex-col w-screen max-w-[100vw] h-[100vh] max-h-screen relative overflow-hidden ">
       <Navbar/>
@@ -18,8 +17,7 @@ const Admin = () => {
         
 
         <div className="w-full h-full flex  flex-col pb-20 gap-2 relative bg-white-200 sm:pt-4 lg:pt-6  overflow-y-scroll font-sans pr-8">
-        {/*  */}
-          {/* <AdminDashboard/> */}
+       
           <Outlet/>
         </div>
       
@@ -29,4 +27,4 @@ const Admin = () => {
   );
 };
 
-export default Admin;
+export default AccountManager;
