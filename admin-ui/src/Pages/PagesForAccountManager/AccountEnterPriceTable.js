@@ -4,8 +4,8 @@ import { Avatar, Button, Card, CardHeader, Paper, Table, TableBody, TableCell, T
 import { styled, alpha } from '@mui/material/styles';
 import Menu from '@mui/material/Menu';
 import AllEnterpriseData from './EnterpriseTable/AllEnterpriseData';
-import NewEnterpriseData from './EnterpriseTable/NewEnterpriseData';
 
+import NewEnterpriseData from './EnterpriseTable/NewEnterpriseData';
 
 
 

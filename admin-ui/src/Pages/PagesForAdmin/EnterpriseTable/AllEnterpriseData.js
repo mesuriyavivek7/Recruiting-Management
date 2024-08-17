@@ -178,22 +178,10 @@ const AllEnterpriseData = () => {
   </TableCell>
   
   <TableCell align="left" sx={{ textAlign: 'center', }}>
-  <Button
-    variant="contained" 
-    sx={{
-      fontSize: { xs: '12px', sm: '14px',  xl: '17px' },
-      width: { xl:'90px',sm: '50px' }, 
-      
-      backgroundColor: item.email_verification === "yes" ? "green" : "red",
-      color: "white",
-      '&:hover': {
-        backgroundColor: item.email_verification === "yes" ? "darkgreen" : "darkred",
-      },
-      textTransform: 'none',
-    }}
-  >
-    {item.email_verification}
-  </Button>
+  <h className="px-3 py-2 text-sm text-white" style={{ backgroundColor: item.email_verification === "yes" ? "green" : "red" }}>
+  {item.email_verification}
+</h>
+
 </TableCell>
 
 </TableRow>
