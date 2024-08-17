@@ -22,33 +22,6 @@ export const register=async (req,res,next)=>{
     //added into team member list
     const newteammember=new ENTERPRISETEAM({enterprise_id:newuser._id,full_name:newuser.full_name,email:newuser.email,mobileno:newuser.mobileno,password:hash,isAdmin:true})
     newteammember.save()
-
-    //search for masteradmin
-    
-    // console.log(newuser)
-    // let masteradmin=null
-    // const masteradmin_ct=await MASTERADMIN.findOne({master_admin_type:"India"})
-    // console.log(masteradmin_ct)
-    // if(masteradmin_ct){
-    //    masteradmin=masteradmin_ct
-    // }else{
-    //    if(newuser.country==="India"){
-    //     masteradmin=await MASTERADMIN.findOne({master_admin_type:"domestic"})
-    //    }else{
-    //     masteradmin=await MASTERADMIN.findOne({master_admin_type:"international"})
-    //    }
-    // }
-
-    // if(newuser.country==="India"){
-    //   masteradmin=await MASTERADMIN.findOne({master_admin_type:"domestic"})
-    //  }else{
-    //   masteradmin=await MASTERADMIN.findOne({master_admin_type:"international"})
-    //  }
-
-    // console.log("masteradmin------->",masteradmin)
-    // //update master admin pending verification list
-    // await MASTERADMIN.findByIdAndUpdate(masteradmin._id,{$push:{pending_verify_enterprise:newuser._id}})
-    
     
     res.status(200).json(newuser)
       
