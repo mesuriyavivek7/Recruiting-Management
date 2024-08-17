@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useDispatch } from 'react-redux';
+import { useDispatch,useSelector } from 'react-redux';
 import axios from 'axios'
 //importing images
 import asset2 from '../../assets/asset 2.png'
@@ -8,6 +8,9 @@ import { setUserData } from '../../State/Admin/Action';
 
 
 export default function Login() {
+
+  const myValue=useSelector((state) => state.admin);
+
   const navigate=useNavigate();
   const [load,setLoad]=useState(false)
   const [errors,setErrors]=useState(false)
@@ -44,15 +47,9 @@ export default function Login() {
       let newErros={}
       try{
         const response=await axios.post(`${process.env.REACT_APP_API_BASE_URL}/auth/login`,formData,{withCredentials:true})
-      
-
-         console.log(response);
-           dispatch(setUserData(response.data));
-           console.log(response.data);
-           
+        dispatch(setUserData(response.data.details));
         navigate('/admin/dashboard')
       }catch(err){  
-        console.log(err);
         if(err.response.status===404){
           newErros.autherr="Invalid email address or password"
         }else{
