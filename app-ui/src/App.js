@@ -11,6 +11,10 @@ import PostJob from "./pages/PostJob";
 import PostJobForm2 from "./components/PostJobForms/postjobform2";
 import PostJobForms3 from "./components/PostJobForms/PostJobForms3";
 import PostJobForm4 from "./components/PostJobForms/PostJobForm4";
+import DemoVideosPage from "./components/DemoVideos";
+import JobPostings from "./components/JobPostings";
+import BulkActions from "./components/BulkActions,";
+import OffersPage from "./components/OffersPage";
 
 const App = () => {
   const AppRouter = createBrowserRouter([
@@ -43,20 +47,24 @@ const App = () => {
           element: <Settings />,
         },
         {
-          path: "postjob",
+          path: "jobposting/postjob",
           element: <PostJob />,
         },
         {
-          path: "jobform2",
-          element: <PostJobForm2/>,
+          path: "jobposting",
+          element: <JobPostings/>,
         },
         {
-          path: "jobform3",
-          element: <PostJobForms3/>,
+          path: "bulkactions",
+          element: <BulkActions/>,
         },
         {
-          path: "jobform4",
-          element: <PostJobForm4/>,
+          path: "demovideos",
+          element: <DemoVideosPage/>,
+        },
+        {
+          path: "offers",
+          element: <OffersPage/>,
         },
       ],
     },
