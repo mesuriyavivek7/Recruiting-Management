@@ -1,7 +1,6 @@
 import ENTERPRISE from "../models/ENTERPRISE.js";
 import ENTERPRISETEAM from "../models/ENTERPRISETEAM.js";
 
-
 import bcrypt from 'bcryptjs'
 
 import jwt from 'jsonwebtoken'
@@ -23,13 +22,42 @@ export const register=async (req,res,next)=>{
     //added into team member list
     const newteammember=new ENTERPRISETEAM({enterprise_id:newuser._id,full_name:newuser.full_name,email:newuser.email,mobileno:newuser.mobileno,password:hash,isAdmin:true})
     newteammember.save()
+
+    //search for masteradmin
     
-    res.status(200).json("New Enterprise Created with Added into team member Successfully")
+    // console.log(newuser)
+    // let masteradmin=null
+    // const masteradmin_ct=await MASTERADMIN.findOne({master_admin_type:"India"})
+    // console.log(masteradmin_ct)
+    // if(masteradmin_ct){
+    //    masteradmin=masteradmin_ct
+    // }else{
+    //    if(newuser.country==="India"){
+    //     masteradmin=await MASTERADMIN.findOne({master_admin_type:"domestic"})
+    //    }else{
+    //     masteradmin=await MASTERADMIN.findOne({master_admin_type:"international"})
+    //    }
+    // }
+
+    // if(newuser.country==="India"){
+    //   masteradmin=await MASTERADMIN.findOne({master_admin_type:"domestic"})
+    //  }else{
+    //   masteradmin=await MASTERADMIN.findOne({master_admin_type:"international"})
+    //  }
+
+    // console.log("masteradmin------->",masteradmin)
+    // //update master admin pending verification list
+    // await MASTERADMIN.findByIdAndUpdate(masteradmin._id,{$push:{pending_verify_enterprise:newuser._id}})
+    
+    
+    res.status(200).json(newuser)
       
    }catch(err){
      next(err)
    }
 }
+
+
 
 //for login enterprise
 export const login=async (req,res,next)=>{

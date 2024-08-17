@@ -1,5 +1,5 @@
 import express from 'express'
-import { changeMail, changepassword, checkPassword, getMobileNo } from '../controller/enterpriseController.js'
+import { changeMail, changepassword, checkPassword, getAllPendingMadminVerifyEnterprise, getEnterprise, getMobileNo } from '../controller/enterpriseController.js'
 
 const router=express.Router()
 
@@ -14,5 +14,11 @@ router.post('/changepassword/:id',changepassword)
 
 //for check password
 router.post('/checkpassword/:id',checkPassword)
+
+//for getting enterprise by id
+router.get('/find/:id',getEnterprise)
+
+//for gettign all pending madmin verification enterprise
+router.get('/adminpending',getAllPendingMadminVerifyEnterprise)
 
 export default router
