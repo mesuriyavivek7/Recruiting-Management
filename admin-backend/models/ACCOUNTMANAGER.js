@@ -3,7 +3,8 @@ import mongoose from "mongoose";
 
 const accountmanagerSchema=new mongoose.Schema({
     full_name:{
-        type:String
+        type:String,
+        required:true
     },
     mobileno:{
         type:String
@@ -39,6 +40,10 @@ const accountmanagerSchema=new mongoose.Schema({
     },
     verified_jobs:{
         type:[String]
+    },
+    master_admin:{
+      type:String,
+      required:true  
     },
     admin_type:{
         type:String,

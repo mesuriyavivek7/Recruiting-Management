@@ -69,8 +69,12 @@ const recruitingagencySchema=new mongoose.Schema({
       filetype:String
     },
     account_status:{
-        type:String,
-        default:"Active"
+        type:Object,
+        default:{
+            status:"Active",
+            remark:"",
+            admin_id:""
+        }
     },
     account_status:{
         type:String,
