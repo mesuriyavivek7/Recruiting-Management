@@ -10,6 +10,7 @@ import { setUserData } from '../../State/Admin/Action';
 export default function Login() {
 
   const myValue=useSelector((state) => state.admin);
+  console.log(myValue);
 
   const navigate=useNavigate();
   const [load,setLoad]=useState(false)
@@ -47,6 +48,7 @@ export default function Login() {
       let newErros={}
       try{
         const response=await axios.post(`${process.env.REACT_APP_API_BASE_URL}/auth/login`,formData,{withCredentials:true})
+        
         dispatch(setUserData(response.data.details));
         navigate('/admin/dashboard')
       }catch(err){  

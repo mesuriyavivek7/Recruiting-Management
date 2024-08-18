@@ -148,7 +148,7 @@ const NewEnterpriseData = () => {
   return (
     <div className="">
       <Card className="mt-9 font-sans">
-        <h1 className="text-lg xl:text-2xl">New Enterprise</h1>
+        <p className="text-lg xl:text-2xl">New Enterprise</p>
 
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
