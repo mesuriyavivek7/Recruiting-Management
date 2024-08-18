@@ -22,9 +22,11 @@ const SideNavbar = () => {
   };
 
   const getNavLinkPath = (path) => {
-    return location.pathname.includes("account-manager")
-      ? path.replace("/admin", "/account-manager")
-      : path;
+    if (location.pathname.includes("account-manager")) {
+      return path.replace("/admin", "/account-manager");
+    } else {
+      return path;
+    }
   };
   return (
     <div className={`p-3 relative bg-blue-230 border-t border-t-gray-400 flex flex-col gap-2 transition-width duration-300 ease-in-out ${isOpen ? "w-64" : "w-20"}`}>
