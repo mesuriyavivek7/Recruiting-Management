@@ -1,5 +1,3 @@
-
-
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import axios from 'axios'
@@ -10,6 +8,7 @@ import {
 } from '@mui/material';
 import { styled, alpha } from '@mui/material/styles';
 import Menu from '@mui/material/Menu';
+import Notification from '../../../Components/Notification';
 
 
 const StyledMenu = styled((props) => (
@@ -56,8 +55,10 @@ const StyledMenu = styled((props) => (
 const NewEnterpriseData = () => {
 
   const myValue=useSelector((state) => state.admin);
+  const [notification,setNotification]=useState(null)
   
-
+  const [inactivateLoad,setInactivateLoad]=useState(false)
+  const [assignLoad,setAssignLoad]=useState(false)
   const [open, setOpen] = useState(false);
   const [newEnterprise,setNewEnterprise]=useState([])
   const [acManager,setAcManager]=useState([])
@@ -65,21 +66,26 @@ const NewEnterpriseData = () => {
   const [openpopup, setOpenpopup] = useState(false);
   const [reason, setReason] = useState("");
 
+  //for showing notification
+  const showNotification=(message,type)=>{
+     setNotification({message,type})
+  }
+
   const fetchEnterprise=async ()=>{
      try{
         const response=await axios.get(`${process.env.REACT_APP_API_APP_URL}/enterprise/adminpending`)
         setNewEnterprise(response.data)
      }catch(err){
-
+        showNotification("There is something wrong..!","failure")
      }
   }
 
   const fetchAccountManager=async ()=>{
     try{
-       const response=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/accountmanager/madmin/66befbd900f8f947fb41fc91`)
+       const response=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/accountmanager/madmin/${myValue.userData._id}`)
        setAcManager(response.data)
     }catch(err){
-
+       showNotification("There is somthing wrong....!","failure")
     }
   }
 
@@ -91,16 +97,19 @@ const NewEnterpriseData = () => {
  
   const [selectInactive,setSelectInactive]=useState(null)
   
-  const handleInactivateButton =(e,item) => {  
+  const handleInactivateButton =async (e,item) => {  
     e.stopPropagation();  
-    setSelectInactive(item)
     if(item.account_status.status==="Active"){
+      setSelectInactive(item)
       setOpenpopup(true);
     }else{
-      console.log("Request gone")
-      handleSubmitButton()
-      console.log("Status changed")
-      
+      try{
+       await axios.post(`${process.env.REACT_APP_API_APP_URL}/enterprise/changestatus`,{id:item._id,status:item.account_status.status,reason,admin_id:myValue.userData._id})
+       fetchEnterprise()
+       showNotification("Successfully account status changed.","success")
+      }catch(err){
+         showNotification("Something went wrong in changeing account status..!","failure")
+      }
     }
   };
   const handleCloseInactivateButton = () => {
@@ -117,14 +126,16 @@ const NewEnterpriseData = () => {
   
       //please change here admin id with my_value id
       try{
-        console.log(selectInactive)
-        await axios.post(`${process.env.REACT_APP_API_APP_URL}/enterprise/changestatus`,{id:selectInactive._id,status:selectInactive.account_status.status,reason,admin_id:'66befbd900f8f947fb41fc91'})
+        setInactivateLoad(true)
+        await axios.post(`${process.env.REACT_APP_API_APP_URL}/enterprise/changestatus`,{id:selectInactive._id,status:selectInactive.account_status.status,reason,admin_id:myValue.userData._id})
         console.log("Status request get")
         fetchEnterprise()
         setOpenpopup(false);
+        showNotification("Successfully account status changed.","success")
       }catch(err){
-
+        showNotification("Something went wrong in changeing account status..!","failure")
       }
+      setInactivateLoad(false)
   };
 
 
@@ -142,6 +153,27 @@ const NewEnterpriseData = () => {
   };
 
   const [selectedRow, setSelectedRow] = useState(null);
+
+  const handleAssignAcManager=async ()=>{
+       try{
+        setAssignLoad(true)
+        //allocated account manager to enterprise
+        await axios.post(`${process.env.REACT_APP_API_APP_URL}/enterprise/allocatedacmanager`,{en_id:selectedRow._id,ac_id:selectedManager})
+
+        //add enterprise into account manager pending list
+        await axios.post(`${process.env.REACT_APP_API_BASE_URL}/accountmanager/addenterprise`,{ac_id:selectedManager,en_id:selectedRow._id})
+
+        //remove enterprise from master admin pending list
+        await axios.post(`${process.env.REACT_APP_API_BASE_URL}/masteradmin/rmventerprisependinglist`,{m_id:myValue.userData._id,en_id:selectedRow._id})
+        fetchEnterprise()
+        handleClose()
+        showNotification("Successfully assign to account manager","success")
+       }catch(err){
+          showNotification("Something went wrong to assign Enterprise to account manager..!","failure")
+       }
+       setAssignLoad(false)
+  }
+
   const handleRowClick = (item) => {
     setSelectedRow(item);  
     setOpen(true); 
@@ -157,7 +189,12 @@ const NewEnterpriseData = () => {
   const paginatedRows = newEnterprise.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   return (
-    <div className=''>
+    <div>
+    {
+      notification && (
+        <Notification message={notification.message} type={notification.type} onClose={()=>setNotification(null)}></Notification>
+      )
+    }
      
 
       <Card className='mt-9 font-sans'>
@@ -327,7 +364,8 @@ const NewEnterpriseData = () => {
           </Button>
           <Button onClick={handleSubmitButton}  sx={{
                         fontSize: { xs: "12px", sm: "14px", xl: "17px" },
-                        width: { xl: "80px", sm: "40px" },
+                        width: { xl: "100px", sm: "50px" },
+                        height:"30px",
                        color:'white',
                         backgroundColor:
                           "#315370",
@@ -335,8 +373,18 @@ const NewEnterpriseData = () => {
                           backgroundColor:"gray"
                         },
                         textTransform: "none",
+                    
                       }}>
-            Submit
+               {inactivateLoad &&
+                <span className="absolute inset-0 flex items-center justify-center">
+                                          <svg className="w-5 h-5 text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l5.6-3.2a10 10 0 00-10.4 0L4 12z"></path>
+                                          </svg>
+                                     </span>
+                                     }
+                                     
+                                     {!inactivateLoad && <span>Submit</span>}
           </Button>
         </DialogActions>
       </Dialog>
@@ -393,10 +441,20 @@ const NewEnterpriseData = () => {
                  <Button
                    variant="contained"
                    disabled={!selectedManager}
-                   onClick={handleClose}
+                   onClick={handleAssignAcManager}
                    sx={{ backgroundColor: selectedManager ? '#315370' : 'gray', color: 'white' }}
+                   className='h-8'
                  >
-                   Assign
+                   {assignLoad && 
+                   <span className="absolute inset-0 flex items-center justify-center">
+                                          <svg className="w-5 h-5 text-black animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l5.6-3.2a10 10 0 00-10.4 0L4 12z"></path>
+                                          </svg>
+                                     </span>
+                                     }
+                                     
+                                     {!assignLoad && <span className='text-white'>Assign</span>}
                  </Button>
                  <Button onClick={handleClose} color="secondary">
                    Cancel

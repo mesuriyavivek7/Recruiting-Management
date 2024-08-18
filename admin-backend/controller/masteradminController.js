@@ -23,3 +23,13 @@ export const addEnterprise=async (req,res,next)=>{
         next(err)
     }
 }
+
+
+export const rmvEnterprisePendingList=async (req,res,next)=>{
+    try{
+       await MASTERADMIN.findByIdAndUpdate(req.body.m_id,{$pull:{pending_verify_enterprise:req.body.en_id}})
+       res.status(200).json("Successfully remove enterprise id from pending verification list")
+    }catch(err){
+        next(err)
+    }
+}

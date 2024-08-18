@@ -7,39 +7,18 @@ import Navbar from "../../Components/Navbar";
 
 
 import { Outlet, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { setUserData } from "../../State/Admin/Action";
-import Cookies from "js-cookie"
+import { useSelector } from "react-redux";
 
 const Admin = () => {
+  const navigate=useNavigate()
+  const myvalue=useSelector((state)=>state.admin)
 
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-
-
-
-  useEffect(() => {
-    const adminCookie = Cookies.get('admin_user');
-    
-
-    if (adminCookie) {
-      const userData = JSON.parse(localStorage.getItem('userData'));
-     
-      if (userData) {
-        dispatch(setUserData(userData));
-
-      } else {
-        localStorage.removeItem('userData');
-        dispatch(setUserData(null));
-      
-      }
-    } else {
-      localStorage.removeItem('userData');
-      
-      dispatch(setUserData(null));
-      navigate('/login'); 
-    }
-  }, [dispatch, navigate]);
+  useEffect(()=>{
+     if(!myvalue){
+      navigate('/')
+     }
+  },[myvalue])
+  
 
   return ( 
     <div className="flex flex-col w-screen max-w-[100vw] h-[100vh] max-h-screen relative overflow-hidden ">

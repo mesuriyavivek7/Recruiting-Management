@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch,useSelector } from 'react-redux';
 import axios from 'axios'
 //importing images
@@ -10,9 +10,27 @@ import { setUserData } from '../../State/Admin/Action';
 export default function Login() {
 
   const myValue=useSelector((state) => state.admin);
-  console.log(myValue);
 
   const navigate=useNavigate();
+  useEffect(()=>{
+     if(myValue.userData){
+        switch(myValue.userData.admin_type){
+          case "master_admin":
+            navigate('/admin')
+            break;
+          case "account_manager":
+            navigate('/account-manager')
+            break;
+          case "super_admin":
+            navigate('super-admin')
+            break;
+          default:
+            break;
+        }
+     }
+  },[myValue])
+
+
   const [load,setLoad]=useState(false)
   const [errors,setErrors]=useState(false)
   const [formData,setFormData]=useState({

@@ -1,8 +1,22 @@
 import Cookies from 'js-cookie';
 
+let user=null
+const cookievalue=Cookies.get('admin_user')
+const localUserData=JSON.parse(localStorage.getItem('userData')) || null
+if(cookievalue){
+    if(localUserData){
+      user=localUserData
+    }else{
+      Cookies.remove('admin_user')
+    }
+}else{
+    if(localUserData){
+      localStorage.removeItem('userData')
+    }
+}
 
 const initialState={
-  userData:JSON.parse(localStorage.getItem('userData'))||null
+  userData:user
 };
 const AdminReducer = (state = initialState, action) => {
     switch (action.type) {
