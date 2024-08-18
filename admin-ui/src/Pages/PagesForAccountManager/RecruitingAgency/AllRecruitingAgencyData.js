@@ -109,7 +109,7 @@ const AllRecruitingAgencyData = () => {
     
        
       <Card className='mt-9 font-sans'>
-      <h className='text-lg xl:text-2xl '>All Recruiting Agency </h>
+      <p className='text-lg xl:text-2xl '>All Recruiting Agency </p>
        
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">

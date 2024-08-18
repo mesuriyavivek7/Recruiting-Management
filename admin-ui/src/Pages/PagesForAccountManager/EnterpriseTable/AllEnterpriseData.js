@@ -99,7 +99,7 @@ const AllEnterpriseData = () => {
      
 
       <Card className='mt-9 font-sans'>
-        <h className='text-lg xl:text-2xl'>All Enterprise</h>
+        <p className='text-lg xl:text-2xl'>All Enterprise</p>
        
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
