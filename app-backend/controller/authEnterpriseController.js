@@ -1,7 +1,6 @@
 import ENTERPRISE from "../models/ENTERPRISE.js";
 import ENTERPRISETEAM from "../models/ENTERPRISETEAM.js";
 
-
 import bcrypt from 'bcryptjs'
 
 import jwt from 'jsonwebtoken'
@@ -24,12 +23,14 @@ export const register=async (req,res,next)=>{
     const newteammember=new ENTERPRISETEAM({enterprise_id:newuser._id,full_name:newuser.full_name,email:newuser.email,mobileno:newuser.mobileno,password:hash,isAdmin:true})
     newteammember.save()
     
-    res.status(200).json("New Enterprise Created with Added into team member Successfully")
+    res.status(200).json(newuser)
       
    }catch(err){
      next(err)
    }
 }
+
+
 
 //for login enterprise
 export const login=async (req,res,next)=>{

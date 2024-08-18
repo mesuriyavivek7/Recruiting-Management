@@ -24,21 +24,20 @@ export const AuthContext=createContext(INITIAL_STATE)
 const AuthReducer=(state,action)=>{
     switch(action.type){
 
-        case "LOGIN_START":
+        case "USER_FETCH_START":
             return{
-                user:null,
                 loading:true,
                 error:null
             }
 
-        case "LOGIN_SUCCESS":
+        case "USER_FETCH_SUCCESS":
             return {
                 user:action.payload,
                 loading:false,
                 error:null
             }
 
-        case "LOGIN_FAILURE":
+        case "USER_FETCH_FAILURE":
             return {
                 user:null,
                 loading:false,

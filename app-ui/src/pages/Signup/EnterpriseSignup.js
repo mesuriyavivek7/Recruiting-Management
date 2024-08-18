@@ -1,5 +1,5 @@
 import React,{useEffect,useState} from "react";
-import asset1 from "../../assets/asset 1.png";
+import asset3 from "../../assets/asset 1.png";
 import asset10 from "../../assets/asset 10.svg";
 import { Link, useNavigate } from "react-router-dom";
 import PhoneInput from "react-phone-input-2";
@@ -8,6 +8,7 @@ import "react-phone-input-2/lib/style.css";
 import axios from "axios";
 
 const EnterpriseSignup = () => {
+  console.log(process.env.REACT_APP_API_ADMIN_URL)
   const navigate=useNavigate()
   const [formData,setFormData]=useState({
     full_name:'',
@@ -134,9 +135,8 @@ const EnterpriseSignup = () => {
           setLoad(true)
           try{
             //register for enterprise
-            axios.post(`${process.env.REACT_APP_API_BASE_URL}/authenterprise/register`,formData,{withCredentials:true})
-            
-
+            const res=await axios.post(`${process.env.REACT_APP_API_BASE_URL}/authenterprise/register`,formData,{withCredentials:true})
+           
             //sending mails for notify user
             const notifymail={
                 to:formData.email,
@@ -152,7 +152,10 @@ const EnterpriseSignup = () => {
            }
 
            await axios.post(`${process.env.REACT_APP_API_BASE_URL}/mail/sendverificationenterprise`,emailverify)
-           setLoad(false)
+           
+           
+           //update master admin pending list
+           await axios.post(`${process.env.REACT_APP_API_ADMIN_URL}/masteradmin/addenterprise`,{country:res.data.country,id:res.data._id})
            
 
            //redirect to login page with successfull message
@@ -162,7 +165,7 @@ const EnterpriseSignup = () => {
                newErrors.internal="There is something wrong."
                setErrors(newErrors)
           }
-          
+          setLoad(false)
           
 
 
@@ -177,7 +180,7 @@ const EnterpriseSignup = () => {
           <div className="w-8/12 h-full py-16 flex flex-col place-items-start mx-auto">
             <div className="flex flex-col place-items-start w-full">
               <img
-                src={asset1}
+                src={asset3}
                 alt="company-logo"
                 className="w-32 h-32 rounded-sm"
               />

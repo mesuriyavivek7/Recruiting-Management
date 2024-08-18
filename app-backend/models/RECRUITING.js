@@ -69,12 +69,31 @@ const recruitingagencySchema=new mongoose.Schema({
       filetype:String
     },
     account_status:{
+        type:Object,
+        default:{
+            status:"Active",
+            remark:"",
+            admin_id:""
+        }
+    },
+    account_status:{
         type:String,
         default:"Active"
+    },
+    admin_verified:{
+        type:Boolean,
+        default:false
+    },
+    alloted_account_manager:{
+        type:String,
+    },
+    account_manager_verified:{
+        type:Boolean,
+        default:false
     }
-
+    
     
 
-})
+},{timestamps:true})
 
 export default mongoose.model("Recruiting",recruitingagencySchema)

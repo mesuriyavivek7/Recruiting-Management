@@ -1,9 +1,19 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import Navbar from "../../components/Navbar";
 import SideNavbar from "../../components/SideNavbar";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
+import {AuthContext} from '../../context/AuthContext'
+
 
 const Enterprisedashboard = () => {
+  const {user}=useContext(AuthContext)
+  const navigate=useNavigate()
+
+  useEffect(()=>{
+    if(!user){
+     navigate('/')
+    }
+  },[])
   return (
     <div className="flex flex-col w-screen max-w-[100vw] h-[100vh] max-h-screen relative overflow-hidden ">
       <Navbar />
