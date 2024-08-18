@@ -17,38 +17,45 @@ const SideNavbar = () => {
       <div className="hover:bg-gray-400 rounded-md p-2">
         <ExpandIcon className="w-[24px] text-white" />
       </div>
-      <Link to="/employer/dashboard/">
+      <Link to="dashboard">
         <div className="hover:bg-gray-400 rounded-md p-2">
           <DashboardIcon className="w-[24px] text-white" />
         </div>
       </Link>
-
-      <div className="hover:bg-gray-400 rounded-md p-2">
-        <JobsIcon className="w-[24px] text-white" />
-      </div>
-      <div className="hover:bg-gray-400 rounded-md p-2">
-        <CandidatesIcon className="w-[24px] text-white" />
-      </div>
-      <div className="hover:bg-gray-400 rounded-md p-2">
-        <PostIcon className="w-[24px] text-white" />
-      </div>
-      <div className="hover:bg-gray-400 rounded-md p-2">
-        <ActionIcon className="w-[24px] text-white" />
-      </div>
-      <div className="hover:bg-gray-400 rounded-md p-2">
-        <OffersIcon className="w-[24px] text-white" />
-      </div>
-      <div className="hover:bg-gray-400 rounded-md p-2">
-        <VideosIcon className="w-[24px] text-white" />
-      </div>
+        <div className="hover:bg-gray-400 rounded-md p-2">
+          <JobsIcon className="w-[24px] text-white" />
+        </div>
+        <div className="hover:bg-gray-400 rounded-md p-2">
+          <CandidatesIcon className="w-[24px] text-white" />
+        </div>
+      <Link to="jobposting">
+        <div className="hover:bg-gray-400 rounded-md p-2">
+          <PostIcon className="w-[24px] text-white" />
+        </div>
+      </Link>
+      <Link to="bulkactions">
+        <div className="hover:bg-gray-400 rounded-md p-2">
+          <ActionIcon className="w-[24px] text-white" />
+        </div>
+      </Link>
+      <Link to="offers">
+        <div className="hover:bg-gray-400 rounded-md p-2">
+          <OffersIcon className="w-[24px] text-white" />
+        </div>
+      </Link>
+      <Link to="demovideos">
+        <div className="hover:bg-gray-400 rounded-md p-2">
+          <VideosIcon className="w-[24px] text-white" />
+        </div>
+      </Link>
       <Link to="settings">
         <div className="hover:bg-gray-400 rounded-md p-2">
           <SettingsIcon className="w-[24px] text-white" />
         </div>
       </Link>
-      <div className="hover:bg-gray-400 rounded-md p-2">
-        <ChatsIcon className="w-[24px] text-white" />
-      </div>
+        <div className="hover:bg-gray-400 rounded-md p-2">
+          <ChatsIcon className="w-[24px] text-white" />
+        </div>
     </div>
   );
 };
