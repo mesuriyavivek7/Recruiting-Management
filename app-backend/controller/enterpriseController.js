@@ -84,7 +84,6 @@ export const getAllPendingMadminVerifyEnterprise=async (req,res,next)=>{
 
 
 export const changeAccountStatus=async (req,res,next)=>{
-  console.log(req.body.status)
   try{
        if(req.body.status==="Active"){
          await ENTERPRISE.findByIdAndUpdate(req.body.id,{$set:{account_status:{status:"Inactive",remark:req.body.reason,admin_id:req.body.admin_id}}})
@@ -95,4 +94,14 @@ export const changeAccountStatus=async (req,res,next)=>{
   }catch(err){
     next(err)
   }
+}
+
+
+export const allocatedAcManager=async (req,res,next)=>{
+    try{
+       await ENTERPRISE.findByIdAndUpdate(req.body.en_id,{$set:{admin_verified:true,allocated_account_manager:req.body.ac_id}})
+       res.status(200).json("Allocated to acmanager")
+    }catch(err){
+      next(err)
+    }
 }

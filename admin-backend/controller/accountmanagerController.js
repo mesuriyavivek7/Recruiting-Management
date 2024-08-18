@@ -9,3 +9,13 @@ export const getAcByMadminId=async (req,res,next)=>{
         next(err)
     }
 }
+
+
+export const addEnterprise=async (req,res,next)=>{
+  try{
+     await ACCOUNTMANAGER.findByIdAndUpdate(req.body.ac_id,{$push:{pending_verify_enterprise:req.body.en_id}})
+     res.status(200).json("Successfully added enterprise into account manager pending list")
+  }catch(err){
+    next(err)
+  }
+}
