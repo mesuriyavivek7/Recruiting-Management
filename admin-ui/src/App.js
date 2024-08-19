@@ -15,6 +15,7 @@ import AccountRecruitingAgencyTable from './Pages/PagesForAccountManager/Account
 import AccountEnterpriceTable from './Pages/PagesForAccountManager/AccountEnterPriceTable';
 
 
+
 function App() {
 
   const AppRouter = createBrowserRouter(
@@ -72,6 +73,7 @@ function App() {
         
        ],
       },
+     
 
     ]
   );

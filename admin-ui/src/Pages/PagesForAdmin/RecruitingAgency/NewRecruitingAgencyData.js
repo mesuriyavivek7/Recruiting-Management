@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 
 import {
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button,Card,TablePagination,
-  Dialog, DialogTitle, DialogContent, DialogActions, FormControl, InputLabel, Select, MenuItem
+  Dialog, DialogTitle, DialogContent,DialogContentText,TextField, DialogActions, FormControl, InputLabel, Select, MenuItem
 } from '@mui/material';
 import { styled, alpha } from '@mui/material/styles';
 import Menu from '@mui/material/Menu';
@@ -56,15 +56,17 @@ const NewRecruitingAgencyData = () => {
   const [open, setOpen] = useState(false);
  
   const [selectedManager, setSelectedManager] = useState('');
-  
+  const [openpopup, setOpenpopup] = useState(false);
+  const [reason, setReason] = useState("");
 
 
   const handleManagerChange = (event) => {
     setSelectedManager(event.target.value);
   };
+ 
 
- 
- 
+
+  
   const products = [
     {
       _id: '1',
@@ -80,7 +82,11 @@ const NewRecruitingAgencyData = () => {
       city: "Gandhinagar",
       domains: ["IT Recruitment", "Executive Search", "Temporary Staffing",  { Education: "B.Tech" }],
       email_verified: "yes",
-      pancard_no:"76556556655"
+      pancard_no:"76556556655",
+      created_at:'22-10-2022',
+      account_status:'Active',
+      action:'Activate',
+      pancard_document:'https://t4.ftcdn.net/jpg/02/45/03/61/360_F_245036112_Lf5C4B2zfWbVGoF1rHAj7IFdLFiSXDQj.jpg'
     },
   ];
 
@@ -91,6 +97,43 @@ const NewRecruitingAgencyData = () => {
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const [selectInactive,setSelectInactive]=useState(null)
+  const handleInactivateButton =(e,item) => {  
+    e.stopPropagation();  
+    setSelectInactive(item)
+     if(item.account_status==="Active"){
+      setOpenpopup(true);
+   
+    }else{
+      console.log("Request gone")
+      handleSubmitButton()
+      console.log("Status changed")
+      
+    }
+  };
+  const handleCloseInactivateButton = () => {
+    setSelectInactive(null)
+    setOpenpopup(false);
+  };
+  const handleSubmitButton =async  () => {
+    console.log("Submit button clicked")
+    // Handle the reason submission logic here
+  
+      //please change here admin id with my_value id
+      try{
+        console.log(selectInactive)
+       // await axios.post(`${process.env.REACT_APP_API_APP_URL}/enterprise/changestatus`,{id:selectInactive._id,status:selectInactive.account_status.status,reason,admin_id:'66befbd900f8f947fb41fc91'})
+        console.log("Status request get")
+       // fetchEnterprise()
+        setOpenpopup(false);
+      }catch(err){
+
+      }
+  };
+
+
+    
 
  
   const handleChangePage = (event, newPage) => {
@@ -171,6 +214,15 @@ const NewRecruitingAgencyData = () => {
   <TableCell sx={{ fontSize: {  xs: '16px', xl: '20px' }, fontWeight: 'bold', whiteSpace: 'nowrap' }} align="left">
     Pancard Number
   </TableCell>
+  <TableCell sx={{ fontSize: { xs: '12px', sm: '16px', lg: '17px', xl: '20px' }, fontWeight: 'bold', whiteSpace: 'nowrap' }} align="left">
+    Created At
+  </TableCell>
+  <TableCell sx={{ fontSize: { xs: '12px', sm: '16px', lg: '17px', xl: '20px' }, fontWeight: 'bold', whiteSpace: 'nowrap' }} align="left">
+    Account Status
+  </TableCell>
+  <TableCell sx={{ fontSize: { xs: '12px', sm: '16px', lg: '17px', xl: '20px' }, fontWeight: 'bold', whiteSpace: 'nowrap' }} align="left">
+    Action
+  </TableCell>
 </TableRow>
 
             </TableHead>
@@ -233,26 +285,40 @@ const NewRecruitingAgencyData = () => {
   ))}
   </TableCell>
   <TableCell align="left" sx={{ textAlign: 'center', }}>
-  <Button
-    variant="contained" 
-    sx={{
-      fontSize: { xs: '12px', sm: '14px',  xl: '17px' },
-      width: { xl:'90px',sm: '50px' }, 
-      
-      backgroundColor: item.email_verified === "yes" ? "green" : "red",
-      color: "white",
-      '&:hover': {
-        backgroundColor: item.email_verified === "yes" ? "darkgreen" : "darkred",
-      },
-      textTransform: 'none',
-    }}
-  >
-    {item.email_verified}
-  </Button>
+  
+  <h1 className={`px-2 py-2 rounded-2xl text-sm text-white  ${(item.email_verified)?("bg-green-500"):"bg-red-500"} `} >
+  {(item.email_verified)?"Yes":"No"}
+  </h1>
 </TableCell>
 <TableCell align="left" sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px'} }}>
     {item.pancard_no}
   </TableCell>
+  <TableCell align="left" sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px' } }}>
+    {item.created_at}
+  </TableCell>
+  <TableCell align="left"  sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px' },textAlign: "center" }}>
+    <h1 className={`px-2 py-2 rounded-2xl text-sm text-white ${(item.account_status==="Active")?("bg-green-500"):"bg-red-500"}`}>{item.account_status}</h1>
+  </TableCell>
+  
+  
+                  <TableCell align="left" sx={{ textAlign: "center" }}>
+                    <Button  onClick={(e)=>handleInactivateButton(e,item)}
+                      variant="contained"
+                      sx={{
+                        fontSize: { xs: "12px", sm: "16px", xl: "18px" },
+                        width: { xl: "120px", sm: "120px" },
+
+                        backgroundColor:
+                          "#315370",
+                        "&:hover": {
+                          backgroundColor:"gray"
+                        },
+                        textTransform: "none",
+                      }}
+                    >
+                      {item.action}
+                    </Button>
+                  </TableCell>
 
 </TableRow>
 
@@ -260,6 +326,52 @@ const NewRecruitingAgencyData = () => {
             </TableBody>
           </Table>
         </TableContainer> 
+        <Dialog open={openpopup} onClose={handleCloseInactivateButton}>
+        <DialogTitle>Inactivate Enterprise</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Please provide a reason why you want to inactivate this account.
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Reason"
+            type="text"
+            fullWidth
+            variant="outlined"
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseInactivateButton} sx={{
+                        fontSize: { xs: "12px", sm: "14px", xl: "17px" },
+                        width: { xl: "80px", sm: "40px" },
+                        color:'white',
+                        backgroundColor:
+                          "#315370",
+                        "&:hover": {
+                          backgroundColor:"gray"
+                        },
+                        textTransform: "none",
+                      }}>
+            Cancel
+          </Button>
+          <Button   onClick={handleSubmitButton} sx={{
+                        fontSize: { xs: "12px", sm: "14px", xl: "17px" },
+                        width: { xl: "80px", sm: "40px" },
+                       color:'white',
+                        backgroundColor:
+                          "#315370",
+                        "&:hover": {
+                          backgroundColor:"gray"
+                        },
+                        textTransform: "none",
+                      }}>
+            Submit
+          </Button>
+        </DialogActions>
+      </Dialog>
         
        {selectedRow && (
         <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm" sx={{fontSize:{sm:'16px',xl:'20px'}}}>
@@ -292,6 +404,29 @@ const NewRecruitingAgencyData = () => {
   ))}</p>
             <p><strong>Email verified:</strong> {selectedRow?.email_verified}</p>
               <p><strong>Pancard Number:</strong> {selectedRow?.pancard_no}</p>
+              <p>
+                    <strong>PAN Card Document:</strong> 
+                    {selectedRow?.pancard_document && (
+                        <div className="mt-2">
+                            {selectedRow.pancard_document.endsWith('.pdf') ? (
+                                <a 
+                                    href={selectedRow.pancard_document} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer" 
+                                    className="text-blue-500"
+                                >
+                                    View PAN Card Document (PDF)
+                                </a>
+                            ) : (
+                                <img 
+                                    src={selectedRow.pancard_document} 
+                                    alt="PAN Card" 
+                                    className="w-full h-auto mt-2"
+                                />
+                            )}
+                        </div>
+                    )}
+                </p>
             
           </div>
           <FormControl fullWidth sx={{ mt: 6 }}>

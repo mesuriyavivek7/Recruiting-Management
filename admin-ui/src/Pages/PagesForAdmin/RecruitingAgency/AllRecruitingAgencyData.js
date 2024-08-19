@@ -215,22 +215,9 @@ const AllRecruitingAgencyData = () => {
   ))}
   </TableCell>
   <TableCell align="left" sx={{ textAlign: 'center', }}>
-  <Button
-    variant="contained" 
-    sx={{
-      fontSize: { xs: '12px', sm: '14px',  xl: '17px' },
-      width: { xl:'90px',sm: '50px' }, 
-      
-      backgroundColor: item.email_verified === "yes" ? "green" : "red",
-      color: "white",
-      '&:hover': {
-        backgroundColor: item.email_verified === "yes" ? "darkgreen" : "darkred",
-      },
-      textTransform: 'none',
-    }}
-  >
-    {item.email_verified}
-  </Button>
+  <h1 className={`px-2 py-2 rounded-2xl text-sm text-white  ${(item.email_verified)?("bg-green-500"):"bg-red-500"} `} >
+  {(item.email_verified)?"Yes":"No"}
+  </h1>
 </TableCell>
 <TableCell align="left" sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px'} }}>
     {item.pancard_no}
