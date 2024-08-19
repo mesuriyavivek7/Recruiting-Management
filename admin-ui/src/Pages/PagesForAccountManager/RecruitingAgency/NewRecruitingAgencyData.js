@@ -294,32 +294,22 @@ const NewRecruitingAgencyData = () => {
               <p><strong>Pancard Number:</strong> {selectedRow?.pancard_no}</p>
             
           </div>
-          <FormControl fullWidth sx={{ mt: 6 }}>
-              <InputLabel id="manager-select-label">Select Account Manager</InputLabel>
-              <Select
-                labelId="manager-select-label"
-                value={selectedManager}
-                label="Select Account Manager"
-                onChange={handleManagerChange}
-              >
-                <MenuItem value="Manager 1">Manager 1</MenuItem>
-                <MenuItem value="Manager 2">Manager 2</MenuItem>
-                <MenuItem value="Manager 3">Manager 3</MenuItem>
-              </Select>
-            </FormControl>
+          
         </DialogContent>
         <DialogActions>
           <Button
             variant="contained"
-            disabled={!selectedManager}
+           
             onClick={handleClose}
-            sx={{ backgroundColor: selectedManager ? '#315370' : 'gray', color: 'white' }}
+            sx={{ backgroundColor:  '#315370', color: 'white',
+              '&:hover': {
+                backgroundColor: 'gray',
+              },
+             }}
           >
-            Assign
+            Approve
           </Button>
-          <Button onClick={handleClose} color="secondary">
-            Cancel
-          </Button>
+        
         </DialogActions>
       </Dialog>
         )}

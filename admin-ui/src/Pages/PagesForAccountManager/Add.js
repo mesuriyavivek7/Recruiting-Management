@@ -12,11 +12,7 @@ const Add = () => {
       </div>
       
       {/* Right-Aligned Section */}
-      <div className='absolute right-4 flex items-center gap-2'>
-        {/* <AddIcon/> */}
-        +
-        <span>Add Account Manager </span>
-      </div>
+      
     </div>
   )
 }
