@@ -1,0 +1,75 @@
+
+import mongoose from 'mongoose'
+
+const jobSchema=new mongoose.Schema({
+    enterprise_id:{
+        type:String,
+        required:true
+    },
+    job_id:{
+        type:String,
+        required:true
+    },
+    module1:{
+        job_title:{
+            type:String,
+            required:true
+        },
+        job_desc:{
+            type:String,
+            required:true
+        },
+        remotework:{
+            type:Boolean,
+            default:false,
+        },
+        country:{
+            type:String,
+            required:true
+        },
+        state:{
+            type:String,
+            required:true
+        },
+        city:{
+            type:[String],
+            required:true
+        },
+        domain:{
+            type:String,
+            required:true
+        },
+        positions:{
+            type:Number,
+            required:true
+        },
+        experience:{
+            min:{
+                type:String,
+                required:true
+            },
+            max:{
+                type:String,
+                required:true
+            }
+        },
+        ext_job_id:{
+            type:String,
+            required:true
+        },
+        manager_email:{
+            type:String,
+            required:true
+        },
+        share_salary_details:{
+            type:Boolean,
+            default:false
+        }
+    },
+    draft_save:{
+        type:Boolean,
+        required:true
+    }
+})
+
+export default mongoose.model("job",jobSchema)
