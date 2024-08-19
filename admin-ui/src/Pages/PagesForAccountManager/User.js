@@ -43,7 +43,7 @@ const User = () => {
       <div className="w-full lg:w-96 xl:w-full mx-auto bg-white border border-gray-300  rounded-lg overflow-hidden">
         <div className="p-6">
           <div className="flex justify-between items-center">
-            <h2 className="text-sm xl:text-xl font-semibold text-gray-600 mb-2">Account Manager</h2>
+            <h2 className="text-sm xl:text-xl font-semibold text-gray-600 mb-2">Candidate</h2>
          
             <p className="font-bold text-green-700 xl:pt-2">^20%</p>
           </div>

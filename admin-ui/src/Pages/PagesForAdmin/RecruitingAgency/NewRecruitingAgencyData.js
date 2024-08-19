@@ -86,7 +86,8 @@ const NewRecruitingAgencyData = () => {
       created_at:'22-10-2022',
       account_status:'Active',
       action:'Activate',
-      pancard_document:'https://t4.ftcdn.net/jpg/02/45/03/61/360_F_245036112_Lf5C4B2zfWbVGoF1rHAj7IFdLFiSXDQj.jpg'
+      // pancard_document:"https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhrJJ0Pm1raETEg0qyTn7YPdhCq7aUW1K_cwlf9_o1tWAAx_ovOghawiWgRTxSec4bK8zzhPfsllDNFqAxjEQEPx_c4y-5yqLZIi2iKri109EdbFo8uP9y8B8WMWvB2V4gYjmx9PSjtVhno/s640/image004.PNG"
+       pancard_document:'https://www.ucd.ie/t4cms/Test%20PDF-8mb.pdf'
     },
   ];
 
@@ -403,32 +404,47 @@ const NewRecruitingAgencyData = () => {
       ))
   ))}</p>
             <p><strong>Email verified:</strong> {selectedRow?.email_verified}</p>
-              <p><strong>Pancard Number:</strong> {selectedRow?.pancard_no}</p>
-              <p>
-                    <strong>PAN Card Document:</strong> 
-                    {selectedRow?.pancard_document && (
-                        <div className="mt-2">
-                            {selectedRow.pancard_document.endsWith('.pdf') ? (
-                                <a 
-                                    href={selectedRow.pancard_document} 
-                                    target="_blank" 
-                                    rel="noopener noreferrer" 
-                                    className="text-blue-500"
-                                >
-                                    View PAN Card Document (PDF)
-                                </a>
-                            ) : (
-                                <img 
-                                    src={selectedRow.pancard_document} 
-                                    alt="PAN Card" 
-                                    className="w-full h-auto mt-2"
-                                />
-                            )}
-                        </div>
-                    )}
-                </p>
+             <div>
+             <p><strong>Pancard Number:</strong> {selectedRow?.pancard_no}</p>
+             </div> 
             
           </div>
+          <div className='pt-3'>
+    <strong className='bg-green-400 p-1 rounded-sm'>PAN Card Document:</strong> 
+    {selectedRow?.pancard_document && (
+        <>
+          
+            <div className="hidden lg:block pt-2">
+                <embed 
+                    src={selectedRow.pancard_document} 
+                    type="application/pdf" 
+                    className="w-full"
+                    style={{
+                        display: 'block',
+                        width: '100%',
+                        maxWidth: '100%',
+                        height: 'auto',
+                        maxHeight: '200px',  
+                        cursor: 'pointer',
+                        objectFit: 'cover',   
+                    }}
+                />
+            </div>
+           
+          
+           
+            <a 
+                href={selectedRow.pancard_document} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-blue-230 underline mt-2 inline-block sm:pl-6 xl:pl-0"
+            >
+                View Full Document (PDF)
+            </a>
+        </>
+    )}
+</div>
+
           <FormControl fullWidth sx={{ mt: 6 }}>
               <InputLabel id="manager-select-label">Select Account Manager</InputLabel>
               <Select
