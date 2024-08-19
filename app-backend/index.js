@@ -16,6 +16,7 @@ import authEnterpriseRoute from './routes/authEnterprise.js'
 import recruitingRoutes from './routes/recruiting.js'
 import authRoute from './routes/auth.js'
 import enterpriseRoute from './routes/enterprise.js'
+import jobRoute from './routes/job.js'
 
 const app=express()
 dotenv.config()
@@ -72,6 +73,7 @@ app.use('/api/authenterprise',authEnterpriseRoute)
 app.use('/api/recruiting',recruitingRoutes)
 app.use('/api/auth',authRoute)
 app.use('/api/enterprise',enterpriseRoute)
+app.use('/api/job',jobRoute)
 
 app.get('/',(req,res)=>{
     res.send("Bahut maja ara hai bhai🐱")
