@@ -80,7 +80,8 @@ const NewRecruitingAgencyData = () => {
       city: "Gandhinagar",
       domains: ["IT Recruitment", "Executive Search", "Temporary Staffing",  { Education: "B.Tech" }],
       email_verified: "yes",
-      pancard_no:"76556556655"
+      pancard_no:"76556556655",
+       pancard_document:'https://www.ucd.ie/t4cms/Test%20PDF-8mb.pdf'
     },
   ];
 
@@ -294,6 +295,41 @@ const NewRecruitingAgencyData = () => {
               <p><strong>Pancard Number:</strong> {selectedRow?.pancard_no}</p>
             
           </div>
+          <div className='pt-3'>
+    <strong className='bg-green-400 p-1 rounded-sm'>PAN Card Document:</strong> 
+    {selectedRow?.pancard_document && (
+        <>
+          
+            <div className="hidden lg:block pt-2">
+                <embed 
+                    src={selectedRow.pancard_document} 
+                    type="application/pdf" 
+                    className="w-full"
+                    style={{
+                        display: 'block',
+                        width: '100%',
+                        maxWidth: '100%',
+                        height: 'auto',
+                        maxHeight: '200px',  
+                        cursor: 'pointer',
+                        objectFit: 'cover',   
+                    }}
+                />
+            </div>
+           
+          
+           
+            <a 
+                href={selectedRow.pancard_document} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-blue-230 underline mt-2 inline-block sm:pl-6 xl:pl-0"
+            >
+                View Full Document (PDF)
+            </a>
+        </>
+    )}
+</div>
           
         </DialogContent>
         <DialogActions>

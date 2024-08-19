@@ -13,6 +13,7 @@ import cookieParser from "cookie-parser"
 import authRoute from './routes/auth.js'
 import masteradminRoute from './routes/masteradmin.js'
 import accountmanagerRoute from './routes/accountmanger.js'
+import mailRoute from './routes/mail.js'
 
 const app=express()
 dotenv.config()
@@ -69,6 +70,7 @@ mongoose.connection.on("connected",()=>{
 app.use('/api/auth',authRoute)
 app.use('/api/masteradmin',masteradminRoute)
 app.use('/api/accountmanager',accountmanagerRoute)
+app.use('/api',mailRoute)
 
 
 
