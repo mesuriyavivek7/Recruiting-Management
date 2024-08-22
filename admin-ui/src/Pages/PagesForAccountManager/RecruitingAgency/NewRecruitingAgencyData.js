@@ -1,7 +1,8 @@
 
 
-import React, { useState } from 'react';
-
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { useSelector } from 'react-redux';
 import {
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button,Card,TablePagination,
   Dialog, DialogTitle, DialogContent, DialogActions, FormControl, InputLabel, Select, MenuItem
@@ -54,40 +55,47 @@ const StyledMenu = styled((props) => (
 const NewRecruitingAgencyData = () => {
 
   const [open, setOpen] = useState(false);
- 
-  const [selectedManager, setSelectedManager] = useState('');
+  const myValue=useSelector((state) => state.admin);
   
+  const [recruitingAgency,setRecruitingAgency]=useState([])
+  
+   
+  const fetchRecruitingAgency=async ()=>{
+    try{
+      const res=await axios.get(`${process.env.REACT_APP_API_APP_URL}/recruiting/acmanagerpending`)
+      setRecruitingAgency(res.data)
+    }catch(err){
 
-
-  const handleManagerChange = (event) => {
-    setSelectedManager(event.target.value);
-  };
-
+    }
+ }
+    useEffect(()=>{
+        fetchRecruitingAgency()
+    },[])
+  
  
- 
-  const products = [
-    {
-      _id: '1',
-      full_name: "zigo",
-      email: "xyz@gmail.com",
-      company_name: "heryo",
-      company_size: 30,
-      designation: "software development",
-      Linkedin_url:"www.linkedin.com",
-      interested_in:["Permanent Hiring"],
-      country: "India",
-      state: "Gujrat",
-      city: "Gandhinagar",
-      domains: ["IT Recruitment", "Executive Search", "Temporary Staffing",  { Education: "B.Tech" }],
-      email_verified: "yes",
-      pancard_no:"76556556655"
-    },
-  ];
+  // const products = [
+  //   {
+  //     _id: '1',
+  //     full_name: "zigo",
+  //     email: "xyz@gmail.com",
+  //     company_name: "heryo",
+  //     company_size: 30,
+  //     designation: "software development",
+  //     Linkedin_url:"www.linkedin.com",
+  //     interested_in:["Permanent Hiring"],
+  //     country: "India",
+  //     state: "Gujrat",
+  //     city: "Gandhinagar",
+  //     domains: ["IT Recruitment", "Executive Search", "Temporary Staffing",  { Education: "B.Tech" }],
+  //     email_verified: "yes",
+  //     pancard_no:"76556556655"
+  //   },
+  // ];
 
-  const repeatedProducts = Array(10).fill(null).map((_, index) => ({
-    ...products[0],
-    _id: String(index + 1),
-  }));
+  // const repeatedProducts = Array(10).fill(null).map((_, index) => ({
+  //   ...products[0],
+  //   _id: String(index + 1),
+  // }));
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -107,15 +115,14 @@ const NewRecruitingAgencyData = () => {
     setSelectedRow(item);  
     setOpen(true); 
   };
-
+  console.log(recruitingAgency)
   const handleClose = () => {
     setOpen(false);
-    setSelectedManager('');
     setSelectedRow(null)
   };
 
   // Calculate the rows to display
-  const paginatedRows = repeatedProducts.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+  const paginatedRows = recruitingAgency.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   return (
     <div className=''>
@@ -199,10 +206,10 @@ const NewRecruitingAgencyData = () => {
     {item.designation}
   </TableCell>
   <TableCell align="left" sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px'} }}>
-    {item.Linkedin_url}
+    {item.linkedin_url}
   </TableCell>
   <TableCell align="left" sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px'} }}>
-    {item.interested_in}
+    {item.firm_type}
   </TableCell>
   <TableCell align="left" sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px' } }}>
     {item.company_name}
@@ -233,25 +240,14 @@ const NewRecruitingAgencyData = () => {
   ))}
   </TableCell>
   <TableCell align="left" sx={{ textAlign: 'center', }}>
-  <Button
-    variant="contained" 
-    sx={{
-      fontSize: { xs: '12px', sm: '14px',  xl: '17px' },
-      width: { xl:'90px',sm: '50px' }, 
-      
-      backgroundColor: item.email_verified === "yes" ? "green" : "red",
-      color: "white",
-      '&:hover': {
-        backgroundColor: item.email_verified === "yes" ? "darkgreen" : "darkred",
-      },
-      textTransform: 'none',
-    }}
+  <span
+   className={`${item.email_verified?("bg-green-400"):("bg-red-400")} px-6 py-4 rounded-lg text-white`}
   >
-    {item.email_verified}
-  </Button>
+    {(item.email_verified)?("Yes"):("No")}
+  </span>
 </TableCell>
 <TableCell align="left" sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px'} }}>
-    {item.pancard_no}
+    {item.kyc_details.pancard_number}
   </TableCell>
 
 </TableRow>
@@ -291,7 +287,7 @@ const NewRecruitingAgencyData = () => {
       ))
   ))}</p>
             <p><strong>Email verified:</strong> {selectedRow?.email_verified}</p>
-              <p><strong>Pancard Number:</strong> {selectedRow?.pancard_no}</p>
+              <p><strong>Pancard Number:</strong> {selectedRow?.kyc_details.pancard_number}</p>
             
           </div>
           
@@ -316,7 +312,7 @@ const NewRecruitingAgencyData = () => {
       </Card>
       <TablePagination
           component="div"
-          count={repeatedProducts.length}
+          count={recruitingAgency.length}
           page={page}
           onPageChange={handleChangePage}
           rowsPerPage={rowsPerPage}

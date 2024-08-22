@@ -67,3 +67,13 @@ export const changeAccountStatus=async (req,res,next)=>{
         next(err)
     }
 }
+
+
+export const getAllPendingAcmanagerRecruiting=async (req,res,next)=>{
+    try{
+      const r_agency=await RECRUITING.find({account_manager_verified:false})
+      res.status(200).json(r_agency)
+    }catch(err){
+        next(err)
+    }
+}
