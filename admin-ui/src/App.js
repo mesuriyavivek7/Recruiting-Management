@@ -13,6 +13,8 @@ import AccountManagerDashboard from './Components/AccountManagerDashboard';
 import AccountManager from './Pages/Dashboard/AccountManager';
 import AccountRecruitingAgencyTable from './Pages/PagesForAccountManager/AccountRecruitingAgencyTable';
 import AccountEnterpriceTable from './Pages/PagesForAccountManager/AccountEnterPriceTable';
+import AccountJobTable from './Pages/PagesForAccountManager/AccountJobTable';
+import JobDetails from './Pages/PagesForAccountManager/JobDetails';
 
 
 
@@ -68,6 +70,14 @@ function App() {
           {
             path: "recruiting-agency",
             element: <AccountRecruitingAgencyTable/>,
+          },
+          {
+            path: "jobs",
+            element: <AccountJobTable/>,
+          },
+          {
+            path: "job/:id",
+            element: <JobDetails/>,
           },
          
         
