@@ -52,7 +52,7 @@ const recruitingagencySchema=new mongoose.Schema({
         type:[String]
     },
     email_verified:{
-        type:String,
+        type:Boolean,
         default:false
     },
     kyc_verified:{
@@ -75,10 +75,6 @@ const recruitingagencySchema=new mongoose.Schema({
             remark:"",
             admin_id:""
         }
-    },
-    account_status:{
-        type:String,
-        default:"Active"
     },
     admin_verified:{
         type:Boolean,

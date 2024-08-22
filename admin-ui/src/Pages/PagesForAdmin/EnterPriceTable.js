@@ -21,7 +21,7 @@ const EnterpriceTable = () => {
   };
   return (
     <div className=''>
-      <div className='flex gap-6'>
+      <div className='flex gap-4'>
         <Button
           className='bg-blue-230 '
           id="demo-customized-button"
@@ -53,12 +53,12 @@ const EnterpriceTable = () => {
             fontSize: '16px',
             textTransform: 'none',
             borderRadius: '15px',
-            width: '120px',
+            width: '200px',
           }}
           onClick={() => handleTabChange('new')}
      
         >
-          New
+          Pending Verification
         </Button>
       </div>
       <div>
