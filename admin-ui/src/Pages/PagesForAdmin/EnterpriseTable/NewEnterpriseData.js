@@ -365,7 +365,7 @@ const NewEnterpriseData = () => {
           <Button onClick={handleSubmitButton}  sx={{
                         fontSize: { xs: "12px", sm: "14px", xl: "17px" },
                         width: { xl: "100px", sm: "50px" },
-                        height:"30px",
+                        // height:"30px",
                        color:'white',
                         backgroundColor:
                           "#315370",

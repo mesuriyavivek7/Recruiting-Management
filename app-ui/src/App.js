@@ -8,9 +8,6 @@ import Enterprisedashboard from "./pages/Dashboard/Enterprisedashboard";
 import Settings from "./pages/Settings";
 import Dashboard from "./pages/Dashboard";
 import PostJob from "./pages/PostJob";
-import PostJobForm2 from "./components/PostJobForms/postjobform2";
-import PostJobForms3 from "./components/PostJobForms/PostJobForms3";
-import PostJobForm4 from "./components/PostJobForms/PostJobForm4";
 import DemoVideosPage from "./components/DemoVideos";
 import JobPostings from "./components/JobPostings";
 import BulkActions from "./components/BulkActions,";
@@ -51,7 +48,7 @@ const App = () => {
           element: <PostJob />,
         },
         {
-          path: "jobposting",
+          path: "jobposting/landing",
           element: <JobPostings/>,
         },
         {

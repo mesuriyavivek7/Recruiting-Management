@@ -72,30 +72,7 @@ const NewRecruitingAgencyData = () => {
         fetchRecruitingAgency()
     },[])
   
- 
-  // const products = [
-  //   {
-  //     _id: '1',
-  //     full_name: "zigo",
-  //     email: "xyz@gmail.com",
-  //     company_name: "heryo",
-  //     company_size: 30,
-  //     designation: "software development",
-  //     Linkedin_url:"www.linkedin.com",
-  //     interested_in:["Permanent Hiring"],
-  //     country: "India",
-  //     state: "Gujrat",
-  //     city: "Gandhinagar",
-  //     domains: ["IT Recruitment", "Executive Search", "Temporary Staffing",  { Education: "B.Tech" }],
-  //     email_verified: "yes",
-  //     pancard_no:"76556556655"
-  //   },
-  // ];
 
-  // const repeatedProducts = Array(10).fill(null).map((_, index) => ({
-  //   ...products[0],
-  //   _id: String(index + 1),
-  // }));
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -290,6 +267,41 @@ const NewRecruitingAgencyData = () => {
               <p><strong>Pancard Number:</strong> {selectedRow?.kyc_details.pancard_number}</p>
             
           </div>
+          <div className='pt-3'>
+    <strong className='bg-green-400 p-1 rounded-sm'>PAN Card Document:</strong> 
+    {selectedRow?.pancard_document && (
+        <>
+          
+            <div className="hidden lg:block pt-2">
+                <embed 
+                    src={selectedRow.pancard_document} 
+                    type="application/pdf" 
+                    className="w-full"
+                    style={{
+                        display: 'block',
+                        width: '100%',
+                        maxWidth: '100%',
+                        height: 'auto',
+                        maxHeight: '200px',  
+                        cursor: 'pointer',
+                        objectFit: 'cover',   
+                    }}
+                />
+            </div>
+           
+          
+           
+            <a 
+                href={selectedRow.pancard_document} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-blue-230 underline mt-2 inline-block sm:pl-6 xl:pl-0"
+            >
+                View Full Document (PDF)
+            </a>
+        </>
+    )}
+</div>
           
         </DialogContent>
         <DialogActions>
