@@ -84,7 +84,7 @@ const NewRecruitingAgencyData = () => {
        
     }
   }
-  console.log(recruitingAgency)
+  
 
 
   useEffect(()=>{

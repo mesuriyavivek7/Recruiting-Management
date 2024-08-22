@@ -68,7 +68,15 @@ export default function Login() {
         const response=await axios.post(`${process.env.REACT_APP_API_BASE_URL}/auth/login`,formData,{withCredentials:true})
         
         dispatch(setUserData(response.data.details));
-        navigate('/admin/dashboard')
+        console.log(response.data.details)
+        if(response.data.details.admin_type==="admin"){
+          navigate('/admin/dashboard')
+        }else if(response.data.details.admin_type==="account_manager"){
+          navigate('/account_manager/dashboard')
+        }else{
+          navigate('/admin/dashboard')
+        }
+        
       }catch(err){  
         if(err.response.status===404){
           newErros.autherr="Invalid email address or password"
