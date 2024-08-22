@@ -19,3 +19,12 @@ export const addEnterprise=async (req,res,next)=>{
     next(err)
   }
 }
+
+export const addRecruiting=async (req,res,next)=>{
+   try{
+     await ACCOUNTMANAGER.findByIdAndUpdate(req.body.ac_id,{$push:{pending_verify_recruiting_agency:req.body.ra_id}})
+     res.status(200).json("Sucessfully added recruiting agency into account manager pending list")
+   }catch(err){
+    next(err)
+   }
+}

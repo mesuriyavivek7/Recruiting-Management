@@ -21,6 +21,7 @@ export const register=async (req,res,next)=>{
     const newteammember=new RECRUITINGTEAM({recruiting_agency_id:newuser._id,full_name:newuser.full_name,email:newuser.email,mobileno:newuser.mobileno,password:hash,isAdmin:true})
     newteammember.save()
     
+
     res.status(200).json(newuser)
       
    }catch(err){

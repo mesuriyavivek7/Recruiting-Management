@@ -124,7 +124,7 @@ const NewEnterpriseData = () => {
     console.log("Submit button clicked")
     // Handle the reason submission logic here
   
-      //please change here admin id with my_value id
+      
       try{
         setInactivateLoad(true)
         await axios.post(`${process.env.REACT_APP_API_APP_URL}/enterprise/changestatus`,{id:selectInactive._id,status:selectInactive.account_status.status,reason,admin_id:myValue.userData._id})

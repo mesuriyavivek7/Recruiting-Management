@@ -33,3 +33,37 @@ export const rmvEnterprisePendingList=async (req,res,next)=>{
         next(err)
     }
 }
+
+
+export const addRecruitingAgency=async (req,res,next)=>{
+    try{
+      let masteradmin=null
+
+      const masteradmin_ct=await MASTERADMIN.findOne({master_admin_type:req.body.country.toLowerCase()})
+      if(masteradmin_ct){
+        masteradmin=masteradmin_ct
+      }else{
+        if(req.body.country==="India"){
+            masteradmin=await MASTERADMIN.findOne({master_admin_type:"domestic"})
+        }else{
+            masteradmin=await MASTERADMIN.findOne({master_admin_type:"international"})
+        }
+      }
+      //update masteradmin pending verification list
+      await MASTERADMIN.findByIdAndUpdate(masteradmin._id,{$push:{pending_verify_recruiting_agency:req.body.id}})
+      res.status(200).json("master admin pendign list update")
+    }catch(err){
+       next(err)
+    }
+}
+
+
+
+export const rmvRecruitingPendingList=async (req,res,next)=>{
+    try{
+         await MASTERADMIN.findByIdAndUpdate(req.body.m_id,{$pull:{pending_verify_recruiting_agency:req.body.ra_id}})
+         res.status(200).json("Remove recruting agency from master admin pending list")
+    }catch(err){
+        next(err)
+    }
+}

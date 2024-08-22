@@ -4,7 +4,8 @@ import dotenv from "dotenv"
 
 //importing mongoose
 import mongoose from "mongoose"
-
+import path from 'path'
+import { fileURLToPath } from 'url';
 import cors from 'cors'
 
 import cookieParser from "cookie-parser"
@@ -17,6 +18,11 @@ import recruitingRoutes from './routes/recruiting.js'
 import authRoute from './routes/auth.js'
 import enterpriseRoute from './routes/enterprise.js'
 import jobRoute from './routes/job.js'
+
+// Get the directory name
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 
 const app=express()
 dotenv.config()
@@ -79,7 +85,8 @@ app.get('/',(req,res)=>{
     res.send("Bahut maja ara hai bhai🐱")
 })
 
-
+// Serve static files from the 'uploads/kycdocs' directory
+app.use('/kycdocs', express.static(path.join(__dirname, 'uploads/kycdocs')));
 
 //middleware for error handeling
 app.use((err,req,res,next)=>{

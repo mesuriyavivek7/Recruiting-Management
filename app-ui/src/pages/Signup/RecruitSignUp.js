@@ -221,6 +221,9 @@ const RecruitSignUp = () => {
        await axios.post(`${process.env.REACT_APP_API_BASE_URL}/mail/sendverificaitionrecruiting`,emailverify)
        setLoad(false)
       
+       //update masteradmin pending list
+       await axios.post(`${process.env.REACT_APP_API_ADMIN_URL}/masteradmin/addragency`,{country:recruitinguser.data.country,id:recruitinguser.data._id})
+
        //navigate user to kyc page
        navigate("/signup/supplier/kyc",{state:{recruiting_id:recruitinguser.data._id}})
       }catch(err){
@@ -377,7 +380,7 @@ const RecruitSignUp = () => {
               </div>
               <div className="flex-start gap-2 w-full">
                 <label className="input-label">
-                  Firm Type(s) <span className="text-orange-800">*</span>
+                  Interested In <span className="text-orange-800">*</span>
                 </label>
                 <div className="grid w-full grid-cols-2 gap-4">
                   <label>
