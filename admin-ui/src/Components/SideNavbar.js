@@ -60,7 +60,7 @@ const SideNavbar = () => {
         {isOpen && <span className="text-white">Candidates</span>}
       </NavLink>
       <NavLink
-        to={getNavLinkPath("/admin/post")}
+        to={getNavLinkPath("/admin/jobs")}
         className={({ isActive }) => `hover:bg-gray-400 rounded-md p-2 ${!isOpen && "justify-center"} flex gap-2 ${isActive ? 'bg-gray-400' : ''}`}
       >
         <PostIcon className="w-[24px] text-white" />
