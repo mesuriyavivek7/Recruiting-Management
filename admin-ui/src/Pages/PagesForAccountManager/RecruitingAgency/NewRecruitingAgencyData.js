@@ -5,10 +5,11 @@ import axios from 'axios';
 import { useSelector } from 'react-redux';
 import {
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button,Card,TablePagination,
-  Dialog, DialogTitle, DialogContent, DialogActions, FormControl, InputLabel, Select, MenuItem
+  Dialog, DialogTitle, TextField,DialogContentText,DialogContent, DialogActions, FormControl, InputLabel, Select, MenuItem
 } from '@mui/material';
 import { styled, alpha } from '@mui/material/styles';
 import Menu from '@mui/material/Menu';
+import Notification from '../../../Components/Notification';
 
 
 const StyledMenu = styled((props) => (
@@ -58,20 +59,32 @@ const NewRecruitingAgencyData = () => {
   const myValue=useSelector((state) => state.admin);
   
   const [recruitingAgency,setRecruitingAgency]=useState([])
+  const [selectInactive,setSelectInactive]=useState(null)
+  const [notification,setNotification]=useState(null)
+
+  //for submit reason
+  const [reason,setReason]=useState('')
+  const [openpopup,setOpenpopup]=useState(false)
   
    
   const fetchRecruitingAgency=async ()=>{
     try{
-      const res=await axios.get(`${process.env.REACT_APP_API_APP_URL}/recruiting/acmanagerpending`)
+      const res=await axios.get(`${process.env.REACT_APP_API_APP_URL}/recruiting/acmanagerpending/${myValue.userData._id}`)
       setRecruitingAgency(res.data)
     }catch(err){
-
+      showNotification("There is somethig wrong while fetching data")
     }
  }
-    useEffect(()=>{
+
+
+
+  useEffect(()=>{
         fetchRecruitingAgency()
-    },[])
-  
+  },[])
+  console.log(recruitingAgency)
+  const showNotification=(message,type)=>{
+     setNotification({message,type})
+  }
 
 
   const [page, setPage] = useState(0);
@@ -87,16 +100,72 @@ const NewRecruitingAgencyData = () => {
     setPage(0);
   };
 
+  const getFormateDate=(cdate)=>{
+    let d=new Date(cdate)
+    return `${d.getDate()}-${d.getMonth()}-${d.getFullYear()}`
+ }
+
+ const handleInactivateButton=async (e,item)=>{
+       e.stopPropagation();  
+       if(item.account_status.status==="Active"){
+        setSelectInactive(item)
+        setOpenpopup(true);
+      }else{
+        try{
+        await axios.post(`${process.env.REACT_APP_API_APP_URL}/recruiting/changestatus`,{id:item._id,status:item.account_status.status,reason,admin_id:myValue.userData._id})
+        showNotification("Successfully account status changed.","success")
+        fetchRecruitingAgency()
+        }catch(err){
+          showNotification("Something went wrong in account status changeing...!","failure")
+        }
+      }
+ }
+
+ const handleSubmitButton=async ()=>{
+     try{
+      await axios.post(`${process.env.REACT_APP_API_APP_URL}/recruiting/changestatus`,{id:selectInactive._id,status:selectInactive.account_status.status,reason,admin_id:myValue.userData._id})
+      fetchRecruitingAgency()
+      setOpenpopup(false)
+      showNotification("Successfully Recruiting agency status changed.....!","success")
+     }catch(err){
+      showNotification("There is somethong wrong in account status change","failure")
+     }
+ }
+
+
+ const handleCloseInactivateButton=()=>{
+    setSelectInactive(null)
+    setOpenpopup(false)
+
+ }
+
   const [selectedRow, setSelectedRow] = useState(null);
   const handleRowClick = (item) => {
     setSelectedRow(item);  
     setOpen(true); 
   };
-  console.log(recruitingAgency)
+  
+  const handleApprove=async ()=>{
+    try{
+      //get verified recruiting agency to account manager
+      await axios.post(`${process.env.REACT_APP_API_APP_URL}/recruiting/acverified`,{id:selectedRow._id})
+
+      //add recruiting agency into verified list
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/accountmanager/addverifiedrecruiting`,{m_id:myValue.userData._id,ra_id:selectedRow._id})
+      fetchRecruitingAgency()
+      handleClose()
+      showNotification("Successfully recruiting agency verified.","success")
+    }catch(err){
+      showNotification("There is something wrong....!","failure")
+    }
+  }
+
+
   const handleClose = () => {
     setOpen(false);
     setSelectedRow(null)
   };
+
 
   // Calculate the rows to display
   const paginatedRows = recruitingAgency.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
@@ -104,7 +173,9 @@ const NewRecruitingAgencyData = () => {
   return (
     <div className=''>
      
-
+     {
+        notification && <Notification message={notification.message} type={notification.type} onClose={()=>setNotification(null)}></Notification>
+     }
       <Card className='mt-9 font-sans'>
         <p className='text-lg xl:text-2xl'>New Recruiting Agency</p>
         <TableContainer component={Paper}>
@@ -155,6 +226,18 @@ const NewRecruitingAgencyData = () => {
   <TableCell sx={{ fontSize: {  xs: '16px', xl: '20px' }, fontWeight: 'bold', whiteSpace: 'nowrap' }} align="left">
     Pancard Number
   </TableCell>
+  <TableCell sx={{ fontSize: {  xs: '16px', xl: '20px' }, fontWeight: 'bold', whiteSpace: 'nowrap' }} align="left">
+    Entity Type
+  </TableCell>
+  <TableCell sx={{ fontSize: { xs: '12px', sm: '16px', lg: '17px', xl: '20px' }, fontWeight: 'bold', whiteSpace: 'nowrap' }} align="left">
+    Created At
+  </TableCell>
+  <TableCell sx={{ fontSize: { xs: '12px', sm: '16px', lg: '17px', xl: '20px' }, fontWeight: 'bold', whiteSpace: 'nowrap' }} align="left">
+    Account Status
+  </TableCell>
+  <TableCell sx={{ fontSize: { xs: '12px', sm: '16px', lg: '17px', xl: '20px' }, fontWeight: 'bold', whiteSpace: 'nowrap' }} align="left">
+    Action
+  </TableCell>
 </TableRow>
 
             </TableHead>
@@ -204,21 +287,15 @@ const NewRecruitingAgencyData = () => {
     {item.city}
   </TableCell>
   <TableCell align="left" sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px'},whiteSpace: 'nowrap' }}>
-  {item.domains.map((domain, index) => (
-    typeof domain === 'string' ? 
-      <div key={index}>
-        {domain}{index < item.domains.length - 1 ? ',' : ''}
-      </div> : 
-      Object.entries(domain).map(([key, value]) => (
-        <div key={index}>
-          {key}: {value}{index < item.domains.length - 1 ? ',' : ''}
-        </div>
-      ))
-  ))}
+    <div className='flex flex-wrap'>
+    {item.domains.map((domain, index) => (
+       <div className='bg-gray-100 m-0.5 p-1.5 text-xs rounded-lg' key={index}>{domain}</div>
+    ))}
+    </div>
   </TableCell>
   <TableCell align="left" sx={{ textAlign: 'center', }}>
   <span
-   className={`${item.email_verified?("bg-green-400"):("bg-red-400")} px-6 py-4 rounded-lg text-white`}
+   className={`${item.email_verified?("bg-green-400"):("bg-red-400")} px-6 py-2 rounded-lg text-white`}
   >
     {(item.email_verified)?("Yes"):("No")}
   </span>
@@ -226,6 +303,35 @@ const NewRecruitingAgencyData = () => {
 <TableCell align="left" sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px'} }}>
     {item.kyc_details.pancard_number}
   </TableCell>
+  <TableCell align="left" sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px'} }}>
+    {item.kyc_details.entity_type}
+  </TableCell>
+  <TableCell align="left" sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px' } }}>
+    {getFormateDate(item.createdAt)}
+  </TableCell>
+  <TableCell align="left"  sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px' },textAlign: "center" }}>
+    <h1 className={`px-2 py-2 rounded-2xl text-sm text-white ${(item.account_status.status==="Active")?("bg-green-500"):"bg-red-500"}`}>{item.account_status.status}</h1>
+  </TableCell>
+  
+  
+                  <TableCell align="left" sx={{ textAlign: "center" }}>
+                    <Button  onClick={(e)=>handleInactivateButton(e,item)}
+                      variant="contained"
+                      sx={{
+                        fontSize: { xs: "12px", sm: "16px", xl: "18px" },
+                        width: { xl: "120px", sm: "120px" },
+
+                        backgroundColor:
+                          "#315370",
+                        "&:hover": {
+                          backgroundColor:"gray"
+                        },
+                        textTransform: "none",
+                      }}
+                    >
+                      {(item.account_status.status==="Active")?("Inactivate"):("Activate")}
+                    </Button>
+                  </TableCell>
 
 </TableRow>
 
@@ -233,6 +339,53 @@ const NewRecruitingAgencyData = () => {
             </TableBody>
           </Table>
         </TableContainer> 
+
+        <Dialog open={openpopup} onClose={handleCloseInactivateButton}>
+        <DialogTitle>Inactivate Recruiting Agency</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Please provide a reason why you want to inactivate this account.
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Reason"
+            type="text"
+            fullWidth
+            variant="outlined"
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseInactivateButton} sx={{
+                        fontSize: { xs: "12px", sm: "14px", xl: "17px" },
+                        width: { xl: "80px", sm: "40px" },
+                        color:'white',
+                        backgroundColor:
+                          "#315370",
+                        "&:hover": {
+                          backgroundColor:"gray"
+                        },
+                        textTransform: "none",
+                      }}>
+            Cancel
+          </Button>
+          <Button   onClick={handleSubmitButton} sx={{
+                        fontSize: { xs: "12px", sm: "14px", xl: "17px" },
+                        width: { xl: "80px", sm: "40px" },
+                       color:'white',
+                        backgroundColor:
+                          "#315370",
+                        "&:hover": {
+                          backgroundColor:"gray"
+                        },
+                        textTransform: "none",
+                      }}>
+            Submit
+          </Button>
+        </DialogActions>
+      </Dialog>
         
        {selectedRow && (
         <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm" sx={{fontSize:{sm:'16px',xl:'20px'}}}>
@@ -247,68 +400,45 @@ const NewRecruitingAgencyData = () => {
             
             <p><strong>Company Size:</strong> {selectedRow?.company_size}</p>
               <p><strong>Designation:</strong> {selectedRow?.designation}</p>
-                <p><strong>Linkedin URL:</strong> {selectedRow?.Linkedin_url}</p>
-                  <p><strong>Interested in:</strong> {selectedRow?.interested_in}</p>
+                  <p><strong>Interested in:</strong> {selectedRow?.firm_type}</p>
             <p><strong>Country:</strong> {selectedRow?.country}</p>
             <p><strong>State:</strong> {selectedRow?.state}</p>
             <p><strong>City:</strong> {selectedRow?.city}</p>
-              <p><strong>Domains:</strong> {selectedRow?.domains.map((domain, index) => (
-    typeof domain === 'string' ? 
-      <div key={index}>
-        {domain}{index < selectedRow.domains.length - 1 ? ',' : ''}
-      </div> : 
-      Object.entries(domain).map(([key, value]) => (
-        <div key={index}>
-          {key}: {value}{index < selectedRow.domains.length - 1 ? ',' : ''}
-        </div>
-      ))
-  ))}</p>
-            <p><strong>Email verified:</strong> {selectedRow?.email_verified}</p>
-              <p><strong>Pancard Number:</strong> {selectedRow?.kyc_details.pancard_number}</p>
             
+              <p><strong>Email verified:</strong> {(selectedRow?.email_verified)?("Yes"):("No")}</p>
+              <p><strong>Pancard Number:</strong> {selectedRow?.kyc_details.pancard_number}</p>
+              <p><strong>Entity Type:</strong> {selectedRow?.kyc_details.entity_type}</p>
+              <p><strong>Linkedin URL:</strong> {selectedRow?.linkedin_url}</p>
+              <p><strong>Domains:</strong>
+              <div className='flex flex-wrap'>
+             {selectedRow?.domains.map((domain, index) => (
+                  <div className='bg-gray-200 p-1.5 m-0.5 rounded-lg text-xs' key={index}>{domain}</div>
+               ))
+             }
+             </div></p>
+              
           </div>
-          <div className='pt-3'>
-    <strong className='bg-green-400 p-1 rounded-sm'>PAN Card Document:</strong> 
-    {selectedRow?.pancard_document && (
-        <>
           
-            <div className="hidden lg:block pt-2">
-                <embed 
-                    src={selectedRow.pancard_document} 
-                    type="application/pdf" 
-                    className="w-full"
-                    style={{
-                        display: 'block',
-                        width: '100%',
-                        maxWidth: '100%',
-                        height: 'auto',
-                        maxHeight: '200px',  
-                        cursor: 'pointer',
-                        objectFit: 'cover',   
-                    }}
-                />
-            </div>
-           
-          
-           
-            <a 
-                href={selectedRow.pancard_document} 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="text-blue-230 underline mt-2 inline-block sm:pl-6 xl:pl-0"
-            >
-                View Full Document (PDF)
-            </a>
-        </>
-    )}
-</div>
+          <div className='mt-6'>
+              <strong className='bg-green-400 px-2 py-1 rounded-sm'>PAN Card Document:</strong> 
+              <div className='mt-2 w-full'>
+              {selectedRow?.kyc_documents && (
+                selectedRow?.kyc_documents.filename.endsWith('.pdf') ? (
+                        <iframe src={`http://localhost:8080/kycdocs/${selectedRow?.kyc_documents.filename}`} width="600" height="400"></iframe>
+                    ) : (
+                        <img className='w-full' src={`http://localhost:8080/kycdocs/${selectedRow?.kyc_documents.filename}`} />
+                    )
+              )}
+              
+             </div>
+          </div>
           
         </DialogContent>
         <DialogActions>
           <Button
             variant="contained"
            
-            onClick={handleClose}
+            onClick={handleApprove}
             sx={{ backgroundColor:  '#315370', color: 'white',
               '&:hover': {
                 backgroundColor: 'gray',

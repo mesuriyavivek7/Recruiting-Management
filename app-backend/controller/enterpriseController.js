@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs'
 import { sendEmailUpdateVerificationEnterprise } from "./mailController.js";
 
 
+
 export const getMobileNo=async (req,res,next)=>{
      try{
        const enterpriseuser=await ENTERPRISE.findById(req.params.id)
@@ -104,4 +105,23 @@ export const allocatedAcManager=async (req,res,next)=>{
     }catch(err){
       next(err)
     }
+}
+
+export const getAcPendingEnterprise=async (req,res,next)=>{
+  try{
+    const enterprise=await ENTERPRISE.find({allocated_account_manager:req.params.id,account_manager_verified:false})
+    res.status(200).json(enterprise)
+  }catch(err){
+    next(err)
+  }
+}
+
+
+export const acVerified=async (req,res,next)=>{
+     try{
+        await ENTERPRISE.findByIdAndUpdate(req.body.id,{$set:{account_manager_verified:true}})
+        res.status(200).json("successfully verification done from account manager side")
+     }catch(err){
+         next(err)
+     }
 }

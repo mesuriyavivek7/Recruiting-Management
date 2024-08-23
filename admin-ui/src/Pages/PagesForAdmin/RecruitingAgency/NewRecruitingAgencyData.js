@@ -133,7 +133,7 @@ const NewRecruitingAgencyData = () => {
   const handleInactivateButton =async (e,item) => {  
     e.stopPropagation();  
     
-     if(item.account_status.status==="Active"){
+    if(item.account_status.status==="Active"){
       setSelectInactive(item)
       setOpenpopup(true);
     }else{
@@ -156,9 +156,7 @@ const NewRecruitingAgencyData = () => {
   
       //please change here admin id with my_value id
       try{
-        console.log(selectInactive)
         await axios.post(`${process.env.REACT_APP_API_APP_URL}/recruiting/changestatus`,{id:selectInactive._id,status:selectInactive.account_status.status,reason,admin_id:myValue.userData._id})
-        console.log("Status request get")
         fetchRecruitingAgency()
         setOpenpopup(false);
         showNotification("Successfully account status changed...!","success")
