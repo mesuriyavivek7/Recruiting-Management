@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 
 import { Button } from '@mui/material'
-import AllCandidateData from './Candidate/AllCandidateData'
-import NewCandidateData from './Candidate/NewCandidateData'
-const AccountCandidateTable = () => {
+import AdminAllCandidateData from './Candidate/AdminAllCandidateData'
+import AdminNewCandidateData from './Candidate/AdminNewCandidateData'
+const AdminCandidateTable = () => {
     
 
 
@@ -58,12 +58,12 @@ const AccountCandidateTable = () => {
       <div>
         {activeTab === 'all' && (
           <div>
-          <AllCandidateData/>
+          <AdminAllCandidateData/>
           </div>
         )}
         {activeTab === 'new' && (
           <div>
-          <NewCandidateData/>
+          <AdminNewCandidateData/>
           </div>
         )}
       </div>
@@ -71,4 +71,4 @@ const AccountCandidateTable = () => {
   )
 }
 
-export default AccountCandidateTable
+export default AdminCandidateTable

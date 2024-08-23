@@ -1,10 +1,17 @@
-import React, { useState } from 'react'
 
-import { Button } from '@mui/material'
-import AllCandidateData from './Candidate/AllCandidateData'
-import NewCandidateData from './Candidate/NewCandidateData'
-const AccountCandidateTable = () => {
-    
+import React, { useState } from 'react';
+import { Avatar, Button, Card, CardHeader, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, TablePagination } from '@mui/material';
+
+
+
+import AdminAllJobData from './Job/AdminAllJobData';
+import AdminNewJobData from './Job/AdminNewJobData';
+
+
+
+const AdminJobTable = () => {
+
+ 
 
 
   const [activeTab, setActiveTab] = useState('all');
@@ -14,8 +21,8 @@ const AccountCandidateTable = () => {
     setActiveTab(tab);
   };
   return (
-    <div>
-       <div className='flex gap-6'>
+    <div className=''>
+      <div className='flex gap-6'>
         <Button
           className='bg-blue-230 '
           id="demo-customized-button"
@@ -58,17 +65,19 @@ const AccountCandidateTable = () => {
       <div>
         {activeTab === 'all' && (
           <div>
-          <AllCandidateData/>
+          <AdminAllJobData/>
           </div>
         )}
         {activeTab === 'new' && (
           <div>
-          <NewCandidateData/>
+          <AdminNewJobData/>
           </div>
         )}
       </div>
-    </div>
-  )
-}
+    
 
-export default AccountCandidateTable
+    </div>
+  );
+};
+
+export default AdminJobTable;

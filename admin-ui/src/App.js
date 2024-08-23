@@ -17,6 +17,10 @@ import AccountJobTable from './Pages/PagesForAccountManager/AccountJobTable';
 import JobDetails from './Pages/PagesForAccountManager/JobDetails';
 import AccountCandidateTable from './Pages/PagesForAccountManager/AccountCandidateTable';
 import CandidateDetails from './Pages/PagesForAccountManager/CandidateDetails';
+import AdminJobTable from './Pages/PagesForAdmin/AdminJobTable';
+import AdminCandidateTable from './Pages/PagesForAdmin/AdminCandidateTable';
+import AdminJobDetails from './Pages/PagesForAdmin/AdminJobDetails';
+import AdminCandidateDetails from './Pages/PagesForAdmin/AdminCandidateDetails';
 
 
 
@@ -48,6 +52,22 @@ function App() {
           
             path: "recruiting-agency",
             element: <RecruitingAgencyTable/>,
+          },
+          {
+            path: "jobs",
+            element: <AdminJobTable/>,
+          },
+          {
+            path: "candidates",
+            element: <AdminCandidateTable/>,
+          },
+          {
+            path: "job/:id",
+            element: <AdminJobDetails/>,
+          },
+          {
+            path: "candidate/:id",
+            element: <AdminCandidateDetails/>,
           },
         
         
