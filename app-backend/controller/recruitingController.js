@@ -71,8 +71,18 @@ export const changeAccountStatus=async (req,res,next)=>{
 
 export const getAllPendingAcmanagerRecruiting=async (req,res,next)=>{
     try{
-      const r_agency=await RECRUITING.find({account_manager_verified:false})
+      const r_agency=await RECRUITING.find({alloted_account_manager:req.params.id,account_manager_verified:false})
       res.status(200).json(r_agency)
+    }catch(err){
+        next(err)
+    }
+}
+
+
+export const acVerified=async (req,res,next)=>{
+    try{
+       await RECRUITING.findByIdAndUpdate(req.body.id,{$set:{account_manager_verified:true}})
+       res.status(200).json("Account manager verified successfully")
     }catch(err){
         next(err)
     }

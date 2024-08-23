@@ -70,7 +70,11 @@ const NewEnterpriseData = () => {
   const showNotification=(message,type)=>{
      setNotification({message,type})
   }
-
+  
+  const getFormateDate=(cdate)=>{
+    let d=new Date(cdate)
+    return `${d.getDate()}-${d.getMonth()}-${d.getFullYear()}`
+  }
   const fetchEnterprise=async ()=>{
      try{
         const response=await axios.get(`${process.env.REACT_APP_API_APP_URL}/enterprise/adminpending`)
@@ -298,7 +302,7 @@ const NewEnterpriseData = () => {
 
 </TableCell>
   <TableCell align="left" sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px' } }}>
-    {item.createdAt}
+    {getFormateDate(item.createdAt)}
   </TableCell>
   <TableCell align="left"  sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px' },textAlign: "center" }}>
     <h1 className={`px-2 py-2 rounded-2xl text-sm text-white ${(item.account_status.status==="Active")?("bg-green-500"):"bg-red-500"}`}>{item.account_status.status}</h1>

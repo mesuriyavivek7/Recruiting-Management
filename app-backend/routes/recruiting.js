@@ -2,7 +2,7 @@ import express from "express"
 import multer from "multer"
 import path from 'path'
 
-import { allocatedAcManager, changeAccountStatus, getAllPendingAcmanagerRecruiting, getAllPendingMadminVerifyRAgency, kycDetailsSubmission, kycDocsSubmission } from "../controller/recruitingController.js"
+import { acVerified, allocatedAcManager, changeAccountStatus, getAllPendingAcmanagerRecruiting, getAllPendingMadminVerifyRAgency, kycDetailsSubmission, kycDocsSubmission } from "../controller/recruitingController.js"
 
 const router=express.Router()
 
@@ -39,5 +39,8 @@ router.post('/allocatedacmanager',allocatedAcManager)
 router.post('/changestatus',changeAccountStatus)
 
 //get all pending account manager verification recruitign agency
-router.get('/acmanagerpending',getAllPendingAcmanagerRecruiting)
+router.get('/acmanagerpending/:id',getAllPendingAcmanagerRecruiting)
+
+//ac manager get approve
+router.post('/acverified',acVerified)
 export default router

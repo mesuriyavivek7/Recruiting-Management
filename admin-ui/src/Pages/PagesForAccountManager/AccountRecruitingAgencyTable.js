@@ -54,12 +54,12 @@ const AccountRecruitingAgencyTable = () => {
             fontSize: '16px',
             textTransform: 'none',
             borderRadius: '15px',
-            width: '120px',
+            width: '200px',
           }}
           onClick={() => handleTabChange('new')}
      
         >
-          New
+          Pending Verification
         </Button>
       </div>
       <div>

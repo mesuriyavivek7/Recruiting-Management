@@ -26,6 +26,7 @@ import { styled, alpha } from "@mui/material/styles";
 import Menu from "@mui/material/Menu";
 import axios from 'axios'
 import { useSelector } from "react-redux";
+import Notification from "../../../Components/Notification";
 
 const StyledMenu = styled((props) => (
   <Menu
@@ -73,63 +74,69 @@ const StyledMenu = styled((props) => (
 const NewEnterpriseData = () => {
   const [open, setOpen] = useState(false);
   
-  const [selectedManager, setSelectedManager] = useState("");
 
-  const handleManagerChange = (event) => {
-    setSelectedManager(event.target.value);
-  };
+  const myValue=useSelector((state)=>state.admin)
+
+ 
 
   const [newEnterprise,setNewEnterprise]=useState([])
 
   const fetchEnterpriseData=async ()=>{
       try{
-         const allEnterprise=await axios.get(`${process.env.REACT_APP_API_APP_URL}/enterprise/adminpending`)
+         const allEnterprise=await axios.get(`${process.env.REACT_APP_API_APP_URL}/enterprise/acpending/${myValue.userData._id}`)
          setNewEnterprise(allEnterprise.data)
       }catch(err){
         
       }
   }
+
+  console.log(newEnterprise)
   
   useEffect(()=>{
     fetchEnterpriseData()
   },[])
 
+  const getFormateDate=(cdate)=>{
+    let d=new Date(cdate)
+    return `${d.getDate()}-${d.getMonth()}-${d.getFullYear()}`
+ }
 
-  const products = [
-    {
-      _id: "1",
-      full_name: "zigo",
-      email: "xyz@gmail.com",
-      mobile_no: 67656456447,
-      company_name: "heryo",
-      designation: "software development",
-      company_size: 30,
-      country: "India",
-      state: "Gujrat",
-      city: "Gandhinagar",
-      email_verification: "yes",
-      createdAt:'22-01-2022',
-      account_status:"Active",
-      action:'Activate'
-    },
-  ];
+  // const products = [
+  //   {
+  //     _id: "1",
+  //     full_name: "zigo",
+  //     email: "xyz@gmail.com",
+  //     mobile_no: 67656456447,
+  //     company_name: "heryo",
+  //     designation: "software development",
+  //     company_size: 30,
+  //     country: "India",
+  //     state: "Gujrat",
+  //     city: "Gandhinagar",
+  //     email_verification: "yes",
+  //     createdAt:'22-01-2022',
+  //     account_status:"Active",
+  //     action:'Activate'
+  //   },
+  // ];
 
-  const repeatedProducts = Array(10)
-    .fill(null)
-    .map((_, index) => ({
-      ...products[0],
-      _id: String(index + 1),
-    }));
-    const [openpopup, setOpenpopup] = useState(false);
+  // const repeatedProducts = Array(10)
+  //   .fill(null)
+  //   .map((_, index) => ({
+  //     ...products[0],
+  //     _id: String(index + 1),
+  //   }));
+  const [openpopup, setOpenpopup] = useState(false);
   const [reason, setReason] = useState("");
   const [notification,setNotification]=useState(null)
   const [inactivateLoad,setInactivateLoad]=useState(false)
   //for showing notification
   const showNotification=(message,type)=>{
+      console.log("message printed")
      setNotification({message,type})
   }
 
-    const [selectInactive,setSelectInactive]=useState(null)
+  const [selectInactive,setSelectInactive]=useState(null)
   
   const handleInactivateButton =async (e,item) => {  
     e.stopPropagation();  
@@ -138,11 +145,12 @@ const NewEnterpriseData = () => {
       setOpenpopup(true);
     }else{
       try{
-      // await axios.post(`${process.env.REACT_APP_API_APP_URL}/enterprise/changestatus`,{id:item._id,status:item.account_status.status,reason,admin_id:myValue.userData._id})
-       fetchEnterpriseData()
+      await axios.post(`${process.env.REACT_APP_API_APP_URL}/enterprise/changestatus`,{id:item._id,status:item.account_status.status,reason,admin_id:myValue.userData._id})
        showNotification("Successfully account status changed.","success")
+       fetchEnterpriseData()
+       
       }catch(err){
-         showNotification("Something went wrong in changeing account status..!","failure")
+        showNotification("There is something wrong in account status change..!",'failure')
       }
     }
   };
@@ -168,9 +176,23 @@ const NewEnterpriseData = () => {
     setOpen(true);
   };
 
+  const handleApprove=async ()=>{
+      try{
+        //get verified enterprise to account manager
+        await axios.post(`${process.env.REACT_APP_API_APP_URL}/enterprise/acverified`,{id:selectedRow._id})
+
+        //add enterprise into verified list
+        await axios.post(`${process.env.REACT_APP_API_BASE_URL}/accountmanager/addverifiedenterprise`,{ac_id:myValue.userData._id,ra_id:selectedRow._id})
+        fetchEnterpriseData()
+        handleClose()
+        showNotification("Successfully enterprise account verified","success")
+      }catch(err){
+        showNotification("There is something wrong....!","failure")
+      }
+  }
+
   const handleClose = () => {
     setOpen(false);
-    setSelectedManager("");
     setSelectedRow(null);
   };
   const handleSubmitButton =async  () => {
@@ -180,9 +202,9 @@ const NewEnterpriseData = () => {
       //please change here admin id with my_value id
       try{
         setInactivateLoad(true)
-        //await axios.post(`${process.env.REACT_APP_API_APP_URL}/enterprise/changestatus`,{id:selectInactive._id,status:selectInactive.account_status.status,reason,admin_id:myValue.userData._id})
+        await axios.post(`${process.env.REACT_APP_API_APP_URL}/enterprise/changestatus`,{id:selectInactive._id,status:selectInactive.account_status.status,reason,admin_id:myValue.userData._id})
         console.log("Status request get")
-      // fetchEnterpriseData()
+        fetchEnterpriseData()
         setOpenpopup(false);
         showNotification("Successfully account status changed.","success")
       }catch(err){
@@ -198,6 +220,9 @@ const NewEnterpriseData = () => {
 
   return (
     <div className="">
+      {
+        notification && <Notification message={notification.message} type={notification.type} onClick={()=>setNotification(null)}></Notification>
+      }
       <Card className="mt-9 font-sans">
         <p className="text-lg xl:text-2xl">New Enterprise</p>
 
@@ -415,7 +440,7 @@ const NewEnterpriseData = () => {
                       },
                     }}
                   >
-                    {item.mobileno}
+                    {`+${item.mobileno}`}
                   </TableCell>
                   <TableCell
                     align="left"
@@ -497,29 +522,14 @@ const NewEnterpriseData = () => {
                   </TableCell>
 
                   <TableCell align="left" sx={{ textAlign: "center" }}>
-                    <Button
-                      variant="contained"
-                      sx={{
-                        fontSize: { xs: "12px", sm: "14px", xl: "17px" },
-                        width: { xl: "90px", sm: "50px" },
-
-                        backgroundColor:
-                          item.email_verified === true ? "green" : "red",
-                        color: "white",
-                        "&:hover": {
-                          backgroundColor:
-                            item.email_verified === true
-                              ? "darkgreen"
-                              : "darkred",
-                        },
-                        textTransform: "none",
-                      }}
+                    <span
+                      className={`${item.email_verified?("bg-green-400"):("bg-red-400")} text-white px-6 py-2 rounded-lg`}
                     >
                       {(item.email_verified)?("Yes"):("No")}
-                    </Button>
+                    </span>
                   </TableCell>
                   <TableCell align="left" sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px' } }}>
-    {item.createdAt}
+    {getFormateDate(item.createdAt)}
   </TableCell>
   <TableCell align="left"  sx={{ fontSize: { xs: '12px', sm: '14px', lg: '15px', xl: '17px' },textAlign: "center" }}>
     <h1 className={`px-2 py-2 rounded-2xl text-sm text-white ${(item.account_status.status==="Active")?("bg-green-500"):"bg-red-500"}`}>{item.account_status.status}</h1>
@@ -656,30 +666,40 @@ const NewEnterpriseData = () => {
                 </p>
                 <p>
                   <strong>Email verification:</strong>{" "}
-                  {selectedRow?.email_verification}
+                  {selectedRow?.email_verified?("Yes"):("No")}
                 </p>
            </div>
+           { 
+            (selectedRow?.account_status.status==="Inactive") && (
+               <div className='my-6'>
+                  <p className='text-red-500 text-xl text-center'>This Account is Inactivated</p>
+               </div>)
+          }
             </DialogContent>
-            <DialogActions>
-            <Button
-            variant="contained"
+            {
+              (selectedRow?.account_status.status==="Active") && (
+                <DialogActions>
+                <Button
+                 variant="contained"
            
-            onClick={handleClose}
-            sx={{ backgroundColor:  '#315370', color: 'white',
-              '&:hover': {
-                backgroundColor: 'gray',
-              },
+                 onClick={handleApprove}
+                 sx={{ backgroundColor:  '#315370', color: 'white',
+                    '&:hover': {
+                     backgroundColor: 'gray',
+                  },
              }}
           >
             Approve
           </Button>
             </DialogActions>
+              )
+            }
           </Dialog>
         )}
       </Card>
       <TablePagination
         component="div"
-        count={repeatedProducts.length}
+        count={newEnterprise.length}
         page={page}
         onPageChange={handleChangePage}
         rowsPerPage={rowsPerPage}
