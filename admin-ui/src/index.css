@@ -7,12 +7,9 @@
 
  body {
   margin: 0;
+  
+    @apply font-noto-sans; /* Apply the default sans font (Noto Sans) globally */
 
-  @apply font-sans;
-   
-   
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 } 
 
 code {

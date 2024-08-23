@@ -29,7 +29,7 @@ const SideNavbar = () => {
     }
   };
   return (
-    <div className={`p-3 relative bg-blue-230 border-t border-t-gray-400 flex flex-col gap-2 transition-width duration-300 ease-in-out ${isOpen ? "w-64" : "w-20"}`}>
+    <div className={`p-3 relative bg-blue-230 border-t  border-t-gray-400 flex flex-col gap-2 transition-width duration-300 font-noto-sans ease-in-out ${isOpen ? "w-64" : "w-20"}`}>
       <div className={`hover:bg-gray-400 rounded-md p-2 ${!isOpen && "justify-center"} flex gap-2`} onClick={toggleSidebar}>
         <ExpandIcon className="w-[24px] text-white" />
         <span className=""></span>

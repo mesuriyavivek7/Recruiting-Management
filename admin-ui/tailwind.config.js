@@ -8,6 +8,10 @@ module.exports = {
       colors:{"blue-230":"#315370","blue-120":"#eef5f6"},
       fontFamily: {
         sans: ['Roboto', 'sans-serif'], 
+        plex: ['"IBM Plex Sans"', 'sans-serif'],
+        chivo: ['"Chivo"', 'sans-serif'],
+        serif4: ['"Source Serif 4"', 'serif'],
+        'noto-sans': ['"Noto Sans"', 'sans-serif'],
       },
     },
   },
