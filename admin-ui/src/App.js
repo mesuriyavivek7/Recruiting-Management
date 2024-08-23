@@ -15,6 +15,8 @@ import AccountRecruitingAgencyTable from './Pages/PagesForAccountManager/Account
 import AccountEnterpriceTable from './Pages/PagesForAccountManager/AccountEnterPriceTable';
 import AccountJobTable from './Pages/PagesForAccountManager/AccountJobTable';
 import JobDetails from './Pages/PagesForAccountManager/JobDetails';
+import AccountCandidateTable from './Pages/PagesForAccountManager/AccountCandidateTable';
+import CandidateDetails from './Pages/PagesForAccountManager/CandidateDetails';
 
 
 
@@ -76,8 +78,16 @@ function App() {
             element: <AccountJobTable/>,
           },
           {
+            path: "candidates",
+            element: <AccountCandidateTable/>,
+          },
+          {
             path: "job/:id",
             element: <JobDetails/>,
+          },
+          {
+            path: "candidate/:id",
+            element: <CandidateDetails/>,
           },
          
         
