@@ -38,3 +38,16 @@ input[type="file"]::file-selector-button {
     @apply text-sm text-black-700;
   }
 }
+
+/* For Chrome, Safari, Edge, Opera */
+[type='number']::-webkit-inner-spin-button,
+[type='number']::-webkit-outer-spin-button {
+  @apply appearance-none;
+  margin: 0;
+}
+
+/* For Firefox */
+[type='number'] {
+  @apply appearance-none;
+  -moz-appearance: textfield;
+}
