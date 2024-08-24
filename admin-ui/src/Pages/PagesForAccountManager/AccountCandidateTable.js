@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
-import AllCandidateData from './Candidate/AllJobData'
-import NewCandidateData from './Candidate/NewJobData'
-import { Button } from '@mui/material'
 
+import { Button } from '@mui/material'
+import AllCandidateData from './Candidate/AllCandidateData'
+import NewCandidateData from './Candidate/NewCandidateData'
 const AccountCandidateTable = () => {
     
 
