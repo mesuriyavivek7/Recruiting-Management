@@ -4,7 +4,7 @@ import { FaBriefcase, FaMapMarkerAlt, FaInfoCircle, FaBook,  FaFileAlt, FaLock, 
 import { FaUser, FaPhone, FaHome, FaBuilding, FaAddressBook, FaGraduationCap, FaIdCard, FaPassport, FaShieldAlt, FaAmbulance, FaMoneyCheckAlt, FaCogs, FaComment } from 'react-icons/fa';
 import { MdEmail, MdPhone } from 'react-icons/md';
 
-const CandidateDetails = () => {
+const AdminCandidateDetails = () => {
   const [value, setValue] = React.useState('two');
   
  const userData = {
@@ -526,4 +526,4 @@ passportNumber:'777'
   );
 };
 
-export default CandidateDetails;
+export default AdminCandidateDetails;

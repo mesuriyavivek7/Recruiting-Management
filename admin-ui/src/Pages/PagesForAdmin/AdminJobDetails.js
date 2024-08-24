@@ -9,7 +9,7 @@ import { useParams } from 'react-router-dom';
 import { FaBusinessTime,FaBullseye,FaThumbsUp,FaBan,FaStar,FaQuestionCircle ,FaFilePdf,FaFileAlt,FaFileAudio, FaMapMarkerAlt, FaBriefcase, FaInfoCircle,FaPaperclip, FaUsers,FaShareAlt,FaExternalLinkAlt,FaDollarSign,FaClock,FaCalendarAlt } from 'react-icons/fa'; // React Icons
 
 
-function JobDetails() {
+function AdminJobDetails() {
   const { id } = useParams();
   const [value, setValue] = useState('one');
   const [jobType, setJobType] = useState('fulltime'); // fulltime or contract
@@ -306,4 +306,4 @@ function JobDetails() {
   );
 }
 
-export default JobDetails;
+export default AdminJobDetails;
