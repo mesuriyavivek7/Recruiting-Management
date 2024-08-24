@@ -15,6 +15,13 @@ function JobDetails() {
   const [jobType, setJobType] = useState('fulltime'); // fulltime or contract
   const [shareWithHiringManager, setShareWithHiringManager] = useState(false);
   const [shareSalaryDetails, setShareSalaryDetails] = useState(false);
+  
+  const [activeTab, setActiveTab] = useState('Job');
+
+ 
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+  };
 
   const uploadedFiles = [
     { name: 'Sample CV', type: 'pdf', url: 'https://www.rd.usda.gov/sites/default/files/pdf-sample_0.pdf' },
@@ -28,6 +35,8 @@ function JobDetails() {
   };
 
   return (
+    <>
+ 
     <div className='bg-gray-100 h-auto' >
     <Box sx={{ width: '100%' }} className=" p-6 rounded-lg  font-sans">
       <Tabs
@@ -65,22 +74,26 @@ function JobDetails() {
         {value === 'one' && (
           <div className="space-y-6 flex flex-col items-center p-4 ">
             {/* Job Profile */}
-            <div className="bg-white p-4 rounded-lg flex flex-col items-center w-full  space-y-2 ">
-              <div className='min-w-[500px] xl:min-w-[900px] space-y-3'>
+            <div className="bg-white p-4 rounded-lg  w-full  space-y-2 ">
+              <div className=' space-y-3'>
             
               <h2 className="text-xl  xl:text-2xl font-semibold text-gray-800  flex items-center">
                 <FaBriefcase className="mr-3 text-2xl xl:text-3xl text-blue-600" /> Job Profile
               </h2>
-              <p className="mt-2 xl:text-lg"><strong>Job Title:</strong> Software Engineer</p>
+              <div className='pl-36'>
+              <p className="xl:text-lg"><strong>Job Title:</strong> Software Engineer</p>
               <p className=" xl:text-lg"><strong>Job Description:</strong> Develop and maintain web applications...</p>
+              </div>
+              
               </div>
             </div>
             {/* Job Location and Experience */}
-            <div className="bg-white p-4 rounded-lg gap-1 flex flex-col items-center w-full  space-y-2">
-            <div className='min-w-[500px] xl:min-w-[900px] space-y-3'>
+            <div className="bg-white p-4 rounded-lg gap-1  w-full  space-y-2">
+            <div className=' space-y-3'>
               <h2 className="text-xl  xl:text-2xl font-semibold text-gray-800  flex items-center">
                 <FaMapMarkerAlt className="mr-3 text-2xl text-green-600" /> Job Location & Experience
               </h2>
+              <div className='pl-36'>
               <p className="mt-2 flex items-center  xl:text-lg"> Permanent</p>
               <p className=" xl:text-lg"><strong>Country:</strong> USA</p>
               <p className=" xl:text-lg"><strong>State:</strong> California</p>
@@ -90,12 +103,15 @@ function JobDetails() {
               <p className=" xl:text-lg"><strong>Experience:</strong> 3-5 years</p>
             </div>
             </div>
+            </div>
             {/* Other Details */}
-            <div className="bg-white p-4 rounded-lg flex flex-col items-center w-full  space-y-2 ">
-            <div className='min-w-[500px] xl:min-w-[900px] space-y-3'>
+            <div className="bg-white p-4 rounded-lg  w-full  space-y-2 ">
+            <div className=' space-y-3'>
+           
               <h2 className="text-xl  xl:text-2xl font-semibold text-gray-800  flex items-center">
                 <FaInfoCircle className="mr-3 text-2xlxl:text-3xl text-purple-600" /> Other Details
               </h2>
+              <div className='pl-36'>
               <p className="mt-2  xl:text-lg"><strong>External Job ID:</strong> 123456</p>
               <div className='flex flex-col space-y-2'>  
               
@@ -111,6 +127,7 @@ function JobDetails() {
               </div>
               </div>
             </div>
+            </div> 
           
         )}
         {value === 'two' && <div className="space-y-6 rounded-lg flex flex-col items-center ">
@@ -120,25 +137,31 @@ function JobDetails() {
             {/* Full-Time Remuneration Details */}
             {jobType === 'fulltime' && (
               <>
-                <div className="bg-white pt-2 p-4 rounded-lg shadow-sm  flex flex-col items-center w-full ">
-                <div className='min-w-[500px] xl:min-w-[900px] space-y-3'>
+                <div className="bg-white pt-2 p-4 rounded-lg shadow-sm   w-full ">
+                <div className=' space-y-3'>
                   
                   
+                    
                     <h2 className="text-xl  xl:text-2xl font-semibold text-gray-800 flex gap-1"><FaDollarSign className="text-2xl xl:text-3xl text-green-600" />Remuneration Details</h2>
+                    <div className='pl-36'>
                     <p className='xl:text-lg'><strong>Annual Salary:</strong> $100,000 - $120,000</p>
+
                     <p className='xl:text-lg'><strong>Additional Salary Details:</strong> Performance bonuses included...</p>
+                    </div>
                  
                 </div>
                 </div>
 
-                <div className="bg-white p-4 rounded-lg shadow-sm flex flex-col items-center w-full ">
-                <div className='min-w-[500px] xl:min-w-[900px] space-y-3'>
+                <div className="bg-white p-4 rounded-lg shadow-sm  w-full ">
+                <div className=' space-y-3'>
                   
                   <div className='space-y-3'>
                     <h2 className="text-xl xl:text-2xl font-semibold text-gray-800 flex gap-1">  <FaInfoCircle className="text-2xl xl:text-3xl text-blue-600" />Commission</h2>
+                    <div className='pl-36'>
                     <p className='xl:text-lg'><strong>Commission Payout:</strong> 5% of annual salary</p>
                     <p className='xl:text-lg'><strong>Payment Terms:</strong> Upon candidate joining</p>
                     <p className='xl:text-lg'><strong>Replacement Clause:</strong> Applicable within 90 days</p>
+                  </div>
                   </div>
                 </div>
                
@@ -149,26 +172,30 @@ function JobDetails() {
             {/* Contract Remuneration Details */}
             {jobType === 'contract' && (
               <>
-                <div className="bg-gray-50 p-4 rounded-lg shadow-sm flex flex-col items-center w-full ">
-                <div className='min-w-[500px] xl:min-w-[900px] '>
+                <div className="bg-gray-50 p-4 rounded-lg shadow-sm  w-full ">
+                <div className=' '>
                  
                   <div className='space-y-3'>
                     <h2 className="text-xl  xl:text-2xl font-semibold text-gray-800 flex gap-1"> <FaClock className="text-2xl text-purple-600" />Contract Remuneration Details</h2>
+                    <div className='pl-36'>
                     <p className='xl:text-lg'><strong>Contract Duration:</strong> 6 months</p>
                     <p className='xl:text-lg'><strong>Pay Rate:</strong> $50 per hour</p>
                     <p className='xl:text-lg'><strong>Pay Cycle:</strong> Bi-weekly</p>
                     <p className='xl:text-lg' ><strong>Working Hours:</strong> 40 hours per week</p>
                     <p className='xl:text-lg'><strong>Additional Pay Rate Details:</strong> Overtime applicable...</p>
                   </div>
+                  </div>
                 </div>
                 </div>
-                <div className="bg-gray-50 p-4 rounded-lg shadow-sm flex flex-col items-center w-full ">
-                <div className='min-w-[500px] xl:min-w-[900px] '>
+                <div className="bg-gray-50 p-4 rounded-lg shadow-sm  w-full ">
+                <div className=''>
                   
                   <div className='space-y-3'>
                     <h2 className="text-xl  xl:text-2xl font-semibold text-gray-800 flex gap-1"><FaCalendarAlt className="text-2xl text-red-600" />Commission</h2>
+                    <div className='pl-36'>
                     <p className='xl:text-lg'><strong>Commission Payout:</strong> 5% of contract value</p>
                     < p className='xl:text-lg'><strong>Payment Terms:</strong> Upon candidate joining</p>
+                  </div>
                   </div>
                 </div>
                 </div>
@@ -182,84 +209,97 @@ function JobDetails() {
          <div className="  space-y-6 rounded-lg font-sans flex flex-col items-center ">
           
          
-          <div className="bg-white p-4 rounded-lg shadow-sm flex flex-col items-center w-full ">
-          <div className='min-w-[500px] xl:min-w-[900px] space-y-3'>
+          <div className="bg-white p-4 rounded-lg shadow-sm  w-full ">
+          <div className='space-y-3'>
       
       <div className='space-y-3'>
         <h2 className="text-xl  xl:text-2xl font-semibold text-gray-800 flex gap-1"><FaStar className="text-2xl text-yellow-600" />Must Haves</h2>
+        <div className='pl-36'>
         <ul className="list-disc pl-5 mt-2 space-y-3">
           <li>Html</li>
           <li>CSS</li>
           <li>Javascript</li>
         </ul>
+
+        </div>
       </div>
     </div>
     </div>
     {/* No Poach Clients */}
-    <div className="bg-white p-4 rounded-lg shadow-sm flex flex-col items-center w-full ">
-    <div className='min-w-[500px] xl:min-w-[900px] space-y-3'>
+    <div className="bg-white p-4 rounded-lg shadow-sm  w-full ">
+    <div className=' space-y-3'>
    
       <div className='space-y-3'>
         <h2 className="text-xl  xl:text-2xl font-semibold text-gray-800 flex gap-1">   <FaBan className="text-2xl xl:text-3xl text-red-600" />No Poach Clients</h2>
+        <div className='pl-36'>
         <p className="mt-2 xl:text-lg">Strict no-nos for client poaching.</p>
+        </div>
       </div>
     </div>
     </div>
 
     {/* Nice to Haves */}
-    <div className="bg-white p-4 rounded-lg shadow-sm flex flex-col items-center w-full ">
-    <div className='min-w-[500px] xl:min-w-[900px] space-y-3'>
+    <div className="bg-white p-4 rounded-lg shadow-sm  w-full ">
+    <div className=' space-y-3'>
      
       <div className='space-y-3'>
         <h2 className="text-xl   xl:text-2xl font-semibold text-gray-800 flex gap-1" > <FaThumbsUp className="text-2xl  xl:text-3xl text-green-600" />Nice to Haves</h2>
+        <div className='pl-36'>
         <ul className="list-disc pl-5 mt-2 space-y-3">
           <li className=' xl:text-lg'>Java</li>
           <li className=' xl:text-lg'>Python</li>
           <li className=' xl:text-lg'>C++</li>
         </ul>
+        </div>
       </div>
     </div>
     </div>
     {/* Target Companies */}
-    <div className="bg-white p-4 rounded-lg shadow-sm flex flex-col items-center w-full ">
-    <div className='min-w-[500px] xl:min-w-[900px] space-y-3'>
+    <div className="bg-white p-4 rounded-lg shadow-sm  w-full ">
+    <div className=' space-y-3'>
       
       <div className='space-y-3'>
         <h2 className="text-xl  xl:text-2xl font-semibold text-gray-800 flex gap-1"><FaBullseye className="text-2xl  xl:text-3xl text-blue-600" />Target Companies</h2>
+        <div className='pl-36'>
         <ul className="list-disc pl-5 mt-2 space-y-3 ">
           <li className=' xl:text-lg'>Motadata</li>
           <li className=' xl:text-lg'>Brevitaz</li>
           <li className=' xl:text-lg'>O2h</li>
         </ul>
+        </div>
       </div>
     </div>
     </div>
    {/* Attachments */}
-    <div className="bg-white p-4 rounded-lg shadow-sm flex flex-col items-center w-full ">
-    <div className='min-w-[500px] xl:min-w-[900px] space-y-3'>
+    <div className="bg-white p-4 rounded-lg shadow-sm  w-full ">
+    <div className=' space-y-3'>
      
       <div className='space-y-3'>
         <h2 className="text-xl  xl:text-2xl font-semibold text-gray-800 flex gap-1 "> <FaPaperclip className="text-2xl  xl:text-3xl text-gray-600" />Attachments</h2>
+        <div className='pl-36'>
         <ul className="list-disc pl-5 mt-2 space-y-2  ">
           {uploadedFiles.map((file, index) => (
-            <li key={index} className="flex flex-col items-center  xl:text-lg">
+            <li key={index} className="flex flex-col   xl:text-lg">
               <div className="flex items-center space-x-2">
                 {file.type === 'pdf' && <FaFilePdf className="text-red-600" />}
                 {file.type === 'audio' && <FaFileAudio className="text-blue-600" />}
                 {(file.type === 'image' || file.type === 'video') && <FaFileAlt className="text-gray-600" />}
                 <span>{file.name} ({file.type.toUpperCase()})</span>
               </div>
+             
               <iframe
-                src={file.url}
-                title={file.name}
-                className="mt-2 border rounded-lg"
-                style={{ width: '100%', height: '400px' }}
-                frameBorder="0"
-                allowFullScreen
-              ></iframe>
+  src={file.url}
+  title={file.name}
+  className="mt-2 border rounded-lg w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl"
+  style={{ height: 'auto', aspectRatio: '1 / 1' }}
+  frameBorder="0"
+  allowFullScreen
+></iframe>
+
             </li>
           ))}
         </ul>
+        </div>
       </div>
     </div>
     </div>
@@ -303,6 +343,7 @@ function JobDetails() {
       </div>
     </Box>
     </div>
+    </>
   );
 }
 

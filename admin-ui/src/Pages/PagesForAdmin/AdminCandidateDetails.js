@@ -199,12 +199,13 @@ passportNumber:'777'
       {value === 'two' && (
         <div className="space-y-6 flex flex-col items-center p-4">
           {/* Biographical Details */}
-          <div className="bg-white p-4 rounded-lg flex flex-col items-center space-y-2 w-full">
-            <div className='min-w-[500px] xl:min-w-[900px] flex flex-col items-center'>
-              <div className='w-auto  space-y-3'>
+          <div className="bg-white p-4 rounded-lg  space-y-2 w-full">
+           
+              <div className='w-auto  space-y-4'>
             <h2 className="text-xl xl:text-2xl font-semibold text-gray-800 font-sans flex items-center">
               <FaIdCard className="mr-3 text-2xl text-blue-600 xl:text-3xl" /> Biographical Details
             </h2>
+            <div className='pl-36 space-y-3'>
             <p className="mt-2 font-sans xl:text-lg"><strong>First Name:</strong> {userData.biographicalDetails.firstName || 'N/A'}</p>
             <p className="font-sans xl:text-lg"><strong>Last Name:</strong> {userData.biographicalDetails.lastName || 'N/A'}</p>
             <p className="font-sans xl:text-lg"><strong>Gender:</strong> {userData.biographicalDetails.gender || 'N/A'}</p>
@@ -226,12 +227,13 @@ passportNumber:'777'
       {value === 'three' && (
         <div className="space-y-6 flex flex-col items-center p-4">
           {/* Contact */}
-          <div className="bg-white p-4 rounded-lg space-y-2 flex flex-col items-center w-full">
-            <div className=' min-w-[500px] xl:min-w-[900px] flex flex-col items-center'>
+          <div className="bg-white p-4 rounded-lg space-y-2  w-full">
+           
               <div className='w-auto space-y-3'>
             <h2 className="text-xl xl:text-2xl font-semibold text-gray-800 font-sans flex items-center">
               <MdEmail className="mr-3 text-2xl text-blue-600 xl:text-3xl" /> Contact
             </h2>
+            <div className=' pl-36 space-y-2'>
             <p className="mt-2 font-sans xl:text-lg"><strong>Personal Email:</strong> {userData.contact.personalEmail || 'N/A'}</p>
             <p className="font-sans xl:text-lg"><strong>Country Code:</strong> {userData.contact.countryCodePersonal || 'N/A'}</p>
             <p className="font-sans xl:text-lg"><strong>Personal Mobile Number:</strong> {userData.contact.personalMobile || 'N/A'}</p>
@@ -244,15 +246,15 @@ passportNumber:'777'
       {value === 'four' && (
         <div className="space-y-6 flex flex-col items-center p-4">
           {/* Address */}
-          <div className="bg-white p-4 rounded-lg flex flex-col items-center w-full  space-y-2">
-            <div className='min-w-[500px] xl:min-w-[900px] flex flex-col items-center'>
+          <div className="bg-white p-4 rounded-lg  w-full  space-y-2">
+           
             <div className='w-auto  space-y-3'>
             <h2 className="text-xl xl:text-2xl font-semibold text-gray-800 font-sans flex items-center">
               <FaMapMarkerAlt className="mr-3 text-2xl text-green-600 xl:text-3xl" /> Address
             </h2>
 
             {/* Current Address */}
-            <div className="space-y-3">
+            <div className="space-y-3 pl-36">
               <h3 className="text-lg xl:text-xl font-semibold text-gray-700">Current Address</h3>
               <p className=" xl:text-lg"><strong>Flat/House/Wing Number:</strong> {userData.address.current.flatHouseWing || 'N/A'}</p>
               <p className="font-sans xl:text-lg"><strong>Street/Locality/Area:</strong> {userData.address.current.streetLocalityArea || 'N/A'}</p>
@@ -263,7 +265,7 @@ passportNumber:'777'
 
             {/* Permanent Address */}
             {!userData.address.permanent.sameAsCurrent && (
-              <div className="space-y-3">
+              <div className="space-y-3 pl-36">
                 <h3 className="text-lg xl:text-xl font-semibold text-gray-700">Permanent Address</h3>
                 <p className="font-sans xl:text-lg"><strong>Flat/House/Wing Number:</strong> {userData.address.permanent.flatHouseWing || 'N/A'}</p>
                 <p className="font-sans xl:text-lg"><strong>Street/Locality/Area:</strong> {userData.address.permanent.streetLocalityArea || 'N/A'}</p>
@@ -277,20 +279,20 @@ passportNumber:'777'
           </div>
           </div>
         </div>
-        </div>
+        
       )}
 
       {value === 'five' && (
         <div className="space-y-6 flex flex-col items-center p-4">
           {/* Work Experience */}
-          <div className="bg-white p-4 rounded-lg flex flex-col w-full items-center space-y-2">
-            <div className='min-w-[500px] xl:min-w-[900px] flex flex-col items-center'>
+          <div className="bg-white p-4 rounded-lg  w-full space-y-2">
+            
             <div className='w-auto  space-y-3'>
             <h2 className="text-xl xl:text-2xl font-semibold text-gray-800 font-sans flex items-center">
               <FaBriefcase className="mr-3 text-2xl text-blue-600 xl:text-3xl" /> Work Experience
             </h2>
             {userData.workExperience.map((exp, index) => (
-              <div key={index} className="space-y-3">
+              <div key={index} className="space-y-3 pl-36">
                 <p className="font-sans xl:text-lg"><strong>Company:</strong> {exp.company || 'N/A'}</p>
                 <p className="font-sans xl:text-lg"><strong>Job Title:</strong> {exp.jobTitle || 'N/A'}</p>
                 <p className="font-sans xl:text-lg"><strong>Job Location:</strong> {exp.jobLocation || 'N/A'}</p>
@@ -301,20 +303,20 @@ passportNumber:'777'
           </div>
           </div>
         </div>
-        </div>
+      
       )}
 
       {value === 'six' && (
         <div className="space-y-6 flex flex-col items-center p-4">
           {/* References */}
-          <div className="bg-white p-4 rounded-lg  space-y-2 flex flex-col items-center w-full">
-            <div className='min-w-[500px] xl:min-w-[900px] flex flex-col items-center'>
+          <div className="bg-white p-4 rounded-lg  space-y-2  w-full">
+            
             <div className='w-auto  space-y-3'>
             <h2 className="text-xl xl:text-2xl font-semibold text-gray-800 font-sans flex items-center">
               <FaUsers className="mr-3 text-2xl text-blue-600 xl:text-3xl" /> References
             </h2>
             {userData.references.map((ref, index) => (
-              <div key={index} className="space-y-3">
+              <div key={index} className="space-y-3 pl-36">
                 <p className="font-sans xl:text-lg"><strong>Reference Name:</strong> {ref.name || 'N/A'}</p>
                 <p className="font-sans xl:text-lg"><strong>Company:</strong> {ref.company || 'N/A'}</p>
                 <p className="font-sans xl:text-lg"><strong>Designation:</strong> {ref.designation || 'N/A'}</p>
@@ -327,20 +329,20 @@ passportNumber:'777'
           </div>
           </div>
         </div>
-        </div>
+      
       )}
 
       {value === 'seven' && (
         <div className="space-y-6 flex flex-col items-center p-4">
           {/* Education */}
-          <div className="bg-white p-4 rounded-lg flex flex-col w-full items-center space-y-2">
-            <div className='min-w-[500px] xl:min-w-[900px] flex flex-col items-center'>
+          <div className="bg-white p-4 rounded-lg  w-full space-y-2">
+           
             <div className='w-auto  space-y-3'>
             <h2 className="text-xl xl:text-2xl font-semibold text-gray-800 font-sans flex items-center">
               <FaBook className="mr-3 text-2xl text-blue-600 xl:text-3xl" /> Education
             </h2>
             {userData.education.map((edu, index) => (
-              <div key={index} className="space-y-3">
+              <div key={index} className="space-y-3 pl-36">
                 <p className="font-sans xl:text-lg"><strong>Education Category:</strong> {edu.category || 'N/A'}</p>
                 <p className="font-sans xl:text-lg"><strong>Degree:</strong> {edu.degree || 'N/A'}</p>
                 <p className="font-sans xl:text-lg"><strong>Field of Specialisation:</strong> {edu.specialisation || 'N/A'}</p>
@@ -360,18 +362,19 @@ passportNumber:'777'
           </div>
         
         </div>
-        </div>
+   
       )}
 
       {value === 'eight' && (
         <div className="space-y-6 flex flex-col items-center p-4">
           {/* Personal Identity */}
-          <div className="bg-white p-4 rounded-lg flex flex-col w-full items-center space-y-2">
-            <div className='min-w-[500px] xl:min-w-[900px] flex flex-col items-center'>
+          <div className="bg-white p-4 rounded-lg w-full  space-y-2">
+    
             <div className='w-auto  space-y-3'>
             <h2 className="text-xl xl:text-2xl font-semibold text-gray-800 font-sans flex items-center">
               <FaIdCard className="mr-3 text-2xl text-blue-600 xl:text-3xl" /> Personal Identity
             </h2>
+            <div className='pl-36 space-y-3'>
             <p className="mt-2 font-sans xl:text-lg"><strong>Aadhar Number:</strong> {userData.personalIdentity.aadharNumber || 'N/A'}</p>
             <p className="font-sans xl:text-lg"><strong>PAN:</strong> {userData.personalIdentity.pan || 'N/A'}</p>
             <p className="font-sans xl:text-lg"><strong>Passport Number:</strong> {userData.personalIdentity.passportNumber || 'N/A'}</p>
@@ -384,42 +387,42 @@ passportNumber:'777'
 {value === 'nine' && (
   <div className="space-y-6 flex flex-col items-center p-4">
     {/* Personal Documentation */}
-    <div className="bg-white p-4 rounded-lg flex flex-col items-center w-full  space-y-2">
-      <div className='min-w-[500px] xl:min-w-[900px] flex flex-col items-center'>
-      <div className='w-auto  space-y-3'>
-      <h2 className="text-xl  xl:text-2xl font-semibold text-gray-800 font-sans flex items-center">
-        <FaFileAlt className="mr-3 text-2xl text-blue-600 xl:text-3xl" /> Personal Documentation
-      </h2>
+    <div className="bg-white p-4 rounded-lg w-full space-y-2">
+      <div className="w-full space-y-3">
+        <h2 className="text-xl xl:text-2xl font-semibold text-gray-800 font-sans flex items-center">
+          <FaFileAlt className="mr-3 text-2xl text-blue-600 xl:text-3xl" /> Personal Documentation
+        </h2>
 
-      {Object.entries(userData.personalDocumentation).map(([key, url]) => (
-        <div key={key} className="space-y-3">
-          <h3 className="text-lg font-medium text-gray-700 capitalize xl:text-xl">
-            {key.replace(/([A-Z])/g, ' $1')}
-          </h3>
-          <iframe
-            src={url}
-            title={key}
-            className="w-full h-[400px] rounded-lg border-2 border-gray-300"
-            loading="lazy"
-          ></iframe>
-        </div>
-      ))}
+        {Object.entries(userData.personalDocumentation).map(([key, url]) => (
+          <div key={key} className="space-y-3  pl-0 md:pl-36">
+            <h3 className="text-lg font-medium text-gray-700 capitalize xl:text-xl">
+              {key.replace(/([A-Z])/g, ' $1')}
+            </h3>
+            <iframe
+              src={url}
+              title={key}
+              className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl h-auto aspect-[4/3] rounded-lg border-2 border-gray-300"
+              loading="lazy"
+            ></iframe>
+          </div>
+        ))}
+      </div>
     </div>
-    </div>
-  </div>
   </div>
 )}
+
 
 
       {value === 'ten' && (
         <div className="space-y-6 flex flex-col items-center p-4">
           {/* Social Security */}
-          <div className="bg-white p-4 rounded-lg  flex flex-col items-center w-full space-y-2">
-            <div className='min-w-[500px] xl:min-w-[900px] flex flex-col items-center'>
+          <div className="bg-white p-4 rounded-lg   w-full space-y-2">
+           
             <div className='w-auto  space-y-3'>
             <h2 className="text-xl xl:text-2xl font-semibold text-gray-800 font-sans flex items-center">
               <FaLock className="mr-3 text-2xl text-blue-600 xl:text-3xl" /> Social Security
             </h2>
+            <div className='pl-36 space-y-3'>
             <p className="mt-2 font-sans xl:text-lg"><strong>UAN Number:</strong> {userData.socialSecurity.uanNumber || 'N/A'}</p>
           </div>
           </div>
@@ -430,12 +433,13 @@ passportNumber:'777'
       {value === 'eleven' && (
         <div className="space-y-6 flex flex-col items-center p-4">
           {/* Emergency */}
-          <div className="bg-white p-4 rounded-lg flex flex-col items-center w-full space-y-2">
-          <div className='min-w-[500px] xl:min-w-[900px] flex flex-col items-center'>
+          <div className="bg-white p-4 rounded-lg  w-full space-y-2">
+         
           <div className='w-auto  space-y-3'>
             <h2 className="text-xl xl:text-2xl font-semibold text-gray-800 font-sans flex items-center">
               <FaExclamationTriangle className="mr-3 text-2xl text-red-600 xl:text-3xl" /> Emergency
             </h2>
+            <div className='pl-36 space-y-3'>
             <p className="mt-2 font-sans xl:text-lg"><strong>Emergency Contact Name:</strong> {userData.emergencyContacts.countryCode || 'N/A'}</p>
             <p className="font-sans xl:text-lg"><strong>Emergency Contact Phone:</strong> {userData.emergencyContacts.contactNumber || 'N/A'}</p>
             <p className="font-sans xl:text-lg"><strong>Emergency Contact Email:</strong> {userData.emergencyContacts.contactEmail || 'N/A'}</p>
@@ -449,14 +453,14 @@ passportNumber:'777'
       {value === 'twelve' && (
         <div className="space-y-6 flex flex-col items-center p-4">
           {/* Dependent */}
-          <div className="bg-white p-4 rounded-lg flex flex-col items-center w-full space-y-2">
-          <div className='min-w-[500px] xl:min-w-[900px] flex flex-col items-center'>
+          <div className="bg-white p-4 rounded-lg  w-full space-y-2">
+         
           <div className='w-auto  space-y-3'>
             <h2 className="text-xl xl:text-2xl font-semibold text-gray-800 font-sans flex items-center">
               <FaUsers className="mr-3 text-2xl text-blue-600 xl:text-3xl" /> Dependent
             </h2>
             {userData.dependents.map((dep, index) => (
-              <div key={index} className="space-y-3">
+              <div key={index} className="space-y-3 pl-36">
                 <p className="font-sans xl:text-lg"><strong>Dependent Name:</strong> {dep.name || 'N/A'}</p>
                 <p className="font-sans xl:text-lg"><strong>Relationship:</strong> {dep.relation || 'N/A'}</p>
                 <p className="font-sans xl:text-lg"><strong>Date of Birth:</strong> {dep.dob || 'N/A'}</p>
@@ -467,18 +471,19 @@ passportNumber:'777'
           </div>
           </div>
         </div>
-        </div>
+      
       )}
 
       {value === 'thirteen' && (
         <div className="space-y-6 flex flex-col items-center p-4">
           {/* Salary Payment */}
-          <div className="bg-white p-4 rounded-lg flex flex-col items-center w-full space-y-2">
-          <div className='min-w-[500px] xl:min-w-[900px] flex flex-col items-center'>
+          <div className="bg-white p-4 rounded-lg  w-full space-y-2">
+         
           <div className='w-auto  space-y-3'>
             <h2 className="text-xl xl:text-2xl font-semibold text-gray-800 font-sans flex items-center">
               <FaDollarSign className="mr-3 text-2xl text-green-600 xl:text-3xl" /> Salary Payment
             </h2>
+            <div className='pl-36 space-y-3'>
             <p className="mt-2 font-sans xl:text-lg"><strong>Bank Account Number:</strong> {userData.salaryPayment.accountNumber || 'N/A'}</p>
             <p className="font-sans xl:text-lg"><strong>Bank Name:</strong> {userData.salaryPayment.bankName || 'N/A'}</p>
             <p className="font-sans xl:text-lg"><strong>IFSC Code:</strong> {userData.salaryPayment.ifscCode || 'N/A'}</p>
@@ -492,12 +497,13 @@ passportNumber:'777'
       {value === 'fourteen' && (
         <div className="space-y-6 flex flex-col items-center p-4">
           {/* Skills */}
-          <div className="bg-white p-4 rounded-lg flex flex-col items-center w-full space-y-2">
-          <div className='min-w-[500px] xl:min-w-[900px] flex flex-col items-center'>
+          <div className="bg-white p-4 rounded-lg  w-full space-y-2">
+         
           <div className='w-auto  space-y-3'>
             <h2 className="text-xl xl:text-2xl font-semibold text-gray-800 font-sans flex items-center">
               <FaBook className="mr-3 text-2xl text-blue-600 xl:text-3xl" /> Skills
             </h2>
+            <div className='pl-36 space-y-3'>
             <p className="mt-2 font-sans xl:text-lg"><strong>Skills:</strong> {userData.skills.join(', ') || 'N/A'}</p>
           </div>
           </div>
@@ -508,12 +514,13 @@ passportNumber:'777'
       {value === 'fifteen' && (
         <div className="space-y-6 flex flex-col items-center p-4">
           {/* Comments */}
-          <div className="bg-white p-4 rounded-lg flex flex-col items-center w-full space-y-2">
-          <div className='min-w-[500px] xl:min-w-[900px] flex flex-col items-center'>
+          <div className="bg-white p-4 rounded-lg  w-full space-y-2">
+   
           <div className='w-auto  space-y-3'>
             <h2 className="text-xl xl:text-2xl font-semibold text-gray-800 font-sans flex items-center">
               <FaExclamationTriangle className="mr-3 text-2xl text-yellow-600 xl:text-3xl" /> Comments
             </h2>
+            <div className='pl-36 space-y-3'>
             <p className="mt-2 font-sans xl:text-lg"><strong>Comments:</strong> {userData.comments || 'N/A'}</p>
           </div>
           </div>

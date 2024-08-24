@@ -14,13 +14,15 @@ import AccountManager from './Pages/Dashboard/AccountManager';
 import AccountRecruitingAgencyTable from './Pages/PagesForAccountManager/AccountRecruitingAgencyTable';
 import AccountEnterpriceTable from './Pages/PagesForAccountManager/AccountEnterPriceTable';
 import AccountJobTable from './Pages/PagesForAccountManager/AccountJobTable';
-import JobDetails from './Pages/PagesForAccountManager/JobDetails';
+
 import AccountCandidateTable from './Pages/PagesForAccountManager/AccountCandidateTable';
 import CandidateDetails from './Pages/PagesForAccountManager/CandidateDetails';
 import AdminJobTable from './Pages/PagesForAdmin/AdminJobTable';
 import AdminCandidateTable from './Pages/PagesForAdmin/AdminCandidateTable';
-import AdminJobDetails from './Pages/PagesForAdmin/AdminJobDetails';
+
 import AdminCandidateDetails from './Pages/PagesForAdmin/AdminCandidateDetails';
+import Job from './Pages/PagesForAccountManager/Job';
+import AdminJob from './Pages/PagesForAdmin/AdminJob';
 
 
 
@@ -63,7 +65,7 @@ function App() {
           },
           {
             path: "job/:id",
-            element: <AdminJobDetails/>,
+            element: <AdminJob/>,
           },
           {
             path: "candidate/:id",
@@ -103,7 +105,7 @@ function App() {
           },
           {
             path: "job/:id",
-            element: <JobDetails/>,
+            element: <Job/>,
           },
           {
             path: "candidate/:id",

@@ -52,12 +52,12 @@ const SideNavbar = () => {
         {isOpen && <span className="text-white">Enterprise</span>}
       </NavLink>
       <NavLink
-        to={getNavLinkPath("/admin/candidates")}
+        to={getNavLinkPath("/admin/recruiting-agency")}
         className={({ isActive }) => `hover:bg-gray-400 rounded-md p-2 ${!isOpen && "justify-center"} flex gap-2 ${isActive ? 'bg-gray-400' : ''}`}
       >
-        <CandidatesIcon className="w-[24px] text-white" />
+        <ActionIcon className="w-[24px] text-white" />
         <span className=""></span>
-        {isOpen && <span className="text-white">Candidates</span>}
+        {isOpen && <span className="text-white">Recruiting Agency</span>}
       </NavLink>
       <NavLink
         to={getNavLinkPath("/admin/jobs")}
@@ -68,45 +68,19 @@ const SideNavbar = () => {
         {isOpen && <span className="text-white">Post a Job</span>}
       </NavLink>
       <NavLink
-        to={getNavLinkPath("/admin/recruiting-agency")}
+        to={getNavLinkPath("/admin/candidates")}
         className={({ isActive }) => `hover:bg-gray-400 rounded-md p-2 ${!isOpen && "justify-center"} flex gap-2 ${isActive ? 'bg-gray-400' : ''}`}
       >
-        <ActionIcon className="w-[24px] text-white" />
+        <CandidatesIcon className="w-[24px] text-white" />
         <span className=""></span>
-        {isOpen && <span className="text-white">Recruiting Agency</span>}
+        {isOpen && <span className="text-white">Candidates</span>}
       </NavLink>
-      <NavLink
-        to={getNavLinkPath("/admin/offers")}
-        className={({ isActive }) => `hover:bg-gray-400 rounded-md p-2 ${!isOpen && "justify-center"} flex gap-2 ${isActive ? 'bg-gray-400' : ''}`}
-      >
-        <OffersIcon className="w-[24px] text-white" />
-        <span className=""></span>
-        {isOpen && <span className="text-white">Offers</span>}
-      </NavLink>
-      <NavLink
-        to={getNavLinkPath("/admin/videos")}
-        className={({ isActive }) => `hover:bg-gray-400 rounded-md p-2 ${!isOpen && "justify-center"} flex gap-2 ${isActive ? 'bg-gray-400' : ''}`}
-      >
-        <VideosIcon className="w-[24px] text-white" />
-        <span className=""></span>
-        {isOpen && <span className="text-white">Demo Videos</span>}
-      </NavLink>
-      <NavLink
-        to={getNavLinkPath("/admin/settings")}
-        className={({ isActive }) => `hover:bg-gray-400 rounded-md p-2 ${!isOpen && "justify-center"} flex gap-2 ${isActive ? 'bg-gray-400' : ''}`}
-      >
-        <SettingsIcon className="w-[24px] text-white" />
-        <span className=""></span>
-        {isOpen && <span className="text-white">Settings</span>}
-      </NavLink>
-      <NavLink
-        to={getNavLinkPath("/admin/support")}
-        className={({ isActive }) => `hover:bg-gray-400 rounded-md p-2 ${!isOpen && "justify-center"} flex gap-2 ${isActive ? 'bg-gray-400' : ''}`}
-      >
-        <ChatsIcon className="w-[24px] text-white" />
-        <span className=""></span>
-        {isOpen && <span className="text-white">Support</span>}
-      </NavLink>
+     
+     
+     
+     
+     
+    
     </div>
   );
 };
