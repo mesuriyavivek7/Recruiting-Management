@@ -1,4 +1,5 @@
 
+
 import { useState } from 'react'; 
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -28,7 +29,7 @@ function AdminJobDetails() {
 
   return (
     <div className='bg-gray-100 h-auto' >
-    <Box sx={{ width: '100%' }} className=" p-6 rounded-lg  font-noto-sans">
+    <Box sx={{ width: '100%' }} className=" p-6 rounded-lg  font-sans">
       <Tabs
         value={value}
         onChange={handleChange}
@@ -64,18 +65,19 @@ function AdminJobDetails() {
         {value === 'one' && (
           <div className="space-y-6 flex flex-col items-center p-4 ">
             {/* Job Profile */}
-            <div className="bg-white p-4 rounded-lg min-w-[500px] xl:min-w-[900px] space-y-2 ">
+            <div className="bg-white p-4 rounded-lg flex flex-col items-center w-full  space-y-2 ">
+              <div className='min-w-[500px] xl:min-w-[900px] space-y-3'>
             
               <h2 className="text-xl  xl:text-2xl font-semibold text-gray-800  flex items-center">
                 <FaBriefcase className="mr-3 text-2xl xl:text-3xl text-blue-600" /> Job Profile
               </h2>
               <p className="mt-2 xl:text-lg"><strong>Job Title:</strong> Software Engineer</p>
               <p className=" xl:text-lg"><strong>Job Description:</strong> Develop and maintain web applications...</p>
-        
+              </div>
             </div>
             {/* Job Location and Experience */}
-            <div className="bg-white p-4 rounded-lg gap-1 min-w-[500px] xl:min-w-[900px] space-y-2">
-              
+            <div className="bg-white p-4 rounded-lg gap-1 flex flex-col items-center w-full  space-y-2">
+            <div className='min-w-[500px] xl:min-w-[900px] space-y-3'>
               <h2 className="text-xl  xl:text-2xl font-semibold text-gray-800  flex items-center">
                 <FaMapMarkerAlt className="mr-3 text-2xl text-green-600" /> Job Location & Experience
               </h2>
@@ -87,9 +89,10 @@ function AdminJobDetails() {
               <p className=" xl:text-lg"><strong>Positions:</strong> 2</p>
               <p className=" xl:text-lg"><strong>Experience:</strong> 3-5 years</p>
             </div>
+            </div>
             {/* Other Details */}
-            <div className="bg-white p-4 rounded-lg min-w-[500px] xl:min-w-[900px] space-y-2 ">
-              
+            <div className="bg-white p-4 rounded-lg flex flex-col items-center w-full  space-y-2 ">
+            <div className='min-w-[500px] xl:min-w-[900px] space-y-3'>
               <h2 className="text-xl  xl:text-2xl font-semibold text-gray-800  flex items-center">
                 <FaInfoCircle className="mr-3 text-2xlxl:text-3xl text-purple-600" /> Other Details
               </h2>
@@ -106,6 +109,7 @@ function AdminJobDetails() {
         </p>
               </div>
               </div>
+              </div>
             </div>
           
         )}
@@ -116,23 +120,28 @@ function AdminJobDetails() {
             {/* Full-Time Remuneration Details */}
             {jobType === 'fulltime' && (
               <>
-                <div className="bg-white pt-2 p-4 rounded-lg shadow-sm flex items-start min-w-[500px] xl:min-w-[900px] ">
-                  <FaDollarSign className="text-2xl xl:text-3xl text-green-600" />
-                  <div  className=''>
-                    <h2 className="text-xl  xl:text-2xl font-semibold text-gray-800">Remuneration Details</h2>
+                <div className="bg-white pt-2 p-4 rounded-lg shadow-sm  flex flex-col items-center w-full ">
+                <div className='min-w-[500px] xl:min-w-[900px] space-y-3'>
+                  
+                  
+                    <h2 className="text-xl  xl:text-2xl font-semibold text-gray-800 flex gap-1"><FaDollarSign className="text-2xl xl:text-3xl text-green-600" />Remuneration Details</h2>
                     <p className='xl:text-lg'><strong>Annual Salary:</strong> $100,000 - $120,000</p>
                     <p className='xl:text-lg'><strong>Additional Salary Details:</strong> Performance bonuses included...</p>
-                  </div>
+                 
+                </div>
                 </div>
 
-                <div className="bg-white p-4 rounded-lg shadow-sm flex items-start space-x-4 min-w-[500px] xl:min-w-[900px]">
-                  <FaInfoCircle className="text-2xl xl:text-3xl text-blue-600" />
-                  <div>
-                    <h2 className="text-xl xl:text-2xl font-semibold text-gray-800">Commission</h2>
+                <div className="bg-white p-4 rounded-lg shadow-sm flex flex-col items-center w-full ">
+                <div className='min-w-[500px] xl:min-w-[900px] space-y-3'>
+                  
+                  <div className='space-y-3'>
+                    <h2 className="text-xl xl:text-2xl font-semibold text-gray-800 flex gap-1">  <FaInfoCircle className="text-2xl xl:text-3xl text-blue-600" />Commission</h2>
                     <p className='xl:text-lg'><strong>Commission Payout:</strong> 5% of annual salary</p>
                     <p className='xl:text-lg'><strong>Payment Terms:</strong> Upon candidate joining</p>
                     <p className='xl:text-lg'><strong>Replacement Clause:</strong> Applicable within 90 days</p>
                   </div>
+                </div>
+               
                 </div>
               </>
             )}
@@ -140,10 +149,11 @@ function AdminJobDetails() {
             {/* Contract Remuneration Details */}
             {jobType === 'contract' && (
               <>
-                <div className="bg-gray-50 p-4 rounded-lg shadow-sm flex items-start space-x-4 min-w-[500px] xl:min-w-[900px]">
-                  <FaClock className="text-2xl text-purple-600" />
-                  <div>
-                    <h2 className="text-xl  xl:text-2xl font-semibold text-gray-800">Contract Remuneration Details</h2>
+                <div className="bg-gray-50 p-4 rounded-lg shadow-sm flex flex-col items-center w-full ">
+                <div className='min-w-[500px] xl:min-w-[900px] '>
+                 
+                  <div className='space-y-3'>
+                    <h2 className="text-xl  xl:text-2xl font-semibold text-gray-800 flex gap-1"> <FaClock className="text-2xl text-purple-600" />Contract Remuneration Details</h2>
                     <p className='xl:text-lg'><strong>Contract Duration:</strong> 6 months</p>
                     <p className='xl:text-lg'><strong>Pay Rate:</strong> $50 per hour</p>
                     <p className='xl:text-lg'><strong>Pay Cycle:</strong> Bi-weekly</p>
@@ -151,14 +161,16 @@ function AdminJobDetails() {
                     <p className='xl:text-lg'><strong>Additional Pay Rate Details:</strong> Overtime applicable...</p>
                   </div>
                 </div>
-
-                <div className="bg-gray-50 p-4 rounded-lg shadow-sm flex items-start space-x-4 min-w-[500px] xl:min-w-[900px]">
-                  <FaCalendarAlt className="text-2xl text-red-600" />
-                  <div>
-                    <h2 className="text-xl  xl:text-2xl font-semibold text-gray-800">Commission</h2>
+                </div>
+                <div className="bg-gray-50 p-4 rounded-lg shadow-sm flex flex-col items-center w-full ">
+                <div className='min-w-[500px] xl:min-w-[900px] '>
+                  
+                  <div className='space-y-3'>
+                    <h2 className="text-xl  xl:text-2xl font-semibold text-gray-800 flex gap-1"><FaCalendarAlt className="text-2xl text-red-600" />Commission</h2>
                     <p className='xl:text-lg'><strong>Commission Payout:</strong> 5% of contract value</p>
                     < p className='xl:text-lg'><strong>Payment Terms:</strong> Upon candidate joining</p>
                   </div>
+                </div>
                 </div>
               </>
             )}
@@ -170,58 +182,64 @@ function AdminJobDetails() {
          <div className="  space-y-6 rounded-lg font-sans flex flex-col items-center ">
           
          
-          <div className="bg-white p-4 rounded-lg shadow-sm flex items-start space-x-4 min-w-[500px] xl:min-w-[900px]">
-      <FaStar className="text-2xl text-yellow-600" />
-      <div>
-        <h2 className="text-xl  xl:text-2xl font-semibold text-gray-800">Must Haves</h2>
-        <ul className="list-disc pl-5 mt-2">
+          <div className="bg-white p-4 rounded-lg shadow-sm flex flex-col items-center w-full ">
+          <div className='min-w-[500px] xl:min-w-[900px] space-y-3'>
+      
+      <div className='space-y-3'>
+        <h2 className="text-xl  xl:text-2xl font-semibold text-gray-800 flex gap-1"><FaStar className="text-2xl text-yellow-600" />Must Haves</h2>
+        <ul className="list-disc pl-5 mt-2 space-y-3">
           <li>Html</li>
           <li>CSS</li>
           <li>Javascript</li>
         </ul>
       </div>
     </div>
-
+    </div>
     {/* No Poach Clients */}
-    <div className="bg-white p-4 rounded-lg shadow-sm flex items-start space-x-4 min-w-[500px] xl:min-w-[900px]">
-      <FaBan className="text-2xl xl:text-3xl text-red-600" />
-      <div>
-        <h2 className="text-xl  xl:text-2xl font-semibold text-gray-800">No Poach Clients</h2>
+    <div className="bg-white p-4 rounded-lg shadow-sm flex flex-col items-center w-full ">
+    <div className='min-w-[500px] xl:min-w-[900px] space-y-3'>
+   
+      <div className='space-y-3'>
+        <h2 className="text-xl  xl:text-2xl font-semibold text-gray-800 flex gap-1">   <FaBan className="text-2xl xl:text-3xl text-red-600" />No Poach Clients</h2>
         <p className="mt-2 xl:text-lg">Strict no-nos for client poaching.</p>
       </div>
     </div>
+    </div>
 
     {/* Nice to Haves */}
-    <div className="bg-white p-4 rounded-lg shadow-sm flex items-start space-x-4 min-w-[500px] xl:min-w-[900px]">
-      <FaThumbsUp className="text-2xl  xl:text-3xl text-green-600" />
-      <div>
-        <h2 className="text-xl   xl:text-2xl font-semibold text-gray-800">Nice to Haves</h2>
-        <ul className="list-disc pl-5 mt-2">
+    <div className="bg-white p-4 rounded-lg shadow-sm flex flex-col items-center w-full ">
+    <div className='min-w-[500px] xl:min-w-[900px] space-y-3'>
+     
+      <div className='space-y-3'>
+        <h2 className="text-xl   xl:text-2xl font-semibold text-gray-800 flex gap-1" > <FaThumbsUp className="text-2xl  xl:text-3xl text-green-600" />Nice to Haves</h2>
+        <ul className="list-disc pl-5 mt-2 space-y-3">
           <li className=' xl:text-lg'>Java</li>
           <li className=' xl:text-lg'>Python</li>
           <li className=' xl:text-lg'>C++</li>
         </ul>
       </div>
     </div>
-
+    </div>
     {/* Target Companies */}
-    <div className="bg-white p-4 rounded-lg shadow-sm flex items-start space-x-4 min-w-[500px] xl:min-w-[900px]">
-      <FaBullseye className="text-2xl  xl:text-3xl text-blue-600" />
-      <div>
-        <h2 className="text-xl  xl:text-2xl font-semibold text-gray-800">Target Companies</h2>
-        <ul className="list-disc pl-5 mt-2">
+    <div className="bg-white p-4 rounded-lg shadow-sm flex flex-col items-center w-full ">
+    <div className='min-w-[500px] xl:min-w-[900px] space-y-3'>
+      
+      <div className='space-y-3'>
+        <h2 className="text-xl  xl:text-2xl font-semibold text-gray-800 flex gap-1"><FaBullseye className="text-2xl  xl:text-3xl text-blue-600" />Target Companies</h2>
+        <ul className="list-disc pl-5 mt-2 space-y-3 ">
           <li className=' xl:text-lg'>Motadata</li>
           <li className=' xl:text-lg'>Brevitaz</li>
           <li className=' xl:text-lg'>O2h</li>
         </ul>
       </div>
     </div>
-
+    </div>
    {/* Attachments */}
-    <div className="bg-white p-4 rounded-lg shadow-sm flex items-start space-x-4 min-w-[500px] xl:min-w-[900px]">
-      <FaPaperclip className="text-2xl  xl:text-3xl text-gray-600" />
-      <div>
-        <h2 className="text-xl  xl:text-2xl font-semibold text-gray-800">Attachments</h2>
+    <div className="bg-white p-4 rounded-lg shadow-sm flex flex-col items-center w-full ">
+    <div className='min-w-[500px] xl:min-w-[900px] space-y-3'>
+     
+      <div className='space-y-3'>
+        <h2 className="text-xl  xl:text-2xl font-semibold text-gray-800 flex gap-1 "> <FaPaperclip className="text-2xl  xl:text-3xl text-gray-600" />Attachments</h2>
         <ul className="list-disc pl-5 mt-2 space-y-2  ">
           {uploadedFiles.map((file, index) => (
             <li key={index} className="flex flex-col items-center  xl:text-lg">
@@ -244,6 +262,7 @@ function AdminJobDetails() {
         </ul>
       </div>
     </div>
+    </div>
      </div>
           }
         {value === 'five' &&  <div className="bg-white p-6 rounded-lg space-y-6 font-sans">
@@ -252,30 +271,30 @@ function AdminJobDetails() {
       <h2 className="text-xl  xl:text-2xl font-semibold text-gray-800 flex  gap-4 "><FaQuestionCircle className='text-red-600  '/>Screening Questions</h2>
       <div className="space-y-4 mt-4">
     
-        <div>
+        <div className='space-y-3'>
           <h3 className="text-lg  xl:text-xl font-semibold text-gray-700">Question 1:</h3>
-          <p className="mt-2 font-sans  xl:text-lg">What is your experience with React.js?</p>
+         
           <p className="mt-2 text-gray-600  xl:text-lg">Answer: I have 3 years of experience working with React.js, including developing and maintaining single-page applications, managing state with Redux, and integrating with REST APIs.</p>
         </div>
 
       
-        <div>
+        <div className='space-y-3'>
           <h3 className="text-lg xl:text-xl font-semibold text-gray-700">Question 2:</h3>
-          <p className="mt-2 font-sans xl:text-lg">Can you describe a challenging project you have worked on?</p>
+         
           <p className="mt-2 text-gray-600 xl:text-lg">Answer: One of the most challenging projects was a large-scale e-commerce platform where I had to optimize performance for high traffic and ensure data integrity across multiple services. I implemented caching strategies and used asynchronous processing to handle large volumes of data efficiently.</p>
         </div>
 
        
-        <div>
+        <div className='space-y-3'>
           <h3 className="text-lg xl:text-xl font-semibold text-gray-700">Question 3:</h3>
-          <p className="mt-2 font-sans xl:text-lg">How do you stay updated with the latest industry trends?</p>
+        
           <p className="mt-2 text-gray-600 xl:text-lg">Answer: I stay updated by following industry blogs, participating in webinars, and engaging in online communities. I also regularly read technical books and attend local meetups and conferences to network with other professionals and learn about new technologies.</p>
         </div>
 
       
-        <div>
+        <div className='space-y-3'>
           <h3 className="text-lg xl:text-xl font-semibold text-gray-700">Question 4:</h3>
-          <p className="mt-2 font-sans xl:text-lg">What strategies do you use for debugging and troubleshooting?</p>
+       
           <p className="mt-2 text-gray-600 xl:text-lg">Answer: I use a combination of debugging tools, logging, and systematic troubleshooting methods. I start by reproducing the issue consistently, then use breakpoints and inspect variables to understand the root cause. I also review logs and use tools like Chrome DevTools to diagnose and resolve issues.</p>
         </div>
       
