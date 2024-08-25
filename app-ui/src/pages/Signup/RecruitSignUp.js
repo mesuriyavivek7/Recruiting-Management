@@ -244,7 +244,7 @@ const RecruitSignUp = () => {
             <form className="flex flex-col gap-4">
               <div className="flex-start gap-2 w-full">
                 <label htmlFor="name" className="input-label">
-                  Full Name <span className="text-orange-800">*</span>
+                  Full Name <span className="text-green-800">*</span>
                 </label>
                 <input
                   type="text"
@@ -260,7 +260,7 @@ const RecruitSignUp = () => {
               </div>
               <div className="flex-start gap-2 w-full">
                 <label htmlFor="email" className="input-label">
-                  Official Email <span className="text-orange-800">*</span>
+                  Official Email <span className="text-green-800">*</span>
                 </label>
                 <input
                   type="email"
@@ -276,7 +276,7 @@ const RecruitSignUp = () => {
               </div>
               <div className="flex-start gap-2 w-full">
                 <label htmlFor="phoneNumber" className="input-label">
-                  Phone Number <span className="text-orange-800">*</span>
+                  Phone Number <span className="text-green-800">*</span>
                 </label>
                 <PhoneInput
                   country={"in"}
@@ -296,7 +296,7 @@ const RecruitSignUp = () => {
               <button
                 type="button"
                 onClick={nextStep}
-                className="w-full py-3 my-3 bg-orange-800 text-white rounded-md text-xl"
+                className="w-full py-3 my-3 bg-green-600 text-white rounded-md text-xl"
               >
                 Next
               </button>
@@ -309,7 +309,7 @@ const RecruitSignUp = () => {
             <form className="flex flex-col gap-4">
               <div className="flex-start gap-2 w-full">
                 <label htmlFor="company" className="input-label">
-                  Company Name <span className="text-orange-800">*</span>
+                  Company Name <span className="text-green-800">*</span>
                 </label>
                 <input
                   type="text"
@@ -325,7 +325,7 @@ const RecruitSignUp = () => {
               </div>
               <div className="flex-start gap-2 w-full">
                 <label htmlFor="size" className="input-label">
-                  Company Size <span className="text-orange-800">*</span>
+                  Company Size <span className="text-green-800">*</span>
                 </label>
                 <select
                   name="company_size"
@@ -348,7 +348,7 @@ const RecruitSignUp = () => {
               </div>
               <div className="flex-start gap-2 w-full">
                 <label htmlFor="designation" className="input-label">
-                  Designation <span className="text-orange-800">*</span>
+                  Designation <span className="text-green-800">*</span>
                 </label>
                 <input
                   type="text"
@@ -364,7 +364,7 @@ const RecruitSignUp = () => {
               </div>
               <div className="flex-start gap-2 w-full">
                 <label htmlFor="linkedinUrl" className="input-label">
-                  LinkedIn URL <span className="text-orange-800">*</span>
+                  LinkedIn URL <span className="text-green-800">*</span>
                 </label>
                 <input
                   type="url"
@@ -380,7 +380,7 @@ const RecruitSignUp = () => {
               </div>
               <div className="flex-start gap-2 w-full">
                 <label className="input-label">
-                  Interested In <span className="text-orange-800">*</span>
+                  Interested In <span className="text-green-800">*</span>
                 </label>
                 <div className="grid w-full grid-cols-2 gap-4">
                   <label>
@@ -432,7 +432,7 @@ const RecruitSignUp = () => {
                 <button
                   type="button"
                   onClick={prevStep}
-                  className="w-full py-3 my-3 border border-orange-800 text-orange-800 rounded-md text-xl"
+                  className="w-full py-3 my-3 border border-green-800 text-green-800 rounded-md text-xl"
                 >
                   <img
                     src={asset7}
@@ -445,7 +445,7 @@ const RecruitSignUp = () => {
                 <button
                   type="button"
                   onClick={nextStep}
-                  className="w-full py-3 my-3 bg-orange-800 text-white rounded-md text-xl"
+                  className="w-full py-3 my-3 bg-green-800 text-white rounded-md text-xl"
                 >
                   Next
                 </button>
@@ -459,7 +459,7 @@ const RecruitSignUp = () => {
             <form className="flex flex-col gap-4">
               <div className="flex-start gap-2 w-full">
                 <label htmlFor="country" className="input-label">
-                  Country <span className="text-orange-800">*</span>
+                  Country <span className="text-green-800">*</span>
                 </label>
                 <select
                   name="country"
@@ -481,7 +481,7 @@ const RecruitSignUp = () => {
               </div>
               <div className="flex-start gap-2 w-full">
                 <label htmlFor="state" className="input-label">
-                  State <span className="text-orange-800">*</span>
+                  State <span className="text-green-800">*</span>
                 </label>
                 <select
                   name="state"
@@ -507,7 +507,7 @@ const RecruitSignUp = () => {
               </div>
               <div className="flex-start gap-2 w-full">
                 <label htmlFor="city" className="input-label">
-                  City <span className="text-orange-800">*</span>
+                  City <span className="text-green-800">*</span>
                 </label>
                 <select
                   name="city"
@@ -531,7 +531,7 @@ const RecruitSignUp = () => {
               </div>
               <div className="flex-start gap-2 w-full">
                 <label htmlFor="city" className="input-label">
-                  Domains (Select up to 10 Domains) <span className="text-orange-800">*</span>
+                  Domains (Select up to 10 Domains) <span className="text-green-800">*</span>
                 </label>
                 <Multiselect
                     style={{
@@ -607,7 +607,7 @@ const RecruitSignUp = () => {
                 <button
                   type="button"
                   onClick={prevStep}
-                  className="w-full py-3 my-3 border border-orange-800 text-orange-800 rounded-md text-xl"
+                  className="w-full py-3 my-3 border border-green-800 text-green-800 rounded-md text-xl"
                 >
                   <img
                     src={asset7}
@@ -621,7 +621,7 @@ const RecruitSignUp = () => {
                   disabled={load}
                   type="button"
                   onClick={onSubmission}
-                  className="w-full py-3 my-3 bg-orange-800 text-white rounded-md text-xl disabled:bg-gray-400 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="w-full py-3 my-3 bg-green-800 text-white rounded-md text-xl disabled:bg-gray-400 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   Submit
                 </button>
@@ -674,28 +674,32 @@ const RecruitSignUp = () => {
   return (
     <main>
       <div className="recruit-content-container h-screen flex relative overflow-hidden">
-        <div className="recruit-form w-[38%] h-full overflow-y-scroll relative">
+        
+        <div className="login-image w-[58%] h-screen relative bg-gradient-to-b from-orange-800 to-black-900">
+          {renderFormImage()}
+        </div>
+        <div className="recruit-form w-[42%] h-full overflow-y-scroll relative">
           <div className="w-8/12 h-full py-16 flex flex-col place-items-start mx-auto">
             <div className="flex flex-col place-items-start w-full">
               <img src={asset1} alt="company-logo" className="w-32" />
               <h1 className="text-3xl mt-8 font-medium text-gray-900 w-8/12 leading-9">
-                Sign Up as a Recruiting Firm (Talent Supplier)
+                Recruiting Agency Signup
               </h1>
             </div>
             <div className="w-full relative flex gap-1 mt-5 place-items-center">
               <div
                 className={`w-4/12 h-1 ${
-                  activeState >= 1 ? "bg-orange-800" : "bg-gray-200"
+                  activeState >= 1 ? "bg-green-800" : "bg-gray-200"
                 }`}
               ></div>
               <div
                 className={`w-4/12 h-1 ${
-                  activeState >= 2 ? "bg-orange-800" : "bg-gray-200"
+                  activeState >= 2 ? "bg-green-800" : "bg-gray-200"
                 }`}
               ></div>
               <div
                 className={`w-4/12 h-1 ${
-                  activeState >= 3 ? "bg-orange-800" : "bg-gray-200"
+                  activeState >= 3 ? "bg-green-800" : "bg-gray-200"
                 }`}
               ></div>
             </div>
@@ -709,9 +713,6 @@ const RecruitSignUp = () => {
               </p>
             </div>
           </div>
-        </div>
-        <div className="login-image w-[62%] h-screen relative bg-gradient-to-b from-orange-800 to-black-900">
-          {renderFormImage()}
         </div>
       </div>
     </main>

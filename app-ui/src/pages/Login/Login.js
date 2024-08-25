@@ -58,13 +58,22 @@ const Login = () => {
   return (
     <div className="login max-w-full h-full relative overflow-hidden">
       <div className="login-content-container flex  place-items-center relative">
-        <div className="login-form w-[38%] relative">
+        
+        <div className="login-image w-[58%] h-screen relative bg-gradient-to-b from-blue-800 to-blue-900">
+          <img
+            src={asset2}
+            alt="login-image"
+            className="relative h-full object-contain mx-auto"
+          />
+        </div>
+
+        <div className="login-form w-[42%] relative">
           <div className="w-8/12 h-full flex flex-col mx-auto">
             <div className="flex flex-col place-items-center w-full">
               <img
                 src={asset1}
                 alt="company-logo"
-                className="w-32 h-32 rounded-sm"
+                className="w-40 h-15 rounded-sm"
               />
               <h1 className="text-3xl mt-6 font-medium text-gray-900">Login</h1>
             </div>
@@ -125,7 +134,7 @@ const Login = () => {
                     Forgot your password?
                   </Link>
                 </p>
-                <button disabled={loading} type="button" onClick={handleSubmit} className="w-full py-[6px] bg-blue-400 text-white rounded-md disabled:bg-gray-400 disabled:cursor-not-allowed disabled:opacity-50" >Login</button>
+                <button disabled={loading} type="button" onClick={handleSubmit} className="w-full py-[6px] bg-green-600 text-white rounded-md disabled:bg-gray-400 disabled:cursor-not-allowed disabled:opacity-50" >Login</button>
               </form>
               <div className="text-sm mt-6">
                 <p className="text-gray-400">
@@ -153,13 +162,6 @@ const Login = () => {
               </div>
             </div>
           </div>
-        </div>
-        <div className="login-image w-[62%] h-screen relative bg-gradient-to-b from-blue-800 to-blue-900">
-          <img
-            src={asset2}
-            alt="login-image"
-            className="relative h-full object-contain mx-auto"
-          />
         </div>
       </div>
     </div>

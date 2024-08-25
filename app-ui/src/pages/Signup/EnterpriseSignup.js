@@ -176,23 +176,32 @@ const EnterpriseSignup = () => {
   return (
     <main>
       <div className="recruit-content-container h-screen flex relative overflow-hidden">
-        <div className="recruit-form w-[38%] h-full overflow-y-scroll relative">
+       
+        <div className="login-image w-[58%] h-screen relative bg-gradient-to-b from-orange-800 via-black-900 to-black-900">
+        <img
+            src={asset10}
+            alt="login-image"
+            className="relative p-28 h-full mx-auto"
+          />
+        </div>
+
+        <div className="recruit-form w-[42%] h-full overflow-y-scroll relative">
           <div className="w-8/12 h-full py-16 flex flex-col place-items-start mx-auto">
             <div className="flex flex-col place-items-start w-full">
               <img
                 src={asset3}
                 alt="company-logo"
-                className="w-32 h-32 rounded-sm"
+                className="w-40 h-15 rounded-sm"
               />
               <h1 className="text-3xl mt-6 w-8/12 font-medium text-gray-900">
-                Sign Up as a Enterprise
+                Enterprise Signup
               </h1>
             </div>
             <div className="w-full relative mt-8">
               <form className="flex flex-col gap-3">
                 <div className="flex-start gap-2 w-full">
                   <label htmlFor="name" className="input-label">
-                    Full Name <span className="text-orange-800">*</span>
+                    Full Name <span className="text-green-800">*</span>
                   </label>
                   <input
                     type="text"
@@ -209,7 +218,7 @@ const EnterpriseSignup = () => {
                 </div>
                 <div className="flex-start gap-2 w-full">
                   <label htmlFor="email" className="input-label">
-                    Official Email <span className="text-orange-800">*</span>
+                    Official Email <span className="text-green-800">*</span>
                   </label>
                   <input
                     type="email"
@@ -226,7 +235,7 @@ const EnterpriseSignup = () => {
                 </div>
                 <div className="flex-start gap-2 w-full">
                   <label htmlFor="phonenumber" className="input-label">
-                    Phone Number <span className="text-orange-800">*</span>
+                    Phone Number <span className="text-green-800">*</span>
                   </label>
                   <PhoneInput
                   country={"in"}
@@ -245,7 +254,7 @@ const EnterpriseSignup = () => {
                 </div>
                 <div className="flex-start gap-2 w-full">
                   <label htmlFor="designation" className="input-label">
-                    Designation <span className="text-orange-800">*</span>
+                    Designation <span className="text-green-800">*</span>
                   </label>
                   <input
                     type="text"
@@ -262,7 +271,7 @@ const EnterpriseSignup = () => {
                 </div>
                 <div className="flex-start gap-2 w-full">
                   <label htmlFor="company" className="input-label">
-                    Company Name <span className="text-orange-800">*</span>
+                    Company Name <span className="text-green-800">*</span>
                   </label>
                   <input
                     type="text"
@@ -279,7 +288,7 @@ const EnterpriseSignup = () => {
                 </div>
                 <div className="flex-start gap-2 w-full">
                   <label htmlFor="size" className="input-label">
-                    Company Size <span className="text-orange-800">*</span>
+                    Company Size <span className="text-green-800">*</span>
                   </label>
                   <select
                     name="company_size"
@@ -296,7 +305,7 @@ const EnterpriseSignup = () => {
                 </div>
                 <div className="flex-start gap-2 w-full">
                   <label htmlFor="country" className="input-label">
-                    Country <span className="text-orange-800">*</span>
+                    Country <span className="text-green-800">*</span>
                   </label>
                   <select
                     name="country"
@@ -319,7 +328,7 @@ const EnterpriseSignup = () => {
                 </div>
                 <div className="flex-start gap-2 w-full">
                   <label htmlFor="state" className="input-label">
-                    State <span className="text-orange-800">*</span>
+                    State <span className="text-green-800">*</span>
                   </label>
                   <select
                     name="state"
@@ -346,7 +355,7 @@ const EnterpriseSignup = () => {
                 </div>
                 <div className="flex-start gap-2 w-full">
                   <label htmlFor="city" className="input-label">
-                    City <span className="text-orange-800">*</span>
+                    City <span className="text-green-800">*</span>
                   </label>
                   <select
                     name="city"
@@ -372,7 +381,7 @@ const EnterpriseSignup = () => {
                 <button
                   type="button"
                   onClick={handleSubmit}
-                  className="w-full py-3 my-3 bg-orange-800 text-white rounded-md text-xl disabled:bg-gray-400 disabled:cursor-not-allowed disabled:opacity-50 "
+                  className="w-full py-3 my-3 bg-green-600 text-white rounded-md text-xl disabled:bg-gray-400 disabled:cursor-not-allowed disabled:opacity-50 "
                   disabled={load}
                 >
                   Sign Up   
@@ -391,13 +400,6 @@ const EnterpriseSignup = () => {
               </div>
             </div>
           </div>
-        </div>
-        <div className="login-image w-[62%] h-screen relative bg-gradient-to-b from-orange-800 via-black-900 to-black-900">
-        <img
-            src={asset10}
-            alt="login-image"
-            className="relative p-28 h-full mx-auto"
-          />
         </div>
       </div>
     </main>
