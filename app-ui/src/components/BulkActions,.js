@@ -25,7 +25,6 @@ const BulkActions = () => {
         <div className="border-b-2 border-blue-600 pb-1 cursor-pointer">
           Send Messages
         </div>
-        <div className="cursor-pointer">Change Resume Status</div>
       </div>
 
       {emails.length === 0 ? (

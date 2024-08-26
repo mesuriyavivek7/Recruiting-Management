@@ -26,7 +26,7 @@ input[type="file"]::file-selector-button {
 }
 @layer components {
   .custom-div {
-    @apply relative pt-3 pb-8 px-4  bg-white rounded-md custom-shadow-1 flex flex-col place-items-start gap-3;
+    @apply pt-3 pb-8 px-4  bg-white rounded-md custom-shadow-1 flex flex-col place-items-start gap-3;
   }
   .flex-start {
     @apply flex flex-col place-items-start;
