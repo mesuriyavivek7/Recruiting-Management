@@ -35,11 +35,16 @@ const PostJobForm2 = ({ onNext }) => {
     if(name==="fixedSalary" || (name==="fullTimeSalaryType" && value==="Fixed")){
       delete fullTimeFormData.minSalary
       delete fullTimeFormData.maxSalary
-      fullTimeFormData['fixedSalary']=''
+      if(name==="fullTimeSalaryType" && value==="Fixed"){
+        fullTimeFormData['fixedSalary']=''
+      }
+      
     }else if(name==="minSalary" || name==="maxSalary" || (name==="fullTimeSalaryType" && value==="Range")){
        delete fullTimeFormData.fixedSalary
-       fullTimeFormData['minSalary']=''
-       fullTimeFormData['maxSalary']=''
+       if(name==="fullTimeSalaryType" && value==="Range"){
+        fullTimeFormData['minSalary']=''
+        fullTimeFormData['maxSalary']=''
+       }
     }
     setFullTimeFormData((prevData)=>({
       ...prevData,
@@ -52,11 +57,15 @@ const PostJobForm2 = ({ onNext }) => {
     if(name==="fixContractPay" || (name==="contractPayRateType" && value==="Fixed")){
         delete contractFormData.minContractPayRate
         delete contractFormData.maxContractPayRate
-        contractFormData['fixContractPay']=''
+        if(name==="contractPayRateType" && value==="Fixed"){
+          contractFormData['fixContractPay']=''
+        }
     }else if(name==="minContractPayRate" || name==="maxContractPayRate" || (name==="contractPayRateType" && value==="Range")){
       delete contractFormData.fixContractPay
-      contractFormData['minContractPayRate']=''
-      contractFormData['maxContractPayRate']=''
+      if(name==="contractPayRateType" && value==="Range"){
+        contractFormData['minContractPayRate']=''
+        contractFormData['maxContractPayRate']=''
+      }
     }
     setContractFormData((prevData)=>({
       ...prevData,
@@ -93,10 +102,14 @@ const PostJobForm2 = ({ onNext }) => {
     const {name,value,type,checked}=e.target
     if(name==="commissionFixPay" || (name==="commissionType" && value==="Fixed")){
         delete commissionFormData.commissionPercentage
-        commissionFormData['commissionFixPay']=''
+        if(name==="commissionType" && value==="Fixed"){
+          commissionFormData['commissionFixPay']=''
+        }
     }else if(name==="commissionPercentage" || (name==="commissionType" && value==="Percentage")){
         delete commissionFormData.commissionFixPay
-        commissionFormData['commissionPercentage']=''
+        if(name==="commissionType" && value==="Percentage"){
+          commissionFormData['commissionPercentage']=''
+        }
     }
     setCommissionFormData((prevData)=>({
       ...prevData,
@@ -104,7 +117,6 @@ const PostJobForm2 = ({ onNext }) => {
     }))
        
   }
-
   console.log(fullTimeFormData)
 
   const [errors, setErrors] = useState({});
@@ -119,7 +131,7 @@ const PostJobForm2 = ({ onNext }) => {
       if(fullTimeFormData.fullTimeSalaryType==='Range'){
         console.log("kuch to gad bad he")
         if(fullTimeFormData.minSalary==='' || fullTimeFormData.maxSalary==='') newErrors.fullTimeSalary="Min or Max salary is required."
-        else if(fullTimeFormData.minSalary>fullTimeFormData.maxSalary) newErrors.fullTimeSalary="Min Salary must be lower then max salary."
+        else if(parseInt(fullTimeFormData.minSalary)>parseInt(fullTimeFormData.maxSalary)) newErrors.fullTimeSalary="Min Salary must be lower then max salary."
       }else{
         if(fullTimeFormData.fixedSalary==='') newErrors.fixedSalary="Fix salary is required"
       }
@@ -130,7 +142,7 @@ const PostJobForm2 = ({ onNext }) => {
        if(contractFormData.contractDurationCount==='') newErrors.contractDurationCount="Duration time is required."
        if(contractFormData.contractPayRateType==="Range"){
          if(contractFormData.minContractPayRate==='' || contractFormData.maxContractPayRate==='') newErrors.contratRangePay="Min Contract pay is required."
-         else if(contractFormData.minContractPayRate>contractFormData.maxContractPayRate) newErrors.contratRangePay="Min contract pay must be less then Max contract pay."
+         else if(parseInt(contractFormData.minContractPayRate)>parseInt(contractFormData.maxContractPayRate)) newErrors.contratRangePay="Min contract pay must be less then Max contract pay."
        }else{
           if(contractFormData.fixContractPay==='') newErrors.fixContractPay="Contract pay required."
        }
@@ -155,8 +167,8 @@ const PostJobForm2 = ({ onNext }) => {
   const [dailyHourCnt,setDailyHourCnt]=useState(1)
 
   const handleNext = () => {
-    if (validate()) {
-      onNext();
+    if(validate()){
+      onNext()
     }
   };
 
@@ -918,7 +930,7 @@ const PostJobForm2 = ({ onNext }) => {
              </div>
              {
                errors.hourCnt && (
-                   <p className="text-red-600 text-sm mt-2">{errors.contractPayCycle}</p>
+                   <p className="text-red-600 text-sm mt-2">{errors.hourCnt}</p>
                )
              }
              

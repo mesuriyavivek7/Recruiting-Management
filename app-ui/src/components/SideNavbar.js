@@ -53,9 +53,11 @@ const SideNavbar = () => {
           <SettingsIcon className="w-[24px] text-white" />
         </div>
       </Link>
+      <Link to="support">
         <div className="hover:bg-gray-400 rounded-md p-2">
           <ChatsIcon className="w-[24px] text-white" />
         </div>
+        </Link>
     </div>
   );
 };

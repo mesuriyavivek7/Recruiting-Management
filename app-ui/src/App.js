@@ -12,6 +12,7 @@ import DemoVideosPage from "./components/DemoVideos";
 import JobPostings from "./components/JobPostings";
 import BulkActions from "./components/BulkActions,";
 import OffersPage from "./components/OffersPage";
+import Support from "./pages/Support";
 
 const App = () => {
   const AppRouter = createBrowserRouter([
@@ -63,6 +64,10 @@ const App = () => {
           path: "offers",
           element: <OffersPage/>,
         },
+        {
+          path: "support",
+          element:<Support/>
+        }
       ],
     },
   ]);
