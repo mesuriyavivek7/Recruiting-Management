@@ -39,7 +39,7 @@ const JobPostings = () => {
               activeState === 1
                 ? "border-blue-400 border-b-2 text-blue-400"
                 : ""
-            }  pb-1`}
+            }  pb-1 cursor-pointer`}
             onClick={() => setActiveState(1)}
           >
             Past Jobs 1
@@ -50,9 +50,9 @@ const JobPostings = () => {
               activeState === 2
                 ? "border-blue-400 border-b-2 text-blue-400"
                 : ""
-            }`}
+            } cursor-pointer`}
           >
-            Drafts 0
+            Drafts 1
           </li>
         </ul>
 

@@ -20,7 +20,9 @@ module.exports = {
         "orange-800":"#D95B01",
         "black-900":"#0c0500",
         "white-200":"#e2e8f0",
-        "white-400":"#f1f5f9"
+        "white-400":"#f1f5f9",
+        "gray-800":"#475569",
+        "purple-200":"#575757"
 
       }
     },

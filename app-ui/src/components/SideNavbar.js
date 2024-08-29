@@ -25,9 +25,11 @@ const SideNavbar = () => {
         <div className="hover:bg-gray-400 rounded-md p-2">
           <JobsIcon className="w-[24px] text-white" />
         </div>
+       <Link to="candidate">
         <div className="hover:bg-gray-400 rounded-md p-2">
           <CandidatesIcon className="w-[24px] text-white" />
         </div>
+        </Link>
       <Link to="jobposting/landing">
         <div className="hover:bg-gray-400 rounded-md p-2">
           <PostIcon className="w-[24px] text-white" />

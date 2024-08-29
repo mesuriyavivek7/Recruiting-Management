@@ -45,6 +45,13 @@ const Dashboard = () => {
          try{
           //make request for creating new team member
           await axios.post(`${process.env.REACT_APP_API_BASE_URL}/enterpriseteam`,{enterprise_id:user.enterprise_id,full_name:teamFormData.full_name,email:teamFormData.email})
+
+          //send notify mail to team member
+          await axios.post(`${process.env.REACT_APP_API_BASE_URL}/mail/sendteammember`,{to:teamFormData.email,name:teamFormData.full_name,inviter_name:user.full_name})
+
+          //send verify mail
+          await axios.post(`${process.env.REACT_APP_API_BASE_URL}/mail/sendverificationenterpriseteam`,{email:teamFormData.email,name:teamFormData.full_name})
+
           teamFormData.full_name=''
           teamFormData.email=''
           showNotification("Successfully new team member added","success")
@@ -62,7 +69,7 @@ const Dashboard = () => {
   const [openPopUp,setOpenPopUp]=useState(false)
   
   return (
-    <div className='flex flex-col gap-4'>
+    <div className='flex flex-col gap-2'>
        {
         notification && <Notification message={notification.message} type={notification.type} onClick={()=>setNotification(null)}></Notification>
        }
@@ -108,7 +115,21 @@ const Dashboard = () => {
                       )
                     }
                   </div>
-                  <button disabled={teamLoad} onClick={handleTeamDataSubmit} className='w-full text-white py-1 mt-2 hover:bg-blue-400 rounded-sm bg-blue-700 disabled:bg-slate-600 disabled:cursor-no-drop'>Add Member</button>
+                  <button disabled={teamLoad} onClick={handleTeamDataSubmit} className='w-full relative text-white py-1 mt-2 hover:bg-blue-400 rounded-sm bg-blue-700 disabled:bg-slate-600 disabled:cursor-no-drop'>
+                                {
+                                  teamLoad && 
+                                     <span className="flex items-center justify-center">
+                                          <svg className="w-5 h-5 text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l5.6-3.2a10 10 0 00-10.4 0L4 12z"></path>
+                                          </svg>
+                                     </span>
+                                }  
+                                {
+                                  !teamLoad && ("Add Member")
+                                }   
+                                
+                  </button>
                 </div>
               </div>
 
@@ -158,6 +179,51 @@ const Dashboard = () => {
               </div>
               <p className='text-gray-600'>Pending Jobs</p>
            </div>
+        </div>
+      </div>
+      <div className='custom-div'>
+        <h1>Resumes</h1>
+        <div className='w-full flex gap-4'>
+          <div className='flex flex-1 flex-col'>
+            <h1 className='text-2xl'>0</h1>
+            <p className='text-sm text-gray-600'>Total Resumes</p>
+            <p className='text-sm text-gray-600'>(No Duplicates)</p>
+          </div>
+          <div className='custom-div flex-1 gap-2'>
+            <div className='flex gap-2 items-center'>
+             <div className='h-2 w-2 bg-green-500 rounded-full'></div>
+             <h1 className='text-2xl'>0</h1>
+            </div>
+            <p className='text-gray-600 text-sm'>New</p>
+          </div>
+          <div className='custom-div flex-1 gap-2'>
+            <div className='flex gap-2 items-center'>
+              <div className='h-2 w-2 bg-slate-500 rounded-full'></div>
+              <h1 className='text-2xl'>0</h1>
+            </div>
+            <p className='text-gray-600 text-sm'>Under Process</p>
+          </div>
+          <div className='custom-div flex-1 gap-2'>
+            <div className='flex gap-2 items-center'>
+              <div className='h-2 w-2 bg-blue-500 rounded-full'></div>
+              <h1 className='text-2xl'>0</h1>
+            </div>
+            <p className='text-gray-600 text-sm'>Selected</p>
+          </div>
+          <div className='custom-div flex-1 gap-2'>
+            <div className='flex gap-2 items-center'>
+              <div className='h-2 w-2 bg-red-500 rounded-full'></div>
+              <h1 className='text-2xl'>0</h1>
+            </div>
+            <p className='text-gray-600 text-sm'>Rejected</p>
+          </div>
+          <div className='custom-div flex-1 gap-2'>
+            <div className='flex gap-2 items-center'>
+              <div className='h-2 w-2 bg-orange-500 rounded-full'></div>
+              <h1 className='text-2xl'>0</h1>
+            </div>
+            <p className='text-gray-600 text-sm'>Others</p>
+          </div>
         </div>
       </div>
     </div>

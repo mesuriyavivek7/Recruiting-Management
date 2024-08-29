@@ -13,6 +13,7 @@ import JobPostings from "./components/JobPostings";
 import BulkActions from "./components/BulkActions,";
 import OffersPage from "./components/OffersPage";
 import Support from "./pages/Support";
+import Candidate from "./pages/Candidate/Candidate";
 
 const App = () => {
   const AppRouter = createBrowserRouter([
@@ -67,6 +68,10 @@ const App = () => {
         {
           path: "support",
           element:<Support/>
+        },
+        {
+          path: "candidate",
+          element: <Candidate></Candidate>
         }
       ],
     },
