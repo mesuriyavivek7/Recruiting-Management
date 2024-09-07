@@ -8,11 +8,11 @@ import asset9 from "../../assets/asset 9.svg";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import Multiselect from 'multiselect-react-dropdown';
+import Notification from "../../components/Notification";
+
 
 //importing axios
 import axios from 'axios'
-
-
 
 
 const RecruitSignUp = () => {
@@ -40,6 +40,17 @@ const RecruitSignUp = () => {
   const [selectedState, setSelectedState] = useState('');
   const [selectedCity, setSelectedCity] = useState('');
   const [load,setLoad]=useState(false)
+  const [checkMobileno,setCheckMobileNo]=useState(false)
+  const [emailCheck,setEmailCheck]=useState(false)
+  const [firtsStepLoad,setFirstStepLoad]=useState(false)
+
+
+  const [notification,setNotification]=useState(null)
+
+  //for showing notification
+  const showNotification=(message,type)=>{
+     setNotification({message,type})
+  }
 
   useEffect(() => {
     getCountries();
@@ -148,20 +159,66 @@ const RecruitSignUp = () => {
      }
   }
 
+  useEffect(()=>{
+      if(emailCheck) handleMobileCheck()
+  },[emailCheck])
+
+  useEffect(()=>{
+     if(checkMobileno){
+      setFirstStepLoad(false)
+      nextStep()
+     }
+  },[checkMobileno])
+
+
+  const handleCheckMail=async ()=>{
+    if(validateForm()){
+      setFirstStepLoad(true)
+      try{
+        const res=await axios.post(`${process.env.REACT_APP_API_BASE_URL}/authrecruiting/checkemail`,{email:formData.email})
+        if(res.data===false) setEmailCheck(true)
+        else {
+           setFirstStepLoad(false)
+           showNotification("Email address is already exist...!","failure")
+        }
+      }catch(err){
+        console.log("Internal error")
+        setFirstStepLoad(false)
+        showNotification("There is something wrong...!",'failure')
+      }
+    }
+  }
+
+  const handleMobileCheck=async ()=>{
+    if(validateForm()){
+      try{
+        const res=await axios.post(`${process.env.REACT_APP_API_BASE_URL}/authrecruiting/checkmobileno`,{mobileno:formData.mobileno})
+        if(res.data===false) setCheckMobileNo(true)
+        else {
+           setFirstStepLoad(false)
+           showNotification("Mobile no is already exist....!","failure")
+        }
+      }catch(err){
+        setFirstStepLoad(false)
+        showNotification("There is something wrong...!","failure")
+      }
+    }
+  }
   
   const validateForm = () => {
     let newErrors = {};
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     switch (activeState) {
       case 1:
-        if (!formData.full_name) newErrors.name = "Full Name is required";
-        if (!formData.email) newErrors.email = "Official Email is required";
-        if (!formData.mobileno)
-          newErrors.phoneNumber = "Phone Number is required";
-        if(formData.mobileno.length<12) newErrors.phoneNumber="Phone Number is invalid";
+        if (!formData.full_name) newErrors.name = "Full Name is required.";
+        if (!formData.email) newErrors.email = "Official Email is required.";
+        else if(!emailRegex.test(formData.email)) newErrors.email="Email address is invalid."
+        if (!formData.mobileno) newErrors.phoneNumber = "Phone Number is required.";
+        if(formData.mobileno.length<12) newErrors.phoneNumber="Phone Number is invalid.";
         break;
       case 2:
-        if (!formData.company_name) newErrors.company = "Company Name is required";
-        if (!formData.company_size) newErrors.size = "Company Size is required";
+        if (!formData.company_name) newErrors.company = "Company Name is required.";
+        if (!formData.company_size) newErrors.size = "Company Size is required.";
         if (!formData.designation)
           newErrors.designation = "Designation is required";
         if (!formData.linkedin_url)
@@ -180,6 +237,9 @@ const RecruitSignUp = () => {
         break;
       default:
         break;
+    }
+    if(Object.keys(newErrors).length>0){
+      showNotification("Please fill out appropriate fields...","failure")
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -219,7 +279,6 @@ const RecruitSignUp = () => {
        }
 
        await axios.post(`${process.env.REACT_APP_API_BASE_URL}/mail/sendverificaitionrecruiting`,emailverify)
-       setLoad(false)
       
        //update masteradmin pending list
        await axios.post(`${process.env.REACT_APP_API_ADMIN_URL}/masteradmin/addragency`,{country:recruitinguser.data.country,id:recruitinguser.data._id})
@@ -227,9 +286,11 @@ const RecruitSignUp = () => {
        //navigate user to kyc page
        navigate("/signup/supplier/kyc",{state:{recruiting_id:recruitinguser.data._id}})
       }catch(err){
-        newErrors.internal="There is something wrong";
+        showNotification("There is something wrong","failure")
+        newErrors.internal="There is something wrong...!";
         setErrors(newErrors)
       }
+      setLoad(false)
    }
    
 
@@ -240,6 +301,7 @@ const RecruitSignUp = () => {
     switch (activeState) {
       case 1:
         return (
+          <>
           <div className="w-full relative mt-6">
             <form className="flex flex-col gap-4">
               <div className="flex-start gap-2 w-full">
@@ -295,16 +357,20 @@ const RecruitSignUp = () => {
               </div>
               <button
                 type="button"
-                onClick={nextStep}
-                className="w-full py-3 my-3 bg-green-600 text-white rounded-md text-xl"
+                onClick={handleCheckMail}
+                disabled={firtsStepLoad}
+                className="w-full py-3 my-3 bg-green-600 text-white rounded-md text-xl disabled:cursor-not-allowed disabled:opacity-50 "
               >
                 Next
               </button>
             </form>
           </div>
+          </>
         );
       case 2:
         return (
+          <>
+          
           <div className="w-full relative mt-6">
             <form className="flex flex-col gap-4">
               <div className="flex-start gap-2 w-full">
@@ -452,9 +518,11 @@ const RecruitSignUp = () => {
               </div>
             </form>
           </div>
+          </>
         );
       case 3:
         return (
+          <>
           <div className="w-full relative mt-6">
             <form className="flex flex-col gap-4">
               <div className="flex-start gap-2 w-full">
@@ -623,7 +691,16 @@ const RecruitSignUp = () => {
                   onClick={onSubmission}
                   className="w-full py-3 my-3 bg-green-800 text-white rounded-md text-xl disabled:bg-gray-400 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  Submit
+                                      <span className="flex items-center justify-center">
+                                           {
+                                            load && 
+                                            <svg className="w-5 h-5 mr-2 text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l5.6-3.2a10 10 0 00-10.4 0L4 12z"></path>
+                                            </svg>
+                                           }
+                                            <span>Sign Up</span>
+                                      </span>
                 </button>
               </div>
               {
@@ -633,6 +710,7 @@ const RecruitSignUp = () => {
               }
             </form>
           </div>
+          </>
         );
       default:
         return null;
@@ -674,11 +752,11 @@ const RecruitSignUp = () => {
   return (
     <main>
       <div className="recruit-content-container h-screen flex relative overflow-hidden">
-        
         <div className="login-image w-[58%] h-screen relative bg-gradient-to-b from-orange-800 to-black-900">
           {renderFormImage()}
         </div>
         <div className="recruit-form w-[42%] h-full overflow-y-scroll relative">
+         {notification && <Notification message={notification.message} type={notification.type} onClose={()=>setNotification(null)}></Notification>}
           <div className="w-8/12 h-full py-16 flex flex-col place-items-start mx-auto">
             <div className="flex flex-col place-items-start w-full">
               <img src={asset1} alt="company-logo" className="w-32" />

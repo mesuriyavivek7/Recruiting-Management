@@ -17,8 +17,8 @@ import authEnterpriseRoute from './routes/authEnterprise.js'
 import recruitingRoutes from './routes/recruiting.js'
 import authRoute from './routes/auth.js'
 import enterpriseRoute from './routes/enterprise.js'
-import jobRoute from './routes/job.js'
 import enterpriseTeamRoute from './routes/enterpriseTeam.js'
+import jobRoute from './routes/jobs.js'
 
 // Get the directory name
 const __filename = fileURLToPath(import.meta.url);
@@ -80,8 +80,8 @@ app.use('/api/authenterprise',authEnterpriseRoute)
 app.use('/api/recruiting',recruitingRoutes)
 app.use('/api/auth',authRoute)
 app.use('/api/enterprise',enterpriseRoute)
-app.use('/api/job',jobRoute)
 app.use('/api/enterpriseteam',enterpriseTeamRoute)
+app.use('/api/job',jobRoute)
 
 app.get('/',(req,res)=>{
     res.send("Bahut maja ara hai bhai🐱")

@@ -1,33 +1,44 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import Notification from "../Notification";
+import { AuthContext } from "../../context/AuthContext";
+const PostJobForm2 = ({ onNext,onPrev,onFormDataChange,jobid,handleDraftSave,parentFormData}) => {
 
-const PostJobForm2 = ({ onNext }) => {
+  const {user}= useContext(AuthContext)
+  const [actionMode,setActionMode]=useState({next:false,draft:false})
+
+  //for showing notification
+  const [notification,setNotification]=useState(null)
+
+   //for showing notification
+   const showNotification=(message,type)=>{
+    setNotification({message,type})
+  }
+
   const [fullTimeFormData, setFullTimeFormData] = useState({
-    fullTimeSalaryType:'Range',
-    fullTimeSalaryCurrency:'INR',
-    additionalSalaryDetails:'',
-    minSalary:'',
-    maxSalary:'',
+    fullTimeSalaryType:(Object.keys(parentFormData.form2.work_details.full_time).length>0)?(parentFormData.form2.work_details.full_time.full_time_salary_type):("Range"),
+    fullTimeSalaryCurrency:(Object.keys(parentFormData.form2.work_details.full_time).length>0)?(parentFormData.form2.work_details.full_time.full_time_salary_currency):("INR"),
+    additionalSalaryDetails:(Object.keys(parentFormData.form2.work_details.full_time).length>0)?(parentFormData.form2.work_details.full_time.additional_salary_details):(""),
+    ...((Object.keys(parentFormData.form2.work_details.full_time).length>0)?((parentFormData.form2.work_details.full_time.full_time_salary_type==="Range")?({minSalary:parentFormData.form2.work_details.full_time.min_salary,maxSalary:parentFormData.form2.work_details.full_time.max_salary}):({fixedSalary:parentFormData.form2.work_details.full_time.fixed_salary})):({maxSalary:'',minSalary:''}))
   });
 
   const [contractFormData,setContractFormData]=useState({
-    contractDurationType:'weekly',
-    contractDurationCount:'',
-    contractPayRateType:'Range',
-    contractPayCurrency:'INR',
-    minContractPayRate:'',
-    maxContractPayRate:'',
-    contractPayCycle:'',
-    additionalContractDetails:'',
-    weeklyHourCnt:1,
-    dailyHourCnt:1,
-    remarks:''
+    contractDurationType:(Object.keys(parentFormData.form2.work_details.contract).length>0)?(parentFormData.form2.work_details.contract.contract_duration_type):("weekly"),
+    contractDurationCount:(Object.keys(parentFormData.form2.work_details.contract).length>0)?(parentFormData.form2.work_details.contract.contract_duration_count):(""),
+    contractPayRateType:(Object.keys(parentFormData.form2.work_details.contract).length>0)?(parentFormData.form2.work_details.contract.contract_pay_rate_type):("Range"),
+    contractPayCurrency:(Object.keys(parentFormData.form2.work_details.contract).length>0)?(parentFormData.form2.work_details.contract.contract_pay_currency):("INR"),
+    ...((Object.keys(parentFormData.form2.work_details.contract).length>0)?((parentFormData.form2.work_details.contract.contract_pay_rate_type==="Range")?({minContractPayRate:parentFormData.form2.work_details.contract.min_contract_pay,maxContractPayRate:parentFormData.form2.work_details.contract.max_contract_pay}):({fixContractPay:parentFormData.form2.work_details.contract.fix_contract_pay})):({minContractPayRate:"",maxContractPayRate:""})),
+    contractPayCycle:(Object.keys(parentFormData.form2.work_details.contract).length>0)?(parentFormData.form2.work_details.contract.contract_pay_cycle):(""),
+    additionalContractDetails:(Object.keys(parentFormData.form2.work_details.contract).length>0)?(parentFormData.form2.work_details.contract.additional_contract_details):(""),
+    weeklyHourCnt:(Object.keys(parentFormData.form2.work_details.contract).length>0)?(parentFormData.form2.work_details.contract.weekly_hour_cnt):(1),
+    dailyHourCnt:(Object.keys(parentFormData.form2.work_details.contract).length>0)?(parentFormData.form2.work_details.contract.daily_hour_cnt):(1),
+    remarks:(Object.keys(parentFormData.form2.work_details.contract).length>0)?(parentFormData.form2.work_details.contract.remarks):("")
   })
 
   const [commissionFormData,setCommissionFormData]=useState({
-    commissionType:'Fixed',
-    billingCycle:'',
-    commissionFixPay:''
-
+    commissionType:(Object.keys(parentFormData.form2.commission_details).length>0)?(parentFormData.form2.commission_details.commission_type):("Fixed"),
+    ...(Object.keys(parentFormData.form2.commission_details).length>0)?(parentFormData.form2.commission_details.commission_type==="Fixed"?({commissionFixPay:parentFormData.form2.commission_details.commission_fix_pay}):({commissionPercentage:parentFormData.form2.commission_details.commission_percentage_pay})):({commissionFixPay:""}),
+    paymentTearms:(Object.keys(parentFormData.form2.commission_details).length>0)?(parentFormData.form2.commission_details.payment_tearms):(""),
+    replacementClause:(Object.keys(parentFormData.form2.commission_details).length>0)?(parentFormData.form2.commission_details.replacement_clause):(""),
   })
 
   const handleFullTimeChange=(e)=>{
@@ -117,7 +128,7 @@ const PostJobForm2 = ({ onNext }) => {
     }))
        
   }
-  console.log(fullTimeFormData)
+  
 
   const [errors, setErrors] = useState({});
   
@@ -129,7 +140,6 @@ const PostJobForm2 = ({ onNext }) => {
     //validate data for full time job mode
     if(activeJobMode.full_time){
       if(fullTimeFormData.fullTimeSalaryType==='Range'){
-        console.log("kuch to gad bad he")
         if(fullTimeFormData.minSalary==='' || fullTimeFormData.maxSalary==='') newErrors.fullTimeSalary="Min or Max salary is required."
         else if(parseInt(fullTimeFormData.minSalary)>parseInt(fullTimeFormData.maxSalary)) newErrors.fullTimeSalary="Min Salary must be lower then max salary."
       }else{
@@ -153,26 +163,89 @@ const PostJobForm2 = ({ onNext }) => {
     //validate data for commision pay out
     if(commissionFormData.commissionType==="Fixed" && commissionFormData.commissionFixPay==="") newErrors.commissionFixPay="Commission pay is required."
     if(commissionFormData.commissionType==="Percentage" && commissionFormData.commissionPercentage==="") newErrors.commissionPercentage="Commission pay is required."
-    if(commissionFormData.billingCycle==='') newErrors.billingCycle="Please select billing cycle."
+    if(commissionFormData.replacementClause==="") newErrors.replacementClause="Replacement Clause is required"
+    if(commissionFormData.paymentTearms==="") newErrors.paymentTearms="Payment tearms is required"
     
     setErrors(newErrors);
+    if(Object.keys(newErrors).length>0) showNotification("Please fill out appropriate input fields..!","failure")
     return Object.keys(newErrors).length === 0;
   };
   
-  const [annualSalary,setAnnualSalary]=useState({range:true,fixed:false})
-  const [commissionPayRate,setCommisionPayRate]=useState({fixed:true,percentage:false})
-  const [activeJobMode,setActiveJobMode]=useState({full_time:true,contract:false})
-  const [payRate,setPayRate]=useState({range:true,fixed:false})
+  const [annualSalary,setAnnualSalary]=useState((Object.keys(parentFormData.form2.work_details.full_time).length>0)?((parentFormData.form2.work_details.full_time.full_time_salary_type==="Range")?({range:true,fixed:false}):({range:false,fixed:true})):({range:true,fixed:false}))
+  const [commissionPayRate,setCommisionPayRate]=useState((Object.keys(parentFormData.form2.commission_details).length>0)?((parentFormData.form2.commission_details.commission_type==="Fixed")?({fixed:true,percentage:false}):({fixed:false,percentage:true})):({fixed:true,percentage:false}))
+  const [activeJobMode,setActiveJobMode]=useState((!Object.keys(parentFormData.form2.work_details.full_time).length===0 && (Object.keys(parentFormData.form2.work_details.contract===0)))?(Object.keys(parentFormData.form2.work_details.full_time).length>0)?({full_time:true,contract:false}):({full_time:false,contract:true}):({full_time:true,contract:false}))
+  const [payRate,setPayRate]=useState((Object.keys(parentFormData.form2.work_details.contract).length>0)?((parentFormData.form2.work_details.contract.contract_pay_rate_type==="Range")?({range:true,fixed:false}):({range:false,fixed:true})):({range:true,fixed:false}))
   const [weeklyHourCnt,setWeeklyHourCnt]=useState(1)
   const [dailyHourCnt,setDailyHourCnt]=useState(1)
 
-  const handleNext = () => {
+  useEffect(()=>{
+     if(actionMode.next===true || actionMode.draft===true){
+      handleParentFormDataChange()
+     }
+  },[actionMode])
+
+  useEffect(()=>{
+     if(actionMode.next===true) handleNext()
+     else if(actionMode.draft===true) handleDraft()
+    setActionMode({next:false,draft:false})
+  },[parentFormData])
+
+
+  const handleParentFormDataChange= () =>{
     if(validate()){
-      onNext()
+      onFormDataChange({
+        enterprise_id:user.enterprise_id,
+        job_id:jobid,
+        work_type:(activeJobMode.full_time)?("full_time"):("contract"),
+        work_details:{
+           full_time:(activeJobMode.full_time)?({
+             full_time_salary_type:fullTimeFormData.fullTimeSalaryType,
+             full_time_salary_currency:fullTimeFormData.fullTimeSalaryCurrency,
+             additional_salary_details:fullTimeFormData.additionalSalaryDetails,
+             ...(fullTimeFormData.fullTimeSalaryType==="Range")?({min_salary:fullTimeFormData.minSalary,max_salary:fullTimeFormData.maxSalary}):({fixed_salary:fullTimeFormData.fixedSalary})
+            }):({}),
+           contract:(activeJobMode.contract)?({
+             contract_duration_type:contractFormData.contractDurationType,
+             contract_duration_count:contractFormData.contractDurationCount,
+             contract_pay_rate_type:contractFormData.contractPayRateType,
+             contract_pay_currency:contractFormData.contractPayCurrency,
+             ...(contractFormData.contractPayRateType==="Range")?({min_contract_pay:contractFormData.minContractPayRate,max_contract_pay:contractFormData.maxContractPayRate}):({fix_contract_pay:contractFormData.fixContractPay}),
+             contract_pay_cycle:contractFormData.contractPayCycle,
+             additional_contract_details:contractFormData.additionalContractDetails,
+             weeklyHourCnt:contractFormData.weeklyHourCnt,
+             dailyHourCnt:contractFormData.dailyHourCnt,
+             remarks:contractFormData.remarks
+           }):({})
+        },
+        commission_details:{
+         commission_type:commissionFormData.commissionType,
+         ...(commissionFormData.commissionType==="Fixed")?({commission_fix_pay:commissionFormData.commissionFixPay}):({commission_percentage_pay:commissionFormData.commissionPercentage}),
+         payment_tearms:commissionFormData.paymentTearms,
+         replacement_clause:commissionFormData.replacementClause
+        }
+     })
     }
+  }
+
+  const handleNext = () => {
+       onNext()
+      // console.log("Hadle next method trigger")
   };
 
+  const handleDraft=async ()=>{
+     const saved=handleDraftSave()
+     if(saved) showNotification("Job Draft Saved Sucessfully","success")
+     else showNotification("There is something wrong in save draft","failure")
+    // console.log("handle drfat method trigger")
+  }
+
+  const handlePrev= () =>{
+     onPrev()
+  }
+
   return (
+    <>
+    {notification && <Notification message={notification.message} type={notification.type} onClose={()=>setNotification(null)}></Notification>}
     <div className="flex flex-col gap-2 relative">
       <div className="custom-div mx-3 w-full relative">
         <div className="flex place-items-start relative w-full px-4 py-6">
@@ -1042,37 +1115,72 @@ const PostJobForm2 = ({ onNext }) => {
             </div>
               )
             }
-            <div className="relative flex flex-col gap-4 mt-4">
-              <p>Billing Cycle*</p>
+            <div className="flex gap-4">
+            <div className="relative flex flex-col gap-2 mt-4">
+              <p>Payment Terms*</p>
               <select
-               name="billingCycle"
+               name="paymentTearms"
                className="input-field"
                onChange={handleCommissionChange}
-               value={commissionFormData.billingCycle}
+               value={commissionFormData.paymentTearms}
               >
                 <option value=''>Select</option>
-                <option value='5'>5 Days</option>
-                <option value='15'>15 Days</option>
-                <option value='30'>30 Days</option>
+                <option value='2'>5</option>
+                <option value='7'>7</option>
+                <option value='15'>15</option>
+                <option value='30'>30</option>
+                <option value='45'>45</option>
+                
               </select>
               {
-                errors.billingCycle && (
-                  <p className="text-red-600 text-sm">{errors.billingCycle}</p>
+                errors.paymentTearms && (
+                  <p className="text-red-600 text-sm">{errors.paymentTearms}</p>
                 )
               }
+            </div>
+            <div className="relative flex flex-col gap-2 mt-4">
+              <p>Replacement Clause*</p>
+              <select
+              name="replacementClause"
+              className="input-field"
+              onChange={handleCommissionChange}
+              value={commissionFormData.replacementClause}
+              >
+                <option value=''>Select</option>
+                <option value='30'>30</option>
+                <option value='60'>60</option>
+                <option value='90'>90</option>
+              </select>
+              {
+                errors.replacementClause && (
+                  <p className="text-red-600 text-sm">{errors.replacementClause}</p>
+                )
+              }
+            </div>
             </div>
           </form>
         </div>
       </div>
       <div className="custom-div place-items-end pb-2">
-        <button
-          className="py-1 px-4 text-base bg-blue-400 rounded-sm text-white"
-          onClick={handleNext}
-        >
-          Next
-        </button>
+        <div className="flex gap-2">
+          <button 
+           onClick={()=>setActionMode({next:false,draft:true})}
+           className="text-gray-400 py-1 px-4 border-gray-200 hover:bg-gray-100 border-2">
+           Save As Draft</button>
+          <button 
+           className="py-1 px-4 text-gray-400 hover:bg-gray-100 rounded-sm border"
+           onClick={handlePrev}
+          >previous</button>
+          <button
+           onClick={()=>setActionMode({next:true,draft:false})}
+           className="py-1 px-4 text-base bg-blue-400 hover:bg-blue-700 rounded-sm text-white"
+           >
+            Next
+          </button>
+        </div>
       </div>
     </div>
+    </>
   );
 };
 

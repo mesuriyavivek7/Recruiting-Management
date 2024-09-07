@@ -1,9 +1,11 @@
 import "./index.css";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
+//import components for login signup
 import Login from "./pages/Login/Login";
 import RecruitSignUp from "./pages/Signup/RecruitSignUp";
 import EnterpriseSignup from "./pages/Signup/EnterpriseSignup";
 import KYC from "./components/KYC";
+//import components for enterprise dashboard
 import Enterprisedashboard from "./pages/Dashboard/Enterprisedashboard";
 import Settings from "./pages/Settings";
 import Dashboard from "./pages/Dashboard";
@@ -14,6 +16,10 @@ import BulkActions from "./components/BulkActions,";
 import OffersPage from "./components/OffersPage";
 import Support from "./pages/Support";
 import Candidate from "./pages/Candidate/Candidate";
+//import components for recruiter agency dashboard
+import RecruitDashboard from "./pages/Dashboard/RecruitDashboard";
+import RecruiterDashboard from "./pages/RecruiterDashboard";
+import Jobs from "./pages/Jobs";
 
 const App = () => {
   const AppRouter = createBrowserRouter([
@@ -75,6 +81,20 @@ const App = () => {
         }
       ],
     },
+    {
+       path:'/recruiter',
+       element:<RecruitDashboard></RecruitDashboard>,
+       children:[
+        { 
+          path:'dashboard',
+          element:<RecruiterDashboard/>
+        },
+        {
+          path:'jobs',
+          element:<Jobs/>
+        }
+       ]
+    }
   ]);
   return (
     <div className="App max-w-[100vw] max-h-screen">

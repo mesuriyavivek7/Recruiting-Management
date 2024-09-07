@@ -4,11 +4,11 @@ import asset10 from "../../assets/asset 10.svg";
 import { Link, useNavigate } from "react-router-dom";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
+import Notification from '../../components/Notification'
 
 import axios from "axios";
 
 const EnterpriseSignup = () => {
-  console.log(process.env.REACT_APP_API_ADMIN_URL)
   const navigate=useNavigate()
   const [formData,setFormData]=useState({
     full_name:'',
@@ -30,6 +30,16 @@ const EnterpriseSignup = () => {
   const [selectedState, setSelectedState] = useState('');
   const [selectedCity, setSelectedCity] = useState('');
   const [load,setLoad]=useState(false)
+  const [mailCheck,setMailCheck]=useState(false)
+  const [mobilenoCheck,setMobilenoCheck]=useState(false)
+
+
+  const [notification,setNotification]=useState(null)
+
+   //for showing notification
+   const showNotification=(message,type)=>{
+     setNotification({message,type})
+   }
 
   useEffect(()=>{
       getCountries();
@@ -106,10 +116,56 @@ const EnterpriseSignup = () => {
    }
   };
 
+   useEffect(()=>{
+      if(mailCheck) handleMobileNoCheck()
+   },[mailCheck])
+
+
+   useEffect(()=>{
+      if(mobilenoCheck) handleSubmit()
+   },[mobilenoCheck])
+
+  const handleMailCheck=async ()=>{
+    if(validateForm()){
+      setLoad(true)
+      try{
+        const res=await axios.post(`${process.env.REACT_APP_API_BASE_URL}/authenterprise/checkmail`,{email:formData.email})
+        if(res.data===false) setMailCheck(true)
+        else{ 
+           showNotification("Email address is already exist...!",'failure')  
+           setLoad(false)
+        }
+      }catch(err){
+          setLoad(false)
+          showNotification("There is something wrong....!","failure")
+      }
+    }
+  }
+
+  const handleMobileNoCheck=async ()=>{
+       if(validateForm()){
+         try{
+             const res=await axios.post(`${process.env.REACT_APP_API_BASE_URL}/authenterprise/checkmobileno`,{mobileno:formData.mobileno})
+             console.log("Mobie Response",res)
+             if(res.data===false) setMobilenoCheck(true)
+             else{
+              showNotification("Mobile no is already exist...!",'failure')
+              setLoad(false)
+             }
+            
+         }catch(err){
+            setLoad(false)
+            showNotification("There is something wrong.....!","failure")
+         } 
+       }
+  }
+
   const validateForm=()=>{
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     let newErrors={};
     if (!formData.full_name) newErrors.name = "Full Name is required";
     if (!formData.email) newErrors.email = "Official Email is required";
+    else if(!emailRegex.test(formData.email)) newErrors.email="Email address is invalid"
     if (!formData.mobileno) newErrors.phoneNumber = "Phone Number is required";
     if(formData.mobileno.length<12) newErrors.phoneNumber="Phone Number is invalid";
     if (!formData.company_name) newErrors.company = "Company Name is required";
@@ -118,7 +174,7 @@ const EnterpriseSignup = () => {
     if (!formData.country) newErrors.country = "Country is required";
     if (!formData.state) newErrors.state = "State is required";
     if (!formData.city) newErrors.city = "City is required";
-
+    if(Object.keys(newErrors).length>0) showNotification("Please fill out appropriate fields...!","failure")
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   }
@@ -132,7 +188,6 @@ const EnterpriseSignup = () => {
   const handleSubmit=async ()=>{
      if(validateForm()){
           let newErrors={}
-          setLoad(true)
           try{
             //register for enterprise
             const res=await axios.post(`${process.env.REACT_APP_API_BASE_URL}/authenterprise/register`,formData,{withCredentials:true})
@@ -162,12 +217,11 @@ const EnterpriseSignup = () => {
            navigate('/',{state:{message:"Registerd Successfully, Now Please Login."}})
 
           }catch(err){
-               newErrors.internal="There is something wrong."
+               newErrors.internal="There is something wrong...!"
                setErrors(newErrors)
+               showNotification("There is something wrong...!","failure")
           }
           setLoad(false)
-          
-
 
      }
   }
@@ -175,6 +229,9 @@ const EnterpriseSignup = () => {
 
   return (
     <main>
+    
+      {notification && <Notification message={notification.message} type={notification.type} onClose={()=>setNotification(null)}></Notification>}
+    
       <div className="recruit-content-container h-screen flex relative overflow-hidden">
        
         <div className="login-image w-[58%] h-screen relative bg-gradient-to-b from-orange-800 via-black-900 to-black-900">
@@ -380,11 +437,20 @@ const EnterpriseSignup = () => {
                 </div>
                 <button
                   type="button"
-                  onClick={handleSubmit}
+                  onClick={handleMailCheck}
                   className="w-full py-3 my-3 bg-green-600 text-white rounded-md text-xl disabled:bg-gray-400 disabled:cursor-not-allowed disabled:opacity-50 "
                   disabled={load}
                 >
-                  Sign Up   
+                                    <span className="flex items-center justify-center">
+                                          {
+                                            load && 
+                                             <svg className="w-5 h-5 mr-2 text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l5.6-3.2a10 10 0 00-10.4 0L4 12z"></path>
+                                             </svg>
+                                          }
+                                          <span>Sign Up</span>
+                                     </span>
                 </button>
                 {errors.internal && (
                   <p className="text-red-600 text-xs">{errors.internal}</p>

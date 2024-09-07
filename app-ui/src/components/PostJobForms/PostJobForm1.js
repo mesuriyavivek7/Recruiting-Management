@@ -2,8 +2,11 @@ import React, { useContext, useEffect, useState } from "react";
 import Multiselect from 'multiselect-react-dropdown';
 import { AuthContext } from "../../context/AuthContext";
 import Notification from "../Notification";
-import axios from 'axios'
-const PostJobForm1 = ({ onNext }) => {
+
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+
+const PostJobForm1 = ({ onNext, onFormDataChange,jobId,handleDraftSave,parentFormData}) => {
   const {user}=useContext(AuthContext)
   const domainOptions = [
     "Accounting/Corporate Finance",
@@ -40,38 +43,38 @@ const PostJobForm1 = ({ onNext }) => {
     "Information security/Cyber Security/IT security and Audit",
     "Shipping/Marine",
   ];
-
+  
+  const [actionMode,setActionMode]=useState({next:false,draft:false})
 
   const [notification,setNotification]=useState(null)
-
 
    //for showing notification
    const showNotification=(message,type)=>{
     setNotification({message,type})
- }
+  }
   
   const [formData, setFormData] = useState({
-    jobTitle: "",
-    jobDescription: "",
-    remoteWork: false,
-    country: "",
-    state: "",
-    city: "",
-    domain: "",
-    positions:"",
-    minExperience: "",
-    maxExperience: "",
-    jobId: "",
-    managersEmail: "",
-    shareSalaryDetails: false,
+    jobTitle: (Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.job_title):(""),
+    jobDescription: (Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.job_description):(""),
+    remoteWork: (Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.permanent_remote_work):(false),
+    country:  (Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.country):(""),
+    state:  (Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.state):(""),
+    city: (Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.city):([]),
+    domain:  (Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.job_domain):(""),
+    positions:  (Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.positions):(""),
+    minExperience:(Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.experience.minexp):(""),
+    maxExperience: (Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.experience.maxexp):(""),
+    jobId: (Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.ext_job_id):(""),
+    managersEmail: (Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.hiring_managers):(""),
+    shareSalaryDetails: (Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.share_salary_details):(false),
   });
 
   const [errors, setErrors] = useState({});
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
-  const [selectedCountry, setSelectedCountry] = useState("");
-  const [selectedState, setSelectedState] = useState("");
+  const [selectedCountry, setSelectedCountry] = useState((Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.country):(""));
+  const [selectedState, setSelectedState] = useState((Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.state):(""));
   const [selectedCity, setSelectedCity] = useState("");
 
   useEffect(() => {
@@ -138,7 +141,7 @@ const PostJobForm1 = ({ onNext }) => {
   const handleCityChange = (selectedList) => {
       setFormData((prev)=>({...prev,city:selectedList}))
   };
-  console.log(formData)
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prevData) => ({
@@ -151,7 +154,7 @@ const PostJobForm1 = ({ onNext }) => {
     const newErrors = {};
     if (!formData.jobTitle) newErrors.jobTitle = "Job Title is required.";
     else if(formData.jobTitle.length<10) newErrors.jobTitle="Job Title must be at least 10 characters"
-    if (!formData.jobDescription || formData.jobDescription.length < 100)
+    if (!formData.jobDescription || getTextLength(formData.jobDescription) < 100)
       newErrors.jobDescription = "Job Description must be at least 100 characters.";
     else if (formData.jobDescription.length>65000) newErrors.jobDescription="Max length of character for job description is 650000."
     if (!formData.country) newErrors.country = "Country is required.";
@@ -166,47 +169,80 @@ const PostJobForm1 = ({ onNext }) => {
     else if (formData.minExperience<=0) newErrors.experience="Minimum value is 0 for min experience."
     else if (formData.maxExperience<=0) newErrors.experience= "Maximum Experience should be greater than 0."
     setErrors(newErrors);
+    if(Object.keys(newErrors).length>0) showNotification("Please fill out appropriate input fields..!","failure")
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleNext = () => {
-    if (validate()) {
-      onNext(formData);
+
+  const handleParentFormDataChange=()=>{
+    if((actionMode.next===true || actionMode.draft===true) && validate()){
+      onFormDataChange({
+        enterprise_id:user.enterprise_id,
+        job_id:jobId,
+        job_title:formData.jobTitle,
+        job_description:formData.jobDescription,
+        permanent_remote_work:formData.remoteWork,
+        country:formData.country,
+        state:formData.state,
+        city:formData.city,
+        job_domain:formData.domain,
+        positions:formData.positions,
+        experience:{minexp:formData.minExperience,maxexp:formData.maxExperience},
+        ext_job_id:formData.jobId,
+        hiring_managers:formData.managersEmail,
+        share_salary_details:formData.shareSalaryDetails
+      })
     }
+ }
+
+ useEffect(()=>{
+   handleParentFormDataChange()
+ },[actionMode])
+
+ useEffect(()=>{
+    if(actionMode.draft) handleDraft()
+    else if(actionMode.next) handleNext()
+    setActionMode({next:false,draft:false})
+ },[parentFormData])
+
+  const handleNext = async () => {
+      console.log("handle next method called")
+      onNext()
   };
 
   const handleDraft=async ()=>{
-      if(validate()){
-         const data={
-            enterprise_id:user._id,
-            draft_save:true,
-            module1:{
-              job_title:formData.jobTitle,
-              job_desc:formData.jobDescription,
-              remotework:formData.remoteWork,
-              country:formData.country,
-              state:formData.state,
-              city:formData.city,
-              domain:formData.domain,
-              positions:formData.positions,
-              experience:{
-                min:formData.minExperience,
-                max:formData.maxExperience
-              },
-              ext_job_id:formData.jobId,
-              manager_email:formData.managersEmail,
-              share_salary_details:formData.shareSalaryDetails
-            }
-         }
-         try{
-          await axios.post(`${process.env.REACT_APP_API_BASE_URL}/job/savedraft`,data)
-          showNotification('Sucessfully Job Draft Saved','success')
-         }catch(err){
-          showNotification('Something went wrong....!',"failure")
-         }
-         
-      }
+       const saved=await handleDraftSave()
+       if(saved) showNotification("Job Draft Saved Sucessfully","success")
+       else showNotification("There is something wrong in save draft","failure")
   }
+
+  const getTextLength=(htmlContent)=>{
+    const div=document.createElement('div')
+    div.innerHTML=htmlContent
+    const text=div.textContent || div.innerText || ''
+    return text.length
+ }
+ 
+ const handleDescription= (newContent)=>{
+      setFormData((prevData)=>({...prevData,jobDescription:newContent}))
+ }
+
+  //moduels and formate for quill text editor
+  const modules={
+    toolbar: [
+      [{ 'header': '1'}, {'header': '2'}, { 'font': [] }],
+      [{size: []}],
+      ['bold', 'italic', 'underline'],
+      [{'list': 'ordered'}, {'list': 'bullet'}],
+      [{ 'color': [] }], // Add color and background color options                             
+  ],
+  };
+  
+  const formats = [
+    'header', 'font', 'size',
+    'bold', 'italic', 'underline','color',
+    'list', 'bullet', 'indent', // Include color and background in formats
+    ];
 
   return (
     <>
@@ -220,7 +256,7 @@ const PostJobForm1 = ({ onNext }) => {
               Provide a Job Title and Job Description.
             </p>
           </div>
-          <form className="custom-div flex-col gap-6 w-8/12 p-6">
+          <form className="custom-div pb-16 flex-col gap-6 w-8/12 p-6">
             <div className="w-full relative flex flex-col gap-2">
               <label htmlFor="jobTitle" className="input-label">
                 Job Title
@@ -240,16 +276,16 @@ const PostJobForm1 = ({ onNext }) => {
                 Job Description
                 <span className="text-green-700">(65000 Characters Maximum)</span>
               </label>
-              <textarea
-                rows={8}
-                name="jobDescription"
-                id="jobDescription"
-                className="input-field"
-                placeholder="Paste the job description"
-                value={formData.jobDescription}
-                onChange={handleChange}
-              />
               {errors.jobDescription && <p className="text-red-600 text-xs">{errors.jobDescription}</p>}
+               <ReactQuill 
+                style={{height:'200px'}}
+                value={formData.jobDescription}
+                onChange={newContent=>handleDescription(newContent)}
+                modules={modules}
+                formats={formats}
+                theme="snow"
+                />
+              
             </div>
           </form>
         </div>
@@ -339,6 +375,7 @@ const PostJobForm1 = ({ onNext }) => {
                     }}
                     id="city"
                     isObject={false}
+                    selectedValues={formData.city}
                     onRemove={handleCityChange}
                     onSelect={handleCityChange}
                     placeholder="Select Cities"
@@ -468,12 +505,12 @@ const PostJobForm1 = ({ onNext }) => {
       <div className="custom-div place-items-end pb-2">
         <div className="flex gap-4">
          <button 
-         onClick={handleDraft}
+         onClick={()=>setActionMode({next:false,draft:true})}
          className="text-gray-400 py-1 px-4 border-gray-200 hover:bg-gray-100 border-2">
          Save As Draft</button>
          <button
           className="py-1 px-4 text-base bg-blue-400 rounded-sm text-white"
-          onClick={handleNext}
+          onClick={()=>setActionMode({next:true,draft:false})}
          >
            Next
          </button>
