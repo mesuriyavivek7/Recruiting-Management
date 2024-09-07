@@ -71,7 +71,7 @@ const Dashboard = () => {
   return (
     <div className='flex flex-col gap-2'>
        {
-        notification && <Notification message={notification.message} type={notification.type} onClick={()=>setNotification(null)}></Notification>
+        notification && <Notification message={notification.message} type={notification.type} onClose={()=>setNotification(null)}></Notification>
        }
        {
         openPopUp && (

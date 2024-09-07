@@ -1,5 +1,5 @@
 import express from 'express'
-import { register} from '../controller/authEnterpriseController.js'
+import { checkMail, checkMobileNo, register} from '../controller/authEnterpriseController.js'
 
 const router=express.Router()
 
@@ -8,5 +8,11 @@ const router=express.Router()
 
 router.post('/register',register)
 
+
+//for check email address is already exist or not
+router.post('/checkmail',checkMail)
+
+//for check mobile no is already exist or not
+router.post('/checkmobileno',checkMobileNo)
 
 export default router

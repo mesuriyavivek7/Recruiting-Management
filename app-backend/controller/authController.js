@@ -16,22 +16,19 @@ export const login=async (req,res,next)=>{
             const isPasswordCorrect=await bcrypt.compare(req.body.password,enterpriseuser.password)
             
             if(!isPasswordCorrect){
-               return next(error(404,"Password is incorrect"))
+               return next(error(404,"Password is incorrect...!"))
             }
-
-            
-    
             
         }else if(recruitinguser){
             user=recruitinguser
             const isPasswordCorrect=await bcrypt.compare(req.body.password,enterpriseuser.password)
 
             if(!isPasswordCorrect){
-               return next(error(404,"Password is incorrect"))
+               return next(error(404,"Password is incorrect...!"))
             }
 
         }else{
-            return next(error(404,"User not found by this email address"))
+            return next(error(404,"User not found by this email address....!"))
         }
 
         const token=jwt.sign({id:user._id,isAdmin:user.isAdmin},process.env.JWT)

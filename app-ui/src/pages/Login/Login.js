@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import asset2 from "../../assets/asset 2.png";
 import asset1 from "../../assets/asset 1.png";
 import { Link,useNavigate,useLocation } from "react-router-dom";
-
+import Notification from "../../components/Notification";
 import axios from "axios";
 import {AuthContext} from '../../context/AuthContext'
 
@@ -12,6 +12,14 @@ const Login = () => {
   const location=useLocation()
   const {user,dispatch,loading}=useContext(AuthContext)
   
+
+  const [notification,setNotification]=useState(null)
+
+   //for showing notification
+   const showNotification=(message,type)=>{
+     setNotification({message,type})
+   }
+
 
   useEffect(()=>{
      if(user){
@@ -34,8 +42,8 @@ const Login = () => {
     let newErrors={}
     if(!formData.email) newErrors.email="Email address is required"
     if(!formData.password) newErrors.password="Password is required"
+    if(Object.keys(newErrors).length>0) showNotification("Please fill out appropriate fields...!")
     setErrors(newErrors)
-
     return Object.keys(newErrors).length===0
 
     
@@ -43,6 +51,7 @@ const Login = () => {
 
   const handleSubmit=async ()=>{
     if(validateForm()){
+      try{
        dispatch({type:"USER_FETCH_START"})
       //login user
       const user=await axios.post(`${process.env.REACT_APP_API_BASE_URL}/auth/login`,formData,{withCredentials:true})
@@ -51,12 +60,17 @@ const Login = () => {
 
       //navigate to dashboard
       navigate('/employer/dashboard')
+      }catch(err){
+        dispatch({type:"USER_FETCH_FAILURE"})
+        showNotification(err.response.data.message,'failure')
+      }
        
     }
   }
 
   return (
     <div className="login max-w-full h-full relative overflow-hidden">
+    {notification && <Notification message={notification.message} type={notification.type} onClose={()=>setNotification(null)}></Notification>}
       <div className="login-content-container flex  place-items-center relative">
         
         <div className="login-image w-[58%] h-screen relative bg-gradient-to-b from-blue-800 to-blue-900">
@@ -134,11 +148,22 @@ const Login = () => {
                     Forgot your password?
                   </Link>
                 </p>
-                <button disabled={loading} type="button" onClick={handleSubmit} className="w-full py-[6px] bg-green-600 text-white rounded-md disabled:bg-gray-400 disabled:cursor-not-allowed disabled:opacity-50" >Login</button>
+                <button disabled={loading} type="button" onClick={handleSubmit} className="w-full py-[6px] bg-green-600 text-white rounded-md disabled:bg-gray-400 disabled:cursor-not-allowed disabled:opacity-50" >
+                                    <span className="flex items-center justify-center">
+                                          {
+                                            loading && 
+                                             <svg className="w-5 h-5 mr-2 text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l5.6-3.2a10 10 0 00-10.4 0L4 12z"></path>
+                                             </svg>
+                                          }
+                                          <span>Login</span>
+                                     </span>
+                </button>
               </form>
               <div className="text-sm mt-6">
                 <p className="text-gray-400">
-                  Not registered as Employer? 
+                  Create Account as Employer? 
                   <Link to="/signup/employer" className="text-blue-400 pl-1">
                     Create Account
                   </Link>
@@ -146,16 +171,8 @@ const Login = () => {
               </div>
               <div className="text-sm mt-6">
                 <p className="text-gray-400">
-                  Not registered as Recruiting Agency?
+                  Create Account as Recruiting Agency?
                   <Link to="/signup/supplier" className="text-blue-400 pl-1">
-                    Create Account
-                  </Link>
-                </p>
-              </div>
-              <div className="text-sm mt-6">
-                <p className="text-gray-400">
-                  Not registered as Channel Partner?
-                  <Link to="/employer" className="text-blue-400 pl-1">
                     Create Account
                   </Link>
                 </p>

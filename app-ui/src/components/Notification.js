@@ -15,7 +15,7 @@ export default function Notification({ message, type, onClose }) {
 
     return (
         <div
-            className={`fixed top-8 right-8 z-50 max-w-xs px-4 py-2 shadow-lg text-white mb-4 transition-opacity duration-300 ${
+            className={`fixed top-18 right-8 z-50 max-w-xs px-4 py-2 shadow-lg text-white mb-4 transition-opacity duration-300 ${
                 visible ? 'opacity-100' : 'opacity-0'} ${
                 type === 'success' ? 'bg-green-500' : 'bg-red-500'
             }`}
