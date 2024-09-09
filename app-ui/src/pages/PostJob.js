@@ -5,6 +5,7 @@ import PostJobForm3 from "../components/PostJobForms/PostJobForms3";
 import PostJobForm4 from "../components/PostJobForms/PostJobForm4";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
+import PostJobForm5 from "../components/PostJobForms/PostJobForm5";
 
 const PostJob = () => {
   const {user}=useContext(AuthContext)
@@ -41,7 +42,8 @@ const PostJob = () => {
       commission_details:{}
     },
     form3: {},
-    form4: {},
+    form4: {attachments:{}},
+    form5: {},
   });
 
   console.log('allformdata------>',formData)
@@ -74,6 +76,29 @@ const PostJob = () => {
          
       //step-3 create job commission details
       if(Object.keys(formData.form2).length>0) await axios.post(`${process.env.REACT_APP_API_BASE_URL}/job/jobcommission/${res.data._id}`,formData.form2)
+
+      //step-4 craete job company details
+      if(Object.keys(formData.form3).length>0) await axios.post(`${process.env.REACT_APP_API_BASE_URL}/job/company/${res.data._id}`,formData.form3)
+
+      //step-5 craete sourcing guidelines
+      if(Object.keys(formData.form4).length>0){
+           let {enterprise_id,job_id,must_haves,poach_clients,nice_to_haves,target_companies,additional_guidelines}=formData.form4
+           const sourcing={enterprise_id,job_id,must_haves,poach_clients,...((nice_to_haves!=="")?({nice_to_haves}):({})),...((target_companies!=="")?({target_companies}):({})),...((additional_guidelines!=="")?({additional_guidelines}):({}))}
+           await axios.post(`${process.env.REACT_APP_API_BASE_URL}/job/sourcing/${res.data._id}`,sourcing)
+      }
+
+      //step-6 create job attachments
+      if(Object.keys(formData.form4.attachments).length>0){
+          
+          const fileData=new FormData()
+          if(formData.form4.attachments.sample_cv) fileData.append('sample_cv',formData.form4.attachments.sample_cv)
+          if(formData.form4.attachments.evaluation_form) fileData.append('evaluation_form',formData.form4.attachments.evaluation_form)
+          if(formData.form4.attachments.audio_brief) fileData.append('audio_brief',formData.form4.attachments.audio_brief)
+          if(formData.form4.attachments.other_docs) fileData.append("other_docs",formData.form4.attachments.other_docs)
+
+          if([...fileData.entries()].length!==0) await axios.post(`${process.env.REACT_APP_API_BASE_URL}/job/uploadjobdocs/${jobId}`,fileData,{headers:{"Content-Type":'multipart/form-data'}})
+      }
+      
 
       //step- create job draft
       await axios.post(`${process.env.REACT_APP_API_BASE_URL}/job/savedraft`,{enterprise_id:user.enterprise_id,enterprise_member_id:user._id,job_id:res.data.job_id,org_job_id:res.data._id})
@@ -124,16 +149,33 @@ const PostJob = () => {
             onNext={handleNext}
             onPrev={handlePrev}
             onFormDataChange={(data) => handleFormData('form3', data)}
+            jobid={jobId}
+            handleDraftSave={handleDraftSave}
+            parentFormData={formData}
           />
         );
       case 4:
         return (
           <PostJobForm4
+            onNext={handleNext}
             onPrev={handlePrev}
             onFormDataChange={(data) => handleFormData('form4', data)}
-            onSubmit={handleSubmit}
+            jobid={jobId}
+            handleDraftSave={handleDraftSave}
+            parentFormData={formData}
           />
         );
+      case 5:
+        return (
+          <PostJobForm5
+            onSubmit={handleSubmit}
+            onPrev={handlePrev}
+            onFormDataChange={(data)=> handleFormData('form5',data)}
+            jobid={jobId}
+            handleDraftSave={handleDraftSave}
+            parentFormData={formData}
+          />
+        )
       default:
         return null;
     }

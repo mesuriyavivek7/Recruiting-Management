@@ -125,3 +125,13 @@ export const acVerified=async (req,res,next)=>{
          next(err)
      }
 }
+
+
+export const getCompnayName=async (req,res,next)=>{
+    try{
+       const company=await ENTERPRISE.findById(req.params.eid,{company_name:1,_id:0})
+       res.status(200).json(company)
+    }catch(err){
+      next(err)
+    }
+}

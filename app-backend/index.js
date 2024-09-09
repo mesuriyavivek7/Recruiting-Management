@@ -51,6 +51,7 @@ app.use(cors(corsOptions));
 app.use(cookieParser())
 //using json middleware where we can easily get our json data
 app.use(express.json())
+app.use(express.urlencoded({ extended: true }));
 
 
 
