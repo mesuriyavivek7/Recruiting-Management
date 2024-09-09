@@ -69,19 +69,56 @@ const PostJobForm1 = ({ onNext, onFormDataChange,jobId,handleDraftSave,parentFor
     shareSalaryDetails: (Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.share_salary_details):(false),
   });
 
+  
+
   const [errors, setErrors] = useState({});
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
-  const [selectedCountry, setSelectedCountry] = useState((Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.country):(""));
-  const [selectedState, setSelectedState] = useState((Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.state):(""));
+  const [selectedCountry, setSelectedCountry] = useState("");
+  const [selectedState, setSelectedState] = useState("")
   const [selectedCity, setSelectedCity] = useState("");
 
+  const getCountryId=()=>{
+    if(Object.keys(parentFormData.form1).length>0){
+       let countryname=parentFormData.form1.country
+       for (let i of countries){
+        if(i.country_name===countryname){
+            setSelectedCountry(parseInt(i.country_id))
+            break;
+        }
+      }
+    }
+  }
+  const getStateId=()=>{
+    if(Object.keys(parentFormData.form1).length>0){
+      let statename=parentFormData.form1.state
+      for(let i of states){
+        if(i.state_name===statename){
+          setSelectedState(parseInt(i.state_id))
+          break;
+        }
+      }
+    }
+  }
+
+ 
   useEffect(() => {
     getCountries();
     getStates();
     getCities();
+    getCountryId()
+    getStateId()
   }, []);
+
+
+  useEffect(()=>{
+    getCountryId()
+  },[countries])
+
+  useEffect(()=>{
+    getStateId()
+  },[states])
 
   const getCountries = async () => {
     try {
@@ -322,7 +359,7 @@ const PostJobForm1 = ({ onNext, onFormDataChange,jobId,handleDraftSave,parentFor
                 >
                   <option value="">Select Country</option>
                   {countries.map((country) => (
-                    <option key={country.country_id} value={country.country_id}>
+                    <option key={country.country_id}  value={country.country_id}>
                       {country.country_name}
                     </option>
                   ))}

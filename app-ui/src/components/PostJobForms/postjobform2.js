@@ -173,7 +173,7 @@ const PostJobForm2 = ({ onNext,onPrev,onFormDataChange,jobid,handleDraftSave,par
   
   const [annualSalary,setAnnualSalary]=useState((Object.keys(parentFormData.form2.work_details.full_time).length>0)?((parentFormData.form2.work_details.full_time.full_time_salary_type==="Range")?({range:true,fixed:false}):({range:false,fixed:true})):({range:true,fixed:false}))
   const [commissionPayRate,setCommisionPayRate]=useState((Object.keys(parentFormData.form2.commission_details).length>0)?((parentFormData.form2.commission_details.commission_type==="Fixed")?({fixed:true,percentage:false}):({fixed:false,percentage:true})):({fixed:true,percentage:false}))
-  const [activeJobMode,setActiveJobMode]=useState((!Object.keys(parentFormData.form2.work_details.full_time).length===0 && (Object.keys(parentFormData.form2.work_details.contract===0)))?(Object.keys(parentFormData.form2.work_details.full_time).length>0)?({full_time:true,contract:false}):({full_time:false,contract:true}):({full_time:true,contract:false}))
+  const [activeJobMode,setActiveJobMode]=useState(((Object.keys(parentFormData.form2.work_details.full_time).length!==0 || Object.keys(parentFormData.form2.work_details.contract).length!==0))?((Object.keys(parentFormData.form2.work_details.full_time).length>0)?({full_time:true,contract:false}):({full_time:false,contract:true})):({full_time:true,contract:false}))
   const [payRate,setPayRate]=useState((Object.keys(parentFormData.form2.work_details.contract).length>0)?((parentFormData.form2.work_details.contract.contract_pay_rate_type==="Range")?({range:true,fixed:false}):({range:false,fixed:true})):({range:true,fixed:false}))
   const [weeklyHourCnt,setWeeklyHourCnt]=useState(1)
   const [dailyHourCnt,setDailyHourCnt]=useState(1)
@@ -212,8 +212,8 @@ const PostJobForm2 = ({ onNext,onPrev,onFormDataChange,jobid,handleDraftSave,par
              ...(contractFormData.contractPayRateType==="Range")?({min_contract_pay:contractFormData.minContractPayRate,max_contract_pay:contractFormData.maxContractPayRate}):({fix_contract_pay:contractFormData.fixContractPay}),
              contract_pay_cycle:contractFormData.contractPayCycle,
              additional_contract_details:contractFormData.additionalContractDetails,
-             weeklyHourCnt:contractFormData.weeklyHourCnt,
-             dailyHourCnt:contractFormData.dailyHourCnt,
+             weekly_hour_cnt:contractFormData.weeklyHourCnt,
+             daily_hour_cnt:contractFormData.dailyHourCnt,
              remarks:contractFormData.remarks
            }):({})
         },
@@ -235,7 +235,7 @@ const PostJobForm2 = ({ onNext,onPrev,onFormDataChange,jobid,handleDraftSave,par
   const handleDraft=async ()=>{
      const saved=handleDraftSave()
      if(saved) showNotification("Job Draft Saved Sucessfully","success")
-     else showNotification("There is something wrong in save draft","failure")
+     else showNotification("There is something wrong for draft save","failure")
     // console.log("handle drfat method trigger")
   }
 
@@ -933,6 +933,7 @@ const PostJobForm2 = ({ onNext,onPrev,onFormDataChange,jobid,handleDraftSave,par
                       id="hourly"
                       name="contractPayCycle"
                       value='hourly'
+                      checked={contractFormData.contractPayCycle==="hourly"}
                       onChange={handleContractChange}
                       ></input>
                       Hourly
@@ -945,6 +946,7 @@ const PostJobForm2 = ({ onNext,onPrev,onFormDataChange,jobid,handleDraftSave,par
                       id="daily"
                       name="contractPayCycle"
                       value='daily'
+                      checked={contractFormData.contractPayCycle==="daily"}
                       onChange={handleContractChange}
                       ></input>
                       Daily
@@ -956,7 +958,8 @@ const PostJobForm2 = ({ onNext,onPrev,onFormDataChange,jobid,handleDraftSave,par
                       type="radio"
                       id="Weekly"
                       name="contractPayCycle"
-                      value='Weekly'
+                      value='weekly'
+                      checked={contractFormData.contractPayCycle==="weekly"}
                       onChange={handleContractChange}
                       ></input>
                       Weekly
@@ -968,7 +971,8 @@ const PostJobForm2 = ({ onNext,onPrev,onFormDataChange,jobid,handleDraftSave,par
                       type="radio"
                       id="Monthly"
                       name="contractPayCycle"
-                      value='Monthly'
+                      value='monthly'
+                      checked={contractFormData.contractPayCycle==="monthly"}
                       onChange={handleContractChange}
                       ></input>
                       Monthly
@@ -1105,6 +1109,7 @@ const PostJobForm2 = ({ onNext,onPrev,onFormDataChange,jobid,handleDraftSave,par
               className="input-field"
               placeholder="%"
               onChange={handleCommissionChange}
+              value={commissionFormData.commissionPercentage}
               ></input>
               </div>
               {

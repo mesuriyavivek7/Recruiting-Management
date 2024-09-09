@@ -1,10 +1,13 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import FileDragDrop from "../FileDragDrop";
 import { ReactComponent as UploadIcon } from "../../assets/asset34.svg";
+import Notification from "../Notification";
+import { AuthContext } from "../../context/AuthContext";
 
-const PostJobForm4 = ({ onNext }) => {
+const PostJobForm4 = ({ onNext,onPrev,onFormDataChange,jobid,handleDraftSave,parentFormData}) => {
+  const [action,setAction]=useState({next:false,prev:false})
+  const {user}=useContext(AuthContext)
   const [formData, setFormData] = useState({
-    citizenshipStatus: "",
     mustHaves: "",
     noPoachClients: "",
     niceToHaves: "",
@@ -19,6 +22,14 @@ const PostJobForm4 = ({ onNext }) => {
   });
 
   const [errors, setErrors] = useState({});
+
+   //for showing notification
+   const [notification,setNotification]=useState(null)
+
+   //for showing notification
+   const showNotification=(message,type)=>{
+    setNotification({message,type})
+  }
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -40,37 +51,68 @@ const PostJobForm4 = ({ onNext }) => {
 
   const validate = () => {
     const newErrors = {};
-    if (!formData.citizenshipStatus) newErrors.citizenshipStatus = "Required Citizenship / Work Permit / Visa Status is required.";
     if (!formData.mustHaves) newErrors.mustHaves = "Must Haves field is required.";
     if (!formData.noPoachClients) newErrors.noPoachClients = "No Poach Clients field is required.";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
+  const handleParentFormData=()=>{
+    if(validate){
+      onFormDataChange({
+        enterprise_id:user.enterprise_id,
+        job_id:jobid,
+        must_haves:formData.mustHaves,
+        poach_clients:formData.noPoachClients,
+        nice_to_haves:formData.niceToHaves,
+        target_companies:formData.targetCompanies,
+        additional_guidelines:formData.additionalGuidelines,
+        attachments:{
+          sample_cv:formData.attachments.sampleCV,
+          evaluation_form:formData.attachments.candidateEvaluationForm,
+          audio_brief:formData.attachments.audioBriefing,
+          other_docs:formData.attachments.otherFiles
+        }
+      })
+    }
+  }
+
+  useEffect(()=>{
+    if(action.next===true) handleNext()
+    else if(action.draft===true) handleDraft() 
+    setAction({next:false,draft:false})
+  },[parentFormData])
+
+  useEffect(()=>{
+    if(action.next===true || action.draft===true) handleParentFormData()
+  },[action])
+
+  const handleDraft=async ()=>{
+    const saved=await handleDraftSave()
+    if(saved) showNotification("Job Draft Saved Successfully","success")
+    else showNotification("There is something wrong in save draft","failure")
+
+    // console.log("draft saved")
+  }
+
+  const handlePrev=()=>{
+    onPrev()
+  }
+
   const handleNext = () => {
     if (validate()) {
       onNext(formData);
     }
+
+    // console.log("next trigger")
   };
 
   return (
+    <>
+    {notification && <Notification message={notification.message} type={notification.type} onClose={()=>setNotification(null)}></Notification>}
     <div className="flex flex-col gap-2 relative w-8/12 mx-auto">
       <div className="custom-div mx-3 w-full relative">
         <form className="w-full relative flex flex-col gap-8 mt-4">
-          <div className="relative flex flex-col gap-2 place-items-start">
-            <label htmlFor="citizenshipStatus" className="input-label">
-              Required Citizenship / Work Permit / Visa Status*
-            </label>
-            <input
-              type="text"
-              id="citizenshipStatus"
-              name="citizenshipStatus"
-              className="input-field"
-              value={formData.citizenshipStatus}
-              onChange={handleChange}
-            />
-            {errors.citizenshipStatus && <p className="text-red-600 text-xs">{errors.citizenshipStatus}</p>}
-          </div>
           <div className="relative flex flex-col gap-2 place-items-start">
             <label htmlFor="mustHaves" className="input-label">
               Must Haves*
@@ -152,42 +194,69 @@ const PostJobForm4 = ({ onNext }) => {
               <label className="input-label font-semibold">Sample CV</label>
               <FileDragDrop
                 fileuploadname="Upload Sample CV"
+                fileuploadspan="PDF, DOC, DOCX of up to 10MB, Tables and Images will be ignored."
                 onFileUpload={(file) => handleFileUpload("sampleCV", file)}
+                fileId="samplecv"
+                accepted=".pdf,.docx,.doc"
+                showNotification={showNotification}
               />
             </div>
             <div className="relative flex flex-col gap-2 place-items-start mt-2">
               <label className="input-label font-semibold">Candidate Evaluation Form</label>
               <FileDragDrop
                 fileuploadname="Candidate Evaluation Form"
+                fileuploadspan="PDF, DOC, DOCX of up to 10MB, Tables and Images will be ignored."
                 onFileUpload={(file) => handleFileUpload("candidateEvaluationForm", file)}
+                fileId="evaluationform"
+                accepted=".pdf,.docx,.doc"
+                showNotification={showNotification}
               />
             </div>
             <div className="relative flex flex-col gap-2 place-items-start mt-2">
               <label className="input-label font-semibold">Audio Briefing by Client</label>
               <FileDragDrop
                 fileuploadname="Audio Briefing by Client"
+                fileuploadspan="MPEG, MP4 And WAV of up to 10MB, Tables and Images will be ignored."
                 onFileUpload={(file) => handleFileUpload("audioBriefing", file)}
+                fileId="audio"
+                accepted="video/mpeg, video/mp4, audio/wav"
+                showNotification={showNotification}
               />
             </div>
             <div className="relative flex flex-col gap-2 place-items-start mt-2">
               <label className="input-label font-semibold">Upload other files</label>
               <FileDragDrop
                 fileuploadname="Upload other files"
+                fileuploadspan="JPEG, PNG, PDF,MPEG, MP4, WAV, Word and Excel of up to 10MB, Tables and Images will be ignored."
                 onFileUpload={(file) => handleFileUpload("otherFiles", file)}
+                fileId="other"
+                accepted="image/jpeg, image/png, application/pdf, video/mpeg, video/mp4, audio/wav, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                showNotification={showNotification}
               />
             </div>
           </div>
         </form>
       </div>
       <div className="custom-div place-items-end pb-2 mx-3 w-full">
-        <button
-          className="py-1 px-4 text-base bg-blue-400 rounded-sm text-white"
-          onClick={handleNext}
-        >
-          Next
-        </button>
+       <div className="flex gap-2">
+           <button 
+             onClick={()=>setAction({next:false,draft:true})}
+             className="text-gray-400 py-1 px-4 border-gray-200 hover:bg-gray-100 border-2">
+             Save As Draft</button>
+          <button 
+           className="py-1 px-4 text-gray-400 hover:bg-gray-100 rounded-sm border"
+           onClick={handlePrev}
+          >previous</button>
+          <button
+            className="py-1 px-4 text-base bg-blue-400 rounded-sm text-white"
+            onClick={()=>setAction({next:true,draft:false})}
+          >
+            Next
+          </button>
+       </div>
       </div>
     </div>
+    </>
   );
 };
 

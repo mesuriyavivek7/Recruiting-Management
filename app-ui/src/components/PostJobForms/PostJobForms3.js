@@ -1,15 +1,35 @@
-import React, { useState } from "react";
-
+import React, { useContext, useEffect, useState } from "react";
+import Notification from "../Notification";
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import axios from "axios";
+import { AuthContext } from "../../context/AuthContext";
 
-const PostJobForms3 = ({ onNext,onPrev }) => {
+const PostJobForms3 = ({ onNext,onPrev,onFormDataChange,jobid,handleDraftSave,parentFormData}) => {
+  const {user}=useContext(AuthContext)
   const [formData, setFormData] = useState({
-    clientVisibility: true,
-    clientName: "ZUPEE",
-    clientDescription: "",
-    agreeToTerms: false,
+    clientVisibility:(Object.keys(parentFormData.form3).length>0)?(parentFormData.form3.client_visibility):(true),
+    clientName: "",
+    clientDescription:(Object.keys(parentFormData.form3).lenght>0)?(parentFormData.form3.client_description):(""),
+    agreeToTerms: (Object.keys(parentFormData.form3).length>0)?(parentFormData.form3.agree_to_tearms):(false),
   });
+
+  const [action,setAction]=useState({next:false,draft:false})
+
+  const getCompnayName=async ()=>{
+    try{
+      const res=await axios(`${process.env.REACT_APP_API_BASE_URL}/enterprise/companyname/${user.enterprise_id}`)
+      setFormData((prevData)=>({...prevData,clientName:res.data.company_name}))
+
+    }catch(err){
+      showNotification("There is something wrong...!","failure")
+    }
+  } 
+
+
+  useEffect(()=>{
+    getCompnayName()
+  },[])
 
   const [errors, setErrors] = useState({});
 
@@ -21,6 +41,13 @@ const PostJobForms3 = ({ onNext,onPrev }) => {
     }));
   };
 
+    //for showing notification
+    const [notification,setNotification]=useState(null)
+
+    //for showing notification
+    const showNotification=(message,type)=>{
+     setNotification({message,type})
+   }
   
   const validate = () => {
     const newErrors = {};
@@ -63,13 +90,45 @@ const formats = [
   ];
 
 
-  console.log(formData)
   
+  const handleParentFormDataChange=()=>{
+    if(validate()){
+      onFormDataChange({
+          enterprise_id:user.enterprise_id,
+          job_id:jobid,
+          client_visibility:formData.clientVisibility,
+          client_name:formData.clientName,
+          client_description:formData.clientDescription,
+          agree_to_tearms:formData.agreeToTerms
+      })
+    }
+  }
+
+  useEffect(()=>{
+    if(action.next===true || action.draft===true){
+       handleParentFormDataChange()
+    }
+  },[action])
+  
+  useEffect(()=>{
+    if(action.next===true) handleNext()
+    else if(action.draft===true) handleDraft()
+    setAction({next:false,draft:false})
+  },[parentFormData])
+
+
+ const handleDraft=async ()=>{
+   const saved=handleDraftSave()
+   if(saved) showNotification("Job Draft Saved Sucessfully",'success')
+   else showNotification("There is something wrong for draft save",'failure')
+
+  // console.log("handle draft save trigger")
+ }
 
   const handleNext = () => {
-    if (validate()) {
       onNext(formData);
-    }
+      // console.log("handle next trigger")
+    
   };
 
   const handlePrev=()=>{
@@ -77,6 +136,8 @@ const formats = [
   }
 
   return (
+    <>
+     {notification && <Notification message={notification.message} type={notification.type} onClose={()=>setNotification(null)}></Notification>}
     <div className="flex flex-col gap-2 relative">
       <div className="custom-div mx-3 w-full relative">
         <div className="flex place-items-start relative w-full px-4 py-6">
@@ -172,6 +233,10 @@ const formats = [
       </div>
       <div className="custom-div place-items-end pb-2">
          <div className="flex gap-2">
+            <button 
+            onClick={()=>setAction({next:false,draft:true})}
+            className="text-gray-400 py-1 px-4 border-gray-200 hover:bg-gray-100 border-2">
+            Save As Draft</button>
            <button 
              className="py-1 px-4 text-gray-400 hover:bg-gray-100 rounded-sm border"
              onClick={handlePrev}
@@ -179,13 +244,14 @@ const formats = [
            <button
             type="button"
             className="py-1 px-4 text-base bg-blue-400 rounded-sm text-white"
-            onClick={handleNext}
+            onClick={()=>setAction({next:true,draft:false})}
            >
             Next
           </button>
          </div>
       </div>
     </div>
+    </>
   );
 };
 

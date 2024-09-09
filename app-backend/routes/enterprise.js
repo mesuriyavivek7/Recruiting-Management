@@ -1,5 +1,5 @@
 import express from 'express'
-import { acVerified, allocatedAcManager, changeAccountStatus, changeMail, changepassword, checkPassword, getAcPendingEnterprise, getAllPendingMadminVerifyEnterprise, getEnterprise, getMobileNo } from '../controller/enterpriseController.js'
+import { acVerified, allocatedAcManager, changeAccountStatus, changeMail, changepassword, checkPassword, getAcPendingEnterprise, getAllPendingMadminVerifyEnterprise, getCompnayName, getEnterprise, getMobileNo } from '../controller/enterpriseController.js'
 
 const router=express.Router()
 
@@ -32,5 +32,8 @@ router.get('/acpending/:id',getAcPendingEnterprise)
 
 //for getting approved from account manager side
 router.post('/acverified',acVerified)
+
+//for getting company name 
+router.get('/companyname/:eid',getCompnayName)
 
 export default router
