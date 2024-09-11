@@ -24,7 +24,12 @@ const SideNavbar = () => {
   const getNavLinkPath = (path) => {
     if (location.pathname.includes("account-manager")) {
       return path.replace("/admin", "/account-manager");
-    } else {
+    } 
+    else if (location.pathname.includes("super-admin")) {
+      return path.replace("/admin", "/super-admin");
+    }
+    
+    else {
       return path;
     }
   };
