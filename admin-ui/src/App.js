@@ -23,6 +23,14 @@ import AdminCandidateTable from './Pages/PagesForAdmin/AdminCandidateTable';
 import AdminCandidateDetails from './Pages/PagesForAdmin/AdminCandidateDetails';
 import Job from './Pages/PagesForAccountManager/Job';
 import AdminJob from './Pages/PagesForAdmin/AdminJob';
+import SuperAdmin from './Pages/Dashboard/SuperAdmin';
+import SupperAdminDashboard from './Components/SuperAdminDashboard';
+import SuperEnterpriceTable from './Pages/PagesForSuperAdmin/SuperEnterPriceTable';
+import SuperRecruitingAgencyTable from './Pages/PagesForSuperAdmin/SuperRecruitingAgencyTable';
+import SuperJobTable from './Pages/PagesForSuperAdmin/SuperJobTable';
+import SuperCandidateTable from './Pages/PagesForSuperAdmin/SuperCandidateTable';
+import SuperCandidateDetails from './Pages/PagesForSuperAdmin/SuperCandidateDetails';
+import SuperAdminJob from './Pages/PagesForSuperAdmin/SuperAdminJob';
 
 
 
@@ -110,6 +118,46 @@ function App() {
           {
             path: "candidate/:id",
             element: <CandidateDetails/>,
+          },
+         
+        
+       ],
+      },
+      {
+        path:"/super-admin",
+        element: <SuperAdmin/>,
+        children: [
+          {
+            index: true, 
+            element: <SupperAdminDashboard/>,
+          },
+          {
+            path: "dashboard",
+            element: <SupperAdminDashboard/>,
+           },
+          {
+            path: "enterprise",
+            element: <SuperEnterpriceTable/>,
+          },
+          {
+            path: "recruiting-agency",
+            element: <SuperRecruitingAgencyTable/>,
+          },
+          {
+            path: "jobs",
+            element: <SuperJobTable/>,
+          },
+          {
+            path: "candidates",
+            element: <SuperCandidateTable/>,
+          },
+          {
+            path: "job/:id",
+            element: <SuperAdminJob/>,
+          },
+          {
+            path: "candidate/:id",
+            element: <SuperCandidateDetails/>,
           },
          
         
