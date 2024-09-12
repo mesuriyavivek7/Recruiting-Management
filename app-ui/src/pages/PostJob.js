@@ -196,6 +196,7 @@ const PostJob = () => {
           <p className={stepClass(2)}>Remuneration & Commission</p>
           <p className={stepClass(3)}>Company Details</p>
           <p className={stepClass(4)}>Sourcing Guidelines</p>
+          <p className={stepClass(5)}>Screening Questions</p>
         </div>
       </div>
       {renderForm()}

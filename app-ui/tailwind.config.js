@@ -23,7 +23,9 @@ module.exports = {
         "white-400":"#f1f5f9",
         "gray-800":"#475569",
         "purple-200":"#575757",
-        "black-200":'#334155'
+        "black-200":'#334155',
+        "orange-700":'#fbe6b1',
+        "orange-800":'af8008'
       }
     },
   },
