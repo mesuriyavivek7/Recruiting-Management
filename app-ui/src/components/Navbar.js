@@ -28,7 +28,7 @@ const Navbar = () => {
         </div>
       </div>
       <div className="flex place-items-center gap-4">
-        <Link to="jobposting/postjob">
+        <Link to="jobposting/landing">
           <button
             type="button"
             className="bg-blue-400 rounded-md py-1 px-2 flex place-items-center gap-3"

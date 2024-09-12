@@ -8,18 +8,19 @@ const PostJobForm4 = ({ onNext,onPrev,onFormDataChange,jobid,handleDraftSave,par
   const [action,setAction]=useState({next:false,prev:false})
   const {user}=useContext(AuthContext)
   const [formData, setFormData] = useState({
-    mustHaves: "",
-    noPoachClients: "",
-    niceToHaves: "",
-    targetCompanies: "",
-    additionalGuidelines: "",
+    mustHaves: (Object.keys(parentFormData.form4).length>0)?(parentFormData.form4.must_haves):(""),
+    noPoachClients: (Object.keys(parentFormData.form4).length>0)?(parentFormData.form4.poach_clients):(""),
+    niceToHaves:(Object.keys(parentFormData.form4).length>0)?(parentFormData.form4.nice_to_haves):(""),
+    targetCompanies: (Object.keys(parentFormData.form4).length>0)?(parentFormData.form4.target_companies):(""),
+    additionalGuidelines: (Object.keys(parentFormData.form4).length>0)?(parentFormData.form4.additional_guidelines):(""),
     attachments: {
-      sampleCV: null,
-      candidateEvaluationForm: null,
-      audioBriefing: null,
-      otherFiles: null,
+      sampleCV: (Object.keys(parentFormData.form4.attachments).length>0)?(parentFormData.form4.attachments.sample_cv):(null),
+      candidateEvaluationForm: (Object.keys(parentFormData.form4.attachments).length>0)?(parentFormData.form4.attachments.evaluation_form):(null),
+      audioBriefing: (Object.keys(parentFormData.form4.attachments).length>0)?(parentFormData.form4.attachments.audio_brief):(null),
+      otherFiles: (Object.keys(parentFormData.form4.attachments).length>0)?(parentFormData.form4.attachments.other_docs):(null),
     }
   });
+
 
   const [errors, setErrors] = useState({});
 
@@ -199,6 +200,7 @@ const PostJobForm4 = ({ onNext,onPrev,onFormDataChange,jobid,handleDraftSave,par
                 fileId="samplecv"
                 accepted=".pdf,.docx,.doc"
                 showNotification={showNotification}
+                existfile={(Object.keys(parentFormData.form4.attachments).length>0)?(parentFormData.form4.attachments.sample_cv):(null)}
               />
             </div>
             <div className="relative flex flex-col gap-2 place-items-start mt-2">
@@ -210,6 +212,7 @@ const PostJobForm4 = ({ onNext,onPrev,onFormDataChange,jobid,handleDraftSave,par
                 fileId="evaluationform"
                 accepted=".pdf,.docx,.doc"
                 showNotification={showNotification}
+                existfile={(Object.keys(parentFormData.form4.attachments).length>0)?(parentFormData.form4.attachments.evaluation_form):(null)}
               />
             </div>
             <div className="relative flex flex-col gap-2 place-items-start mt-2">
@@ -221,6 +224,7 @@ const PostJobForm4 = ({ onNext,onPrev,onFormDataChange,jobid,handleDraftSave,par
                 fileId="audio"
                 accepted="video/mpeg, video/mp4, audio/wav"
                 showNotification={showNotification}
+                existfile={(Object.keys(parentFormData.form4.attachments).length>0)?(parentFormData.form4.attachments.audio_brief):(null)}
               />
             </div>
             <div className="relative flex flex-col gap-2 place-items-start mt-2">
@@ -232,6 +236,7 @@ const PostJobForm4 = ({ onNext,onPrev,onFormDataChange,jobid,handleDraftSave,par
                 fileId="other"
                 accepted="image/jpeg, image/png, application/pdf, video/mpeg, video/mp4, audio/wav, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                 showNotification={showNotification}
+                existfile={(Object.keys(parentFormData.form4.attachments).length>0)?(parentFormData.form4.attachments.other_docs):(null)}
               />
             </div>
           </div>

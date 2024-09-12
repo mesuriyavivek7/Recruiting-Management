@@ -23,7 +23,11 @@ const Login = () => {
 
   useEffect(()=>{
      if(user){
-        navigate('/employer/dashboard')
+        if(user.userType==="enterprise"){
+          navigate('/employer/dashboard')
+        }else{
+          navigate('/recruiter/dashboard')
+        }
      }
   },[])
 
@@ -59,7 +63,12 @@ const Login = () => {
       dispatch({type:"USER_FETCH_SUCCESS",payload:user.data.details})
 
       //navigate to dashboard
-      navigate('/employer/dashboard')
+      if(user.data.details.userType==="enterprise"){
+        navigate('/employer/dashboard')
+      }else{
+        navigate('/recruiter/dashboard')
+      }
+      
       }catch(err){
         dispatch({type:"USER_FETCH_FAILURE"})
         showNotification(err.response.data.message,'failure')

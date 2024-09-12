@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import VideocamOutlinedIcon from '@mui/icons-material/VideocamOutlined';
 import SearchIcon from '@mui/icons-material/Search';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import LiveJobs from '../components/recruitjobs/LiveJobs';
 export default function Jobs() {
   const [currentTabe,setCurrentTabe]=useState('accepted')
 
@@ -76,6 +77,10 @@ export default function Jobs() {
                 }
              </div>
           </div>
+       </div>
+       <div className='flex flex-col gap-2'>
+          <LiveJobs></LiveJobs>
+          <LiveJobs></LiveJobs>
        </div>
     </div>
 

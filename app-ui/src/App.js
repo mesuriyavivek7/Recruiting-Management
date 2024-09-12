@@ -11,7 +11,7 @@ import Settings from "./pages/Settings";
 import Dashboard from "./pages/Dashboard";
 import PostJob from "./pages/PostJob";
 import DemoVideosPage from "./components/DemoVideos";
-import JobPostings from "./components/JobPostings";
+import JobPostings from "./pages/jobs/JobPostings";
 import BulkActions from "./components/BulkActions,";
 import OffersPage from "./components/OffersPage";
 import Support from "./pages/Support";
@@ -52,7 +52,7 @@ const App = () => {
           element: <Settings />,
         },
         {
-          path: "jobposting/postjob",
+          path: "jobposting/landing/postjob",
           element: <PostJob />,
         },
         {
