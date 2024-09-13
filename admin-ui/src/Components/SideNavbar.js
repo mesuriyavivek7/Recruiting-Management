@@ -23,10 +23,10 @@ const SideNavbar = () => {
 
   const getNavLinkPath = (path) => {
     if (location.pathname.includes("account-manager")) {
-      return path.replace("/admin", "/account-manager");
+      return path.replace("/master_admin", "/account-manager");
     } 
     else if (location.pathname.includes("super-admin")) {
-      return path.replace("/admin", "/super-admin");
+      return path.replace("/master_admin", "/super-admin");
     }
     
     else {
@@ -41,7 +41,7 @@ const SideNavbar = () => {
         {isOpen && <span className="text-white">Collaps</span>}
       </div>
       <NavLink
-        to={getNavLinkPath("/admin/dashboard/")}
+        to={getNavLinkPath("/master_admin/dashboard/")}
         className={({ isActive }) => `hover:bg-gray-400 rounded-md p-2 ${!isOpen && "justify-center"} flex gap-2 ${isActive ? 'bg-gray-400' : ''}`}
       >
         <DashboardIcon className="w-[24px] text-white" />
@@ -49,7 +49,7 @@ const SideNavbar = () => {
         {isOpen && <span className="text-white">Dashboard</span>}
       </NavLink>
       <NavLink
-        to={getNavLinkPath("/admin/enterprise")}
+        to={getNavLinkPath("/master_admin/enterprise")}
         className={({ isActive }) => `hover:bg-gray-400 rounded-md p-2 ${!isOpen && "justify-center"} flex gap-2 ${isActive ? 'bg-gray-400' : ''}`}
       >
         <JobsIcon className="w-[24px] text-white" />
@@ -57,7 +57,7 @@ const SideNavbar = () => {
         {isOpen && <span className="text-white">Enterprise</span>}
       </NavLink>
       <NavLink
-        to={getNavLinkPath("/admin/recruiting-agency")}
+        to={getNavLinkPath("/master_admin/recruiting-agency")}
         className={({ isActive }) => `hover:bg-gray-400 rounded-md p-2 ${!isOpen && "justify-center"} flex gap-2 ${isActive ? 'bg-gray-400' : ''}`}
       >
         <ActionIcon className="w-[24px] text-white" />
@@ -65,7 +65,7 @@ const SideNavbar = () => {
         {isOpen && <span className="text-white">Recruiting Agency</span>}
       </NavLink>
       <NavLink
-        to={getNavLinkPath("/admin/jobs")}
+        to={getNavLinkPath("/master_admin/jobs")}
         className={({ isActive }) => `hover:bg-gray-400 rounded-md p-2 ${!isOpen && "justify-center"} flex gap-2 ${isActive ? 'bg-gray-400' : ''}`}
       >
         <PostIcon className="w-[24px] text-white" />
@@ -73,7 +73,7 @@ const SideNavbar = () => {
         {isOpen && <span className="text-white">Post a Job</span>}
       </NavLink>
       <NavLink
-        to={getNavLinkPath("/admin/candidates")}
+        to={getNavLinkPath("/master_admin/candidates")}
         className={({ isActive }) => `hover:bg-gray-400 rounded-md p-2 ${!isOpen && "justify-center"} flex gap-2 ${isActive ? 'bg-gray-400' : ''}`}
       >
         <CandidatesIcon className="w-[24px] text-white" />

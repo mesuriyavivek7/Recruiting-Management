@@ -60,7 +60,7 @@ const NewCandidateData = () => {
   const handleRowClick = (id) => {
     setSelectedRowId(id);
   
-    navigate(`/admin/candidate/${id}`); 
+    navigate(`/master_admin/candidate/${id}`); 
   };
 
 

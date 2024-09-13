@@ -16,19 +16,19 @@ export default function Login() {
      if(myValue.userData){
         switch(myValue.userData.admin_type){
           case "master_admin":
-            navigate('/admin')
+            navigate('/master_admin')
             break;
           case "account_manager":
             navigate('/account-manager')
             break;
           case "super_admin":
-            navigate('super-admin')
+            navigate('/super-admin')
             break;
           default:
             break;
         }
      }
-  },[myValue])
+  },[myValue,navigate])
 
 
   const [load,setLoad]=useState(false)
@@ -73,7 +73,12 @@ export default function Login() {
           navigate('/admin/dashboard')
         }else if(response.data.details.admin_type==="account_manager"){
           navigate('/account_manager/dashboard')
-        }else{
+        }
+      else if(response.data.details.admin_type==="super_admin"){
+        navigate('/super_admin/dashboard')
+      }
+        
+        else{
           navigate('/admin/dashboard')
         }
         

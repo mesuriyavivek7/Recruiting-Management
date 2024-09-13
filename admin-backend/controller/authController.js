@@ -3,6 +3,7 @@ import ACCOUNTMANAGER from "../models/ACCOUNTMANAGER.js"
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { error } from "../utils/error.js"
+import SUPERADMIN from "../models/SUPER.js"
 
 
 export const login=async (req,res,next)=>{
@@ -11,6 +12,7 @@ export const login=async (req,res,next)=>{
       switch(req.body.admin_type){
         
            case "super_admin":
+            admin=await SUPERADMIN.findOne({email:req.body.email})
             break;
 
            case "master_admin":
@@ -58,5 +60,17 @@ export const acRegister=async (req,res,next)=>{
        res.status(200).json("New Account manager created successfully")
    }catch(err){
       next(err)
+   }
+}
+
+export const sadminRegister=async (req,res,next)=>{
+   const salt = bcrypt.genSaltSync(10);
+   const hash = bcrypt.hashSync(req.body.password,salt);
+   try{  
+      const superadmin=new SUPERADMIN({...req.body,password:hash})
+      await superadmin.save()
+      res.status(200).json("New superadmin created successfully")
+   }catch(err){
+     next(err)
    }
 }

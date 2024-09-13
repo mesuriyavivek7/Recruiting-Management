@@ -60,7 +60,7 @@ const AdminAllJobData = () => {
   const handleRowClick = (id) => {
     setSelectedRowId(id);
   
-    navigate(`/admin/job/${id}`); 
+    navigate(`/master_admin/job/${id}`); 
   };
 
 
