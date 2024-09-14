@@ -12,3 +12,6 @@ const jobsqSchema=new mongoose.Schema({
     screening_questions:[Object]
 
 })
+
+
+export default mongoose.model("jobsq",jobsqSchema)

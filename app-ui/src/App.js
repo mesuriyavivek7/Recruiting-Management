@@ -20,6 +20,7 @@ import Candidate from "./pages/Candidate/Candidate";
 import RecruitDashboard from "./pages/Dashboard/RecruitDashboard";
 import RecruiterDashboard from "./pages/RecruiterDashboard";
 import Jobs from "./pages/Jobs";
+import UploadResume from "./pages/UploadResume";
 
 const App = () => {
   const AppRouter = createBrowserRouter([
@@ -92,6 +93,10 @@ const App = () => {
         {
           path:'jobs',
           element:<Jobs/>
+        },
+        {
+          path:'uploadresume',
+          element:<UploadResume/>
         }
        ]
     }

@@ -1,4 +1,3 @@
-import { generateRandomId } from "../helper/generateRandomId.js";
 import JOBS from "../models/JOBS.js";
 
 
@@ -12,6 +11,16 @@ export const createJobs=async (req,res,next)=>{
         job=newjob
        }
        res.status(200).json(job)
+    }catch(err){
+        next(err)
+    }
+}
+
+
+export const allotedJobToAcManager=async (req,res,next)=>{
+    try{
+      await JOBS.findByIdAndUpdate(req.params.orgid,{$set:{isDraft:false,job_status:"Pending",alloted_account_manager:req.body.ac_id}})
+      res.status(200).json("Sucessfully allocated to account manager")
     }catch(err){
         next(err)
     }

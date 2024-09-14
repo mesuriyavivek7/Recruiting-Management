@@ -5,6 +5,7 @@ import VideocamOutlinedIcon from '@mui/icons-material/VideocamOutlined';
 import SearchIcon from '@mui/icons-material/Search';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import LiveJobs from '../components/recruitjobs/LiveJobs';
+import MappedJobs from '../components/recruitjobs/MappedJobs';
 export default function Jobs() {
   const [currentTabe,setCurrentTabe]=useState('accepted')
 
@@ -78,10 +79,29 @@ export default function Jobs() {
              </div>
           </div>
        </div>
-       <div className='flex flex-col gap-2'>
-          <LiveJobs></LiveJobs>
-          <LiveJobs></LiveJobs>
-       </div>
+    
+       {
+         currentTabe==="accepted"  && (
+                 <div className='flex flex-col gap-2'>
+                    <MappedJobs></MappedJobs>
+                 </div>
+         )
+       }
+       {
+        currentTabe==="mapped" && (
+                  <div className='flex flex-col gap-2'>
+                    <LiveJobs></LiveJobs>
+                  </div>
+        )
+       }
+       {
+        currentTabe==="live" && (
+                  <div className='flex flex-col gap-2'>
+                    <LiveJobs></LiveJobs>
+                    <LiveJobs></LiveJobs>
+                  </div>  
+        )
+       }
     </div>
 
   )

@@ -55,11 +55,12 @@ const PostJobForm4 = ({ onNext,onPrev,onFormDataChange,jobid,handleDraftSave,par
     if (!formData.mustHaves) newErrors.mustHaves = "Must Haves field is required.";
     if (!formData.noPoachClients) newErrors.noPoachClients = "No Poach Clients field is required.";
     setErrors(newErrors);
+    if(Object.keys(newErrors).length>0) showNotification("Please fill out appropriate input fields...!","failure")
     return Object.keys(newErrors).length === 0;
   };
 
   const handleParentFormData=()=>{
-    if(validate){
+    if(validate()){
       onFormDataChange({
         enterprise_id:user.enterprise_id,
         job_id:jobid,

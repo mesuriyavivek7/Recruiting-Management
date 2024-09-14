@@ -49,3 +49,13 @@ export const addVerifiedEnterprise=async (req,res,next)=>{
     next(err)
    }
 }
+
+export const addJobsPendingList=async (req,res,next)=>{
+  console.log("request geted")
+  try{  
+     await ACCOUNTMANAGER.findByIdAndUpdate(req.body.ac_id,{$push:{pending_verify_jobs:req.body.orgjobid}})
+     res.status(200).json("Sucessfully added job into account manager pendig list")
+  }catch(err){
+    next(err)
+  }
+}

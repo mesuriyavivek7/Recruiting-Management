@@ -82,7 +82,7 @@ export default function ScreeningQue({id,type,addQuestion,questionValueChange,re
 
   //change into parent
   useEffect(()=>{
-      questionValueChange(id,{answer:{options:ansOptions.map(item=>item.value)}})
+      questionValueChange(id,{answer:{option:ansOptions.map(item=>item.value)}})
   },[ansOptions])
   
   //handle short text change
@@ -91,7 +91,7 @@ export default function ScreeningQue({id,type,addQuestion,questionValueChange,re
   }
   //change into parent
   useEffect(()=>{
-    questionValueChange(id,{answer:{short_text_length:shortTextLength}})
+    if(selectedOption.value==="short_text") questionValueChange(id,{answer:{short_text_length:shortTextLength}})
   },[shortTextLength])
 
   return (
