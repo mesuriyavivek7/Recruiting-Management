@@ -135,3 +135,12 @@ export const getCompnayName=async (req,res,next)=>{
       next(err)
     }
 }
+
+export const getAcManagerId=async (req,res,next)=>{
+      try{
+         const acmanager=await ENTERPRISE.findById(req.params.eid)
+         res.status(200).json(acmanager.allocated_account_manager)
+      }catch(err){
+        next(err)
+      }
+}

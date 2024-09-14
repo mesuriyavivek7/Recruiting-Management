@@ -19,3 +19,12 @@ export const createJobDraft=async (req,res,next)=>{
         next(err)
     }
 }
+
+export const deleteJobDraft=async (req,res,next)=>{
+    try{
+       await JOBDRAFTS.findOneAndDelete({job_id:req.params.jobid})
+       res.status(200).json("Job Draft deleted sucessfully")
+    }catch(err){
+        next(err)
+    }
+}

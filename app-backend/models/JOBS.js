@@ -28,10 +28,20 @@ const jobSchema=new mongoose.Schema({
     job_attachments:{
         type:String
     },
+    job_screening_questionsa:{
+        type:String
+    },
     isDraft:{
         type:Boolean,
         default:false
     },
+    job_status:{
+        type:String,
+        required:true
+    },
+    alloted_account_manager:{
+        type:String
+    }
 
 },{timestamps:true});
 
