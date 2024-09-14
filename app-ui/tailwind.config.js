@@ -17,6 +17,7 @@ module.exports = {
         "gray-400": "#6b7280",
         "gray-500": "#575757",
         "white-600": "#f8fafc",
+        "white-500":"#f3f4f6",
         "orange-800": "#D95B01",
         "black-900": "#0c0500",
         "white-200": "#e2e8f0",
