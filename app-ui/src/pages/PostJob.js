@@ -28,7 +28,7 @@ const PostJob = () => {
   }
 
   useEffect(()=>{
-    handleJobId()
+     if(!jobId) handleJobId()
   },[])
 
   console.log(jobId)
