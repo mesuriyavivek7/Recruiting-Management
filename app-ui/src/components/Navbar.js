@@ -11,7 +11,7 @@ const Navbar = () => {
   const [openProfile,setOpenProfile]=useState(false)
   return (
    
-    <div className="w-full z-10 flex justify-between py-4 px-3 bg-blue-600">
+    <div className="w-full z-60 flex justify-between py-4 px-3 bg-blue-600">
       <div className="flex place-items-center gap-12">
         <div className="h-[30px] flex place-items-center overflow-hidden rounded-md">
           <img src={asset1} alt="logo" width={95} />
