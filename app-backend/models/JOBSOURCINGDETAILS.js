@@ -17,6 +17,6 @@ const jobsourcingdetailsSchema=new mongoose.Schema({
     nice_to_haves:String,
     target_companies:String,
     additional_guidelines:String
-})
+},{timestamps:true})
 
 export default mongoose.model("jobsourcingdetails",jobsourcingdetailsSchema)

@@ -16,3 +16,12 @@ export const createJobCommission=async (req,res,next)=>{
     next(err)
    }
 }
+
+export const getJobCommissionDetails=async (req,res,next)=>{
+      try{
+         const jobcommission=await JOBCOMMISSION.findOne({job_id:req.params.jobid},{_id:0,createdAt:0,updatedAt:0}).lean()
+         res.status(200).json(jobcommission)
+      }catch(err){
+        next(err)
+      }
+}

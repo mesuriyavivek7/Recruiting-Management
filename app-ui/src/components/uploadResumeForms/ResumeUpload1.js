@@ -7,15 +7,15 @@ import Notification from '../Notification';
 //imporitng icons
 import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined';
 
-export default function ResumeUpload1() {
+export default function ResumeUpload1({parentFormData,candidateId,parentFormDataChange,onNext}) {
   const [formData,setFormData]=useState({
-        firstname:"",
-        lastname:"",
+        firstname:(Object.keys(parentFormData.form0).length>0)?(parentFormData.form0.firstName):(""),
+        lastname:(Object.keys(parentFormData.form0).length>0)?(parentFormData.form0.lastName):(""),
         country:"",
         currentLocation:"",
-        primaryEmailId:"",
+        primaryEmailId:(Object.keys(parentFormData.form0).length>0)?(parentFormData.form0.email):(""),
         additionalEmailId:"",
-        primaryContactNumber:"",
+        primaryContactNumber:(Object.keys(parentFormData.form0).length>0)?(`91${parentFormData.form0.mobile}`):(""),
         additionalContactNumber:'',
         currentCompany:"",
         currentDesignation:"",
@@ -26,7 +26,7 @@ export default function ResumeUpload1() {
         salaryRemarks:"",
         noticePeriod:"",
         comment:"",
-        educationQualification:"",
+        educationQualification:(Object.keys(parentFormData.form0).length>0)?(parentFormData.form0.education):(""),
         candidateSummary:"",
   })
 

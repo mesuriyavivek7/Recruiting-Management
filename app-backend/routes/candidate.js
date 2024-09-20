@@ -2,7 +2,7 @@ import express from 'express'
 import multer from 'multer'
 import path from 'path'
 
-import { createAndParseResume } from '../controller/resumeController.js'
+import { cancelProcess, checkParseDetails, createAndParseResume, removeResumeFile} from '../controller/resumeController.js'
 
 const router=express.Router()
 
@@ -22,6 +22,13 @@ const upload=multer({storage})
 //for attaching candidate resume and parsign it
 router.post('/resumedocs/:cid',upload.single('resume'),createAndParseResume)
 
+//check resuem parse details
+router.post('/checkparsedetails/:cid',checkParseDetails)
 
+//remove resume file from uplods folder
+router.post('/removefile',removeResumeFile)
+
+//cancel parsing process 
+router.delete('/cancelprocess',cancelProcess)
 export default router
 

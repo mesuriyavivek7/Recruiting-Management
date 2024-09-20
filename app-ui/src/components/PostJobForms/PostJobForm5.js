@@ -149,8 +149,8 @@ export default function PostJobForm5({onPrev,onSubmit,onFormDataChange,jobid,han
         </div>
          {
            (jobSubmitLoad)?(<span className='text-xl'>Job Post in Progress...</span>):(  <div className='flex flex-col gap-4'>
-                  <span className='text-xl'>Your Job posted sucessfully</span>
-                  <p>This Job details will be reviewed by your related Account manager typically within one business day.</p>
+                  <span className='text-xl text-center'>Your Job posted sucessfully.</span>
+                  <p className='text-sm text-gray-400 text-center'>This Job details will be reviewed by your related Account manager typically within one business day.</p>
                   <button onClick={handleNavigate} className='text-white bg-blue-500 hover:bg-blue-400 transition-all px-1 py-2'>View Posted Jobs</button>
               </div>)
          }

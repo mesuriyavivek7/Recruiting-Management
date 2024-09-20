@@ -187,6 +187,41 @@ const PostJobForm2 = ({ onNext,onPrev,onFormDataChange,jobid,handleDraftSave,par
   useEffect(()=>{
      if(actionMode.next===true) handleNext()
      else if(actionMode.draft===true) handleDraft()
+    //  else if(Object.keys(parentFormData.form2).length>0){
+    //   setCommissionFormData({
+    //     commissionType:(Object.keys(parentFormData.form2.commission_details).length>0)?(parentFormData.form2.commission_details.commission_type):("Fixed"),
+    //     ...(Object.keys(parentFormData.form2.commission_details).length>0)?(parentFormData.form2.commission_details.commission_type==="Fixed"?({commissionFixPay:parentFormData.form2.commission_details.commission_fix_pay}):({commissionPercentage:parentFormData.form2.commission_details.commission_percentage_pay})):({commissionFixPay:""}),
+    //     paymentTearms:(Object.keys(parentFormData.form2.commission_details).length>0)?(parentFormData.form2.commission_details.payment_tearms):(""),
+    //     replacementClause:(Object.keys(parentFormData.form2.commission_details).length>0)?(parentFormData.form2.commission_details.replacement_clause):(""),
+    //   })
+    //   setCommisionPayRate((Object.keys(parentFormData.form2.commission_details).length>0)?((parentFormData.form2.commission_details.commission_type==="Fixed")?({fixed:true,percentage:false}):({fixed:false,percentage:true})):({fixed:true,percentage:false}))
+    //   if(parentFormData.form2.work_type && parentFormData.form2.work_type==="full_time"){
+    //     setFullTimeFormData({
+    //       fullTimeSalaryType:(Object.keys(parentFormData.form2.work_details.full_time).length>0)?(parentFormData.form2.work_details.full_time.full_time_salary_type):("Range"),
+    //       fullTimeSalaryCurrency:(Object.keys(parentFormData.form2.work_details.full_time).length>0)?(parentFormData.form2.work_details.full_time.full_time_salary_currency):("INR"),
+    //       additionalSalaryDetails:(Object.keys(parentFormData.form2.work_details.full_time).length>0)?(parentFormData.form2.work_details.full_time.additional_salary_details):(""),
+    //       ...((Object.keys(parentFormData.form2.work_details.full_time).length>0)?((parentFormData.form2.work_details.full_time.full_time_salary_type==="Range")?({minSalary:parentFormData.form2.work_details.full_time.min_salary,maxSalary:parentFormData.form2.work_details.full_time.max_salary}):({fixedSalary:parentFormData.form2.work_details.full_time.fixed_salary})):({maxSalary:'',minSalary:''}))
+    //     })
+    //     setActiveJobMode({full_time:true,contract:false})
+    //     setAnnualSalary((Object.keys(parentFormData.form2.work_details.full_time).length>0)?((parentFormData.form2.work_details.full_time.full_time_salary_type==="Range")?({range:true,fixed:false}):({range:false,fixed:true})):({range:true,fixed:false}))
+    //   }
+    //   if(parentFormData.form2.work_type && parentFormData.form2.work_type==="contract"){
+    //     setContractFormData({
+    //       contractDurationType:(Object.keys(parentFormData.form2.work_details.contract).length>0)?(parentFormData.form2.work_details.contract.contract_duration_type):("weekly"),
+    //       contractDurationCount:(Object.keys(parentFormData.form2.work_details.contract).length>0)?(parentFormData.form2.work_details.contract.contract_duration_count):(""),
+    //       contractPayRateType:(Object.keys(parentFormData.form2.work_details.contract).length>0)?(parentFormData.form2.work_details.contract.contract_pay_rate_type):("Range"),
+    //       contractPayCurrency:(Object.keys(parentFormData.form2.work_details.contract).length>0)?(parentFormData.form2.work_details.contract.contract_pay_currency):("INR"),
+    //       ...((Object.keys(parentFormData.form2.work_details.contract).length>0)?((parentFormData.form2.work_details.contract.contract_pay_rate_type==="Range")?({minContractPayRate:parentFormData.form2.work_details.contract.min_contract_pay,maxContractPayRate:parentFormData.form2.work_details.contract.max_contract_pay}):({fixContractPay:parentFormData.form2.work_details.contract.fix_contract_pay})):({minContractPayRate:"",maxContractPayRate:""})),
+    //       contractPayCycle:(Object.keys(parentFormData.form2.work_details.contract).length>0)?(parentFormData.form2.work_details.contract.contract_pay_cycle):(""),
+    //       additionalContractDetails:(Object.keys(parentFormData.form2.work_details.contract).length>0)?(parentFormData.form2.work_details.contract.additional_contract_details):(""),
+    //       weeklyHourCnt:(Object.keys(parentFormData.form2.work_details.contract).length>0)?(parentFormData.form2.work_details.contract.weekly_hour_cnt):(1),
+    //       dailyHourCnt:(Object.keys(parentFormData.form2.work_details.contract).length>0)?(parentFormData.form2.work_details.contract.daily_hour_cnt):(1),
+    //       remarks:(Object.keys(parentFormData.form2.work_details.contract).length>0)?(parentFormData.form2.work_details.contract.remarks):("")
+    //     })
+    //     setActiveJobMode({full_time:false,contract:true})
+    //     setPayRate((Object.keys(parentFormData.form2.work_details.contract).length>0)?((parentFormData.form2.work_details.contract.contract_pay_rate_type==="Range")?({range:true,fixed:false}):({range:false,fixed:true})):({range:true,fixed:false})(Object.keys(parentFormData.form2.work_details.contract).length>0)?((parentFormData.form2.work_details.contract.contract_pay_rate_type==="Range")?({range:true,fixed:false}):({range:false,fixed:true})):({range:true,fixed:false}))
+    //   }
+    //  }
     setActionMode({next:false,draft:false})
   },[parentFormData])
 

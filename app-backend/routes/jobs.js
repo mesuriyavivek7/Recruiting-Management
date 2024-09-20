@@ -3,14 +3,14 @@ import fs from "fs"
 import path from "path"
 import multer from 'multer'
 import { fileURLToPath } from 'url';
-import { allotedJobToAcManager, createJobs } from '../controller/jobController.js'
-import { craeteJobBasicDeatils } from '../controller/jobBasicController.js'
+import { activateJob, allotedJobToAcManager, createJobs, deleteJobDraftWithOtherDetails, getAllJobDetails, getAllJobDraftDetails } from '../controller/jobController.js'
+import { craeteJobBasicDeatils, getJobBasicDetails } from '../controller/jobBasicController.js'
 import { createJobDraft, deleteJobDraft } from '../controller/jobDraftController.js'
-import { createJobCommission } from '../controller/jobCommissionController.js'
-import { createCompanyDetails } from '../controller/jobCompanyController.js'
-import { createSourcingDetails } from '../controller/jobSourcingController.js'
-import { createJobAttachment } from '../controller/jobAttachmentController.js'
-import { createJobSq } from '../controller/jobSqController.js';
+import { createJobCommission, getJobCommissionDetails } from '../controller/jobCommissionController.js'
+import { createCompanyDetails, getJobCompanyDetails } from '../controller/jobCompanyController.js'
+import { createSourcingDetails, getSourcingDetails } from '../controller/jobSourcingController.js'
+import { checkAndRemoveFile, createJobAttachment, getJobAttachmentsDetails, updateJobAttachmentsDetails } from '../controller/jobAttachmentController.js'
+import { createJobSq, getScreeningQue } from '../controller/jobSqController.js';
 
 const router=express.Router()
 const __filename = fileURLToPath(import.meta.url);
@@ -19,7 +19,6 @@ const __dirname = path.dirname(__filename);
 const prepareFolder=(req,res,next)=>{
    const exist_folder=path.join(__dirname,"..",`uploads/jobdocs/${req.params.jobid}`)
    if(fs.existsSync(exist_folder)) fs.rmSync(exist_folder,{recursive:true,force:true})
-
    next()
 }
 
@@ -27,17 +26,35 @@ const prepareFolder=(req,res,next)=>{
 //creatign disk storage for upload files
 const storage=multer.diskStorage({
     destination:(req,file,cb)=>{
-        
         const uniqueFolder=`uploads/jobdocs/${req.params.jobid}`
         fs.mkdirSync(uniqueFolder,{recursive:true})
         cb(null,uniqueFolder);
     },
     filename:(req,file,cb)=>{
-       cb(null,file.originalname);
+       cb(null,file.fieldname+path.extname(file.originalname));
     }
 })
 
-const upload=multer({storage})
+//middleware function to handle file replacement
+const fileFilter=(req,file,cb)=>{
+    const uplodDir=`uploads/jobdocs/${req.params.jobid}`
+    if(fs.existsSync(uplodDir)){
+        const files=fs.readdirSync(uplodDir)
+        if(files.length>0){
+            for(let fl of files){
+                if(path.parse(fl).name===file.fieldname){
+                    if(fs.existsSync(`${uplodDir}/${fl}`)){
+                        fs.unlinkSync(`${uplodDir}/${fl}`)
+                    }
+                }
+            }
+        }
+    }
+    cb(null,true)
+    
+}
+
+const upload=multer({storage,fileFilter})
 
 //for creating job
 router.post('/',createJobs)
@@ -63,6 +80,16 @@ router.post('/uploadjobdocs/:jobid',prepareFolder,upload.fields([
     { name: 'other_docs',maxCount:1}
   ]),createJobAttachment)
 
+//update uploaded job attachments file
+router.post('/updateuploadjobdocs/:jobid',upload.fields([
+    { name: 'sample_cv',maxCount:1 },
+    { name: 'evaluation_form',maxCount:1 },
+    { name: 'audio_brief',maxCount:1},
+    { name: 'other_docs',maxCount:1}
+]),updateJobAttachmentsDetails)
+
+//for check given file is present in upload folder
+router.post('/checkjobattachfile',checkAndRemoveFile)
 
 //for creating job screening questions
 router.post('/jobsq/:orgjobid',createJobSq)
@@ -75,6 +102,38 @@ router.delete('/deletejobdraft/:jobid',deleteJobDraft)
 
 //for allocating job to account manager
 router.post('/allotacmanager/:orgid',allotedJobToAcManager)
+
+//for activated job 
+router.put('/activatejob/:orgid',activateJob)
+
+//for getting jobs details for showing front table
+router.get('/getalljobdetails/:ememberid',getAllJobDetails)
+
+//for getting job draft detials for showing front table
+router.get('/getalljobdraftdetails/:ememberid',getAllJobDraftDetails)
+
+//for deleting job draft with others details 
+router.delete('/deletedraftwithjobs/:jobid',deleteJobDraftWithOtherDetails)
+
+//for getting job data for to show in draft page
+
+//for getting basic job details
+router.get("/getbasicjobdetails/:jobid",getJobBasicDetails)
+
+//for getting job commission details
+router.get("/getjobcommissiondetails/:jobid",getJobCommissionDetails)
+
+//for getting job company details
+router.get('/getcompanydetails/:jobid',getJobCompanyDetails)
+
+//for getting sourcing guidelines details
+router.get('/getsourcingdetails/:jobid',getSourcingDetails)
+
+//for getting job attachments details for showing in to job draft
+router.get('/getjobattachmentdetails/:jobid',getJobAttachmentsDetails)
+
+//for gettign job screening questions details
+router.get('/getscreeningquestions/:jobid',getScreeningQue)
 
 
 export default router

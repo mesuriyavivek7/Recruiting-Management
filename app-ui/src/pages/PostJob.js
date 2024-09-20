@@ -6,32 +6,16 @@ import PostJobForm4 from "../components/PostJobForms/PostJobForm4";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 import PostJobForm5 from "../components/PostJobForms/PostJobForm5";
+import { useParams } from "react-router-dom";
+import Loader from '../assets/loader.svg'
 
 const PostJob = () => {
   const {user}=useContext(AuthContext)
-  const [currentStep, setCurrentStep] = useState(1);
+  const {oldjobid}= useParams()
+  const [currentStep, setCurrentStep] = useState((oldjobid)?(0):(1));
+  const [jobId,setJobId]=useState((oldjobid)?(oldjobid):(null))
+  const [loader,setLoader]=useState(false)
 
-  const [jobId,setJobId]=useState(null)
-
-  const handleJobId=()=>{
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let result = '';
-    const length = 5;
-
-    for (let i = 0; i < length; i++) {
-        const randomIndex = Math.floor(Math.random() * characters.length);
-        result += characters[randomIndex];
-    }
-    result='J'+result;
-    setJobId(result)
-
-  }
-
-  useEffect(()=>{
-     if(!jobId) handleJobId()
-  },[])
-
-  console.log(jobId)
   const [formData, setFormData] = useState({
     form1: {},
     form2: {
@@ -45,6 +29,86 @@ const PostJob = () => {
     form4: {attachments:{}},
     form5: {},
   });
+
+  const handleJobId=()=>{
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let result = '';
+    const length = 5;
+
+    for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * characters.length);
+        result += characters[randomIndex];
+    }
+    result='J'+result;
+    setJobId(result)
+
+  }
+
+  const fetchPastData=async ()=>{
+      try{
+        setLoader(true)
+        //fetch job basic details
+        const basicdetails=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/job/getbasicjobdetails/${oldjobid}`)
+
+        //fetch job commission details
+        const commissiondetails=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/job/getjobcommissiondetails/${oldjobid}`)
+
+        //fetch job company details
+        const companydetails=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/job/getcompanydetails/${oldjobid}`)
+
+        //fetch job sourcing guidelines
+        const sourcingdetails=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/job/getsourcingdetails/${oldjobid}`)
+
+        //fetch job attachments details
+        const jobattachment=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/job/getjobattachmentdetails/${oldjobid}`)
+        
+        //add savedraft flag into job attachments details
+        let jobattach=jobattachment.data
+        for (let key in jobattach) {
+          // Check if the value is an object (and not null)
+          if (jobattach[key] && typeof jobattach[key] === 'object') {
+              // Add the savedDraft key-value pair
+              jobattach[key].savedDraft = true;
+          }
+       }
+
+        //fetch job screening questions
+        const jobsq=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/job/getscreeningquestions/${oldjobid}`)
+        
+        console.log("basicdetails----->",basicdetails.data)
+        console.log("commissiondetails---->",commissiondetails.data)
+        console.log("companydetails---->",companydetails.data)
+        console.log("job sourcing guidelines---->",sourcingdetails.data)
+        console.log("jobattachments----->",jobattachment.data)
+        console.log("screening questions----->",jobsq.data)
+        console.log("jobattach------>",jobattach)
+        
+        setFormData((prevData)=>({...prevData,form1:(basicdetails.data)?(basicdetails.data):({}),
+        form2:(commissiondetails.data)?(commissiondetails.data):({work_details:{full_time:{},contract:{}},commission_details:{}}),
+        form3:(companydetails.data)?(companydetails.data):({}),
+        form4:(sourcingdetails.data)?({...sourcingdetails.data,attachments:{...jobattach,savedDraft:true}}):({attachments:{}}),
+        form5:(jobsq.data)?({...jobsq.data}):({})}))
+        setCurrentStep(1)
+      }catch(err){
+         console.log(err)
+      }
+      setLoader(false)
+  }
+
+
+  //custome box stiling
+  const boxStyle = {
+    animation: 'colorChange 5s infinite',
+  };
+  
+
+  useEffect(()=>{
+     if(!jobId) handleJobId()
+     if(oldjobid) fetchPastData()
+  },[])
+
+  console.log(jobId)
+
 
   console.log('allformdata------>',formData)
 
@@ -87,14 +151,28 @@ const PostJob = () => {
 
       //step-6 create job attachments
       if(Object.keys(formData.form4.attachments).length>0){
-          
-          const fileData=new FormData()
-          if(formData.form4.attachments.sample_cv) fileData.append('sample_cv',formData.form4.attachments.sample_cv)
-          if(formData.form4.attachments.evaluation_form) fileData.append('evaluation_form',formData.form4.attachments.evaluation_form)
-          if(formData.form4.attachments.audio_brief) fileData.append('audio_brief',formData.form4.attachments.audio_brief)
-          if(formData.form4.attachments.other_docs) fileData.append("other_docs",formData.form4.attachments.other_docs)
+           //check for user open saved job draft or craeted new
+           if(formData.form4.attachments.savedDraft){
+               
+            //remove all files from backend upload folder which are remove in job draft section
+            for(let key in formData.form4.attachments){
+               if(formData.form4.attachments.hasOwnProperty(key) && key!=="savedDraft"){
+                  if(!formData.form4.attachments[key]){
+                    await axios.post(`${process.env.REACT_APP_API_BASE_URL}/job/checkjobattachfile`,{jobid:jobId,fieldname:key})
+                  }
+               }
+            }
 
-          if([...fileData.entries()].length!==0) await axios.post(`${process.env.REACT_APP_API_BASE_URL}/job/uploadjobdocs/${jobId}`,fileData,{headers:{"Content-Type":'multipart/form-data'}})
+            //make request for uplaoding updated files
+            let upadtedFiles=getUploadFiles(formData.form4.attachments)
+            if([...upadtedFiles.entries()].length!==0) await axios.post(`${process.env.REACT_APP_API_BASE_URL}/job/updateuploadjobdocs/${jobId}`,upadtedFiles,{headers:{"Content-Type":"multipart/form-data"}})
+
+         }else{
+           //make request for uploading files
+           let fileData=getUploadFiles(formData.form4.attachments)
+           if([...fileData.entries()].length!==0) await axios.post(`${process.env.REACT_APP_API_BASE_URL}/job/uploadjobdocs/${jobId}`,fileData,{headers:{"Content-Type":'multipart/form-data'}})
+         }   
+        
       }
       
       //step-7 create job screening questions
@@ -111,6 +189,16 @@ const PostJob = () => {
       return false;
     }
 
+  }
+
+  const getUploadFiles=(fileObj)=>{
+      let newFile=new FormData()
+      for(let [key,value] of Object.entries(fileObj)){
+         if(key!=="savedDraft"){
+           if(fileObj[key] && !fileObj[key].savedDraft) newFile.append(key,value)
+         }
+      }
+      return newFile
   }
 
   const handleSubmit = async() => {
@@ -137,14 +225,26 @@ const PostJob = () => {
 
       //step-6 create job attachments
       if(Object.keys(formData.form4.attachments).length>0){
-          
-          const fileData=new FormData()
-          if(formData.form4.attachments.sample_cv) fileData.append('sample_cv',formData.form4.attachments.sample_cv)
-          if(formData.form4.attachments.evaluation_form) fileData.append('evaluation_form',formData.form4.attachments.evaluation_form)
-          if(formData.form4.attachments.audio_brief) fileData.append('audio_brief',formData.form4.attachments.audio_brief)
-          if(formData.form4.attachments.other_docs) fileData.append("other_docs",formData.form4.attachments.other_docs)
+    
+            //check for user open saved job draft or craeted new
+            if(formData.form4.attachments.savedDraft){
+               
+               //remove all files from backend upload folder which are remove in job draft section
+               for(let key in formData.form4.attachments){
+                  if(formData.form4.attachments.hasOwnProperty(key) && key!=="savedDraft"){
+                     if(!formData.form4.attachments[key]) await axios.post(`${process.env.REACT_APP_API_BASE_URL}/job/checkjobattachfile`,{jobid:jobId,fieldname:key})
+                  }
+               }
 
-          if([...fileData.entries()].length!==0) await axios.post(`${process.env.REACT_APP_API_BASE_URL}/job/uploadjobdocs/${jobId}`,fileData,{headers:{"Content-Type":'multipart/form-data'}})
+               //make request for uplaoding updated files
+               let upadtedFiles=getUploadFiles(formData.form4.attachments)
+               if([...upadtedFiles.entries()].length!==0) await axios.post(`${process.env.REACT_APP_API_BASE_URL}/job/updateuploadjobdocs/${jobId}`,upadtedFiles,{headers:{"Content-Type":"multipart/form-data"}})
+
+            }else{
+              //make request for uploading files
+              let fileData=getUploadFiles(formData.form4.attachments)
+              if([...fileData.entries()].length!==0) await axios.post(`${process.env.REACT_APP_API_BASE_URL}/job/uploadjobdocs/${jobId}`,fileData,{headers:{"Content-Type":'multipart/form-data'}})
+            }   
       }
       
       //step-7 create job screening questions
@@ -155,7 +255,6 @@ const PostJob = () => {
 
       //step-9 getting account manager for particuler enterprise
       const acmanagerdata=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/enterprise/acmanager/${user.enterprise_id}`)
-      console.log('Account manager----->',acmanagerdata)
 
       //step-10 updated job with allocated account manager
       await axios.post(`${process.env.REACT_APP_API_BASE_URL}/job/allotacmanager/${res.data._id}`,{ac_id:acmanagerdata.data})
@@ -176,6 +275,12 @@ const PostJob = () => {
 
   const renderForm = () => {
     switch (currentStep) {
+      case 0: 
+        return (
+          //this is initial setup when user open job as saved draft
+           <div>Loading.....</div>
+        )
+
       case 1:
         return (
           <PostJobForm1
@@ -243,6 +348,26 @@ const PostJob = () => {
 
   return (
     <div className="flex flex-col gap-2 relative">
+      {
+        loader && (
+          <div className='fixed inset-0 flex justify-center bg-black z-50 bg-opacity-50 backdrop-blur-md items-center'>
+          <div className="w-[500px] gap-4 flex flex-col items-center p-4 rounded-md bg-white">
+            <div style={boxStyle} className="w-[450px] flex justify-center items-center rounded-sm h-60 border animation-color-change">
+              <img src={Loader}></img>
+            </div>
+            <span className="text-xl text-gray-500">Wait For Some Few Seconds...</span>
+          </div>
+          <style>{`
+        @keyframes colorChange {
+          0%, 100% { background-color: #4F75FF; }  
+          25% { background-color: #00CCDD; }       
+          50% { background-color: #378CE7; }       
+          75% { background-color: #96E9C6; }     
+        }
+      `}</style>
+       </div>
+        )
+      }
       <div className="custom-div">
         <p className="text-2xl font-semibold">Post a Job</p>
         <div className="flex place-items-center gap-4">

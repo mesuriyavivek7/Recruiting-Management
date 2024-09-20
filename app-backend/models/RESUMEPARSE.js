@@ -17,10 +17,12 @@ const resumeparseSchema=new mongoose.Schema({
         type:String,
         required:true
     },
-    fullname:String,
+    firstname:String,
+    lastname:String,
     contactno:String,
     emailid:String,
-    educationdetails:String
+    educationdetails:String,
+    pancardnumber:String
 })
 
 export default mongoose.model("resumeparse",resumeparseSchema)

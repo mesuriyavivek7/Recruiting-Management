@@ -51,7 +51,6 @@ export const addVerifiedEnterprise=async (req,res,next)=>{
 }
 
 export const addJobsPendingList=async (req,res,next)=>{
-  console.log("request geted")
   try{  
      await ACCOUNTMANAGER.findByIdAndUpdate(req.body.ac_id,{$push:{pending_verify_jobs:req.body.orgjobid}})
      res.status(200).json("Sucessfully added job into account manager pendig list")
@@ -59,3 +58,15 @@ export const addJobsPendingList=async (req,res,next)=>{
     next(err)
   }
 }
+
+
+export const addJobIntoVerifyList=async (req,res,next)=>{
+  try{
+    await ACCOUNTMANAGER.findByIdAndUpdate(req.body.ac_id,{$pull:{pending_verify_jobs:req.body.orgjobid}})
+    await ACCOUNTMANAGER.findByIdAndUpdate(req.body.ac_id,{$push:{verified_jobs:req.body.orgjobid}})
+    res.status(200).json("Job Successfully added into accountmanager verify list")
+  }catch(err){
+    next(err)
+  }
+}
+

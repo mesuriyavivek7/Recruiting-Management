@@ -56,6 +56,10 @@ const App = () => {
           path: "jobposting/landing/postjob",
           element: <PostJob />,
         },
+        { 
+          path: "jobposting/landing/postjob/:oldjobid",
+          element: <PostJob />
+        },
         {
           path: "jobposting/landing",
           element: <JobPostings/>,

@@ -88,7 +88,7 @@ const FileDragDrop = ({fileuploadname,existfile,fileuploadspan,onFileUpload,file
           file && (
 
             <div className='flex mt-4 justify-between gap-4 place-items-center'>
-              <p className="text-green-500">{file.name}</p>
+              <p className="text-green-500">{(file.savedDraft)?(file.filename):(file.name)}</p>
               <span onClick={handleRemoveFile} className='cursor-pointer hover:text-red-500'><CloseIcon style={{fontSize:"1rem"}}></CloseIcon></span>
             </div>
 
