@@ -8,12 +8,13 @@ import { AuthContext } from "../../context/AuthContext";
 const PostJobForms3 = ({ onNext,onPrev,onFormDataChange,jobid,handleDraftSave,parentFormData}) => {
   const {user}=useContext(AuthContext)
   const [formData, setFormData] = useState({
-    clientVisibility:(Object.keys(parentFormData.form3).length>0)?(parentFormData.form3.client_visibility):(true),
+    clientVisibility:(Object.keys(parentFormData.form3).length>0)?(parentFormData.form3.client_visibility):("Visible"),
     clientName: "",
-    clientDescription:(Object.keys(parentFormData.form3).lenght>0)?(parentFormData.form3.client_description):(""),
+    clientDescription:(Object.keys(parentFormData.form3).length>0)?(parentFormData.form3.client_description):(""),
     agreeToTerms: (Object.keys(parentFormData.form3).length>0)?(parentFormData.form3.agree_to_tearms):(false),
   });
 
+  
   const [action,setAction]=useState({next:false,draft:false})
 
   const getCompnayName=async ()=>{
@@ -154,7 +155,7 @@ const formats = [
                   name="clientVisibility"
                   value="Visible"
                   className="w-[16px] h-[16px] mt-1"
-                  checked={formData.clientVisibility === true}
+                  checked={formData.clientVisibility === "Visible"}
                   onChange={handleChange}
                 />
                 <label htmlFor="visible" className="input-label">
@@ -166,8 +167,8 @@ const formats = [
                 <input
                   type="radio"
                   id="hidden"
-                  name="clientVisibility"
                   value="Hidden"
+                  name="clientVisibility"
                   className="w-[16px] h-[16px] mt-1"
                   checked={formData.clientVisibility === "Hidden"}
                   onChange={handleChange}

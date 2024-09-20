@@ -14,3 +14,13 @@ export const createJobSq=async (req,res,next)=>{
      next(err)
     }
 }
+
+
+export const getScreeningQue=async (req,res,next)=>{
+    try{
+        const getSq=await JOBSQ.findOne({job_id:req.params.jobid},{_id:0,createdAt:0,updatedAt:0})
+        res.status(200).json(getSq)
+    }catch(err){
+        next(err)
+    }
+}

@@ -1,12 +1,13 @@
-import React from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 //importing data grid
 import { DataGrid } from '@mui/x-data-grid'
 import { Box } from '@mui/material'
 
 //importing data fir pastjobs
-import { pastJobCol,pastJobRow } from '../../pages/jobs/PastJobsData'
+import { pastJobCol} from '../../pages/jobs/PastJobsData'
 
-export default function PastJobs() {
+export default function PastJobs({rows,loading,setTotalPastJobs,showNotification}) {
+
   return (
     <div>
         <Box sx={{
@@ -16,9 +17,10 @@ export default function PastJobs() {
             }
         }}>
             <DataGrid
-            rowHeight={65}
-            rows={pastJobRow}
+            rowHeight={70}
+            rows={rows}
             columns={pastJobCol}
+            loading={loading}
              initialState={{
              pagination: {
                 paginationModel: { page: 0, pageSize: 10 },

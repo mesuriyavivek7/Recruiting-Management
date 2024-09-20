@@ -9,12 +9,15 @@ export default function UploadResume() {
   const [currentStep,setCurrentStep]=useState(1)
   const [candidateId,setCandidateId]=useState(null)
   const [formData,setFormData]=useState({
+    form0:{},
     form1:{},
     form2:{}
   })
 
+  console.log("candidate id---->",candidateId)
+  console.log("parent form data---->",formData)
   const createCandidateId=()=>{
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     let result = '';
     const length = 5;
 
@@ -51,24 +54,27 @@ export default function UploadResume() {
           return (
              <ReumeUploadPopUp
               onNext={handleNext}
-              parentFormDataChange={handleFormData}
+              parentFormDataChange={(data)=>handleFormData('form0',data)}
               candidateId={candidateId}
+              parentFormData={formData}
              ></ReumeUploadPopUp>
           )
         case 2:
             return (
                 <ResumeUpload1
                 onNext={handleNext}
-                parentFormDataChange={handleFormData}
+                parentFormDataChange={(data)=>handleFormData('form1',data)}
                 candidateId={candidateId}
+                parentFormData={formData}
                 ></ResumeUpload1>
             )
         case 3:
             return (
                 <ResumeUpload2
                 onPrev={handlePrev}
-                parentFormDataChange={handleFormData}
+                parentFormDataChange={(data)=>handleFormData('form2',data)}
                 candidateId={candidateId}
+                parentFormData={formData}
                 ></ResumeUpload2>
             )
     }
@@ -84,12 +90,12 @@ export default function UploadResume() {
            </div>
            <div className='w-[420px] flex border rounded-md'>
              <div className=' border-r h-full flex gap-2 items-center px-4 py-2 flex-1'>
-                <span className={`h-7 w-7 font-light  ${currentStep===1?("border-blue-400 text-blue-400"):("text-gray-600")}  flex justify-center items-center border-2`}>1</span>
-                <span className={`text-sm ${currentStep===1?("text-blue-400"):(" text-gray-500")}`}>Candidate Info</span>
+                <span className={`h-7 w-7 font-light  ${currentStep===2?("border-blue-400 text-blue-400"):("text-gray-600")}  flex justify-center items-center border-2`}>1</span>
+                <span className={`text-sm ${currentStep===2?("text-blue-400"):(" text-gray-500")}`}>Candidate Info</span>
              </div>
              <div className=' h-full flex gap-2 items-center px-4 py-2 flex-1'>
-                <span className='h-7 w-7 font-light text-gray-600 flex justify-center items-center border-2'>2</span>
-                <span className='text-sm text-gray-500'>Screening Questions</span>
+                <span className={`h-7 w-7 font-light ${currentStep===3?("border-blue-400 text-blue-400"):("text-gray-600")}  flex justify-center items-center border-2`}>2</span>
+                <span className={`text-sm ${currentStep===3?("text-blue-400"):(" text-gray-500")}`}>Screening Questions</span>
              </div>
            </div>
         </div>

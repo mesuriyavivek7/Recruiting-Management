@@ -6,6 +6,7 @@ import { AuthContext } from "../../context/AuthContext";
 
 const PostJobForm4 = ({ onNext,onPrev,onFormDataChange,jobid,handleDraftSave,parentFormData}) => {
   const [action,setAction]=useState({next:false,prev:false})
+  const [load,setLoad]=useState(false)
   const {user}=useContext(AuthContext)
   const [formData, setFormData] = useState({
     mustHaves: (Object.keys(parentFormData.form4).length>0)?(parentFormData.form4.must_haves):(""),
@@ -70,6 +71,7 @@ const PostJobForm4 = ({ onNext,onPrev,onFormDataChange,jobid,handleDraftSave,par
         target_companies:formData.targetCompanies,
         additional_guidelines:formData.additionalGuidelines,
         attachments:{
+          ...parentFormData.form4.attachments,
           sample_cv:formData.attachments.sampleCV,
           evaluation_form:formData.attachments.candidateEvaluationForm,
           audio_brief:formData.attachments.audioBriefing,
@@ -90,10 +92,11 @@ const PostJobForm4 = ({ onNext,onPrev,onFormDataChange,jobid,handleDraftSave,par
   },[action])
 
   const handleDraft=async ()=>{
+    setLoad(true)
     const saved=await handleDraftSave()
     if(saved) showNotification("Job Draft Saved Successfully","success")
     else showNotification("There is something wrong in save draft","failure")
-
+    setLoad(false)
     // console.log("draft saved")
   }
 
@@ -246,14 +249,17 @@ const PostJobForm4 = ({ onNext,onPrev,onFormDataChange,jobid,handleDraftSave,par
       <div className="custom-div place-items-end pb-2 mx-3 w-full">
        <div className="flex gap-2">
            <button 
+             disabled={load}
              onClick={()=>setAction({next:false,draft:true})}
-             className="text-gray-400 py-1 px-4 border-gray-200 hover:bg-gray-100 border-2">
+             className="text-gray-400 disabled:cursor-not-allowed disabled:opacity:50 py-1 px-4 border-gray-200 hover:bg-gray-100 border-2">
              Save As Draft</button>
           <button 
+           disabled={load}
            className="py-1 px-4 text-gray-400 hover:bg-gray-100 rounded-sm border"
            onClick={handlePrev}
           >previous</button>
           <button
+            disabled={load}
             className="py-1 px-4 text-base bg-blue-400 rounded-sm text-white"
             onClick={()=>setAction({next:true,draft:false})}
           >

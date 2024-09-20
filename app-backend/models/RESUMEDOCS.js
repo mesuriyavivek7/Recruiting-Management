@@ -1,6 +1,18 @@
 import mongoose from "mongoose";
 
 const resumedocsSchema=new mongoose.Schema({  
+    job_id:{
+        type:String,
+        required:true
+    },
+    recruiter_agency_id:{
+        type:String,
+        required:true
+    },
+    recruiter_memeber_id:{
+        type:String,
+        required:true
+    },
     candidate_id:{
         type:String,
         required:true

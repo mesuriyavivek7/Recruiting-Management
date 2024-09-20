@@ -10,8 +10,7 @@ const jobcompanyinfoSchema=new mongoose.Schema({
         required:true
     },
     client_visibility:{
-        type:Boolean,
-        default:true
+        type:String,
     },
     client_name:{
         type:String,
@@ -23,7 +22,7 @@ const jobcompanyinfoSchema=new mongoose.Schema({
     agree_to_tearms:{
         type:Boolean,
     }
-});
+},{timestamps:true});
 
 
 export default mongoose.model("jobcompanyinfo",jobcompanyinfoSchema)

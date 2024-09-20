@@ -14,3 +14,12 @@ export const createCompanyDetails=async (req,res,next)=>{
         next(err)
     }
 }
+
+export const getJobCompanyDetails=async (req,res,next)=>{
+     try{
+        const jobcompany=await JOBCOMPANYINFO.findOne({job_id:req.params.jobid},{_id:0,updatedAt:0,createdAt:0})
+        res.status(200).json(jobcompany)
+     }catch(err){
+        next(err)
+     }
+}
