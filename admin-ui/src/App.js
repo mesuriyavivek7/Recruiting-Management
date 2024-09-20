@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
 import Admin from './Pages/Dashboard/Admin';
 import EnterpriceTable from './Pages/PagesForAdmin/EnterPriceTable';
 import AdminDashboard from './Components/AdminDashboard';
@@ -31,20 +31,24 @@ import SuperJobTable from './Pages/PagesForSuperAdmin/SuperJobTable';
 import SuperCandidateTable from './Pages/PagesForSuperAdmin/SuperCandidateTable';
 import SuperCandidateDetails from './Pages/PagesForSuperAdmin/SuperCandidateDetails';
 import SuperAdminJob from './Pages/PagesForSuperAdmin/SuperAdminJob';
+import { useSelector } from 'react-redux';
 
 
 
 function App() {
+  const userData = useSelector((state) => state.admin?.userData);
 
   const AppRouter = createBrowserRouter(
     [
       {
         path:"/",
-        element:<Login></Login>
+        // element:<Login></Login>
+        element: !userData ? <Login /> : <Navigate to={`/${userData.admin_type}/dashboard`} />
       },
       {
-        path:"/admin",
-        element: <Admin/>,
+        path:"/master_admin",
+        // element: <Admin/>,
+        element: userData?.admin_type === "master_admin" ? <Admin /> : <Navigate to="/" />,
         children: [
           {
             index: true, 
@@ -84,8 +88,9 @@ function App() {
        ],
       },
       {
-        path:"/account-manager",
-        element: <AccountManager/>,
+        path:"/account_manager",
+        // element: <AccountManager/>,
+        element: userData?.admin_type === "account_manager" ? <AccountManager /> : <Navigate to="/" />,
         children: [
           {
             index: true, 
@@ -124,8 +129,9 @@ function App() {
        ],
       },
       {
-        path:"/super-admin",
-        element: <SuperAdmin/>,
+        path:"/super_admin",
+        // element: <SuperAdmin/>,
+        element: userData?.admin_type === "super_admin" ? <SuperAdmin /> : <Navigate to="/" />,
         children: [
           {
             index: true, 

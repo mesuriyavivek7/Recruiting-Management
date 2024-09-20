@@ -12,6 +12,8 @@ import { ReactComponent as VideosIcon } from "../assets/asset24.svg";
 import { ReactComponent as SettingsIcon } from "../assets/asset26.svg";
 import { ReactComponent as ChatsIcon } from "../assets/asset27.svg";
 import { NavLink, useLocation } from "react-router-dom";
+import { PiBuildingApartmentFill } from "react-icons/pi";
+import { PiBuildingOfficeThin } from "react-icons/pi";
 
 const SideNavbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -22,11 +24,11 @@ const SideNavbar = () => {
   };
 
   const getNavLinkPath = (path) => {
-    if (location.pathname.includes("account-manager")) {
-      return path.replace("/admin", "/account-manager");
+    if (location.pathname.includes("account_manager")) {
+      return path.replace("/master_admin", "/account_manager");
     } 
-    else if (location.pathname.includes("super-admin")) {
-      return path.replace("/admin", "/super-admin");
+    else if (location.pathname.includes("super_admin")) {
+      return path.replace("/master_admin", "/super_admin");
     }
     
     else {
@@ -41,7 +43,7 @@ const SideNavbar = () => {
         {isOpen && <span className="text-white">Collaps</span>}
       </div>
       <NavLink
-        to={getNavLinkPath("/admin/dashboard/")}
+        to={getNavLinkPath("/master_admin/dashboard/")}
         className={({ isActive }) => `hover:bg-gray-400 rounded-md p-2 ${!isOpen && "justify-center"} flex gap-2 ${isActive ? 'bg-gray-400' : ''}`}
       >
         <DashboardIcon className="w-[24px] text-white" />
@@ -49,15 +51,16 @@ const SideNavbar = () => {
         {isOpen && <span className="text-white">Dashboard</span>}
       </NavLink>
       <NavLink
-        to={getNavLinkPath("/admin/enterprise")}
+        to={getNavLinkPath("/master_admin/enterprise")}
         className={({ isActive }) => `hover:bg-gray-400 rounded-md p-2 ${!isOpen && "justify-center"} flex gap-2 ${isActive ? 'bg-gray-400' : ''}`}
       >
-        <JobsIcon className="w-[24px] text-white" />
+          
+          <PiBuildingApartmentFill style={{ color: 'white', fontSize: '28px' }}/>
         <span className=""></span>
         {isOpen && <span className="text-white">Enterprise</span>}
       </NavLink>
       <NavLink
-        to={getNavLinkPath("/admin/recruiting-agency")}
+        to={getNavLinkPath("/master_admin/recruiting-agency")}
         className={({ isActive }) => `hover:bg-gray-400 rounded-md p-2 ${!isOpen && "justify-center"} flex gap-2 ${isActive ? 'bg-gray-400' : ''}`}
       >
         <ActionIcon className="w-[24px] text-white" />
@@ -65,7 +68,7 @@ const SideNavbar = () => {
         {isOpen && <span className="text-white">Recruiting Agency</span>}
       </NavLink>
       <NavLink
-        to={getNavLinkPath("/admin/jobs")}
+        to={getNavLinkPath("/master_admin/jobs")}
         className={({ isActive }) => `hover:bg-gray-400 rounded-md p-2 ${!isOpen && "justify-center"} flex gap-2 ${isActive ? 'bg-gray-400' : ''}`}
       >
         <PostIcon className="w-[24px] text-white" />
@@ -73,7 +76,7 @@ const SideNavbar = () => {
         {isOpen && <span className="text-white">Post a Job</span>}
       </NavLink>
       <NavLink
-        to={getNavLinkPath("/admin/candidates")}
+        to={getNavLinkPath("/master_admin/candidates")}
         className={({ isActive }) => `hover:bg-gray-400 rounded-md p-2 ${!isOpen && "justify-center"} flex gap-2 ${isActive ? 'bg-gray-400' : ''}`}
       >
         <CandidatesIcon className="w-[24px] text-white" />

@@ -48,7 +48,7 @@ const SuperEnterpriceTable = () => {
       </div>
       <div>
         {activeTab === 'all' && (
-          <div>
+          <div className='pt-10'>
           <AllEnterpriseData/>
           </div>
         )}
