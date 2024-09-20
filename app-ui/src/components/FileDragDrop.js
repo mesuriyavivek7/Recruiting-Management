@@ -1,8 +1,10 @@
 import React,{useState} from 'react';
 import {ReactComponent as UploadIcon} from "../assets/asset33.svg";
 
-const FileDragDrop = ({fileuploadname,fileuploadspan,onFileUpload,fileId,accepted,showNotification}) => {
-    const [file, setFile] = useState(null);
+//importing icons
+import CloseIcon from '@mui/icons-material/Close';
+const FileDragDrop = ({fileuploadname,existfile,fileuploadspan,onFileUpload,fileId,accepted,showNotification}) => {
+    const [file, setFile] = useState(existfile);
     let fileTypes=[]
     switch(fileId){
          case "samplecv":
@@ -25,7 +27,6 @@ const FileDragDrop = ({fileuploadname,fileuploadspan,onFileUpload,fileId,accepte
             fileTypes=["application/pdf","application/msword","application/vnd.openxmlformats-officedocument.wordprocessingml.document",'video/mpeg','video/mp4','audio/wav','image/jpeg','image/png','application/vnd.ms-excel',',application/vnd.openxmlformats-officedocument.spreadsheetml.sheet','image/jpg']
             break;
 
-
     }
 
 
@@ -38,6 +39,11 @@ const FileDragDrop = ({fileuploadname,fileuploadspan,onFileUpload,fileId,accepte
         showNotification("Please select valid file type under 10mb","failure")
       }
     };
+
+    const handleRemoveFile=()=>{
+      setFile(null)
+      onFileUpload(null)
+    }
   
     const handleDragOver = (e) => {
       e.preventDefault();
@@ -77,9 +83,19 @@ const FileDragDrop = ({fileuploadname,fileuploadspan,onFileUpload,fileId,accepte
           <p className="text-base"><span className='text-blue-400'>{fileuploadname}</span> or drag and drop</p>
           <p className="text-xs text-gray-400">{fileuploadspan}</p>
         </label>
-        {file && (
-          <p className="mt-4 text-green-500">{file.name}</p>
-        )}
+        
+        {
+          file && (
+
+            <div className='flex mt-4 justify-between gap-4 place-items-center'>
+              <p className="text-green-500">{file.name}</p>
+              <span onClick={handleRemoveFile} className='cursor-pointer hover:text-red-500'><CloseIcon style={{fontSize:"1rem"}}></CloseIcon></span>
+            </div>
+
+          )
+        }
+         
+        
       </div>
     );
 }

@@ -15,11 +15,17 @@
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
+    "email-regex": "^5.0.0",
     "express": "^4.19.2",
+    "got": "^14.4.2",
     "jsonwebtoken": "^9.0.2",
+    "mammoth": "^1.8.0",
     "mongoose": "^8.5.2",
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.9.14",
-    "nodemon": "^3.1.4"
+    "nodemon": "^3.1.4",
+    "pdf-parse": "^1.1.1",
+    "phone-regex": "^2.1.0",
+    "textract": "^2.5.0"
   }
 }

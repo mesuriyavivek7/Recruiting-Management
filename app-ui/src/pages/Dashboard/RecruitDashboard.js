@@ -1,8 +1,15 @@
-import React from 'react'
+import React, { useContext, useEffect } from 'react'
 import Navbar from '../../components/recruiter/Navbar'
 import SideNavbar from '../../components/recruiter/SideNavbar'
-import { Outlet } from 'react-router-dom'
+import { Outlet ,useNavigate} from 'react-router-dom'
+import { AuthContext } from '../../context/AuthContext'
 const RecruitDashboard = () => {
+  const {user}=useContext(AuthContext)
+  const navigate=useNavigate()
+  
+  useEffect(()=>{
+     if(!user) navigate('/')
+  },[])
   return (
     <div>
       <div className="flex flex-col w-screen max-w-[100vw] h-[100vh] max-h-screen relative overflow-hidden ">

@@ -11,7 +11,7 @@ import Settings from "./pages/Settings";
 import Dashboard from "./pages/Dashboard";
 import PostJob from "./pages/PostJob";
 import DemoVideosPage from "./components/DemoVideos";
-import JobPostings from "./components/JobPostings";
+import JobPostings from "./pages/jobs/JobPostings";
 import BulkActions from "./components/BulkActions,";
 import OffersPage from "./components/OffersPage";
 import Support from "./pages/Support";
@@ -20,6 +20,7 @@ import Candidate from "./pages/Candidate/Candidate";
 import RecruitDashboard from "./pages/Dashboard/RecruitDashboard";
 import RecruiterDashboard from "./pages/RecruiterDashboard";
 import Jobs from "./pages/Jobs";
+import UploadResume from "./pages/UploadResume";
 
 const App = () => {
   const AppRouter = createBrowserRouter([
@@ -52,7 +53,7 @@ const App = () => {
           element: <Settings />,
         },
         {
-          path: "jobposting/postjob",
+          path: "jobposting/landing/postjob",
           element: <PostJob />,
         },
         {
@@ -92,6 +93,10 @@ const App = () => {
         {
           path:'jobs',
           element:<Jobs/>
+        },
+        {
+          path:'uploadresume',
+          element:<UploadResume/>
         }
        ]
     }

@@ -3,13 +3,14 @@ import fs from "fs"
 import path from "path"
 import multer from 'multer'
 import { fileURLToPath } from 'url';
-import { createJobs } from '../controller/jobController.js'
+import { allotedJobToAcManager, createJobs } from '../controller/jobController.js'
 import { craeteJobBasicDeatils } from '../controller/jobBasicController.js'
-import { createJobDraft } from '../controller/jobDraftController.js'
+import { createJobDraft, deleteJobDraft } from '../controller/jobDraftController.js'
 import { createJobCommission } from '../controller/jobCommissionController.js'
 import { createCompanyDetails } from '../controller/jobCompanyController.js'
 import { createSourcingDetails } from '../controller/jobSourcingController.js'
 import { createJobAttachment } from '../controller/jobAttachmentController.js'
+import { createJobSq } from '../controller/jobSqController.js';
 
 const router=express.Router()
 const __filename = fileURLToPath(import.meta.url);
@@ -64,9 +65,16 @@ router.post('/uploadjobdocs/:jobid',prepareFolder,upload.fields([
 
 
 //for creating job screening questions
+router.post('/jobsq/:orgjobid',createJobSq)
 
 //for creating job draft 
 router.post('/savedraft',createJobDraft)
+
+//for deleting job saved draft
+router.delete('/deletejobdraft/:jobid',deleteJobDraft)
+
+//for allocating job to account manager
+router.post('/allotacmanager/:orgid',allotedJobToAcManager)
 
 
 export default router
