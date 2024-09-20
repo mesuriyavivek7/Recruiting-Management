@@ -88,7 +88,7 @@ function App() {
        ],
       },
       {
-        path:"/account-manager",
+        path:"/account_manager",
         // element: <AccountManager/>,
         element: userData?.admin_type === "account_manager" ? <AccountManager /> : <Navigate to="/" />,
         children: [
@@ -129,7 +129,7 @@ function App() {
        ],
       },
       {
-        path:"/super-admin",
+        path:"/super_admin",
         // element: <SuperAdmin/>,
         element: userData?.admin_type === "super_admin" ? <SuperAdmin /> : <Navigate to="/" />,
         children: [

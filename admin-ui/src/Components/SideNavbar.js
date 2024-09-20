@@ -12,6 +12,8 @@ import { ReactComponent as VideosIcon } from "../assets/asset24.svg";
 import { ReactComponent as SettingsIcon } from "../assets/asset26.svg";
 import { ReactComponent as ChatsIcon } from "../assets/asset27.svg";
 import { NavLink, useLocation } from "react-router-dom";
+import { PiBuildingApartmentFill } from "react-icons/pi";
+import { PiBuildingOfficeThin } from "react-icons/pi";
 
 const SideNavbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -22,11 +24,11 @@ const SideNavbar = () => {
   };
 
   const getNavLinkPath = (path) => {
-    if (location.pathname.includes("account-manager")) {
-      return path.replace("/master_admin", "/account-manager");
+    if (location.pathname.includes("account_manager")) {
+      return path.replace("/master_admin", "/account_manager");
     } 
-    else if (location.pathname.includes("super-admin")) {
-      return path.replace("/master_admin", "/super-admin");
+    else if (location.pathname.includes("super_admin")) {
+      return path.replace("/master_admin", "/super_admin");
     }
     
     else {
@@ -52,7 +54,8 @@ const SideNavbar = () => {
         to={getNavLinkPath("/master_admin/enterprise")}
         className={({ isActive }) => `hover:bg-gray-400 rounded-md p-2 ${!isOpen && "justify-center"} flex gap-2 ${isActive ? 'bg-gray-400' : ''}`}
       >
-        <JobsIcon className="w-[24px] text-white" />
+          
+          <PiBuildingApartmentFill style={{ color: 'white', fontSize: '28px' }}/>
         <span className=""></span>
         {isOpen && <span className="text-white">Enterprise</span>}
       </NavLink>

@@ -23,7 +23,7 @@ const superadminSchema=new mongoose.Schema({
     },
     super_admin_type:{
         type:String,
-        required:true
+        //required:true
     }
 
 },{timestamps:true})

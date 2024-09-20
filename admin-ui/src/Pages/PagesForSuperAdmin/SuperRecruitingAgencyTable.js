@@ -48,7 +48,7 @@ const SuperRecruitingAgencyTable = () => {
       </div>
       <div>
         {activeTab === 'all' && (
-          <div>
+          <div className='pt-10'>
           <AllRecruitingAgencyData/>
           </div>
         )}
