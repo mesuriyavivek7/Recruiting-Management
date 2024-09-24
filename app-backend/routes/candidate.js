@@ -30,5 +30,15 @@ router.post('/removefile',removeResumeFile)
 
 //cancel parsing process 
 router.delete('/cancelprocess',cancelProcess)
+
+//for uploading candidate other forms
+
+//for uploading candidate conset proof
+
+//for posting candidate basic details
+
+//for posting candidate screening questions
+
+
 export default router
 

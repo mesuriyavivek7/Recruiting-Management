@@ -86,7 +86,7 @@ const recruitingagencySchema=new mongoose.Schema({
     account_manager_verified:{
         type:Boolean,
         default:false
-    }
+    },
     
     
 

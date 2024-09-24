@@ -70,3 +70,11 @@ export const addJobIntoVerifyList=async (req,res,next)=>{
   }
 }
 
+export const getAcManagerEmail=async (req,res,next)=>{
+    try{
+      const emailObj=await ACCOUNTMANAGER.findById(req.params.id,{email:1,_id:0})
+      res.status(200).json(emailObj)
+    }catch(err){
+       next(err)
+    }
+}

@@ -14,7 +14,7 @@ import CheckCircleOutlinedIcon from '@mui/icons-material/CheckCircleOutlined';
 //import progress bar
 import ProgressBar from "@ramonak/react-progress-bar";
 
-export default function ReumeUploadPopUp({onNext,candidateId,parentFormDataChange,parentFormData}) {
+export default function ReumeUploadPopUp({onNext,jobId,candidateId,parentFormDataChange,parentFormData}) {
   const {user}=useContext(AuthContext)
   const [file,setFile]=useState(null)
   const fileTypes=["application/pdf","application/msword","application/vnd.openxmlformats-officedocument.wordprocessingml.document"]
@@ -73,7 +73,7 @@ export default function ReumeUploadPopUp({onNext,candidateId,parentFormDataChang
          try{
            //collecting data
            const parseDetails={
-             job_id:"Jvivek",
+             job_id:jobId,
              recruiter_agency_id:user.recruiting_agency_id,             
              recruiter_memeber_id:user._id,
              filepath:parseFileData.filepath,
@@ -210,7 +210,7 @@ export default function ReumeUploadPopUp({onNext,candidateId,parentFormDataChang
             {errors.filetype && <span className='text-red-500 flex justify-between text-sm mt-1 bg-red-200 rounded-md px-2 py-1'>{errors.filetype} <span onClick={()=>setErrors({})}><CancelOutlinedIcon style={{fontSize:"1.1rem",cursor:"pointer"}}></CancelOutlinedIcon></span></span>}
            <div className='flex place-content-end mt-3'>
             <div className='flex gap-2'>
-                <button className='rounded-md text-sm border border-blue-400 text-blue-400 p-2 px-3'>Cancel</button>
+                <button onClick={()=>navigate('/recruiter/jobs')} className='rounded-md text-sm border border-blue-400 text-blue-400 p-2 px-3'>Cancel</button>
                 <button onClick={handleNext} disabled={file?false:true} className='disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-black disabled:opacity-30 rounded-md text-sm border text-white bg-blue-400 p-2 px-4'>Next</button>
             </div>
            </div>

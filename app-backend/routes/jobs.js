@@ -3,7 +3,7 @@ import fs from "fs"
 import path from "path"
 import multer from 'multer'
 import { fileURLToPath } from 'url';
-import { activateJob, allotedJobToAcManager, createJobs, deleteJobDraftWithOtherDetails, getAllJobDetails, getAllJobDraftDetails } from '../controller/jobController.js'
+import { activateJob, allotedJobToAcManager, createJobs, deleteJobDraftWithOtherDetails, downloadEvaluationForm, getAllJobDetails, getAllJobDraftDetails, getCandidateScreeningQue, getFronLiveJobDetails, getFrontAcceptedJobDetails, getFrontMappedJobDetails, getJobAttachmentsDetailsForCandidate } from '../controller/jobController.js'
 import { craeteJobBasicDeatils, getJobBasicDetails } from '../controller/jobBasicController.js'
 import { createJobDraft, deleteJobDraft } from '../controller/jobDraftController.js'
 import { createJobCommission, getJobCommissionDetails } from '../controller/jobCommissionController.js'
@@ -135,5 +135,27 @@ router.get('/getjobattachmentdetails/:jobid',getJobAttachmentsDetails)
 //for gettign job screening questions details
 router.get('/getscreeningquestions/:jobid',getScreeningQue)
 
+//for getting job details for showing into recruting agency job section
+
+//for getting job details for showing front page live jobs
+router.get('/frontlivejobs/:jobid',getFronLiveJobDetails)
+
+//for getting job details for showing front page of mapped job
+router.get('/frontmappedjobs/:rteamid',getFrontMappedJobDetails)
+
+//for getting job details for showing front page of accepted job
+router.get('/frontacceptedjobs/:rteamid',getFrontAcceptedJobDetails)
+
+//for getting job details for showing to candidate form filling page
+
+//for gettign job details for job attachments
+router.get('/getcandidatejobattachments/:jobid',getJobAttachmentsDetailsForCandidate)
+
+//for getting screening question 
+router.get('/getcandidatescreeningque/:jobid',getCandidateScreeningQue)
+
+//for downloading
+//for dowloading evaluation file
+router.get('/download/evaluationform/:jobid',downloadEvaluationForm)
 
 export default router

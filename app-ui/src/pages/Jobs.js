@@ -6,8 +6,20 @@ import SearchIcon from '@mui/icons-material/Search';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import LiveJobs from '../components/recruitjobs/LiveJobs';
 import MappedJobs from '../components/recruitjobs/MappedJobs';
+import AcceptedJobs from '../components/recruitjobs/AcceptedJobs';
 export default function Jobs() {
   const [currentTabe,setCurrentTabe]=useState('accepted')
+
+  const renderForm=()=>{
+        switch(currentTabe){
+          case "accepted":
+             return <AcceptedJobs></AcceptedJobs>
+          case "mapped":
+             return <MappedJobs></MappedJobs>
+          case "live":
+             return <LiveJobs></LiveJobs>
+        }
+  }
 
   const handleCurrentTabe=(state)=>{
     setCurrentTabe(state)
@@ -70,7 +82,7 @@ export default function Jobs() {
              </div>
              <div onClick={()=>handleCurrentTabe('favourite')} className='cursor-pointer flex flex-col gap-1 items-center'>
                 <div className='flex gap-2'>
-                  <h1 className={`text-[.9rem] tracking-wide font-light ${(currentTabe==='favourite')?("text-blue-400 hover:text-blue-500"):("text-gray-400 text-black")}`}>Favourite Jobs</h1>
+                  <h1 className={`text-[.9rem] tracking-wide font-light ${(currentTabe==='favourite')?("text-blue-400 hover:text-blue-500"):(" text-black")}`}>Favourite Jobs</h1>
                   <span className={`text-sm rounded-full bg-slate-200 px-[6px] py-[1px] ${(currentTabe==='favourite')?("text-blue-400"):("text-black")}`}>0</span>
                 </div>
                 {
@@ -79,29 +91,11 @@ export default function Jobs() {
              </div>
           </div>
        </div>
+       <div>
+        {renderForm()}
+       </div>
     
-       {
-         currentTabe==="accepted"  && (
-                 <div className='flex flex-col gap-2'>
-                    <MappedJobs></MappedJobs>
-                 </div>
-         )
-       }
-       {
-        currentTabe==="mapped" && (
-                  <div className='flex flex-col gap-2'>
-                    <LiveJobs></LiveJobs>
-                  </div>
-        )
-       }
-       {
-        currentTabe==="live" && (
-                  <div className='flex flex-col gap-2'>
-                    <LiveJobs></LiveJobs>
-                    <LiveJobs></LiveJobs>
-                  </div>  
-        )
-       }
+      
     </div>
 
   )

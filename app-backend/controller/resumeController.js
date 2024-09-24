@@ -58,14 +58,14 @@ const parseResumeText=async (filepath,text,res)=>{
    const educationRegex = /(Bachelor|Master|PhD|B\.Sc|M\.Sc|Diploma|Degree)/i;
 
    const nameMatch=text.match(firstNameLastNameRegex)
-   const mobileMatch=cleanMobileNumber(text.match(phoneRegax())[0])
+   const mobileMatch=text.match(phoneRegax())
    const emailMatch=text.match(emailRegax())
    const educationMatch=text.match(educationRegex)
 
    res.status(200).json({
       firstName: nameMatch ? nameMatch[1] : null,
       lastName: nameMatch ? nameMatch[2] : null,
-      mobile: mobileMatch ? mobileMatch : null,
+      mobile: mobileMatch ? cleanMobileNumber(mobileMatch[0]) : null,
       email: emailMatch ? emailMatch[0] : null,
       education: educationMatch ? educationMatch[0] : null,
       filepath
