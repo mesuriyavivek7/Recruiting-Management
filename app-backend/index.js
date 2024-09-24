@@ -15,6 +15,7 @@ import authRecruitingRoute from './routes/authRecruiting.js'
 import mailRoute from './routes/mail.js'
 import authEnterpriseRoute from './routes/authEnterprise.js'
 import recruitingRoutes from './routes/recruiting.js'
+import recruitingTeam from './routes/recruitingTeam.js'
 import authRoute from './routes/auth.js'
 import enterpriseRoute from './routes/enterprise.js'
 import enterpriseTeamRoute from './routes/enterpriseTeam.js'
@@ -80,6 +81,7 @@ app.use('/api/authrecruiting',authRecruitingRoute)
 app.use('/api/mail',mailRoute)
 app.use('/api/authenterprise',authEnterpriseRoute)
 app.use('/api/recruiting',recruitingRoutes)
+app.use('/api/recruitingteam',recruitingTeam)
 app.use('/api/auth',authRoute)
 app.use('/api/enterprise',enterpriseRoute)
 app.use('/api/enterpriseteam',enterpriseTeamRoute)

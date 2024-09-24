@@ -1,19 +1,16 @@
-import RECRUITINGTEAM from '../models/RECRUITINGTEAM'
+import express from 'express'
+import { addJobIntoAcceptList, rejectJob, updateJobMappedList } from '../controller/recrutingTeamController.js'
 
-import bcrypt from 'bcryptjs'
+const router=express.Router()
 
 
-//creating team member
+//for adding job into mapped job list
+router.post('/updatemappedlist/:rteamid',updateJobMappedList)
 
-export const createteammember=async (req,res,next)=>{
+//for accept mapped job and add into accept job list
+router.post('/addacceptlist/:rteamid',addJobIntoAcceptList)
 
-    const salt = bcrypt.genSaltSync(10);
-    const hash = bcrypt.hashSync('uphire', salt);
+//for given rejection reason of any job
+router.post('/rejectjob/:rteamid',rejectJob)
 
-    try{
-       const newteammember=new RECRUITINGTEAM({...req.body,password:hash})
-       res.status(200).json("new Team member added")
-    }catch(err){
-       next(err)  
-    } 
-}
+export default router

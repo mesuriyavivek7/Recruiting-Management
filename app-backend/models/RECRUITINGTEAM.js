@@ -1,4 +1,4 @@
-import mongoose, { mongo } from "mongoose";
+import mongoose from "mongoose";
 
 
 const recruitingteamSchema=new mongoose.Schema({
@@ -33,6 +33,13 @@ const recruitingteamSchema=new mongoose.Schema({
     hide_commision:{
         type:Boolean,
         default:false
+    },
+    mapped_jobs:[String],
+    accepted_jobs:[String],
+    requested_jobs:[String],
+    rejected_jobs:{
+        orgjobid:String,
+        reason:String
     }
 })
 

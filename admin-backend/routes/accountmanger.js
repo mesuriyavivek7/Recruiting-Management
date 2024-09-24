@@ -1,5 +1,5 @@
 import express from 'express'
-import { addEnterprise, addJobIntoVerifyList, addJobsPendingList, addRecruiting, addVerifiedRecruitng, getAcByMadminId } from '../controller/accountmanagerController.js'
+import { addEnterprise, addJobIntoVerifyList, addJobsPendingList, addRecruiting, addVerifiedRecruitng, getAcByMadminId, getAcManagerEmail } from '../controller/accountmanagerController.js'
 
 const router=express.Router()
 
@@ -23,5 +23,8 @@ router.post('/addpendingjob',addJobsPendingList)
 
 //add job into verified list
 router.post('/addjobverifylist',addJobIntoVerifyList)
+
+//for getting account manager email
+router.get('/acmanageremail/:id',getAcManagerEmail)
 
 export default router

@@ -41,6 +41,13 @@ const jobSchema=new mongoose.Schema({
     },
     alloted_account_manager:{
         type:String
+    },
+    job_request:[String],
+    accepted_recruiting_agency:[String],
+    mapped_recruiting_agency_member:[String],
+    job_rejection_reason:{
+        recruiting_agency_member:String,
+        reason:String
     }
 
 },{timestamps:true});
