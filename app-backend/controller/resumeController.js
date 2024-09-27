@@ -76,7 +76,7 @@ const parseResumeText=async (filepath,text,res)=>{
 export const checkParseDetails=async (req,res,next)=>{
    try{
       const {job_id,filepath,firstname,lastname,contactno,emailid,educationdetails,pancardnumber}=req.body
-      const check=await RESUMEPARSE.find({$and:[{job_id:job_id},{$or:[{emailid},{contactno},{pancardnumber}]}]})
+      const check=await RESUMEPARSE.find({$and:[{job_id:job_id},{completed:true},{$or:[{emailid},{contactno},{pancardnumber}]}]})
       if(check.length!==0){
          fs.unlinkSync(filepath)
          res.status(200).json(false)
@@ -156,4 +156,45 @@ export const cancelProcess=async (req,res,next)=>{
     }catch(err){
        next(err)
     }
+}
+
+
+export const marksAsCompleted=async (req,res,next)=>{
+    try{
+      await RESUMEDOCS.findOneAndUpdate({candidate_id:req.params.cid},{$set:{completed:true}})
+      await RESUMEPARSE.findOneAndUpdate({candidate_id:req.params.cid},{$set:{completed:true}})
+      res.status(200).json("Updated resume docs and parse")
+    }catch(err){
+      next(err)
+    }
+}
+
+
+export const getResumeFileName=async (req,res,next)=>{
+   try{
+      const resumepath=await RESUMEDOCS.findOne({candidate_id:req.params.cid},{filename:1,_id:0})
+      res.status(200).json(resumepath.filename)
+   }catch(err){
+      next(err)
+   }
+}
+
+export const downloadResumeDocs=async (req,res,next)=>{
+     try{
+       const doc=await RESUMEDOCS.findOne({candidate_id:req.params.cid},{filepath:1,filename:1,_id:0})
+       if(!doc) res.status(404).json("File not found....!")
+       const filepath=doc.filepath
+       res.download(filepath,doc.filename)
+     }catch(err){
+      next(err)
+     }
+}
+
+export const getResumeFilePath=async (req,res,next)=>{
+      try{
+        const doctype=await RESUMEDOCS.findOne({candidate_id:req.params.cid},{filetype:1,_id:0})
+        res.status(200).json(doctype.filetype)
+      }catch(err){
+          next(err)
+      }
 }

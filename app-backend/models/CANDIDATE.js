@@ -17,10 +17,16 @@ const candidateSchema=new mongoose.Schema({
         type:String,
         required:true
      },
-     candidate_status:String,
+     candidate_status:{
+        type:String,
+        default:"Pending"
+     },
+     remarks:String,
+     alloted_account_manager:String,
      candidate_basic_details:String,
      candidate_attachments:String,
-     candidate_consent_proof:String
+     candidate_consent_proof:String,
+     candidate_question_answer:String
 },{timestamps:true})
 
 

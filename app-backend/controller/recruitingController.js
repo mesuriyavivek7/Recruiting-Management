@@ -87,3 +87,13 @@ export const acVerified=async (req,res,next)=>{
         next(err)
     }
 }
+
+
+export const getAcmanager=async (req,res,next)=>{
+    try{
+       const acmanager=await RECRUITING.findById(req.params.ragencyid,{alloted_account_manager:1,_id:0})
+       res.status(200).json(acmanager.alloted_account_manager)
+    }catch(err){
+        next(err)
+    }
+}

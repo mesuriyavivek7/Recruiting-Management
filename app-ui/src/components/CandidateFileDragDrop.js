@@ -5,8 +5,8 @@ import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined';
 import InsertDriveFileOutlinedIcon from '@mui/icons-material/InsertDriveFileOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 
-export default function CandidateFileDragDrop({showNotification,downloadAttachments,jobId,onFileUpload,fileTitle,fileId,fileSubText,accepted}) {
-  const [file,setFile]=useState()
+export default function CandidateFileDragDrop({existfile,showNotification,downloadAttachments,jobId,onFileUpload,fileTitle,fileId,fileSubText,accepted}) {
+  const [file,setFile]=useState(existfile)
 
   const downloadUrl=`${process.env.REACT_APP_API_BASE_URL}/job/download/${fileId}/${jobId}`
   

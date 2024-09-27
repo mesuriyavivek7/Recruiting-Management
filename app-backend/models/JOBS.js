@@ -48,7 +48,8 @@ const jobSchema=new mongoose.Schema({
     job_rejection_reason:{
         recruiting_agency_member:String,
         reason:String
-    }
+    },
+    posted_candidate_profiles:[String]
 
 },{timestamps:true});
 

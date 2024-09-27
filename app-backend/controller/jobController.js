@@ -353,3 +353,12 @@ export const getCandidateScreeningQue=async (req,res,next)=>{
       next(err)
     }
 }
+
+export const addCandidateProfileList=async (req,res,next)=>{
+    try{
+     await JOBS.findOneAndUpdate({job_id:req.params.jobid},{$push:{posted_candidate_profiles:req.body.orgcid}})
+     res.status(200).json("Added candidate into job candidate profile list")
+    }catch(err){
+       next(err)
+    }
+}

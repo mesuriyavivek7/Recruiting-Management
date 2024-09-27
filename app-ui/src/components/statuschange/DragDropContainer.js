@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import DropSection from './DropSection'
 import DropBox from './DropBox'
 
+// candidaterows=[{status:"newresume"},{status:"no-show"},{status"r-test"}]
+
 export default function DragDropContainer() {
     const [sections,setSections]=useState({
         section1:[{id:1,cname:'Sahil Dalal',cid:'31229',jobname:'Softwere Engineer-Cloud Platforms',jobid:'J12422',jobcountry:'India',jobtype:'Permanent Hiring',date:'13 jun 23'},{id:2,cname:'Dhruv Kakdiya',cid:'31229',jobname:'Softwere Engineer-Cloud Platforms',jobid:'J12422',jobcountry:'India',jobtype:'Permanent Hiring',date:'13 jun 23'}],
@@ -29,6 +31,7 @@ export default function DragDropContainer() {
         section23:[],
         section24:[],
     })
+
 
     const handleDrop=(item,sectionId)=>{
        console.log('sectionid------>',sectionId)
