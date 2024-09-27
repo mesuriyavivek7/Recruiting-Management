@@ -4,10 +4,14 @@ import ReumeUploadPopUp from '../components/uploadResumeForms/ReumeUploadPopUp'
 import ResumeUpload1 from '../components/uploadResumeForms/ResumeUpload1'
 import ResumeUpload2 from '../components/uploadResumeForms/ResumeUpload2'
 import { useLocation } from 'react-router-dom'
-import { useNavigate } from 'react-router-dom'
-import Notification from '../components/Notification';
+import { useNavigate} from 'react-router-dom'
+import axios from 'axios'
+
+//importing icons
+import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
 
 export default function UploadResume() {
+  
   const navigate=useNavigate()
   const location=useLocation()
   const {user}=useContext(AuthContext)
@@ -18,19 +22,10 @@ export default function UploadResume() {
     form1:{},
     form2:{}
   })
-
-
-  //for showing notification
-  const [notification,setNotification]=useState(null)
-
-  //for showing notification
-  const showNotification=(message,type)=>{
-   setNotification({message,type})
-  }
-
   
   console.log("candidate id---->",candidateId)
   console.log("parent form data---->",formData)
+
   const createCandidateId=()=>{
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     let result = '';
@@ -49,6 +44,8 @@ export default function UploadResume() {
     if(!candidateId) createCandidateId()
   },[])
 
+
+
   const handleNext=()=>{
     setCurrentStep((prevStep)=>prevStep+1)
   }
@@ -65,6 +62,60 @@ export default function UploadResume() {
   }
 
   const handleSubmit=async ()=>{
+    try{
+      //here submission process start
+
+      //step-1 create candidate 
+      const res=await axios.post(`${process.env.REACT_APP_API_BASE_URL}/candidate/createcandidate/${candidateId}`,{
+        job_id:location.state.job_id,
+        candidate_id:candidateId,
+        recruiter_member_id:user._id,
+        recruiter_agency_id:user.recruiter_agency_id,
+      })
+
+      //step-2 create candidate basic details
+      if(Object.keys(formData.form1).length>0) await axios.post(`${process.env.REACT_APP_API_BASE_URL}/candidate/createcandidatebasicdetails/${res.data._id}`,formData.form1.basicDetails)
+
+      //step-3 uploading candidate attachments
+      if(Object.keys(formData.form1).length>0){
+        const fileData=new FormData()
+        if(formData.form1.candidateattachments.evaluation_form) fileData.append('evaluation_form',formData.form1.candidateattachments.evaluation_form)
+        if(formData.form1.candidateattachments.audio_brief) fileData.append('audio_brief',formData.form1.candidateattachments.audio_brief)
+        if(formData.form1.candidateattachments.other_docs) fileData.append('other_docs',formData.form1.candidateattachments.other_docs)
+        
+        if([...fileData.entries()].length!==0) await axios.post(`${process.env.REACT_APP_API_BASE_URL}/candidate/uploadcandidateattachments/${candidateId}`,fileData,{headers:{"Content-Type":"multipart/form-data"}})
+      }
+
+      //step-4 uploading candidate conset proof
+      if(Object.keys(formData.form1).length>0){
+         const fileData=new FormData()
+         if(formData.form1.consetProof){
+          fileData.append('consetproof',formData.form1.consetProof)
+          await axios.post(`${process.env.REACT_APP_API_BASE_URL}/candidate/uploadconsetproof/${candidateId}`,fileData,{headers:{"Content-Type":"multipart/form-data"}})
+         }
+      }
+      
+      //step-5 storing candidate answer into db
+      if(Object.keys(formData.form2).length>0) await axios.post(`${process.env.REACT_APP_API_BASE_URL}/candidate/createsqanswer/${res.data._id}`,formData.form2)
+
+      //step-6 make resumeparse and resumedocs as completed
+      await axios.put(`${process.env.REACT_APP_API_BASE_URL}/candidate/markascompleted/${candidateId}`)
+
+      //step-7 get alloted account manager id
+      const acmanager=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/recruiting/getacmanagerid/${user.recruiting_agency_id}`)
+        
+      //step-8 add candidate profile into account manager pending list
+      await axios.post(`${process.env.REACT_APP_API_ADMIN_URL}/accountmanager/addpendingcandidate/${acmanager.data}`,{orgcid:res.data._id})
+
+      //step-9 add accountmanager id into candidate profile
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/candidate/addacmanager/${res.data._id}`,{acmanagerid:acmanager._id})
+
+      return true
+    }catch(err){
+      //handeling error here
+      console.log(err)
+      return false
+    }
 
   }
 
@@ -98,6 +149,7 @@ export default function UploadResume() {
                 candidateId={candidateId}
                 parentFormData={formData}
                 jobObj={location.state}
+                submitPost={handleSubmit}
                 ></ResumeUpload2>
             )
     }
@@ -113,12 +165,12 @@ export default function UploadResume() {
            </div>
            <div className='w-[420px] flex border rounded-md'>
              <div className=' border-r h-full flex gap-2 items-center px-4 py-2 flex-1'>
-                <span className={`h-7 w-7 font-light  ${currentStep===2?("border-blue-400 text-blue-400"):("text-gray-600")}  flex justify-center items-center border-2`}>1</span>
-                <span className={`text-sm ${currentStep===2?("text-blue-400"):(" text-gray-500")}`}>Candidate Info</span>
+                <span className={`h-7 w-7 font-light  ${(currentStep===2 || Object.keys(formData.form1).length>0)?("border-blue-400 text-blue-400"):("text-gray-600")}  flex justify-center items-center border-2`}>{(Object.keys(formData.form1).length>0)?(<CheckOutlinedIcon></CheckOutlinedIcon>):(1)}</span>
+                <span className={`text-sm ${(currentStep===2 || Object.keys(formData.form1).length>0)?("text-blue-400"):(" text-gray-500")}`}>Candidate Info</span>
              </div>
              <div className=' h-full flex gap-2 items-center px-4 py-2 flex-1'>
-                <span className={`h-7 w-7 font-light ${currentStep===3?("border-blue-400 text-blue-400"):("text-gray-600")}  flex justify-center items-center border-2`}>2</span>
-                <span className={`text-sm ${currentStep===3?("text-blue-400"):(" text-gray-500")}`}>Screening Questions</span>
+                <span className={`h-7 w-7 font-light ${(currentStep===3 || Object.keys(formData.form2).length>0)?("border-blue-400 text-blue-400"):("text-gray-600")}  flex justify-center items-center border-2`}>{(Object.keys(formData.form2).length>0)?(<CheckOutlinedIcon></CheckOutlinedIcon>):(2)}</span>
+                <span className={`text-sm ${(currentStep===3 || Object.keys(formData.form2).length>0)?("text-blue-400"):(" text-gray-500")}`}>Screening Questions</span>
              </div>
            </div>
         </div>

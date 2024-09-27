@@ -5,10 +5,6 @@ const consentproofSchema=new mongoose.Schema({
         type:String,
         required:true,
      },
-     recruiting_id:{
-        type:String,
-        required:true
-     },
      filename:String,
      filepath:String,
      filetype:String,

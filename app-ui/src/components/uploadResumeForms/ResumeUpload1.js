@@ -16,47 +16,45 @@ import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined
 export default function ResumeUpload1({jobObj,parentFormData,candidateId,parentFormDataChange,onNext}) {
   const {user}=useContext(AuthContext)
   const [formData,setFormData]=useState({
-        firstname:(Object.keys(parentFormData.form0).length>0)?(parentFormData.form0.firstName):(""),
-        lastname:(Object.keys(parentFormData.form0).length>0)?(parentFormData.form0.lastName):(""),
-        country:"",
-        currentLocation:"",
-        primaryEmailId:(Object.keys(parentFormData.form0).length>0)?(parentFormData.form0.email):(""),
-        additionalEmailId:"",
-        primaryContactNumber:(Object.keys(parentFormData.form0).length>0)?(`91${parentFormData.form0.mobile}`):(""),
-        additionalContactNumber:'',
-        currentCompany:"",
-        currentDesignation:"",
-        experience:"",
-        releventExperience:"",
-        currentSalary:"",
-        expectedSalary:"",
-        salaryRemarks:"",
-        noticePeriod:"",
-        comment:"",
-        educationQualification:(Object.keys(parentFormData.form0).length>0)?(parentFormData.form0.education):(""),
-        candidateSummary:"",
+        firstname:(Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.basicDetails.first_name):((Object.keys(parentFormData.form0).length>0)?(parentFormData.form0.firstName):("")),
+        lastname:(Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.basicDetails.last_name):(Object.keys(parentFormData.form0).length>0)?(parentFormData.form0.lastName):(""),
+        country:(Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.basicDetails.country):(""),
+        currentLocation:(Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.basicDetails.current_location):(""),
+        primaryEmailId:(Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.basicDetails.primary_email_id):(Object.keys(parentFormData.form0).length>0)?(parentFormData.form0.email):(""),
+        additionalEmailId:(Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.basicDetails.additional_email_id):(""),
+        primaryContactNumber:(Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.basicDetails.primary_contact_number):(Object.keys(parentFormData.form0).length>0)?(`91${parentFormData.form0.mobile}`):(""),
+        additionalContactNumber:(Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.basicDetails.additional_contact_number):(""),
+        currentCompany:(Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.basicDetails.current_company):(""),
+        currentDesignation:(Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.basicDetails.current_designation):(""),
+        experience:(Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.basicDetails.experience):(""),
+        releventExperience:(Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.basicDetails.relevant_experience):(""),
+        currentSalary:(Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.basicDetails.current_annual_salary):(""),
+        expectedSalary:(Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.basicDetails.expected_annual_salary):(""),
+        salaryRemarks:(Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.basicDetails.salary_remarks):(""),
+        noticePeriod:(Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.basicDetails.notice_period):(""),
+        comment:(Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.basicDetails.comments):(""),
+        educationQualification:(Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.basicDetails.education_qualification):((Object.keys(parentFormData.form0).length>0)?(parentFormData.form0.education):("")),
+        candidateSummary:(Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.basicDetails.candidate_summary):(""),
         candidatetoc:false
   })
 
   const [attachments,setAttachments]=useState({
-    candidate_evaluation_form:"",
-    candidate_audio:"",
-    other_file:"",
+    candidate_evaluation_form:(Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.candidateattachments.evaluation_form):(""),
+    candidate_audio:(Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.candidateattachments.audio_brief):(""),
+    other_file:(Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.candidateattachments.other_docs):(""),
   })
 
-  const [consetProof,setConsetProof]=useState(null)
+  const [consetProof,setConsetProof]=useState((Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.consetProof):(null))
 
   const [jobAttachments,setJobAttachments]=useState({})
 
-  console.log("Conset Proof--->",consetProof)
-  console.log("job attachments---->",attachments)
 
   //fetching job attached documents details
   useEffect(()=>{
     const getJobAttachmentsDetails=async ()=>{
        try{
-         const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/job/getcandidatejobattachments/J492KY`)
-         setJobAttachments(res.data)
+         const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/job/getcandidatejobattachments/${jobObj.job_id}`)
+         setJobAttachments((res.data)?(res.data):({}))
        }catch(err){
         //here error handeling is remain
          console.log(err)
@@ -117,7 +115,7 @@ export default function ResumeUpload1({jobObj,parentFormData,candidateId,parentF
         if(jobAttachments.other_docs && attachments.other_file==="") newErrors.otherFile="Please upload mention formate other file."
       }
 
-      if(!consetProof) errors.consetProof="Please upload conset proof file."
+      if(!consetProof) newErrors.consetProof="Please upload conset proof file."
   
       if(Object.keys(newErrors).length!==0) showNotification("Please fill out appropriate fields..!","failure") 
       setErrors(newErrors)
@@ -148,6 +146,16 @@ export default function ResumeUpload1({jobObj,parentFormData,candidateId,parentF
     }
   };
 
+  const checkCreadential=async ()=>{
+    try{
+        const res=await axios.post(`${process.env.REACT_APP_API_BASE_URL}/candidate/checkmobileandemail`,{email:formData.primaryEmailId,mobileno:formData.primaryContactNumber})
+        if(res.data) showNotification("Email address or Mobile number is alredy exist.","failure")
+        else handleNext()
+    }catch(err){
+      console.log(err)
+    }
+  }
+
   const handleNext=()=>{
      if(validate()){
        parentFormDataChange({
@@ -172,7 +180,8 @@ export default function ResumeUpload1({jobObj,parentFormData,candidateId,parentF
            comments:formData.comment,
            education_qualification:formData.educationQualification,
            candidate_summary:formData.candidateSummary,
-           candidate_toc:formData.candidatetoc
+           candidate_toc:formData.candidatetoc,
+           notice_period:formData.noticePeriod
         },
         candidateattachments:{
            folder_name:jobObj.job_id,
@@ -368,6 +377,7 @@ export default function ResumeUpload1({jobObj,parentFormData,candidateId,parentF
                 <div className='flex flex-1 flex-col gap-2'>
                     <label className='input-label' htmlFor='designation'>Current Designation </label>
                     <input
+                    onChange={handleFormData}
                     value={formData.currentDesignation}
                     id='currentDesignation'
                     name='currentDesignation'
@@ -807,6 +817,7 @@ export default function ResumeUpload1({jobObj,parentFormData,candidateId,parentF
                </div>
                <div className='flex flex-col gap-3'>
                <CandidateFileDragDrop 
+                existfile={attachments.candidate_evaluation_form}
                 fileTitle="Candidate Evaluation Form"
                 fileId="evaluationform"
                 accepted=".pdf,.docx,.doc"
@@ -819,6 +830,7 @@ export default function ResumeUpload1({jobObj,parentFormData,candidateId,parentF
                 errors.evaluationFrom && (<span className='text-red-500 text-sm'>{errors.evaluationFrom}</span>)
                }
                <CandidateFileDragDrop
+                existfile={attachments.candidate_audio}
                 fileTitle="Candidate Audio Attachment"
                 fileId="audioform"
                 fileSubText="(5MB mp3/mp4 file allowed)"
@@ -832,6 +844,7 @@ export default function ResumeUpload1({jobObj,parentFormData,candidateId,parentF
                 errors.candidateAudio && (<span className='text-red-500 text-sm'>{errors.candidateAudio}</span>)
                }
                <CandidateFileDragDrop
+                existfile={attachments.other_file}
                 onFileUpload={(file)=>handleAttachments("other_file",file)}
                 fileTitle="Other Files"
                 fileId="otherfiles"
@@ -907,7 +920,7 @@ export default function ResumeUpload1({jobObj,parentFormData,candidateId,parentF
         <div className='shadow rounded-md flex w-[1300px] place-content-end fixed bottom-0 bg-white px-6 py-2'>
           <div className='flex gap-2'>
             <button className='py-1 px-4 text-base hover:bg-slate-100 transition-all rounded-sm text-black'>Cancel</button>
-            <button onClick={handleNext} className='py-1 px-4 text-base hover:bg-blue-400 bg-blue-500 rounded-sm text-white'>Next</button>
+            <button onClick={checkCreadential} className='py-1 px-4 text-base hover:bg-blue-400 bg-blue-500 rounded-sm text-white'>Next</button>
           </div>
         </div>
     </div>

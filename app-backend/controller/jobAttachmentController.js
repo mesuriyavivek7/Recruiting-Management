@@ -11,10 +11,10 @@ export const createJobAttachment=async (req,res,next)=>{
          let audioBrief=(req.files.audio_brief!==undefined)?(req.files.audio_brief[0]):(null)
          let otherDocs=(req.files.other_docs!==undefined)?(req.files.other_docs[0]):(null)
          const newobj={
-           sample_cv:(sampleCv)?({filename:sampleCv.originalname,filepath:sampleCv.path,filetype:sampleCv.mimetype,filesize:sampleCv.size}):({}),
-           evaluation_form:(evaluationForm)?({filename:evaluationForm.originalname,filepath:evaluationForm.path,filetype:evaluationForm.mimetype,filesize:evaluationForm.size}):({}),
-           audio_brief:(audioBrief)?({filename:audioBrief.originalname,filepath:audioBrief.path,filetype:audioBrief.mimetype,filesize:audioBrief.size}):({}),
-           other_docs:(otherDocs)?({filename:otherDocs.originalname,filepath:otherDocs.path,filetype:otherDocs.mimetype,filesize:otherDocs.size}):({})
+           sample_cv:(sampleCv)?({filename:(sampleCv.fieldname+path.extname(sampleCv.originalname)),filepath:sampleCv.path,filetype:sampleCv.mimetype,filesize:sampleCv.size}):({}),
+           evaluation_form:(evaluationForm)?({filename:(evaluationForm.fieldname+path.extname(evaluationForm.originalname)),filepath:evaluationForm.path,filetype:evaluationForm.mimetype,filesize:evaluationForm.size}):({}),
+           audio_brief:(audioBrief)?({filename:(audioBrief.fieldname+path.extname(audioBrief.originalname)),filepath:audioBrief.path,filetype:audioBrief.mimetype,filesize:audioBrief.size}):({}),
+           other_docs:(otherDocs)?({filename:(otherDocs.fieldname+path.extname(otherDocs.originalname)),filepath:otherDocs.path,filetype:otherDocs.mimetype,filesize:otherDocs.size}):({})
          }
          //creating job attachment or update it
          const jobattachment=await JOBATTACHEMENT.findOneAndUpdate({folder_name:req.params.jobid},{$set:{...newobj}},{upsert:true,new:true})

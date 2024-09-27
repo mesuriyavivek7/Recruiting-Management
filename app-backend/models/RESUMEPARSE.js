@@ -17,6 +17,10 @@ const resumeparseSchema=new mongoose.Schema({
         type:String,
         required:true
     },
+    completed:{
+       type:Boolean,
+       default:false
+    },
     firstname:String,
     lastname:String,
     contactno:String,

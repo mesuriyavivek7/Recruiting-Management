@@ -32,8 +32,12 @@ const resumedocsSchema=new mongoose.Schema({
     filesize:{
         type:Number,
         required:true
+    },
+    completed:{
+        type:Boolean,
+        default:false
     }
-})
+},{timestamps:true})
 
 
 export default mongoose.model("resumedocs",resumedocsSchema)

@@ -95,6 +95,9 @@ app.get('/',(req,res)=>{
 // Serve static files from the 'uploads/kycdocs' directory
 app.use('/kycdocs', express.static(path.join(__dirname, 'uploads/kycdocs')));
 
+// Serve static files from the 'uploads/resumedocs' directory
+app.use('/resumedocs',express.static(path.join(__dirname,'uploads/resumedocs')));
+
 //middleware for error handeling
 app.use((err,req,res,next)=>{
     const errStatus=err.status || 500

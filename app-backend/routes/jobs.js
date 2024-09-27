@@ -3,7 +3,7 @@ import fs from "fs"
 import path from "path"
 import multer from 'multer'
 import { fileURLToPath } from 'url';
-import { activateJob, allotedJobToAcManager, createJobs, deleteJobDraftWithOtherDetails, downloadEvaluationForm, getAllJobDetails, getAllJobDraftDetails, getCandidateScreeningQue, getFronLiveJobDetails, getFrontAcceptedJobDetails, getFrontMappedJobDetails, getJobAttachmentsDetailsForCandidate } from '../controller/jobController.js'
+import { activateJob, addCandidateProfileList, allotedJobToAcManager, createJobs, deleteJobDraftWithOtherDetails, downloadEvaluationForm, getAllJobDetails, getAllJobDraftDetails, getCandidateScreeningQue, getFronLiveJobDetails, getFrontAcceptedJobDetails, getFrontMappedJobDetails, getJobAttachmentsDetailsForCandidate } from '../controller/jobController.js'
 import { craeteJobBasicDeatils, getJobBasicDetails } from '../controller/jobBasicController.js'
 import { createJobDraft, deleteJobDraft } from '../controller/jobDraftController.js'
 import { createJobCommission, getJobCommissionDetails } from '../controller/jobCommissionController.js'
@@ -157,5 +157,9 @@ router.get('/getcandidatescreeningque/:jobid',getCandidateScreeningQue)
 //for downloading
 //for dowloading evaluation file
 router.get('/download/evaluationform/:jobid',downloadEvaluationForm)
+
+
+//add candidate profile into jobs candidate profile list
+router.post('/addcandidateprofilelist/:jobid',addCandidateProfileList)
 
 export default router

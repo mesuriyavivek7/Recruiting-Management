@@ -2,17 +2,39 @@
 import DescriptionIcon from '@mui/icons-material/Description';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 
+
+const getDate=(date)=>{
+  let d=new Date(date)
+  let d_ate=d.getDate()
+  let d_month=d.getMonth()+1
+  let d_year=d.getFullYear()
+ 
+  return `${(d_ate<10)?(`0${d_ate}`):(d_ate)}-${(d_month<10)?(`0${d_month}`):(d_month)}-${d_year}`
+}
+
+
+const getDays=(date)=>{
+  const today=new Date()
+  const past=new Date(date)
+
+  const timeDifference=today.getTime()-past.getTime()
+
+  const days=Math.floor(timeDifference/(1000 * 60 * 60 * 24))
+  return days
+}
+
+
 //column for candidate data
 export const candidateCol=[
     { field: 'id', headerName: 'ID',headerClassName:'super-app-theme--header', width: 70, },
     {
-        field:"name&id",headerName:'Candidate Name/CID',headerClassName:'super-app-theme--header',width:200, 
+        field:"name&id",headerName:'Candidate Name/CID',headerClassName:'super-app-theme--header',width:250, 
         renderCell:(params)=>{
           return (
             <div className="flex items-center gap-6">
                 <div className="flex flex-col gap-1">
-                    <p className='text-sm text-blue-400'>{params.row.name}</p>
-                    <span className='text-sm text-blue-400'>{params.row.cid}</span>
+                    <p className='text-sm text-blue-400'>{params.row.candidate_full_name}</p>
+                    <span className='text-sm text-blue-400'>{params.row.candidate_id}</span>
                 </div>
                 <div className="flex gap-2">
                     <span className='text-blue-400 cursor-pointer'><DescriptionIcon style={{fontSize:'1.3rem'}}/></span>
@@ -27,11 +49,11 @@ export const candidateCol=[
         renderCell:(params)=>{
           return (
            <div className='flex w-full h-full items-center'>
-            <div className='flex gap-1 items-center'>
-               <span className={`${(params.row.jobstatus==="Active")?("text-green-800 bg-green-200"):("text-red-800 bg-red-400")} h-6 w-6 rounded-md border text-sm flex justify-center items-center`}>{(params.row.jobstatus==="Active")?("A"):("N")}</span>
-               <div className='flex flex-col'>
-                 <span className='text-sm'>{params.row.jobid}-{params.row.jobtitle}</span>
-                 <span className='text-sm'>{params.row.jobcountry} - {params.row.jobcity}</span>
+            <div className='flex gap-2 items-center'>
+               <span className={`${(params.row.job_status==="Active")?("text-green-800 bg-green-200"):("text-red-800 bg-red-400")} h-6 w-6 rounded-md border text-sm flex justify-center items-center`}>{(params.row.job_status==="Active")?("A"):("N")}</span>
+               <div className='flex flex-col gap-1'>
+                 <span className='text-sm'>{params.row.job_id} - {params.row.job_title}</span>
+                 <span className='text-sm'>{params.row.job_country} - {params.row.job_city}</span>
                </div>
             </div>
            </div>
@@ -39,68 +61,109 @@ export const candidateCol=[
           }
     },
     {
-        field:"cstatus",headerName:"Candidate Status",headerClassName:'super-app-theme--header',width:200,
+        field:"cstatus",headerName:"Candidate Status",headerClassName:'super-app-theme--header',width:230,
         renderCell:(params)=>{
             return (
-                <select className='input-field' value={params.row.cstatus}>
-                    <option value='newresume'><div className='bg-blue-400 p-1 rounded-full'></div>New Resume</option>
-                    <option value='rs-cc'><div className='bg-purple-400 p-1 rounded-full'></div>Resume Select - Client Recruiter</option>
-                    <option value='rs-hm'><div className='bg-purple-400 p-1 rounded-full'></div>Resume Select - Hiring Manager</option>
-                    <option value='test-process'><div className='bg-purple-400 p-1 rounded-full'></div>Test in Process</option>
-                    <option value='interview-process'><div className='bg-purple-400 p-1 rounded-full'></div>Interview in Process</option>
-                    <option value='no-show'><div className='bg-purple-400 p-1 rounded-full'></div>No Show</option>
-                    <option value='candidate-not-ins'><div className='bg-orange-400 p-1 rounded-full'></div>Candidate Not Interested</option>
-                    <option value='candidate-not-reach'><div className='bg-orange-400 p-1 rounded-full'></div>Candidate Not Reachable</option>
-                    <option value='rr-cc'><div className='bg-red-400 p-1 rounded-full'></div>Resume Reject - Client Recruiter</option>
-                    <option value='rr-hm'><div className='bg-red-400 p-1 rounded-full'></div>Resume Reject - Hiring Manager</option>
-                    <option value='r-test'><div className='bg-red-400 p-1 rounded-full'></div>Resueme in Test</option>
-                    <option value='rjt-tech-itw'><div className='bg-red-400 p-1 rounded-full'></div>Resume Reject in Tech Interview</option>
-                    <option value='rjt-hr-itw'><div className='bg-red-400 p-1 rounded-full'></div>Rejected in HR Interview</option>
-                    <option value='s-f-itw'><div className='bg-green-400 p-1 rounded-full'></div>Selected in Final Interview</option>
-                    <option value='s-not-offer'><div className='bg-green-400 p-1 rounded-full'></div>Selected - Won't be Offered</option>
-                    <option value='o-released'><div className='bg-green-400 p-1 rounded-full'></div>Offer Released</option>
-                    <option value='o-accepted'><div className='bg-green-400 p-1 rounded-full'></div>Offer Accepted</option>
-                    <option value='o-rejected'><div className='bg-green-400 p-1 rounded-full'></div>Offer Rejected</option>
-                    <option value='c-not-joine'><div className='bg-green-400 p-1 rounded-full'></div>Candidate Not Joined</option>
-                    <option value='c-joine'><div className='bg-green-400 p-1 rounded-full'></div>Candidate Joined</option>
-                    <option value='quit-after-joine'><div className='bg-green-400 p-1 rounded-full'></div>Quit After Joining</option>
-                    <option value='on-hold'><div className='bg-sky-400 p-1 rounded-full'></div>On Hold</option>
-                    <option value='no-action'><div className='bg-sky-400 p-1 rounded-full'></div>No Further Action</option>
-                    <option value='use-later'><div className='bg-sky-400 p-1 rounded-full'></div>Use Later</option>
+                <select 
+                className='input-field'
+                value={params.row.candidate_status}
+                >
+                    <option value='newresume'>New Resume</option>
+                    <option value='rs-cc'>Resume Select - Client Recruiter</option>
+                    <option value='rs-hm'>Resume Select - Hiring Manager</option>
+                    <option value='test-process'>Test in Process</option>
+                    <option value='interview-process'>Interview in Process</option>
+                    <option value='no-show'>No Show</option>
+                    <option value='candidate-not-ins'>Candidate Not Interested</option>
+                    <option value='candidate-not-reach'>Candidate Not Reachable</option>
+                    <option value='rr-cc'>Resume Reject - Client Recruiter</option>
+                    <option value='rr-hm'>Resume Reject - Hiring Manager</option>
+                    <option value='r-test'>Resueme in Test</option>
+                    <option value='rjt-tech-itw'>Resume Reject in Tech Interview</option>
+                    <option value='rjt-hr-itw'>Rejected in HR Interview</option>
+                    <option value='s-f-itw'>Selected in Final Interview</option>
+                    <option value='s-not-offer'>Selected - Won't be Offered</option>
+                    <option value='o-released'>Offer Released</option>
+                    <option value='o-accepted'>Offer Accepted</option>
+                    <option value='o-rejected'>Offer Rejected</option>
+                    <option value='c-not-joine'>Candidate Not Joined</option>
+                    <option value='c-joine'>Candidate Joined</option>
+                    <option value='quit-after-joine'>Quit After Joining</option>
+                    <option value='on-hold'>On Hold</option>
+                    <option value='no-action'>No Further Action</option>
+                    <option value='use-later'>Use Later</option>
                 </select>
             )
         }
     },
     {
-        field:'submited',headerName:"Submitted",headerClassName:'super-app-theme--header',width:150,
+        field:'submited',headerName:"Submitted",headerClassName:'super-app-theme--header',width:160,
+        renderCell:(params)=>{
+          return (
+              <div className="flex mt-5 h-full flex-col gap-1">
+                  <span className="text-md leading-5">{getDate(params.row.submited)}</span>
+                  <span className="text-sm text-gray-400">({getDays(params.row.submited)} days ago)</span>
+              </div>
+          )
+      }
     },
     {
-        field:"last_uapdated",headerName:"Last Updated",headerClassName:'super-app-theme--header',width:150,
+        field:"updated",headerName:"Last Updated",headerClassName:'super-app-theme--header',width:160,
+        renderCell:(params)=>{
+          return (
+              <div className="flex mt-5 h-full flex-col gap-1">
+                  <span className="text-md leading-5">{getDate(params.row.updated)}</span>
+                  <span className="text-sm text-gray-400">({getDays(params.row.updated)} days ago)</span>
+              </div>
+          )
+      }
     },
     {
-        field:"notice_period",headerName:"Notice Period",headerClassName:'super-app-theme--header',width:180
+        field:"notice_period",headerName:"Notice Period",headerClassName:'super-app-theme--header',width:170,
+        renderCell:(params)=>{
+            return (
+              <div className='flex mt-7'>
+                <span className='text-md leading-5'>{params.row.notice_period} Days</span>
+              </div>
+            )
+        }
     },
     {
-        field:'email&mobile',headerName:"Email/Mobile",headerClassName:'super-app-theme--header',width:200,
+        field:'email&mobile',headerName:"Email/Mobile",headerClassName:'super-app-theme--header',width:280,
         renderCell:(params)=>{
             return (
               <div className='flex w-full h-full items-center'>
                <div className='flex flex-col gap-1'>
-                 <span className='text-sm'>{params.row.email}</span>
-                 <span className='text-sm'>{params.row.mobile}</span>
+                 <span className='text-sm'>{params.row.candidate_email_address}</span>
+                 <span className='text-sm'>+{params.row.candidate_mobile_number}</span>
                </div>
                </div>
             )
         }
     },
     {
-      field:'recruiter', headerName:"Recruiter", headerClassName:'super-app-theme--header', width:200
+      field:'recruiter_name', headerName:"Recruiter", headerClassName:'super-app-theme--header', width:200,
+      renderCell:(params)=>{
+         return (
+            <div className='flex gap-1 mt-7 items-center'>
+               <span className='h-7 w-7 font-bold rounded-full text-white text-[15px] flex justify-center items-center bg-blue-400'>{params.row.recruiter_name[0].toUpperCase()}</span>
+               <span className='text-sm'>{params.row.recruiter_name}</span>
+            </div>
+         )
+      }
     },
     {
-      field:'vendor', headerName:'UPHIRE vendor',  headerClassName:'super-app-theme--header',width:200
-    },
-    {
-      field:'remarks',headerName:'Remarks' , headerClassName:'super-app-theme--header'
+      field:'remarks',headerName:'Remarks' , headerClassName:'super-app-theme--header',width:200,
+      renderCell:(params)=>{
+        return (
+          <div>
+             <input
+             type='text'
+             className='input-field'
+             ></input>
+          </div>
+        )
+      }
     }
 ]
 
