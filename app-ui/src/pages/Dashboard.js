@@ -1,6 +1,10 @@
 import React, { useContext, useState } from 'react'
 import axios from 'axios';
 
+
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
+
 //importing icons
 import AddIcon from '@mui/icons-material/Add';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
@@ -13,8 +17,10 @@ const Dashboard = () => {
   const {user}=useContext(AuthContext)
   const [teamFormData,setTeamFormData]=useState({
     full_name:'',
-    email:''
+    email:'',
+    mobileno:'',
   })
+  const [openPopUp,setOpenPopUp]=useState(false)
 
   const [errors,setErrors]=useState({})
   const [teamLoad,setTeamLoad]=useState(false)
@@ -34,6 +40,7 @@ const Dashboard = () => {
       let newErrors={}
       if(teamFormData.full_name==='') newErrors.full_name="Name is required"
       if(teamFormData.email==="") newErrors.email="Email address is required"
+      if(teamFormData.mobileno==="") newErrors.mobileno="Mobile No is required"
       setErrors(newErrors)
 
       return Object.keys(newErrors).length===0
@@ -41,10 +48,9 @@ const Dashboard = () => {
 
   const handleTeamDataSubmit=async ()=>{
     if(validateTeamFormData()){
-        setTeamLoad(true)
          try{
           //make request for creating new team member
-          await axios.post(`${process.env.REACT_APP_API_BASE_URL}/enterpriseteam`,{enterprise_id:user.enterprise_id,full_name:teamFormData.full_name,email:teamFormData.email})
+          await axios.post(`${process.env.REACT_APP_API_BASE_URL}/enterpriseteam`,{enterprise_id:user.enterprise_id,full_name:teamFormData.full_name,email:teamFormData.email,mobileno:teamFormData.mobileno})
 
           //send notify mail to team member
           await axios.post(`${process.env.REACT_APP_API_BASE_URL}/mail/sendteammember`,{to:teamFormData.email,name:teamFormData.full_name,inviter_name:user.full_name})
@@ -54,19 +60,44 @@ const Dashboard = () => {
 
           teamFormData.full_name=''
           teamFormData.email=''
-          showNotification("Successfully new team member added","success")
+          teamFormData.mobileno=''
+          showNotification("Successfully new team member added.","success")
+          setOpenPopUp(false)
          }catch(err){
           let newErrors={}
           newErrors.internalError="There is somethign wrong..!"
           setErrors(newErrors)
-          showNotification("There is somthing wrong for adding new team member","failure")
+          showNotification("There is somthing wrong for adding new team member.","failure")
          }
          setTeamLoad(false)
          
     }
   }
 
-  const [openPopUp,setOpenPopUp]=useState(false)
+  const checkCreadentials=async ()=>{
+      if(validateTeamFormData()){
+         setTeamLoad(true)
+        try{
+            const res=await axios.post(`${process.env.REACT_APP_API_BASE_URL}/enterpriseteam/checkcreadentials`,{mobileno:teamFormData.mobileno,email:teamFormData.email})
+            if(res.data){
+               setTeamLoad(false)
+               showNotification("Entered mobile no or email adress is alredy exist.",'failure')
+            }else{
+              await handleTeamDataSubmit()
+            }
+        }catch(err){
+           console.log(err)
+           showNotification("Something went wrong while adding new team member.",'failure')
+           setTeamLoad(false)
+        }
+        setTeamLoad(false)
+      }
+
+  }
+
+  
+
+  
   
   return (
     <div className='flex flex-col gap-2'>
@@ -75,7 +106,7 @@ const Dashboard = () => {
        }
        {
         openPopUp && (
-          <div className='fixed inset-0 flex justify-center bg-opacity-50 backdrop-blur-md items-center'>
+          <div className='fixed inset-0 flex justify-center bg-opacity-50 backdrop-blur-md bg-black items-center'>
             <div className="rounded-md overflow-hidden border-gray-100 border-1 max-w-md w-full">
               <div className='relative w-full bg-white py-2'>
                 <span className='absolute cursor-pointer flex items-center text-green-600 text-sm left-2 top-4' onClick={()=>setOpenPopUp(false)}><ArrowBackIosIcon style={{fontSize:'1rem'}}></ArrowBackIosIcon>Back</span>
@@ -115,7 +146,26 @@ const Dashboard = () => {
                       )
                     }
                   </div>
-                  <button disabled={teamLoad} onClick={handleTeamDataSubmit} className='w-full relative text-white py-1 mt-2 hover:bg-blue-400 rounded-sm bg-blue-700 disabled:bg-slate-600 disabled:cursor-no-drop'>
+                  <div className='flex relative w-full flex-col gap-2'>
+                    <label className='input-label' htmlFor='primarycontactnumber'>Enter Phone Number <span className='text-red-500'>*</span></label>
+                       <PhoneInput
+                        value={teamFormData.mobileno}
+                        country={"in"}
+                        onChange={(phone) =>
+                        setTeamFormData((prevData) => ({
+                          ...prevData,
+                          mobileno: phone,
+                        }))
+                         }
+                        containerStyle={{ width: "100%" }}
+                        />
+                        {
+                          errors.mobileno && (
+                           <p className='text-xs text-red-400'>{errors.mobileno}</p>
+                         )
+                        }
+                  </div>
+                  <button disabled={teamLoad} onClick={checkCreadentials} className='w-full relative text-white py-1 mt-2 hover:bg-blue-400 rounded-sm bg-blue-700 disabled:bg-slate-600 disabled:cursor-no-drop'>
                                 {
                                   teamLoad && 
                                      <span className="flex items-center justify-center">

@@ -20,6 +20,16 @@ export const createEnterpriseTeam=async (req,res,next)=>{
 }
 
 
+export const checkCreadentials=async (req,res,next)=>{
+    try{
+         const user=await ENTERPRISETEAM.findOne({$or:[{mobileno:req.body.mobileno},{email:req.body.email}]})
+         if(user) res.status(200).json(true)
+         else res.status(200).json(false)
+    }catch(err){
+       next(err)
+    }
+}
+
 export const getCandidateDetails = async (req, res, next) => {
   try {
     // Fetch job data with candidate profiles for the given enterprise member
@@ -91,3 +101,80 @@ export const getCandidateDetails = async (req, res, next) => {
     next(err);
   }
 };
+
+
+export const addNewCandidate=async (req,res,next)=>{
+    try{
+       const {candidateId,jobId}=req.body
+       await ENTERPRISETEAM.findByIdAndUpdate(req.params.enmemberid,{$push:{received_candidates:{candidateId,jobId}}})
+       res.status(200).json("Added candidateid and jobid into received candidate list")
+    }catch(err){
+       next(err)
+    }
+}
+
+
+export const getRecruiterTeamMember=async (req,res,next)=>{
+     try{
+       const candidates=await ENTERPRISETEAM.findById(req.params.enmemberid,{_id:0,received_candidates:1})
+       if(candidates.received_candidates.length===0) res.status(200).json([])
+
+      const recruiterData= await Promise.all(candidates.received_candidates.map(async (obj)=>{
+           const candidatedetails=await CANDIDATE.findById(obj.candidateId)
+           const recruiterfullname=await RECRUITINGTEAM.findById(candidatedetails.recruiter_member_id,{full_name:1,_id:0})
+           const candidatebasic=await CANDIDATEBASICDETAILS.findById(candidatedetails.candidate_basic_details)
+           const jobbasicdetails=await JOBBASICDETAILS.findOne({job_id:candidatedetails.job_id})
+           return (
+            {
+              id:candidatedetails.recruiter_member_id,
+              full_name:recruiterfullname.full_name,
+              candidate_id:candidatedetails.candidate_id,
+              candidate_full_name:`${candidatebasic.first_name} ${candidatebasic.last_name}`,
+              job_id:candidatedetails.job_id,
+              job_title:jobbasicdetails.job_title
+            }
+           )
+       }))
+
+       res.status(200).json(recruiterData)
+     }catch(err){
+       next(err)
+     }
+}
+
+export const checkIsAdmin=async (req,res,next)=>{
+    try{
+        const check=await ENTERPRISETEAM.findById(req.params.eid)
+        if(check.isAdmin) res.status(200).json(true)
+        else res.status(200).json(false)
+    }catch(err){
+        next(err)
+    }
+}
+
+export const changeAccountStatus=async (req,res,next)=>{
+    try{
+        await ENTERPRISETEAM.findByIdAndUpdate(req.params.eid,{$set:{account_status:req.body.status}})
+        res.status(200).json("Enterprise account status changed successfully")
+    }catch(err){
+        next(err)
+    }
+}
+
+
+export const getSubmitedCandidateMailId=async (req,res,next)=>{
+     try{
+        const member=await ENTERPRISETEAM.findById(req.params.ememberid)
+
+        const candidates=await Promise.all(member.received_candidates.map(async (candidate)=>{
+            const candidatedetails=await CANDIDATE.findById(candidate.candidateId)
+            const candiadteBasicDetails=await CANDIDATEBASICDETAILS.findById(candidatedetails.candidate_basic_details)
+            return candiadteBasicDetails.primary_email_id
+        }))
+
+        res.status(200).json(candidates)
+
+     }catch(err){
+        next(err)
+     }
+}

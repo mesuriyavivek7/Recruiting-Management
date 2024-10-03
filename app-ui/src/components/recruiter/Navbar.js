@@ -3,11 +3,13 @@ import asset1 from "../../assets/asset 1.png";
 import asset29 from "../../assets/asset29.svg";
 import asset15 from "../../assets/asset15.svg";
 import { Link } from "react-router-dom";
+import Message from "../message/Message";
 import { AuthContext } from "../../context/AuthContext";
 
 const Navbar = () => {
   const {user}=useContext(AuthContext)
   const [openProfile,setOpenProfile]=useState(false)
+  const [openMessageBox,setOpenMessageBox]=useState(false)
   return (
    
     <div className="w-full z-60 flex justify-between py-4 px-3 bg-blue-600">
@@ -27,9 +29,14 @@ const Navbar = () => {
         </div>
       </div>
       <div className="flex place-items-center gap-4">
-        <Link to="/">
-          <img src={asset29} alt="notification" width={26} />
-        </Link>
+        <div className="relative">
+          <img className="cursor-pointer" onClick={()=>setOpenMessageBox(true)} src={asset29} alt="notification" width={26} />
+          {
+            openMessageBox && (
+              <Message setOpenMessageBox={setOpenMessageBox}></Message>
+            )
+          }
+        </div>
         <div className="relative">
           <div onClick={()=>setOpenProfile((prev)=>(!prev))} className="w-[30px] h-[30px] rounded-full cursor-pointer bg-blue-400 flex place-items-center ">
             <p className="text-white text-sm mx-auto">VM</p>

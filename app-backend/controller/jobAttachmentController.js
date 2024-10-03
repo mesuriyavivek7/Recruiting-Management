@@ -47,30 +47,38 @@ export const checkAndRemoveFile=async (req,res,next)=>{
      switch(fieldname){
            case "sample_cv":
             let samplecvfile=await JOBATTACHEMENT.findOne({folder_name:jobid},{sample_cv:1,_id:0})
-            filedata=samplecvfile.sample_cv
-            if(filedata){
-              const filepath=filedata.filepath
-              if(fs.existsSync(filepath)){
-                fs.unlinkSync(filepath)
-                await JOBATTACHEMENT.updateOne({folder_name:jobid},{$set:{sample_cv:{}}})
-              }
-           }
+            if(samplecvfile){
+
+              filedata=samplecvfile.sample_cv
+              if(filedata){
+                const filepath=filedata.filepath
+                if(fs.existsSync(filepath)){
+                  fs.unlinkSync(filepath)
+                  await JOBATTACHEMENT.updateOne({folder_name:jobid},{$set:{sample_cv:{}}})
+                }
+             }
+
+            }
+           
             break;
 
           case "evaluation_form":
             let evaluationfile=await JOBATTACHEMENT.findOne({folder_name:jobid},{evaluation_form:1,_id:0})
-            filedata=evaluationfile.evaluation_form
-            if(filedata){
-              const filepath=filedata.filepath
-              if(fs.existsSync(filepath)){
-                fs.unlinkSync(filepath)
-                await JOBATTACHEMENT.updateOne({folder_name:jobid},{$set:{evaluation_form:{}}})
-              }
-           }
+            if(evaluationfile){
+              filedata=evaluationfile.evaluation_form
+              if(filedata){
+                const filepath=filedata.filepath
+                if(fs.existsSync(filepath)){
+                  fs.unlinkSync(filepath)
+                  await JOBATTACHEMENT.updateOne({folder_name:jobid},{$set:{evaluation_form:{}}})
+                }
+             }
+            }
             break;
 
           case "audio_brief":
             let audiofile=await JOBATTACHEMENT.findOne({folder_name:jobid},{audio_brief:1,_id:0})
+            if(audiofile){
             filedata=audiofile.audio_brief
             if(filedata){
               const filepath=filedata.filepath
@@ -79,10 +87,12 @@ export const checkAndRemoveFile=async (req,res,next)=>{
                 await JOBATTACHEMENT.updateOne({folder_name:jobid},{$set:{audio_brief:{}}})
               }
            }
+          }
             break;
           
           case "other_docs":
             let otherfile=await JOBATTACHEMENT.findOne({folder_name:jobid},{other_docs:1,_id:0})
+            if(otherfile){
             filedata=otherfile.other_docs
             if(filedata){
               const filepath=filedata.filepath
@@ -91,6 +101,7 @@ export const checkAndRemoveFile=async (req,res,next)=>{
                 await JOBATTACHEMENT.updateOne({folder_name:jobid},{$set:{other_docs:{}}})
               }
            }
+          }
             break;
           
           default:
