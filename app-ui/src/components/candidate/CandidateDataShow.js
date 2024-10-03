@@ -10,7 +10,7 @@ import WhiteLoader from '../../assets/whiteloader.svg'
 //importing icons
 import DescriptionIcon from '@mui/icons-material/Description';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
-export default function CandidateDataShow({showNotification,loader,rows,refetchCandidateData}) {
+export default function CandidateDataShow({selectedRows,setSelectedRows,showNotification,loader,rows,refetchCandidateData}) {
  const [candidateStatusLoader,setCandidateStatusLoader]=useState(false)
  const [remarksLoader,setRemarksLoader]=useState(false)
 
@@ -300,6 +300,8 @@ const candidateCol=[
       rows={rows}
       columns={candidateCol}
       loading={loader}
+      rowSelectionModel={selectedRows}
+      onRowSelectionModelChange={(newRowSelected)=>setSelectedRows(newRowSelected)}
       initialState={{
           pagination: {
             paginationModel: { page: 0, pageSize: 10 },

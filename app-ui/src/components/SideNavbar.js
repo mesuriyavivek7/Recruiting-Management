@@ -1,7 +1,6 @@
 import React from "react";
 import { ReactComponent as ExpandIcon } from "../assets/asset19.svg";
 import { ReactComponent as DashboardIcon } from "../assets/asset28.svg";
-import { ReactComponent as JobsIcon } from "../assets/asset21.svg";
 import { ReactComponent as CandidatesIcon } from "../assets/asset20.svg";
 import { ReactComponent as PostIcon } from "../assets/asset22.svg";
 import { ReactComponent as ActionIcon } from "../assets/asset23.svg";
@@ -9,6 +8,9 @@ import { ReactComponent as OffersIcon } from "../assets/asset25.svg";
 import { ReactComponent as VideosIcon } from "../assets/asset24.svg";
 import { ReactComponent as SettingsIcon } from "../assets/asset26.svg";
 import { ReactComponent as ChatsIcon } from "../assets/asset27.svg";
+//importing icons
+import PeopleOutlinedIcon from '@mui/icons-material/PeopleOutlined';
+
 import { Link } from "react-router-dom";
 
 const SideNavbar = () => {
@@ -22,9 +24,7 @@ const SideNavbar = () => {
           <DashboardIcon className="w-[24px] text-white" />
         </div>
       </Link>
-        <div className="hover:bg-gray-400 rounded-md p-2">
-          <JobsIcon className="w-[24px] text-white" />
-        </div>
+        
        <Link to="candidate">
         <div className="hover:bg-gray-400 rounded-md p-2">
           <CandidatesIcon className="w-[24px] text-white" />
@@ -33,6 +33,11 @@ const SideNavbar = () => {
       <Link to="jobposting/landing">
         <div className="hover:bg-gray-400 rounded-md p-2">
           <PostIcon className="w-[24px] text-white" />
+        </div>
+      </Link>
+       <Link to="team">
+        <div className="hover:bg-gray-400 rounded-md p-2">
+          <span className="w-[24px] text-white"><PeopleOutlinedIcon></PeopleOutlinedIcon></span>
         </div>
       </Link>
       <Link to="bulkactions">

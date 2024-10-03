@@ -26,6 +26,10 @@ const recruitingteamSchema=new mongoose.Schema({
         type:Boolean,
         default:false
     },
+    accout_status:{
+       type:String,
+       default:"Active"
+    },
     email_verified:{
        type:Boolean,
        dafault:false
@@ -40,8 +44,9 @@ const recruitingteamSchema=new mongoose.Schema({
     rejected_jobs:{
         orgjobid:String,
         reason:String
-    }
-})
+    },
+    submited_candidate_profile:[Object]
+},{timestamps:true})
 
 
 export default mongoose.model('recruitingteam',recruitingteamSchema)

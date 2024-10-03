@@ -1,5 +1,6 @@
 import ENTERPRISE from "../models/ENTERPRISE.js";
 import ENTERPRISETEAM from "../models/ENTERPRISETEAM.js";
+import JOBS from "../models/JOBS.js";
 import bcrypt from 'bcryptjs'
 import { sendEmailUpdateVerificationEnterprise } from "./mailController.js";
 
@@ -143,4 +144,30 @@ export const getAcManagerId=async (req,res,next)=>{
       }catch(err){
         next(err)
       }
+}
+
+
+export const getEnterpriseMember=async (req,res,next)=>{
+    try{  
+       const enterpriseMember=await ENTERPRISETEAM.find({enterprise_id:req.params.eid})
+       const enterpriseData=await Promise.all(enterpriseMember.map(async (enterprise)=>{
+           const activeJobCount=await JOBS.countDocuments({enterprise_member_id:enterprise._id,job_status:'Active'})
+           const pendingJobCount=await JOBS.countDocuments({enterprise_member_id:enterprise._id,job_status:'Pending'})
+
+           return (
+            {
+              id:enterprise._id,
+              full_name:enterprise.full_name,
+              account_status:enterprise.account_status,
+              active_jobs:activeJobCount,
+              pending_jobs:pendingJobCount,
+              isAdmin:enterprise.isAdmin,
+              createdAt:enterprise.createdAt
+            }
+           )
+       }))
+       res.status(200).json(enterpriseData)
+    }catch(err){
+      next(err)
+    }  
 }

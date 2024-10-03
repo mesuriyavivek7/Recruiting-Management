@@ -1,4 +1,4 @@
-import mongoose, { mongo } from "mongoose";
+import mongoose from "mongoose";
 
 
 const enterpriseteamSchema=new mongoose.Schema({
@@ -14,6 +14,10 @@ const enterpriseteamSchema=new mongoose.Schema({
         type:String,
         required:true
     },
+    mobileno:{
+       type:String,
+       required:true
+    },
     password:{
         type:String,
         required:true,
@@ -25,9 +29,14 @@ const enterpriseteamSchema=new mongoose.Schema({
     email_verified:{
         type:Boolean,
         default:false
-    }
-
-})
+    },
+    account_status:{
+       type:String,
+       default:'Active'
+    },
+    posted_jobs:[String],
+    received_candidates:[Object]
+},{timestamps:true})
 
 
 export default mongoose.model("enterpriseteam",enterpriseteamSchema)

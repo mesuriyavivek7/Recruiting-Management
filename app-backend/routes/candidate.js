@@ -5,7 +5,7 @@ import fs from 'fs'
 import { fileURLToPath } from 'url';
 
 import { cancelProcess, checkParseDetails, createAndParseResume, downloadResumeDocs, getResumeFileName, getResumeFilePath, marksAsCompleted, removeResumeFile} from '../controller/resumeController.js'
-import { addAcManager, changeCandidateStatus, createCandidate, updateCandidateRemarks } from '../controller/candidateController.js'
+import { addAcManager, changeCandidateStatus, changeMultipleCandidateStatus, createCandidate, getCandidateForMultipleAction, updateCandidateRemarks } from '../controller/candidateController.js'
 import { checkEmailAndMobile, createCandidateBasicDetails } from '../controller/candidateBasicController.js'
 import { uploadCandidateAttachments } from '../controller/candidateAttachmentsController.js';
 import { uploadCandidateConsetProof } from '../controller/candidateConsetController.js';
@@ -117,6 +117,12 @@ router.get('/resumefilepath/:cid',getResumeFilePath)
 
 //updating candidate remarks
 router.post('/updatecandidateremarks/:orgcid',updateCandidateRemarks)
+
+//get candidate data for multiple action
+router.post('/getcandidateformultipleaction',getCandidateForMultipleAction)
+
+//change status for multiple candidates
+router.put('/changemultiplecandidatestatus',changeMultipleCandidateStatus)
 
 export default router
 
