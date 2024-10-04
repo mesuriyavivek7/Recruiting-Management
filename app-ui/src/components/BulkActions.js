@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import EmailPopup from "./EmailPopup";
 import asset35 from "../assets/asset35.svg";
 import axios from "axios";
+import Notification from "./Notification";
 
 import { AuthContext } from "../context/AuthContext";
 
@@ -14,6 +15,7 @@ const BulkActions = () => {
   const [emails, setEmails] = useState([]);
   const {user}=useContext(AuthContext)
   const [candiadteMails,setCandidateMails]=useState([])
+  const [loader,setLoader]=useState(false)
 
   const fetchCandidateMails=async ()=>{
      try{
@@ -25,6 +27,23 @@ const BulkActions = () => {
      }
   }
 
+
+    //for showing notification
+    const [notification,setNotification]=useState(null)
+
+    //for showing notification
+    const showNotification=(message,type)=>{
+     setNotification({message,type})
+    }
+  
+
+  const handleSubmit=async ()=>{
+    setLoader(true)
+    setEmails([])
+    await fetchCandidateMails()
+    showNotification("Successfull email sent to all candidate.",'success')
+    setLoader(false)
+  }
 
   useEffect(()=>{
      fetchCandidateMails()
@@ -47,6 +66,7 @@ const BulkActions = () => {
 
   return (
     <div className="custom-div">
+      {notification && <Notification message={notification.message} type={notification.type} onClose={()=>setNotification(null)}></Notification>}
       <div className="w-full relative flex justify-between items-center border-b pb-2 mb-4">
         <h2 className="text-lg font-semibold">Send Messages</h2>
       </div>
@@ -109,7 +129,7 @@ const BulkActions = () => {
           >
            Add More Emails
           </button> 
-          <button className="bg-blue-400 text-white px-4 py-2 rounded mt-4">Send</button>
+          <button onClick={handleSubmit} className="bg-blue-400 text-white px-4 py-2 rounded mt-4">Send</button>
         </div>
       )}
 
