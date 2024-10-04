@@ -8,6 +8,7 @@ import { ReactComponent as OffersIcon } from "../assets/asset25.svg";
 import { ReactComponent as VideosIcon } from "../assets/asset24.svg";
 import { ReactComponent as SettingsIcon } from "../assets/asset26.svg";
 import { ReactComponent as ChatsIcon } from "../assets/asset27.svg";
+import { ReactComponent as JobsIcon } from "../assets/asset21.svg";
 import Support from "../pages/Support"; 
 //importing icons
 import PeopleOutlinedIcon from '@mui/icons-material/PeopleOutlined';
@@ -52,9 +53,7 @@ const SideNavbar = () => {
         </div>
       </Link>
 
-      <Link to="candidate">
-        <div className="hover:bg-gray-400 rounded-md p-2 flex items-center gap-2">
-        
+    
        <Link to="candidate">
         <div className="hover:bg-gray-400 rounded-md p-2">
           <CandidatesIcon className="w-[24px] text-white" />
@@ -126,6 +125,7 @@ const SideNavbar = () => {
         </div>
       )}
     </div>
+    
   );
 };
 

@@ -12,7 +12,7 @@ import Dashboard from "./pages/Dashboard";
 import PostJob from "./pages/PostJob";
 import DemoVideosPage from "./components/DemoVideos";
 import JobPostings from "./pages/jobs/JobPostings";
-import BulkActions from "./components/BulkActions,";
+import BulkActions from "./components/BulkActions";
 import OffersPage from "./components/OffersPage";
 import Support from "./pages/Support";
 import Candidate from "./pages/Candidate/Candidate";
