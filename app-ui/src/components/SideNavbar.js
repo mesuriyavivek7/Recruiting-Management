@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { ReactComponent as ExpandIcon } from "../assets/asset19.svg";
 import { ReactComponent as DashboardIcon } from "../assets/asset28.svg";
-import { ReactComponent as JobsIcon } from "../assets/asset21.svg";
 import { ReactComponent as CandidatesIcon } from "../assets/asset20.svg";
 import { ReactComponent as PostIcon } from "../assets/asset22.svg";
 import { ReactComponent as ActionIcon } from "../assets/asset23.svg";
@@ -10,6 +9,9 @@ import { ReactComponent as VideosIcon } from "../assets/asset24.svg";
 import { ReactComponent as SettingsIcon } from "../assets/asset26.svg";
 import { ReactComponent as ChatsIcon } from "../assets/asset27.svg";
 import Support from "../pages/Support"; 
+//importing icons
+import PeopleOutlinedIcon from '@mui/icons-material/PeopleOutlined';
+
 import { Link } from "react-router-dom";
 
 const SideNavbar = () => {
@@ -52,6 +54,9 @@ const SideNavbar = () => {
 
       <Link to="candidate">
         <div className="hover:bg-gray-400 rounded-md p-2 flex items-center gap-2">
+        
+       <Link to="candidate">
+        <div className="hover:bg-gray-400 rounded-md p-2">
           <CandidatesIcon className="w-[24px] text-white" />
           {isExpanded && <span className="text-white">Candidates</span>}
         </div>
@@ -64,6 +69,11 @@ const SideNavbar = () => {
         </div>
       </Link>
 
+       <Link to="team">
+        <div className="hover:bg-gray-400 rounded-md p-2">
+          <span className="w-[24px] text-white"><PeopleOutlinedIcon></PeopleOutlinedIcon></span>
+        </div>
+      </Link>
       <Link to="bulkactions">
         <div className="hover:bg-gray-400 rounded-md p-2 flex items-center gap-2">
           <ActionIcon className="w-[24px] text-white" />

@@ -26,7 +26,8 @@ module.exports = {
         "purple-200": "#575757",
         "black-200": '#334155',
         "orange-700": '#fbe6b1',
-        "orange-800": 'af8008'
+        "orange-800": 'af8008',
+        "blue-100":'#edf3fd'
       },
     
       

@@ -1,5 +1,6 @@
-import {  createContext, useEffect, useReducer } from "react";
+import {  createContext, useEffect, useReducer, useState } from "react";
 import Cookies from 'js-cookie';
+import axios from "axios";
 
 
 const token=Cookies.get("t_user")
@@ -57,16 +58,34 @@ const AuthReducer=(state,action)=>{
 
 export const AuthContextProvider=({children})=>{
     const [state,dispatch]=useReducer(AuthReducer,INITIAL_STATE)
+    const [isAdmin,setIsAdmin]=useState(false)
+
+    //Check for user is admin or not
+    const checkAdmin=async ()=>{
+        if(state.user){
+         try{
+            let res=null;
+            if(state.user.userType==='enterprise') res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/enterpriseteam/checkadmin/${state.user._id}`)
+            else res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/recruitingteam/checkadmin/${state.user._id}`)
+            
+            if(res.data) setIsAdmin(true)
+            else setIsAdmin(false)
+         }catch(err){
+            console.log(err)
+         }
+        }
+    }
 
     useEffect(()=>{
        localStorage.setItem("user",JSON.stringify(state.user))
+       checkAdmin()
     },[state.user])
 
     
     return (
         <AuthContext.Provider
          value={
-            {
+            {   isAdmin,
                 user:state.user,
                 loading:state.loading,
                 error:state.error,

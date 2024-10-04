@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 
 import axios from 'axios'
-import Loader from '../../assets/whiteloader.svg'
+import Loader from '../../assets/loader.svg'
 import Notification from '../Notification';
 import { AuthContext } from '../../context/AuthContext';
 import { useNavigate } from "react-router-dom";

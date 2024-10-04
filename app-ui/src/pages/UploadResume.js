@@ -104,11 +104,12 @@ export default function UploadResume() {
       //step-7 get alloted account manager id
       const acmanager=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/recruiting/getacmanagerid/${user.recruiting_agency_id}`)
         
+      console.log(acmanager)
       //step-8 add candidate profile into account manager pending list
       await axios.post(`${process.env.REACT_APP_API_ADMIN_URL}/accountmanager/addpendingcandidate/${acmanager.data}`,{orgcid:res.data._id})
 
       //step-9 add accountmanager id into candidate profile
-      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/candidate/addacmanager/${res.data._id}`,{acmanagerid:acmanager._id})
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/candidate/addacmanager/${res.data._id}`,{acmanagerid:acmanager.data})
 
       return true
     }catch(err){

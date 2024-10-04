@@ -2,21 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
-
-
-
- body {
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap');
+*{
+  font-family: "Nunito", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
   margin: 0;
-  
-    @apply font-noto-sans; /* Apply the default sans font (Noto Sans) globally */
-
-} 
-
-code {
-   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace; 
-
 }
+
 
 @layer components{
 
