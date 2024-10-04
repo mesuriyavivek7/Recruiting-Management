@@ -11,46 +11,46 @@ import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
 export default function Support() {
   return (
     <div className='flex flex-col gap-2'>
-      <div className='custom-div gap-6'>
-        <div className='flex flex-col gap-1'>
-          <h1 className='text-gray-800 text-xl'>Technical Support</h1>
+     <h1 className='text-xl font-bold'>Support</h1>
+        <div className='flex flex-col'>
+          <h1 className='text-black text-xl'>Technical Support</h1>
           <p className='text-sm text-gray-500'>Questions related to the Web Portal's features and defects</p>
-         </div>
-         <div className='flex w-full justify-between border p-4 pr-10 rounded-md'>
-            <div className='flex gap-8'>
-             <img className='w-24 h-24 rounded-full ' src={asset36}></img>
-             <div className='flex flex-col gap-1'>
-               <h2 className='text-lg'>Roshebh Sharma</h2>
+         
+         <div className='flex w-full justify-between border p-1 pr-10 rounded-md pt-2 mt-2'>
+            <div className='flex gap-8 pl-2'>
+             <img className='w-12 h-12 rounded-full ' src={asset36}></img>
+             <div className='flex flex-col '>
+               <h2 className=''>Roshebh Sharma</h2>
                <span className='text-sm text-gray-500'>support@uphire.in</span>
              </div>
             </div>
             <div className='flex-col flex gap-2'>
-               <h1>CONTACT</h1>
-               <div className='flex gap-2 justify-center'>
+             
+               <div className='flex gap-4  pt-4'>
                   <EmailIcon style={{fontSize:'1.2rem',color:'#575757'}}></EmailIcon>
-                  <LocalPhoneIcon style={{fontSize:'1.2rem',color:'#575757'}}></LocalPhoneIcon>
+                  
                </div>
             </div>
          </div>
      </div>
-     <div className='custom-div gap-6'>
-        <div className='flex flex-col gap-1'>
-          <h1 className='text-gray-800 text-xl'>Business Support</h1>
+    
+        <div className='flex flex-col mt-2'>
+          <h1 className='text-black text-xl'>Business Support</h1>
           <p className='text-sm text-gray-500'>Account Manager (UPHIRE Platform Adoption Consultant) for all the Requirements, Candidate processing & Payments</p>
-         </div>
-         <div className='flex w-full justify-between border p-4 pr-10 rounded-md'>
-            <div className='flex gap-8'>
-             <img className='w-24 h-24 rounded-full ' src={asset37}></img>
-             <div className='flex flex-col gap-1'>
+  
+         <div className='flex w-full justify-between border p-1 pr-10 rounded-md pt-2 mt-2'>
+            <div className='flex gap-8 pl-2'>
+             <img className='w-12 h-12 rounded-full ' src={asset37}></img>
+             <div className='flex flex-col '>
                <h2 className='text-lg'>Vibhita Chopra</h2>
                <span className='text-sm text-gray-500'>support@uphire.in</span>
              </div>
             </div>
             <div className='flex-col flex gap-2'>
-               <h1>CONTACT</h1>
-               <div className='flex gap-2 justify-center'>
+               
+               <div className='flex gap-2 pt-4'>
                   <EmailIcon style={{fontSize:'1.2rem',color:'#575757'}}></EmailIcon>
-                  <LocalPhoneIcon style={{fontSize:'1.2rem',color:'#575757'}}></LocalPhoneIcon>
+                
                </div>
             </div>
          </div>

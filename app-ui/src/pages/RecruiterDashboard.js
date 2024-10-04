@@ -5,6 +5,43 @@ import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
 //import icons
 import AddIcon from '@mui/icons-material/Add';
 
+
+// charts
+
+import Polar from './Charts/Polar'; 
+import MyResponsiveRadialBar from './Charts/Radial'; 
+
+
+
+
+
+// Charts Data
+const polarData = [
+    { id: 'React', value: 40 },
+    { id: 'Angular', value: 30 },
+    { id: 'Vue', value: 30 },
+  ];
+  
+  const radialData = [
+    {
+        "id": "",
+        "data": [
+            { "x": "", "y": 120 },
+            { "x": "", "y": 150 },
+            { "x": "", "y": 100 }
+        ]
+    },
+    {
+        "id": "",
+        "data": [
+            { "x": "", "y": 100 },
+            { "x": "", "y": 130 },
+            { "x": "", "y": 80 }
+        ]
+    }
+  ];
+
+
 export default function RecruiterDashboard() {
   return (
     <div className='flex flex-col gap-2'>
@@ -28,6 +65,30 @@ export default function RecruiterDashboard() {
           </button>
          </div>
       </div>
+
+{/* add section for charts */}
+
+<div className='custom-div py-2 gap-4'>
+  <h1 className='text-xl font-bold'>Key Indicators</h1>
+  <div className='w-full flex gap-4 pb-2'>
+    
+  <div className='w-48 h-56 flex-1 flex flex-col gap-2 shadow '>
+      <MyResponsiveRadialBar  data={radialData}/>
+    </div>
+    
+    <div className='w-58 h-56 flex-1 flex flex-col gap-2 shadow pt-6'>
+      <Polar data={polarData} />
+    </div>
+
+    <div className='w-48 h-56 flex-1 flex flex-col gap-2 shadow pt-6'>
+      <Polar data={polarData} />
+    </div>
+  </div>
+</div>
+{/* Finish section*/}
+
+
+
       <div className='custom-div py-4 gap-4'>
          <h1>Jobs</h1>
          <div className='w-full flex gap-4'>

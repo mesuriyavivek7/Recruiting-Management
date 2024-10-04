@@ -1,5 +1,14 @@
 import React, { useContext, useState } from 'react'
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+
+// charts
+// import MyResponsivePie from './Charts/pie';
+import Polar from './Charts/Polar'; 
+import MyResponsiveRadialBar from './Charts/Radial'; 
+
+
+
 
 //importing icons
 import AddIcon from '@mui/icons-material/Add';
@@ -19,6 +28,67 @@ const Dashboard = () => {
   const [errors,setErrors]=useState({})
   const [teamLoad,setTeamLoad]=useState(false)
   const [notification,setNotification]=useState(null)
+
+// 
+
+// const pieData = [
+//   { id: 'JavaScript', value: 55 },
+//   { id: 'Python', value: 25 },
+//   { id: 'Java', value: 20 },
+// ];
+
+const polarData = [
+  { id: 'React', value: 40 },
+  { id: 'Angular', value: 30 },
+  { id: 'Vue', value: 30 },
+];
+
+const radialData = [
+  {
+      "id": "",
+      "data": [
+          { "x": "", "y": 120 },
+          { "x": "", "y": 150 },
+          { "x": "", "y": 100 }
+      ]
+  },
+  {
+      "id": "",
+      "data": [
+          { "x": "", "y": 100 },
+          { "x": "", "y": 130 },
+          { "x": "", "y": 80 }
+      ]
+  }
+];
+
+
+// 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// for add new job(chaange by fenee)
+
+  const navigate = useNavigate();
+
+  const handleAddJobClick = () => {
+    navigate("/employer/jobposting/landing/postjob");
+  };
+
 
   //for showing notification
   const showNotification=(message,type)=>{
@@ -140,20 +210,43 @@ const Dashboard = () => {
       <div className='custom-div py-4 flex flex-row items-center justify-between'>
          <div className='flex gap-4 text-gray-600 items-center'>
             <span className='cursor-pointer'>My Dashboard</span>
-            <span className='cursor-pointer'>Insights</span>
+          
          </div>
          <button onClick={()=>setOpenPopUp(true)} className='text-gray-600 cursor-pointer flex gap-2 items-center'>
           <span><AddIcon></AddIcon></span>
           <span>Add Member</span>
          </button>
       </div>
+
+    {/* Add section key indicators */}
+<div className='custom-div py-2 gap-4'>
+  <h1 className='text-xl font-bold'>Key Indicators</h1>
+  <div className='w-full flex gap-4 pb-2'>
+    
+  <div className='w-48 h-56 flex-1 flex flex-col gap-2 shadow '>
+      <MyResponsiveRadialBar  data={radialData}/>
+    </div>
+    
+    <div className='w-58 h-56 flex-1 flex flex-col gap-2 shadow pt-6'>
+      <Polar data={polarData} />
+    </div>
+
+    <div className='w-48 h-56 flex-1 flex flex-col gap-2 shadow pt-6'>
+      <Polar data={polarData} />
+    </div>
+  </div>
+</div>
+{/* Finish section */}
+
+
       <div className='custom-div py-4 gap-4'>
         <h1>Jobs</h1>
         <div className='w-full flex gap-4'>
-           <div className='custom-div cursor-pointer flex-1'>
+         <div className='custom-div cursor-pointer flex-1' onClick={handleAddJobClick}>
              <span><AddIcon style={{fontSize:"1.8rem"}}></AddIcon></span>
-             <span className='text-gray-600'>Add New Job</span>
+<span className='text-gray-600'>Add New Job</span>
            </div>
+         
            <div className='custom-div flex-1 flex flex-col gap-2'>
               <h1 className='text-2xl'>0</h1>
               <p className='text-gray-600'>Total Open Jobs</p>
@@ -229,5 +322,6 @@ const Dashboard = () => {
     </div>
   )
 }
+
 
 export default Dashboard
