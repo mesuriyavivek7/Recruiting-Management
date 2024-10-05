@@ -2,6 +2,7 @@ import ENTERPRISE from "../models/ENTERPRISE.js";
 import ENTERPRISETEAM from "../models/ENTERPRISETEAM.js";
 import JOBS from "../models/JOBS.js";
 import bcrypt from 'bcryptjs'
+import axios from 'axios'
 import { sendEmailUpdateVerificationEnterprise } from "./mailController.js";
 
 
@@ -170,4 +171,14 @@ export const getEnterpriseMember=async (req,res,next)=>{
     }catch(err){
       next(err)
     }  
+}
+
+export const getAcmanagerMailandName=async (req,res,next)=>{
+     try{
+         const allotedmanagerid=await ENTERPRISE.findById(req.params.eid,{allocated_account_manager:1,_id:0})
+         const user=await axios.get(`${process.env.ADMIN_SERVER_URL}/accountmanager/getmailandname/${allotedmanagerid.allocated_account_manager}`)
+         res.status(200).json(user.data)
+     }catch(err){
+         next(err)
+     }
 }

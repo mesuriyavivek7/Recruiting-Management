@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Multiselect from 'multiselect-react-dropdown';
 
-const EmailPopup = ({ onClose, onSubmit,setCandidateMails, candiadteMails }) => {
+const EmailPopup = ({ onClose, onSubmit, candiadteMails }) => {
   
   const [emailData, setEmailData] = useState({
     email: [],
@@ -11,6 +11,8 @@ const EmailPopup = ({ onClose, onSubmit,setCandidateMails, candiadteMails }) => 
     attachments:null
   });
   const [errors,setErrors]=useState({})
+
+  console.log(emailData)
 
   const handleMailChange=async (selectedList)=>{ 
       setEmailData((prevData)=>({...prevData,email:selectedList}))

@@ -176,7 +176,7 @@ const radialData = [
        }
        {
         openPopUp && (
-          <div className='fixed inset-0 flex justify-center bg-opacity-50 backdrop-blur-md bg-black items-center'>
+          <div className='fixed inset-0 flex z-50 justify-center bg-opacity-50 backdrop-blur-md bg-black items-center'>
             <div className="rounded-md overflow-hidden border-gray-100 border-1 max-w-md w-full">
               <div className='relative w-full bg-white py-2'>
                 <span className='absolute cursor-pointer flex items-center text-green-600 text-sm left-2 top-4' onClick={()=>setOpenPopUp(false)}><ArrowBackIosIcon style={{fontSize:'1rem'}}></ArrowBackIosIcon>Back</span>

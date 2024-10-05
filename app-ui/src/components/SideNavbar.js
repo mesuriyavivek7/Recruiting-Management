@@ -8,7 +8,6 @@ import { ReactComponent as OffersIcon } from "../assets/asset25.svg";
 import { ReactComponent as VideosIcon } from "../assets/asset24.svg";
 import { ReactComponent as SettingsIcon } from "../assets/asset26.svg";
 import { ReactComponent as ChatsIcon } from "../assets/asset27.svg";
-import { ReactComponent as JobsIcon } from "../assets/asset21.svg";
 import Support from "../pages/Support"; 
 //importing icons
 import PeopleOutlinedIcon from '@mui/icons-material/PeopleOutlined';
@@ -31,7 +30,7 @@ const SideNavbar = () => {
     <div className={`p-3 relative bg-blue-600 border-t border-t-gray-400 flex flex-col gap-2 ${isExpanded ? 'w-48' : 'w-16'}`}>
       {/* Expand/Collapse Button */}
       <div
-        className="hover:bg-gray-400 rounded-md p-2 cursor-pointer flex items-center"
+        className="hover:bg-gray-400 rounded-md p-2 cursor-pointer flex items-center gap-2"
         onClick={toggleNavbar}
       >
         <ExpandIcon className="w-[24px] text-white" />
@@ -46,16 +45,10 @@ const SideNavbar = () => {
         </div>
       </Link>
 
-      <Link to="jobs">
-        <div className="hover:bg-gray-400 rounded-md p-2 flex items-center gap-2">
-          <JobsIcon className="w-[24px] text-white" />
-          {isExpanded && <span className="text-white">Jobs</span>}
-        </div>
-      </Link>
 
     
        <Link to="candidate">
-        <div className="hover:bg-gray-400 rounded-md p-2">
+        <div className="hover:bg-gray-400 rounded-md flex items-center gap-2 p-2">
           <CandidatesIcon className="w-[24px] text-white" />
           {isExpanded && <span className="text-white">Candidates</span>}
         </div>
@@ -69,8 +62,9 @@ const SideNavbar = () => {
       </Link>
 
        <Link to="team">
-        <div className="hover:bg-gray-400 rounded-md p-2">
+        <div className="hover:bg-gray-400 rounded-md flex items-center gap-2 p-2">
           <span className="w-[24px] text-white"><PeopleOutlinedIcon></PeopleOutlinedIcon></span>
+          {isExpanded && <span className="text-white">Team</span>}
         </div>
       </Link>
       <Link to="bulkactions">

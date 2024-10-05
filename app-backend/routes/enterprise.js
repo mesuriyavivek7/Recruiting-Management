@@ -1,5 +1,5 @@
 import express from 'express'
-import { acVerified, allocatedAcManager, changeAccountStatus, changeMail, changepassword, checkPassword, getAcManagerId, getAcPendingEnterprise, getAllPendingMadminVerifyEnterprise, getCompnayName, getEnterprise, getEnterpriseMember, getMobileNo } from '../controller/enterpriseController.js'
+import { acVerified, allocatedAcManager, changeAccountStatus, changeMail, changepassword, checkPassword, getAcManagerId, getAcPendingEnterprise, getAcmanagerMailandName, getAllPendingMadminVerifyEnterprise, getCompnayName, getEnterprise, getEnterpriseMember, getMobileNo } from '../controller/enterpriseController.js'
 
 const router=express.Router()
 
@@ -42,6 +42,9 @@ router.get('/acmanager/:eid',getAcManagerId)
 //for getting member of perticuler enterprise team for showing into enterprise team page
 router.get('/getenterprisemember/:eid',getEnterpriseMember)
 
+
+//for getting account manager email id and name
+router.get('/getacmanagermailandname/:eid',getAcmanagerMailandName)
 
 
 export default router

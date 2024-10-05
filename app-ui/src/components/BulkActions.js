@@ -10,21 +10,35 @@ import { AuthContext } from "../context/AuthContext";
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 
+//import Rocket
+import Rocket from '../assets/rocket.gif'
+
 const BulkActions = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [emails, setEmails] = useState([]);
   const {user}=useContext(AuthContext)
   const [candiadteMails,setCandidateMails]=useState([])
   const [loader,setLoader]=useState(false)
+  const [acmanager,setAcManager]=useState(null)
 
   const fetchCandidateMails=async ()=>{
      try{
         const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/enterpriseteam/getthecandidatemails/${user._id}`)
-        console.log(res)
         setCandidateMails(res.data)
      }catch(err){
       console.log(err)
      }
+  }
+  console.log(emails)
+
+  const fetchAllotedAccountmanager=async ()=>{
+      try{
+          const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/enterprise/getacmanagermailandname/${user.enterprise_id}`)
+           setAcManager(res.data)
+      }catch(err){
+         //handeling error here
+         console.log(err)
+      }
   }
 
 
@@ -39,14 +53,38 @@ const BulkActions = () => {
 
   const handleSubmit=async ()=>{
     setLoader(true)
-    setEmails([])
-    await fetchCandidateMails()
-    showNotification("Successfull email sent to all candidate.",'success')
-    setLoader(false)
+     try{
+       await Promise.all(emails.map(async (item)=>{
+          const formData=new FormData()
+          formData.append('email',item.email)
+          formData.append('subject',item.subject)
+          formData.append('message',item.message)
+          if(acmanager) formData.append('ac_name',acmanager.full_name)
+          if(acmanager) formData.append('ac_email',acmanager.email)
+          if(item.cc) formData.append('cc',item.cc)
+          if(item.attachments) formData.append('attachments',item.attachments)
+
+          //send mail request
+         await axios.post(`${process.env.REACT_APP_API_BASE_URL}/mail/bulkaction`,formData,{
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }})
+       }))
+       await fetchCandidateMails()
+       setEmails([])
+       setLoader(false)
+       showNotification("Successfully mail sended to all candidates",'success')
+     }catch(err){
+       setLoader(false)
+       showNotification("Something went wrong while senging mail to candidates.","failure")
+       console.log(err)
+     }
+     
   }
 
   useEffect(()=>{
      fetchCandidateMails()
+     fetchAllotedAccountmanager()
   },[])
 
   const togglePopup = () => {
@@ -66,6 +104,15 @@ const BulkActions = () => {
 
   return (
     <div className="custom-div">
+      {
+        loader && 
+        <div className="fixed inset-0  bg-black z-50 bg-opacity-50 flex justify-center items-center">
+         <div className="custom-div gap-4 w-[400px] items-center">
+             <img className="w-32 h-36" src={Rocket}></img>
+             <span>Wait for few seconds while we are sending mails...</span>
+         </div>
+       </div>
+      }
       {notification && <Notification message={notification.message} type={notification.type} onClose={()=>setNotification(null)}></Notification>}
       <div className="w-full relative flex justify-between items-center border-b pb-2 mb-4">
         <h2 className="text-lg font-semibold">Send Messages</h2>
