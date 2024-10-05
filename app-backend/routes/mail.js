@@ -1,5 +1,5 @@
 import express from 'express'
-import { sendMail,sendVerificationMailRecruiting,sendVerificationMailEnterprise,verifyemailEnterprise,verifyemailRecruiting, sendTeamMemberNotifyMail, sendEmailUpdateVerificationEnterprise, verifyemailEnterpriseTeam, sendVerificationMailEnterpriseTeam, verifyemailRecruitingTeam, sendVerificationMailRecruitingTeam } from '../controller/mailController.js'
+import { sendMail,sendVerificationMailRecruiting,sendVerificationMailEnterprise,verifyemailEnterprise,verifyemailRecruiting, sendTeamMemberNotifyMail, sendEmailUpdateVerificationEnterprise, verifyemailEnterpriseTeam, sendVerificationMailEnterpriseTeam, verifyemailRecruitingTeam, sendVerificationMailRecruitingTeam, sendBulkMail, shareResumeWithHiringManager } from '../controller/mailController.js'
 import multer from 'multer'
 import fs from 'fs'
 import path from 'path'
@@ -30,10 +30,11 @@ const upload=multer({storage:storage})
 
 
 //enterprise bulk action
-router.post('/bulkaction',upload.single('attachments'),)
+router.post('/bulkaction',upload.single('attachments'),sendBulkMail)
 
 
-
+//share resume with hiring manager
+router.post('/sharewithhiringmanager',shareResumeWithHiringManager)
 
 //for sending mail
 

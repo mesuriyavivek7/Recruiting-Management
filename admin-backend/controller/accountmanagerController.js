@@ -98,3 +98,13 @@ export const addCandidateVerifiedList=async (req,res,next)=>{
       next(err)
     }
 }
+
+
+export const getAcmanagerMailandName=async (req,res,next)=>{
+    try{
+       const acmanager=await ACCOUNTMANAGER.findById(req.params.acmanagerid,{full_name:1,email:1,_id:0})
+       res.status(200).json(acmanager)
+    }catch(err){
+       next(err)
+    }
+}

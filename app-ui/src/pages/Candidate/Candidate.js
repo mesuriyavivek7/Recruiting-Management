@@ -51,7 +51,9 @@ export default function Candidate() {
   const [selectedStatus,setSelectedStatus]=useState('')
   const [statuschangeLoader,setStatusChangeLoader]=useState(false)
 
+  //here we store hiring manager mails
   const [tags,setTags]=useState([])
+  const [emailLoad,setEmailLoad]=useState(false)
 
 
 
@@ -113,6 +115,26 @@ const getDate=(date)=>{
          console.log(err)
          showNotification("Something went wrong while changing multiple candidate status.","failure")
        }
+  }
+
+  //For share multiple resume with multiple hiring managers
+  const shareResumeWithHiringManager=async ()=>{
+   if(tags.length!==0){
+     setEmailLoad(true)
+     try{
+         await axios.post(`${process.env.REACT_APP_API_BASE_URL}/mail/sharewithhiringmanager`,{emails:tags,ciddata:selectedCandidateRows})
+         setEmailLoad(false)
+         setOpenMultipleActionTab(false)
+         showNotification("Successfully resume share to hiring managers",'success')
+     }catch(err){
+       setEmailLoad(false)
+       //handeling error
+       console.log(err)
+       showNotification("Something went wrong while sharing resume to multiple hiring manager")
+     }
+   }else{
+      showNotification("Add hiring manager mails into input box.",'failure')
+   }
   }
 
   
@@ -179,23 +201,23 @@ const getDate=(date)=>{
                         ):(
                            multipleActionCandidateData.map((candidate,index)=>(
 
-                              <div key={index} className='flex mt-2 justify-between p-2 rounded-md border shadow'>
-                                 <div className='flex flex-col'>
+                              <div key={index} className='flex mt-2  justify-between p-2 rounded-md border shadow'>
+                                 <div className='flex-1 flex flex-col'>
                                     <div className='flex gap-2 items-center'>
                                     <h2 className='text-[15px] text-gray-500 font-bold'>{candidate.candidate_full_name}</h2>
                                     <span className='text-[13px] text-gray-400'>{candidate.candidate_id}</span>
                                    </div>
-                               <div className='flex gap-1 items-center'>
+                                   <div className='flex gap-1 items-center'>
                                    <h2 className='text-[14px] text-gray-500'>{candidate.job_title}</h2>
                                    <span className='text-[13px] text-gray-400'>{candidate.job_id}</span>
-                               </div>
+                                   </div>
                               </div>
-                              <div className='flex flex-col'>
+                              <div className='flex-1 flex items-center flex-col'>
                                 <h2 className='text-[15px]'>{cstatus.get(candidate.candidate_status)}</h2>
                                 <span className='text-gray-400 text-[13px]'>Received on {getDate(candidate.submited)}</span>
                                </div>
-                              <div className='flex justify-center items-center'>
-                                 <span onClick={()=>handleRemoveCandidate(candidate.id)} className='text-gray-500 cursor-pointer'><DeleteOutlinedIcon style={{fontSize:"1.8rem"}}></DeleteOutlinedIcon></span>
+                              <div className='flex-1 flex  place-content-end px-4 items-center'>
+                                 <span onClick={()=>handleRemoveCandidate(candidate.id)} className='text-gray-500 hover:text-red-500 cursor-pointer'><DeleteOutlinedIcon style={{fontSize:"1.8rem"}}></DeleteOutlinedIcon></span>
                                </div>
                               </div>
 
@@ -232,26 +254,37 @@ const getDate=(date)=>{
                <div className='bg-white relative p-3 h-[500px] rounded-md'>
                   <span>Send Message To</span>
                   <div className='mt-4 overflow-y-auto h-[330px]'>
-                    <div className='flex mt-2 justify-between p-2 rounded-md border shadow'>
-                       <div className='flex flex-col'>
-                          <div className='flex gap-2 items-center'>
-                             <h2 className='text-[15px] text-gray-500 font-bold'>Sneha Upadhyay</h2>
-                             <span className='text-[13px] text-gray-400'>C6G7WD</span>
-                          </div>
-                          <div className='flex gap-1 items-center'>
-                            <h2 className='text-[14px] text-gray-500'>Software Engineer</h2>
-                            <span className='text-[13px] text-gray-400'>JHDGDH</span>
-                          </div>
-                       </div>
-                       <div className='flex flex-col'>
-                          <h2 className='text-[15px]'>Offer Released</h2>
-                          <span className='text-gray-400 text-[13px]'>Received on 13 Jun 2023</span>
-                       </div>
-                       <div className='flex justify-center items-center'>
-                          <span className='text-gray-500 cursor-pointer'><DeleteOutlinedIcon style={{fontSize:"1.8rem"}}></DeleteOutlinedIcon></span>
-                       </div>
-                     </div>
-                    
+                  {
+                        multipleActionLoader?(
+                            <div className='flex w-full justify-center items-center'>
+                               <img src={WhiteLoader} className='w-10 h-10 mt-4'></img>
+                            </div>
+                        ):(
+                           multipleActionCandidateData.map((candidate,index)=>(
+
+                              <div key={index} className='flex mt-2  justify-between p-2 rounded-md border shadow'>
+                                 <div className='flex-1 flex flex-col'>
+                                    <div className='flex gap-2 items-center'>
+                                    <h2 className='text-[15px] text-gray-500 font-bold'>{candidate.candidate_full_name}</h2>
+                                    <span className='text-[13px] text-gray-400'>{candidate.candidate_id}</span>
+                                   </div>
+                                   <div className='flex gap-1 items-center'>
+                                   <h2 className='text-[14px] text-gray-500'>{candidate.job_title}</h2>
+                                   <span className='text-[13px] text-gray-400'>{candidate.job_id}</span>
+                                   </div>
+                              </div>
+                              <div className='flex-1 flex items-center flex-col'>
+                                <h2 className='text-[15px]'>{cstatus.get(candidate.candidate_status)}</h2>
+                                <span className='text-gray-400 text-[13px]'>Received on {getDate(candidate.submited)}</span>
+                               </div>
+                              <div className='flex-1 flex  place-content-end px-4 items-center'>
+                                 <span onClick={()=>handleRemoveCandidate(candidate.id)} className='text-gray-500 hover:text-red-500 cursor-pointer'><DeleteOutlinedIcon style={{fontSize:"1.8rem"}}></DeleteOutlinedIcon></span>
+                               </div>
+                              </div>
+
+                           ))
+                        )
+                     }
 
                   </div>
                   <div className='absolute  p-3  left-0 right-0'>
@@ -263,7 +296,7 @@ const getDate=(date)=>{
                        </textarea>
                      
                        <button className='bg-blue-400 absolute text-[14px] flex items-center gap-2 rounded-md top-[64%] right-2 p-2 py-1 text-white'>
-                            <ShareOutlinedIcon></ShareOutlinedIcon> Send Messages for 2 Resumes
+                            <ShareOutlinedIcon></ShareOutlinedIcon> Send Messages for {selectedCandidateRows.length} Resumes
                        </button>
                      </div>
                   </div>
@@ -276,27 +309,38 @@ const getDate=(date)=>{
                <div className='bg-white relative p-3 h-[500px] rounded-md'>
                   <span>Share Resumes</span>
                   <div className='mt-4 overflow-y-auto h-[300px]'>
-                     <div className='flex mt-2 justify-between p-2 rounded-md border shadow'>
-                       <div className='flex flex-col'>
-                          <div className='flex gap-2 items-center'>
-                             <h2 className='text-[15px] text-gray-500 font-bold'>Sneha Upadhyay</h2>
-                             <span className='text-[13px] text-gray-400'>C6G7WD</span>
-                          </div>
-                          <div className='flex gap-1 items-center'>
-                            <h2 className='text-[14px] text-gray-500'>Software Engineer</h2>
-                            <span className='text-[13px] text-gray-400'>JHDGDH</span>
-                          </div>
-                       </div>
-                       <div className='flex flex-col'>
-                          <h2 className='text-[15px]'>Offer Released</h2>
-                          <span className='text-gray-400 text-[13px]'>Received on 13 Jun 2023</span>
-                       </div>
-                       <div className='flex justify-center items-center'>
-                          <span className='text-gray-500 cursor-pointer'><DeleteOutlinedIcon style={{fontSize:"1.8rem"}}></DeleteOutlinedIcon></span>
-                       </div>
-                     </div>
-                    
 
+                  {
+                        multipleActionLoader?(
+                            <div className='flex w-full justify-center items-center'>
+                               <img src={WhiteLoader} className='w-10 h-10 mt-4'></img>
+                            </div>
+                        ):(
+                           multipleActionCandidateData.map((candidate,index)=>(
+
+                              <div key={index} className='flex mt-2  justify-between p-2 rounded-md border shadow'>
+                                 <div className='flex-1 flex flex-col'>
+                                    <div className='flex gap-2 items-center'>
+                                    <h2 className='text-[15px] text-gray-500 font-bold'>{candidate.candidate_full_name}</h2>
+                                    <span className='text-[13px] text-gray-400'>{candidate.candidate_id}</span>
+                                   </div>
+                                   <div className='flex gap-1 items-center'>
+                                   <h2 className='text-[14px] text-gray-500'>{candidate.job_title}</h2>
+                                   <span className='text-[13px] text-gray-400'>{candidate.job_id}</span>
+                                   </div>
+                              </div>
+                              <div className='flex-1 flex items-center flex-col'>
+                                <h2 className='text-[15px]'>{cstatus.get(candidate.candidate_status)}</h2>
+                                <span className='text-gray-400 text-[13px]'>Received on {getDate(candidate.submited)}</span>
+                               </div>
+                              <div className='flex-1 flex  place-content-end px-4 items-center'>
+                                 <span onClick={()=>handleRemoveCandidate(candidate.id)} className='text-gray-500 hover:text-red-500 cursor-pointer'><DeleteOutlinedIcon style={{fontSize:"1.8rem"}}></DeleteOutlinedIcon></span>
+                               </div>
+                              </div>
+
+                           ))
+                        )
+                     }
                   </div>
                   <div className='absolute left-0 right-0 p-3'>
                      <div className='inline-block'>
@@ -332,7 +376,24 @@ const getDate=(date)=>{
                                    </span>
                                  )}
                             ></TagsInput>
-                            <button className='bg-blue-400 mt-4 rounded-md text-white py-1 px-2 gap-2 text-[14px] flex items-center'><ShareOutlinedIcon></ShareOutlinedIcon> Share 4 Resumes</button>
+                            <button 
+                             onClick={shareResumeWithHiringManager}
+                             disabled={tags.length===0 || emailLoad} 
+                             className='bg-blue-400 disabled:bg-white disabled:cursor-no-drop disabled:text-gray-500 disabled:border mt-4 w-60 rounded-md text-white py-1 px-2 gap-2 text-[14px] flex items-center'>
+                               {
+                                 emailLoad?(
+                                 <svg className="w-5 h-5 mr-2 text-black animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l5.6-3.2a10 10 0 00-10.4 0L4 12z"></path>
+                                 </svg>
+                                 ):(
+                                  <span className='flex gap-1 items-center'>
+                                    <ShareOutlinedIcon></ShareOutlinedIcon> Share {selectedCandidateRows.length} Resumes
+                                   </span>
+                                 )
+                               }
+                              
+                            </button>
                          
                      </div>
                   </div>

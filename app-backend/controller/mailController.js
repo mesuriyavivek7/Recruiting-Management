@@ -2,9 +2,70 @@ import RECRUITING from '../models/RECRUITING.js'
 import ENTERPRISE from '../models/ENTERPRISE.js'
 import RECRUITINGTEAM from '../models/RECRUITINGTEAM.js'
 import ENTERPRISETEAM from '../models/ENTERPRISETEAM.js'
+import RESUMEDOCS from '../models/RESUMEDOCS.js'
+import CANDIDATE from '../models/CANDIDATE.js'
+import CANDIDATEBASICDETAILS from '../models/CANDIDATEBASICDETAILS.js'
 import nodemailer from 'nodemailer'
 import dotenv from 'dotenv'
 import jwt from 'jsonwebtoken'
+import fs from 'fs'
+import JOBBASICDETAILS from '../models/JOBBASICDETAILS.js'
+
+
+
+// Function to generate the HTML template
+const generateEmailHTML = (resumedetails) => {
+    // Generate HTML for each candidate
+    let candidatesHTML = '';
+    resumedetails.forEach(resume => {
+      candidatesHTML += `
+        <div class="candidate">
+          <h2>Candidate Name: ${resume.candidate_name}</h2>
+          <p>Applied Position: ${resume.job_title}</p>
+          <p><a href="http://localhost:8080/resumedocs/${resume.filename}" class="btn">View Resume</a></p>
+        </div>
+      `;
+    });
+  
+    // Full HTML email
+    return `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+          body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; }
+          .container { width: 100%; max-width: 600px; margin: 20px auto; background-color: #ffffff; border: 1px solid #dddddd; padding: 20px; box-sizing: border-box; }
+          h1 { color: #333333; font-size: 24px; text-align: center; }
+          p { font-size: 16px; color: #555555; }
+          .candidate-list { margin: 20px 0; }
+          .candidate { background-color: #f9f9f9; padding: 15px; border: 1px solid #dddddd; margin-bottom: 10px; border-radius: 5px; }
+          .candidate h2 { font-size: 18px; margin: 0; color: #333333; }
+          .candidate p { margin: 5px 0; font-size: 14px; color: #666666; }
+          .btn { display: inline-block; background-color: #28a745; color: white; padding: 10px 20px; text-align: center; text-decoration: none; border-radius: 5px; font-size: 16px; }
+          .footer { text-align: center; margin-top: 20px; font-size: 12px; color: #888888; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <h1>Candidate Resumes for Your Review</h1>
+          <p>Dear Hiring Manager,</p>
+          <p>Please find below the details of candidates who have applied for various positions:</p>
+          <div class="candidate-list">
+            ${candidatesHTML}
+          </div>
+          <p>If you have any questions or require further information, please feel free to reach out.</p>
+          <p>Best Regards,<br>Recruitment Team</p>
+          <div class="footer">
+            <p>&copy; 2024 Uphire | All Rights Reserved</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+  };
+  
 
 
 dotenv.config()
@@ -19,11 +80,202 @@ let transpoter=nodemailer.createTransport({
     }
 })
 
-export const sendBulkMail=async (req,rex,next)=>{
-     try{
-        
-     }catch(err){
 
+export const shareResumeWithHiringManager=async (req,res,next)=>{
+      try{
+        const {emails,ciddata}=req.body
+
+        const resumedetails=await Promise.all(ciddata.map(async (cid)=>{
+            const cuser=await CANDIDATE.findById(cid,{candidate_id:1,_id:0})
+            const candidatebasicdetails=await CANDIDATEBASICDETAILS.findOne({candidate_id:cuser.candidate_id})
+            const resume=await RESUMEDOCS.findOne({candidate_id:cuser.candidate_id},{filepath:1,job_id:1,filename:1,_id:0})
+            const jobbasicdetails=await JOBBASICDETAILS.findOne({job_id:resume.job_id})
+            return (
+                {
+                    filepath:resume.filepath,
+                    filename:resume.filename,
+                    candidate_name:`${candidatebasicdetails.first_name} ${candidatebasicdetails.last_name}`,
+                    job_title:jobbasicdetails.job_title
+                }
+            )
+        }))
+
+        const hiringmanageremails=emails.join(',')
+        let mailOption={
+             from:{
+                name:'uphire',
+                address:'vivekmesuriya110@gmail.com'
+             },
+             to:hiringmanageremails,
+             subject:'Review the candidates',
+             html:generateEmailHTML(resumedetails)
+        }
+
+        let info=await transpoter.sendMail(mailOption)
+
+        res.status(200).json(`mail sended successfully Response ${info.response}`)
+      }catch(err){
+        next(err)
+      }
+}
+
+export const sendBulkMail=async (req,res,next)=>{
+     try{
+        let attachments=null
+        if(req.file){
+           attachments={
+            filename:req.file.originalname,
+            path:req.file.path
+           }
+        }
+        
+        const mailpreq=req.body
+
+        let mailOption={
+            from:{
+                name:"uphire",
+                address:"vivekmesuriya110@gmail.com"
+            },
+            to:mailpreq.email,
+            subject:mailpreq.subject,
+            ...(mailpreq.cc && {cc:mailpreq.cc}),
+            ...(attachments && {attachments}),
+            html:`<!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                <title>Email Template</title>
+                <style>
+                    /* General styling */
+                    body {
+                        margin: 0;
+                        padding: 0;
+                        background-color: #f4f4f4;
+                        font-family: Arial, sans-serif;
+                    }
+            
+                    table {
+                        border-spacing: 0;
+                        width: 100%;
+                        max-width: 600px;
+                        margin: 0 auto;
+                    }
+            
+                    table td {
+                        padding: 20px;
+                    }
+            
+                    /* Container */
+                    .email-container {
+                        background-color: #ffffff;
+                        border-radius: 8px;
+                        overflow: hidden;
+                        box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+                    }
+            
+                    /* Header */
+                    .email-header {
+                        background-color: #007BFF;
+                        color: white;
+                        padding: 40px 20px;
+                        text-align: center;
+                    }
+            
+                    .email-header h1 {
+                        margin: 0;
+                        font-size: 24px;
+                    }
+            
+                    /* Body */
+                    .email-body {
+                        padding: 20px;
+                        color: #333333;
+                        line-height: 1.6;
+                    }
+            
+                    .email-body h2 {
+                        margin-top: 0;
+                    }
+            
+                    /* Button */
+                    .cta-button {
+                        background-color: #28a745;
+                        color: white;
+                        text-decoration: none;
+                        padding: 10px 20px;
+                        border-radius: 5px;
+                        display: inline-block;
+                    }
+            
+                    /* Footer */
+                    .email-footer {
+                        background-color: #f4f4f4;
+                        color: #666666;
+                        padding: 20px;
+                        text-align: center;
+                        font-size: 12px;
+                    }
+            
+                    /* Responsive */
+                    @media only screen and (max-width: 600px) {
+                        .email-header, .email-body, .email-footer {
+                            padding: 10px;
+                        }
+            
+                        .email-header h1 {
+                            font-size: 20px;
+                        }
+            
+                        .cta-button {
+                            width: 100%;
+                            text-align: center;
+                            padding: 15px 0;
+                        }
+                    }
+                </style>
+            </head>
+            <body>
+                <table class="email-container">
+                    <!-- Header -->
+                    <tr>
+                        <td class="email-header">
+                            <h1>Uphire</h1>
+                        </td>
+                    </tr>
+            
+                    <!-- Body -->
+                    <tr>
+                        <td class="email-body">
+                            <p>${mailpreq.message}</p>
+                            <p>For any further queries and problame contact to acmanager ${mailpreq.ac_name && mailpreq.ac_name}.</p>
+                            <label for="">Email:</label><span>${mailpreq.ac_email && mailpreq.ac_email}</span>
+                        </td>
+                        
+                    </tr>
+                    
+            
+                    <!-- Footer -->
+                    <tr>
+                        <td class="email-footer">
+                            <p>&copy; 2024 UPHIRE. All rights reserved.</p>
+                            <p>This email was sent from enterprise. If you don't want to receive these emails, you can <a href="#">unsubscribe</a>.</p>
+                        </td>
+                    </tr>
+                </table>
+            </body>
+            </html>`
+        }
+        
+        let info=await transpoter.sendMail(mailOption)
+        res.status(200).json(`Mail sent successfully. Response ${info.response}`)
+     }catch(err){
+        next(err)
+     }finally{
+        if(req.file){
+           fs.unlinkSync(req.file.path)
+        }
      }
 }
 
