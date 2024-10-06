@@ -1,10 +1,12 @@
 
 
 import React, { useState } from 'react';
+import { useDispatch,useSelector } from 'react-redux';
 import { DataGrid } from '@mui/x-data-grid';
 import { Card, TablePagination } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { columns ,rows} from './RowColDataOfNew'; // Import columns configuration
+import axios from 'axios';
 
 const calculateRowHeight = (params) => {
 
@@ -24,6 +26,8 @@ const NewCandidateData = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
+  const myValue=useSelector((state) => state.admin);
+
   // Handle pagination change
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -33,6 +37,14 @@ const NewCandidateData = () => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
+
+  const fetchData=async ()=>{
+     try{
+        const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/getnewcandidatedata/${myValue._id}`)
+     }catch(err){
+
+     }
+  }
 
   // Calculate the rows to display
   const paginatedRows = rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
