@@ -78,3 +78,13 @@ export const changeMultipleCandidateStatus=async (req,res,next)=>{
         next(err)
      }
 }
+
+
+
+export const getAcCandidateData=async (req,res,next)=>{
+     try{
+       
+     }catch(err){
+      next(err)
+     }
+}

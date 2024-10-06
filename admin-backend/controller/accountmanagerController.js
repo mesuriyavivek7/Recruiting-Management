@@ -1,4 +1,5 @@
 import ACCOUNTMANAGER from "../models/ACCOUNTMANAGER.js"
+import axios from 'axios'
 
 //get account manager by master admin id
 export const getAcByMadminId=async (req,res,next)=>{
@@ -107,4 +108,13 @@ export const getAcmanagerMailandName=async (req,res,next)=>{
     }catch(err){
        next(err)
     }
+}
+
+export const getNewCandidateId=async (req,res,next)=>{
+     try{
+        const candidateIds=await ACCOUNTMANAGER.findById(req.params.acmanagerid,{pending_verify_candidate_profile:1,_id:0})
+        const candiadteDatas=await axios.post(`${process.env.APP_SERVER_URL}/candidate/getacmanagercandidatedata`,{cIds:candidateIds.pending_verify_candidate_profile})
+     }catch(err){
+       next(err)
+     }
 }
