@@ -1,34 +1,71 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 
 import Notification from '../Notification';
+import axios from 'axios'
+import { AuthContext } from '../../context/AuthContext';
+
 //imporitng icons
 import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined';
+import CandidateFileDragDrop from '../CandidateFileDragDrop';
+import InsertDriveFileOutlinedIcon from '@mui/icons-material/InsertDriveFileOutlined';
+import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 
-export default function ResumeUpload1() {
+export default function ResumeUpload1({jobObj,parentFormData,candidateId,parentFormDataChange,onNext}) {
+  const {user}=useContext(AuthContext)
   const [formData,setFormData]=useState({
-        firstname:"",
-        lastname:"",
-        country:"",
-        currentLocation:"",
-        primaryEmailId:"",
-        additionalEmailId:"",
-        primaryContactNumber:"",
-        additionalContactNumber:'',
-        currentCompany:"",
-        currentDesignation:"",
-        experience:"",
-        releventExperience:"",
-        currentSalary:"",
-        expectedSalary:"",
-        salaryRemarks:"",
-        noticePeriod:"",
-        comment:"",
-        educationQualification:"",
-        candidateSummary:"",
+        firstname:(Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.basicDetails.first_name):((Object.keys(parentFormData.form0).length>0)?(parentFormData.form0.firstName):("")),
+        lastname:(Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.basicDetails.last_name):(Object.keys(parentFormData.form0).length>0)?(parentFormData.form0.lastName):(""),
+        country:(Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.basicDetails.country):(""),
+        currentLocation:(Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.basicDetails.current_location):(""),
+        primaryEmailId:(Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.basicDetails.primary_email_id):(Object.keys(parentFormData.form0).length>0)?(parentFormData.form0.email):(""),
+        additionalEmailId:(Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.basicDetails.additional_email_id):(""),
+        primaryContactNumber:(Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.basicDetails.primary_contact_number):(Object.keys(parentFormData.form0).length>0)?(`91${parentFormData.form0.mobile}`):(""),
+        additionalContactNumber:(Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.basicDetails.additional_contact_number):(""),
+        currentCompany:(Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.basicDetails.current_company):(""),
+        currentDesignation:(Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.basicDetails.current_designation):(""),
+        experience:(Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.basicDetails.experience):(""),
+        releventExperience:(Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.basicDetails.relevant_experience):(""),
+        currentSalary:(Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.basicDetails.current_annual_salary):(""),
+        expectedSalary:(Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.basicDetails.expected_annual_salary):(""),
+        salaryRemarks:(Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.basicDetails.salary_remarks):(""),
+        noticePeriod:(Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.basicDetails.notice_period):(""),
+        comment:(Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.basicDetails.comments):(""),
+        educationQualification:(Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.basicDetails.education_qualification):((Object.keys(parentFormData.form0).length>0)?(parentFormData.form0.education):("")),
+        candidateSummary:(Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.basicDetails.candidate_summary):(""),
+        candidatetoc:false
   })
+
+  const [attachments,setAttachments]=useState({
+    candidate_evaluation_form:(Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.candidateattachments.evaluation_form):(""),
+    candidate_audio:(Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.candidateattachments.audio_brief):(""),
+    other_file:(Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.candidateattachments.other_docs):(""),
+  })
+
+  const [consetProof,setConsetProof]=useState((Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.consetProof):(null))
+
+  const [jobAttachments,setJobAttachments]=useState({})
+
+
+  //fetching job attached documents details
+  useEffect(()=>{
+    const getJobAttachmentsDetails=async ()=>{
+       try{
+         const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/job/getcandidatejobattachments/${jobObj.job_id}`)
+         setJobAttachments((res.data)?(res.data):({}))
+       }catch(err){
+        //here error handeling is remain
+         console.log(err)
+       }
+    }
+    getJobAttachmentsDetails()
+  },[])
+
+  const handleAttachments=(name,file)=>{
+      setAttachments((prevData)=>({...prevData,[name]:file}))
+  }
 
   const [errors,setErrors]=useState({})
 
@@ -42,8 +79,11 @@ export default function ResumeUpload1() {
 
   const [countries,setCountries]=useState([])
   const handleFormData=(e)=>{
-      const {name,value}=e.target
-      setFormData((prevData)=>({...prevData,[name]:value}))
+    const { name, value, type, checked } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: type === 'checkbox' ? checked : value,
+    }));
   }
 
   const validate=()=>{
@@ -66,11 +106,23 @@ export default function ResumeUpload1() {
       if(formData.expectedSalary==="") newErrors.expectedSalary="expected salary is required..!"
       if(formData.noticePeriod==="") newErrors.noticePeriod="Please select notice period..!"
       if(formData.educationQualification==="") newErrors.educationQualification="education qualification is required..!"
+      if(formData.candidatetoc===false) newErrors.candidateToc="Please agree to terms above."
+
+      //validation for optional files
+      if(Object.keys(jobAttachments).length>0){
+        if(jobAttachments.evaluation_form && attachments.candidate_evaluation_form==="") newErrors.evaluationFrom="Please upload evaluation form."
+        if(jobAttachments.audio_brief && attachments.candidate_audio==="") newErrors.candidateAudio="Please upload candidate audio file."
+        if(jobAttachments.other_docs && attachments.other_file==="") newErrors.otherFile="Please upload mention formate other file."
+      }
+
+      if(!consetProof) newErrors.consetProof="Please upload conset proof file."
   
-      if(Object.keys(newErrors).length!==0) showNotification("Please fill out appropriate fields..!") 
+      if(Object.keys(newErrors).length!==0) showNotification("Please fill out appropriate fields..!","failure") 
       setErrors(newErrors)
       return Object.keys(newErrors).length===0
   }
+
+  
 
   const getCountries = async () => {
     try {
@@ -79,6 +131,87 @@ export default function ResumeUpload1() {
       setCountries(result);
     } catch (error) {
       console.log("Error while fetching countries", error);
+    }
+  };
+
+  //for file uploading conset file and store 
+  const fileTypes=["application/pdf","application/msword","application/vnd.openxmlformats-officedocument.wordprocessingml.document",'video/mpeg','video/mp4','image/jpeg','image/png','image/jpg']
+
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile && fileTypes.includes(selectedFile.type) && selectedFile.size<=10*1024*1024 ) {
+      setConsetProof(selectedFile);
+    }else{
+      showNotification("Please select valid file type under 10mb","failure")
+    }
+  };
+
+  const checkCreadential=async ()=>{
+    try{
+        const res=await axios.post(`${process.env.REACT_APP_API_BASE_URL}/candidate/checkmobileandemail`,{email:formData.primaryEmailId,mobileno:formData.primaryContactNumber})
+        if(res.data) showNotification("Email address or Mobile number is alredy exist.","failure")
+        else handleNext()
+    }catch(err){
+      console.log(err)
+    }
+  }
+
+  const handleNext=()=>{
+     if(validate()){
+       parentFormDataChange({
+        basicDetails:{
+           candidate_id:candidateId,
+           recruiter_id:user.recruiting_agency_id,
+           first_name:formData.firstname,
+           last_name:formData.lastname,
+           country:formData.country,
+           current_location:formData.currentLocation,
+           primary_email_id:formData.primaryEmailId,
+           additional_email_id:formData.additionalEmailId,
+           primary_contact_number:formData.primaryContactNumber,
+           additional_contact_number:formData.additionalContactNumber,
+           current_company:formData.currentCompany,
+           current_designation:formData.currentDesignation,
+           experience:formData.experience,
+           relevant_experience:formData.releventExperience,
+           current_annual_salary:formData.currentSalary,
+           expected_annual_salary:formData.expectedSalary,
+           salary_remarks:formData.salaryRemarks,
+           comments:formData.comment,
+           education_qualification:formData.educationQualification,
+           candidate_summary:formData.candidateSummary,
+           candidate_toc:formData.candidatetoc,
+           notice_period:formData.noticePeriod
+        },
+        candidateattachments:{
+           folder_name:jobObj.job_id,
+           recruiter_id:user.recruiting_agency_id,
+           evaluation_form:attachments.candidate_evaluation_form,
+           audio_brief:attachments.candidate_audio,
+           other_docs:attachments.other_file
+        },
+        consetProof
+       })
+
+       onNext()
+     }
+  }
+
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const droppedFile = e.dataTransfer.files[0];
+    console.log(droppedFile)
+    if (droppedFile && fileTypes.includes(droppedFile.type) && droppedFile.size<=10*1024*1024) {
+      setConsetProof(droppedFile);
+    }else{
+      showNotification("Please select valid file type under 10mb","failure")
     }
   };
 
@@ -107,6 +240,8 @@ export default function ResumeUpload1() {
                     type='text'
                     className='input-field'
                     ></input>
+                    { errors.firstname && <span className='text-red-500 text-sm'>{errors.firstName}</span> }
+                    
                 </div>
                 <div className='flex flex-1 flex-col gap-2'>
                     <label className='input-label' htmlFor='lastname'>Last Name <span className='text-red-500'>*</span></label>
@@ -118,6 +253,7 @@ export default function ResumeUpload1() {
                     type='text'
                     className='input-field'
                     ></input>
+                    { errors.lastname && <span className='text-red-500 text-sm'>{errors.lastName}</span> }
                 </div>
             </div>
             <div className='flex w-full gap-3 items-center'>
@@ -137,6 +273,7 @@ export default function ResumeUpload1() {
                         ))
                       }
                     </select>
+                    {errors.country &&  <span className='text-red-500 text-sm'>{errors.country}</span>}
                 </div>
                 <div className='flex flex-1 flex-col gap-2'>
                     <label className='input-label' htmlFor='lastname'>Current Location <span className='text-red-500'>*</span></label>
@@ -147,6 +284,7 @@ export default function ResumeUpload1() {
                     name='currentLocation'
                     className='input-field'
                     ></input>
+                    {errors.currentLocation &&  <span className='text-red-500 text-sm'>{errors.currentLocation}</span>}
                 </div>
             </div>
           </div>
@@ -169,6 +307,7 @@ export default function ResumeUpload1() {
                     type='email'
                     className='input-field'
                     ></input>
+                    {errors.primaryEmailId &&  <span className='text-red-500 text-sm'>{errors.primaryEmailId}</span>}
                 </div>
                 <div className='flex flex-1 flex-col gap-2'>
                     <label className='input-label' htmlFor='additionalemail'>Additonal Email ID </label>
@@ -179,6 +318,7 @@ export default function ResumeUpload1() {
                     type='text'
                     className='input-field'
                     ></input>
+                    {errors.additionalEmailId &&  <span className='text-red-500 text-sm'>{errors.additionalEmailId}</span>}
                 </div>
             </div>
             <div className='flex w-full gap-3 items-center'>
@@ -195,6 +335,7 @@ export default function ResumeUpload1() {
                    }
                    containerStyle={{ width: "100%" }}
                    />
+                   {errors.primaryContactNumber &&  <span className='text-red-500 text-sm'>{errors.primaryContactNumber}</span>}
                 </div>
                 <div className='flex flex-1 flex-col gap-2'>
                     <label className='input-label' htmlFor='lastname'>Additional Contact Number</label>
@@ -231,13 +372,15 @@ export default function ResumeUpload1() {
                     type='email'
                     className='input-field'
                     ></input>
+                    {errors.currentCompany &&  <span className='text-red-500 text-sm'>{errors.currentCompany}</span>}
                 </div>
                 <div className='flex flex-1 flex-col gap-2'>
                     <label className='input-label' htmlFor='designation'>Current Designation </label>
                     <input
+                    onChange={handleFormData}
                     value={formData.currentDesignation}
                     id='currentDesignation'
-                    name='designation'
+                    name='currentDesignation'
                     type='text'
                     className='input-field'
                     ></input>
@@ -254,6 +397,7 @@ export default function ResumeUpload1() {
                     id='experience'
                     className='input-field'
                     ></input>
+                    {errors.experience &&  <span className='text-red-500 text-sm'>{errors.experience}</span>}
                 </div>
                 <div className='flex flex-1 flex-col gap-2'>
                     <label className='input-label' htmlFor='releventexperience'>Relevent Experience(Yrs) <span className='text-red-500'>*</span></label>
@@ -265,6 +409,7 @@ export default function ResumeUpload1() {
                     id='releventexperience'
                     className='input-field'
                     ></input>
+                    {errors.releventExperience &&  <span className='text-red-500 text-sm'>{errors.releventExperience}</span>}
                 </div>
             </div>
             <div className='flex w-full gap-3 items-center'>
@@ -583,6 +728,7 @@ export default function ResumeUpload1() {
                        className='input-field'
                        name='expectedSalary'
                        ></input>
+                       {errors.expectedSalary &&  <span className='text-red-500 text-sm'>{errors.expectedSalary}</span>}
                     </div>
                 </div>
             </div>
@@ -616,6 +762,7 @@ export default function ResumeUpload1() {
                  <option value='2months'>2 Months</option>
                  <option value='3months'>3 Months</option>
                 </select>
+                {errors.noticePeriod &&  <span className='text-red-500 text-sm'>{errors.noticePeriod}</span>}
               </div>
               <div className='w-full flex flex-col gap-2'>
                 <label className='input-label' htmlFor='comments'>Comments</label>
@@ -650,6 +797,7 @@ export default function ResumeUpload1() {
                name='educationQualification'
                className='input-field w-[350px]'
                ></input>
+               {errors.educationQualification &&  <span className='text-red-500 text-sm'>{errors.educationQualification}</span>}
              </div>
              <div className='flex flex-col gap-2'>
               <label className='input-label' htmlFor='covernote'>Candidate Summary / Cover Note</label>
@@ -667,34 +815,47 @@ export default function ResumeUpload1() {
                  <h1 className='text-xl font-light'>Attachments</h1>
                  <p className='text-gray-400 text-[14px] font-light'>Click or drag files in the bands below</p>
                </div>
-               <div className='flex flex-col gap-2'>
-               <div className='flex p-2 flex-col items-center w-[350px] rounded-md bg-blue-100 '>
-                  <div className='flex items-center gap-2'>
-                     <span className='text-blue-400'><CloudUploadOutlinedIcon></CloudUploadOutlinedIcon></span>
-                     <div className='flex  flex-col'>
-                       <span className='text-sm text-blue-400'>Candidate Evaluation Form</span>
-                       <span className='text-[12px] cursor-pointer text-blue-400'>(<span className='text-red-400'>*</span> Required Download Template)</span>
-                     </div>
-                  </div>
-               </div>
-               <div className='flex p-2 flex-col items-center w-[350px] rounded-md bg-blue-100 '>
-                  <div className='flex items-center gap-2'>
-                     <span className='text-blue-400'><CloudUploadOutlinedIcon></CloudUploadOutlinedIcon></span>
-                     <div className='flex  flex-col'>
-                       <span className='text-sm text-blue-400'>Candidate Evaluation Form</span>
-                       <span className='text-[12px] cursor-pointer text-blue-400'>(<span className='text-red-400'>*</span> Required Download Template)</span>
-                     </div>
-                  </div>
-               </div>
-               <div className='flex p-2 flex-col items-center w-[350px] rounded-md bg-blue-100 '>
-                  <div className='flex items-center gap-2'>
-                     <span className='text-blue-400'><CloudUploadOutlinedIcon></CloudUploadOutlinedIcon></span>
-                     <div className='flex  flex-col'>
-                       <span className='text-sm text-blue-400'>Candidate Evaluation Form</span>
-                       <span className='text-[12px] cursor-pointer text-blue-400'>(<span className='text-red-400'>*</span> Required Download Template)</span>
-                     </div>
-                  </div>
-               </div>
+               <div className='flex flex-col gap-3'>
+               <CandidateFileDragDrop 
+                existfile={attachments.candidate_evaluation_form}
+                fileTitle="Candidate Evaluation Form"
+                fileId="evaluationform"
+                accepted=".pdf,.docx,.doc"
+                onFileUpload={(file)=>handleAttachments("candidate_evaluation_form",file)}
+                showNotification={showNotification}
+                downloadAttachments={(jobAttachments.evaluation_form)?(jobAttachments.evaluation_form):(null)}
+                jobId="J492KY"
+               ></CandidateFileDragDrop>
+               {
+                errors.evaluationFrom && (<span className='text-red-500 text-sm'>{errors.evaluationFrom}</span>)
+               }
+               <CandidateFileDragDrop
+                existfile={attachments.candidate_audio}
+                fileTitle="Candidate Audio Attachment"
+                fileId="audioform"
+                fileSubText="(5MB mp3/mp4 file allowed)"
+                accepted="video/mpeg, video/mp4, audio/wav"
+                onFileUpload={(file)=>handleAttachments("candidate_audio",file)}
+                showNotification={showNotification}
+                downloadAttachments={(jobAttachments.audio_brief)?(jobAttachments.audio_brief):(null)}
+                jobId="J492KY"
+               ></CandidateFileDragDrop>
+               {
+                errors.candidateAudio && (<span className='text-red-500 text-sm'>{errors.candidateAudio}</span>)
+               }
+               <CandidateFileDragDrop
+                existfile={attachments.other_file}
+                onFileUpload={(file)=>handleAttachments("other_file",file)}
+                fileTitle="Other Files"
+                fileId="otherfiles"
+                accepted="image/jpeg, image/png, application/pdf, video/mpeg, video/mp4, audio/wav, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                showNotification={showNotification}
+                downloadAttachments={(jobAttachments.other_docs)?(jobAttachments.other_docs):(null)}
+                jobId="J492KY"
+               ></CandidateFileDragDrop>
+               {
+                errors.otherFile && (<span className='text-red-500 text-sm'>{errors.otherFile}</span>)
+               }
                </div>
              </div>
              <div className='flex w-[350px] flex-col gap-4'>
@@ -702,30 +863,64 @@ export default function ResumeUpload1() {
                  <h1 className='text-xl font-light'>Upload Candidate Consent Proof <span className='text-red-400'>*</span></h1>
                  <p className='text-sm font-light text-gray-400'>Please upload a copy or screenshot of the confirmation by the Candidate to apply for this job (either on Email, Social Media or Phone Messaging)</p>
                </div>
-               <div className='w-full cursor-pointer h-28 rounded-md bg-blue-100 border-blue-400 flex justify-center items-center border border-dashed'>
+               {
+                (!consetProof)?(
+                <>
+                <div onDragOver={handleDragOver} onDrop={handleDrop}  className='w-full cursor-pointer h-28 rounded-md bg-blue-100 border-blue-400 flex justify-center items-center border border-dashed'>
                    <div className='flex gap-2'>
                      <span className='text-blue-400'><CloudUploadOutlinedIcon></CloudUploadOutlinedIcon></span>
-                     <span>Drag and drop or Browse your file</span>
+                     <label className='cursor-pointer' htmlFor='conset_proof'>Drag and drop or Browse your file</label>
+                     <input
+                     onChange={handleFileChange}
+                     type='file'
+                     className='hidden'
+                     id='conset_proof'
+                     ></input>
                    </div>
+                   
                </div>
+               {
+                errors.consetProof && <span className='text-sm text-red-500'>{errors.consetProof}</span>
+               }
+               
+               </>
+               ):(
+                <div className='border items-center px-2 py-4 rounded-md flex justify-between'>
+                  <div className='flex gap-2 items-center'>
+                      <div className='h-10 w-10 bg-blue-100 rounded-full flex justify-center items-center'><span className='text-blue-500'><InsertDriveFileOutlinedIcon></InsertDriveFileOutlinedIcon></span></div>
+                      <span className='text-sm text-gray-400'>{consetProof.name}</span>
+                  </div>
+                  <span onClick={()=>setConsetProof(null)} className='text-red-400 cursor-pointer'><DeleteOutlineOutlinedIcon style={{fontSize:"1.7rem"}}></DeleteOutlineOutlinedIcon></span>
+               </div>
+               )
+               }
              </div>
           </div>
          
         </div>
         <hr></hr>
 
-        <div className='w-full p-2 px-4 bg-blue-100 rounded-md flex gap-4 my-4 mb-8'>
+       <div className='flex flex-col mt-4 mb-8'>
+        <div className='w-full p-2 px-4 bg-blue-100 rounded-md flex my-1 gap-4 '>
            <input
+           name='candidatetoc'
+           checked={formData.candidatetoc}
+           onChange={handleFormData}
            type='checkbox'
            ></input>
            <p className='text-[14px]'>I certify that I have spoken to this candidate and he/she is ready for this opportunity.<br></br>
            Further the candidate has no objection in my sharing his or her resume.</p>
         </div>
+        {
+          errors.candidateToc  && <span className='text-sm text-red-500'>{errors.candidateToc}</span>
+        }
+         
+        </div>
 
         <div className='shadow rounded-md flex w-[1300px] place-content-end fixed bottom-0 bg-white px-6 py-2'>
           <div className='flex gap-2'>
             <button className='py-1 px-4 text-base hover:bg-slate-100 transition-all rounded-sm text-black'>Cancel</button>
-            <button className='py-1 px-4 text-base hover:bg-blue-400 bg-blue-500 rounded-sm text-white'>Next</button>
+            <button onClick={checkCreadential} className='py-1 px-4 text-base hover:bg-blue-400 bg-blue-500 rounded-sm text-white'>Next</button>
           </div>
         </div>
     </div>

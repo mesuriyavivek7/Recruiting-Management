@@ -45,6 +45,16 @@ export const craeteJobBasicDeatils=async (req,res,next)=>{
     }
 }
 
+export const getJobBasicDetails=async (req,res,next)=>{
+      try{
+          const basicdetails=await JOBBASICDETAILS.findOne({job_id:req.params.jobid},{_id:0,createdAt:0,updatedAt:0})
+          res.status(200).json(basicdetails)
+      }catch(err){
+         next(err)
+      }
+}
+
+
 
 
 export const showJobDetail = async (req, res) => {

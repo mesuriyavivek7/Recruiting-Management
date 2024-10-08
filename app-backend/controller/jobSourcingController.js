@@ -26,3 +26,13 @@ export const showJobSourcingDetails = async (req, res) => {
       res.status(500).json({ error: error.message });
     }
   };
+
+export const getSourcingDetails=async (req,res,next)=>{
+    try{
+      const sourcingdetails=await JOBSOURCINGDETAILS.findOne({job_id:req.params.jobid},{_id:0,createdAt:0,updatedAt:0})
+      res.status(200).json(sourcingdetails)
+    }catch(err){
+        next(err)
+    }
+}
+

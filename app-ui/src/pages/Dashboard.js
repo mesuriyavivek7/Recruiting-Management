@@ -1,5 +1,18 @@
 import React, { useContext, useState } from 'react'
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+
+// charts
+// import MyResponsivePie from './Charts/pie';
+import Polar from './Charts/Polar'; 
+import MyResponsiveRadialBar from './Charts/Radial'; 
+
+
+
+
+
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
 
 //importing icons
 import AddIcon from '@mui/icons-material/Add';
@@ -13,12 +26,75 @@ const Dashboard = () => {
   const {user}=useContext(AuthContext)
   const [teamFormData,setTeamFormData]=useState({
     full_name:'',
-    email:''
+    email:'',
+    mobileno:'',
   })
+  const [openPopUp,setOpenPopUp]=useState(false)
 
   const [errors,setErrors]=useState({})
   const [teamLoad,setTeamLoad]=useState(false)
   const [notification,setNotification]=useState(null)
+
+// 
+
+// const pieData = [
+//   { id: 'JavaScript', value: 55 },
+//   { id: 'Python', value: 25 },
+//   { id: 'Java', value: 20 },
+// ];
+
+const polarData = [
+  { id: 'React', value: 40 },
+  { id: 'Angular', value: 30 },
+  { id: 'Vue', value: 30 },
+];
+
+const radialData = [
+  {
+      "id": "",
+      "data": [
+          { "x": "", "y": 120 },
+          { "x": "", "y": 150 },
+          { "x": "", "y": 100 }
+      ]
+  },
+  {
+      "id": "",
+      "data": [
+          { "x": "", "y": 100 },
+          { "x": "", "y": 130 },
+          { "x": "", "y": 80 }
+      ]
+  }
+];
+
+
+// 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// for add new job(chaange by fenee)
+
+  const navigate = useNavigate();
+
+  const handleAddJobClick = () => {
+    navigate("/employer/jobposting/landing/postjob");
+  };
+
 
   //for showing notification
   const showNotification=(message,type)=>{
@@ -34,6 +110,7 @@ const Dashboard = () => {
       let newErrors={}
       if(teamFormData.full_name==='') newErrors.full_name="Name is required"
       if(teamFormData.email==="") newErrors.email="Email address is required"
+      if(teamFormData.mobileno==="") newErrors.mobileno="Mobile No is required"
       setErrors(newErrors)
 
       return Object.keys(newErrors).length===0
@@ -41,10 +118,9 @@ const Dashboard = () => {
 
   const handleTeamDataSubmit=async ()=>{
     if(validateTeamFormData()){
-        setTeamLoad(true)
          try{
           //make request for creating new team member
-          await axios.post(`${process.env.REACT_APP_API_BASE_URL}/enterpriseteam`,{enterprise_id:user.enterprise_id,full_name:teamFormData.full_name,email:teamFormData.email})
+          await axios.post(`${process.env.REACT_APP_API_BASE_URL}/enterpriseteam`,{enterprise_id:user.enterprise_id,full_name:teamFormData.full_name,email:teamFormData.email,mobileno:teamFormData.mobileno})
 
           //send notify mail to team member
           await axios.post(`${process.env.REACT_APP_API_BASE_URL}/mail/sendteammember`,{to:teamFormData.email,name:teamFormData.full_name,inviter_name:user.full_name})
@@ -54,19 +130,44 @@ const Dashboard = () => {
 
           teamFormData.full_name=''
           teamFormData.email=''
-          showNotification("Successfully new team member added","success")
+          teamFormData.mobileno=''
+          showNotification("Successfully new team member added.","success")
+          setOpenPopUp(false)
          }catch(err){
           let newErrors={}
           newErrors.internalError="There is somethign wrong..!"
           setErrors(newErrors)
-          showNotification("There is somthing wrong for adding new team member","failure")
+          showNotification("There is somthing wrong for adding new team member.","failure")
          }
          setTeamLoad(false)
          
     }
   }
 
-  const [openPopUp,setOpenPopUp]=useState(false)
+  const checkCreadentials=async ()=>{
+      if(validateTeamFormData()){
+         setTeamLoad(true)
+        try{
+            const res=await axios.post(`${process.env.REACT_APP_API_BASE_URL}/enterpriseteam/checkcreadentials`,{mobileno:teamFormData.mobileno,email:teamFormData.email})
+            if(res.data){
+               setTeamLoad(false)
+               showNotification("Entered mobile no or email adress is alredy exist.",'failure')
+            }else{
+              await handleTeamDataSubmit()
+            }
+        }catch(err){
+           console.log(err)
+           showNotification("Something went wrong while adding new team member.",'failure')
+           setTeamLoad(false)
+        }
+        setTeamLoad(false)
+      }
+
+  }
+
+  
+
+  
   
   return (
     <div className='flex flex-col gap-2'>
@@ -75,7 +176,7 @@ const Dashboard = () => {
        }
        {
         openPopUp && (
-          <div className='fixed inset-0 flex justify-center bg-opacity-50 backdrop-blur-md items-center'>
+          <div className='fixed inset-0 flex z-50 justify-center bg-opacity-50 backdrop-blur-md bg-black items-center'>
             <div className="rounded-md overflow-hidden border-gray-100 border-1 max-w-md w-full">
               <div className='relative w-full bg-white py-2'>
                 <span className='absolute cursor-pointer flex items-center text-green-600 text-sm left-2 top-4' onClick={()=>setOpenPopUp(false)}><ArrowBackIosIcon style={{fontSize:'1rem'}}></ArrowBackIosIcon>Back</span>
@@ -115,7 +216,26 @@ const Dashboard = () => {
                       )
                     }
                   </div>
-                  <button disabled={teamLoad} onClick={handleTeamDataSubmit} className='w-full relative text-white py-1 mt-2 hover:bg-blue-400 rounded-sm bg-blue-700 disabled:bg-slate-600 disabled:cursor-no-drop'>
+                  <div className='flex relative w-full flex-col gap-2'>
+                    <label className='input-label' htmlFor='primarycontactnumber'>Enter Phone Number <span className='text-red-500'>*</span></label>
+                       <PhoneInput
+                        value={teamFormData.mobileno}
+                        country={"in"}
+                        onChange={(phone) =>
+                        setTeamFormData((prevData) => ({
+                          ...prevData,
+                          mobileno: phone,
+                        }))
+                         }
+                        containerStyle={{ width: "100%" }}
+                        />
+                        {
+                          errors.mobileno && (
+                           <p className='text-xs text-red-400'>{errors.mobileno}</p>
+                         )
+                        }
+                  </div>
+                  <button disabled={teamLoad} onClick={checkCreadentials} className='w-full relative text-white py-1 mt-2 hover:bg-blue-400 rounded-sm bg-blue-700 disabled:bg-slate-600 disabled:cursor-no-drop'>
                                 {
                                   teamLoad && 
                                      <span className="flex items-center justify-center">
@@ -140,20 +260,43 @@ const Dashboard = () => {
       <div className='custom-div py-4 flex flex-row items-center justify-between'>
          <div className='flex gap-4 text-gray-600 items-center'>
             <span className='cursor-pointer'>My Dashboard</span>
-            <span className='cursor-pointer'>Insights</span>
+          
          </div>
          <button onClick={()=>setOpenPopUp(true)} className='text-gray-600 cursor-pointer flex gap-2 items-center'>
           <span><AddIcon></AddIcon></span>
           <span>Add Member</span>
          </button>
       </div>
+
+    {/* Add section key indicators */}
+<div className='custom-div py-2 gap-4'>
+  <h1 className='text-xl font-bold'>Key Indicators</h1>
+  <div className='w-full flex gap-4 pb-2'>
+    
+  <div className='w-48 h-56 flex-1 flex flex-col gap-2 shadow '>
+      <MyResponsiveRadialBar  data={radialData}/>
+    </div>
+    
+    <div className='w-58 h-56 flex-1 flex flex-col gap-2 shadow pt-6'>
+      <Polar data={polarData} />
+    </div>
+
+    <div className='w-48 h-56 flex-1 flex flex-col gap-2 shadow pt-6'>
+      <Polar data={polarData} />
+    </div>
+  </div>
+</div>
+{/* Finish section */}
+
+
       <div className='custom-div py-4 gap-4'>
         <h1>Jobs</h1>
         <div className='w-full flex gap-4'>
-           <div className='custom-div cursor-pointer flex-1'>
+         <div className='custom-div cursor-pointer flex-1' onClick={handleAddJobClick}>
              <span><AddIcon style={{fontSize:"1.8rem"}}></AddIcon></span>
-             <span className='text-gray-600'>Add New Job</span>
+<span className='text-gray-600'>Add New Job</span>
            </div>
+         
            <div className='custom-div flex-1 flex flex-col gap-2'>
               <h1 className='text-2xl'>0</h1>
               <p className='text-gray-600'>Total Open Jobs</p>
@@ -229,5 +372,6 @@ const Dashboard = () => {
     </div>
   )
 }
+
 
 export default Dashboard

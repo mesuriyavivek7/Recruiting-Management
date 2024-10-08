@@ -27,3 +27,13 @@ export const showJobScreeningQuestions = async (req, res) => {
       res.status(500).json({ error: error.message });
     }
   };
+
+export const getScreeningQue=async (req,res,next)=>{
+    try{
+        const getSq=await JOBSQ.findOne({job_id:req.params.jobid},{_id:0,createdAt:0,updatedAt:0})
+        res.status(200).json(getSq)
+    }catch(err){
+        next(err)
+    }
+}
+

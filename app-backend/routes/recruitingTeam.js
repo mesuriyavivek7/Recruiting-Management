@@ -1,19 +1,38 @@
-import RECRUITINGTEAM from '../models/RECRUITINGTEAM'
+import express from 'express'
+import { addJobIntoAcceptList, addNewCandidate, changeAccountStatus, changeCommissionFlag, checkCreadentials, checkIsAdmin, createteammember, getEnterpriseTeamMember, rejectJob, updateJobMappedList } from '../controller/recrutingTeamController.js'
 
-import bcrypt from 'bcryptjs'
+
+const router=express.Router()
+
+//for creating new recruiting member
+router.post('/',createteammember)
+
+//for check recruiting team creadentials
+router.post('/checkcredentials',checkCreadentials)
+
+//for adding job into mapped job list
+router.post('/updatemappedlist/:rteamid',updateJobMappedList)
+
+//for accept mapped job and add into accept job list
+router.post('/addacceptlist/:rteamid',addJobIntoAcceptList)
+
+//for given rejection reason of any job
+router.post('/rejectjob/:rteamid',rejectJob)
+
+//for adding candidate id and job id into submited candiadte list
+router.put('/addintocandidatelist/:rememberid',addNewCandidate)
+
+//for getting all enterprise team id which are connecting with recruiter agency
+router.get('/getenterpriseteam/:rememberid',getEnterpriseTeamMember)
+
+//for check current user is admin or not
+router.get('/checkadmin/:reid',checkIsAdmin)
+
+//for change recruiter team commission flag
+router.put('/changecommisionflag/:rememberid',changeCommissionFlag)
+
+//for change recruiter team account status
+router.put('/changeaccountstatus/:rememberid',changeAccountStatus)
 
 
-//creating team member
-
-export const createteammember=async (req,res,next)=>{
-
-    const salt = bcrypt.genSaltSync(10);
-    const hash = bcrypt.hashSync('uphire', salt);
-
-    try{
-       const newteammember=new RECRUITINGTEAM({...req.body,password:hash})
-       res.status(200).json("new Team member added")
-    }catch(err){
-       next(err)  
-    } 
-}
+export default router

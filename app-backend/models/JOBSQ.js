@@ -11,7 +11,7 @@ const jobsqSchema=new mongoose.Schema({
     },
     screening_questions:[Object]
 
-})
+},{timestamps:true})
 
 
 export default mongoose.model("jobsq",jobsqSchema)

@@ -42,3 +42,18 @@ export const login=async (req,res,next)=>{
         next(err)
     }
 }
+
+
+export const logout=async (req,res,next)=>{
+      try{
+        res.clearCookie("t_user", {
+            httpOnly: false,
+            secure: true, // Ensure this matches your cookie settings
+            sameSite: 'none' // Ensure this matches your cookie settings
+        });
+
+        res.status(200).json('logout successfully')
+      }catch(err){
+          next(err)
+      }
+}

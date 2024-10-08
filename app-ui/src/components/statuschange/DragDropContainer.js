@@ -1,245 +1,187 @@
-import React, { useState } from 'react'
-import DropSection from './DropSection'
-import DropBox from './DropBox'
+import React, { useEffect, useState } from 'react';
+import DropSection from './DropSection';
+import DropBox from './DropBox';
+import axios from 'axios';
 
-export default function DragDropContainer() {
-    const [sections,setSections]=useState({
-        section1:[{id:1,cname:'Sahil Dalal',cid:'31229',jobname:'Softwere Engineer-Cloud Platforms',jobid:'J12422',jobcountry:'India',jobtype:'Permanent Hiring',date:'13 jun 23'},{id:2,cname:'Dhruv Kakdiya',cid:'31229',jobname:'Softwere Engineer-Cloud Platforms',jobid:'J12422',jobcountry:'India',jobtype:'Permanent Hiring',date:'13 jun 23'}],
-        section2:[{id:3,cname:'Sahil Gediya',cid:'31229',jobname:'Softwere Engineer-Cloud Platforms',jobid:'J12422',jobcountry:'India',jobtype:'Permanent Hiring',date:'15 jun 23'}],
-        section3:[],
-        section4:[],
-        section5:[],
-        section6:[],
-        section7:[],
-        section8:[],
-        section9:[],
-        section10:[],
-        section11:[],
-        section12:[],
-        section13:[],
-        section14:[],
-        section15:[],
-        section16:[],
-        section17:[],
-        section18:[],
-        section19:[],
-        section20:[],
-        section21:[],
-        section22:[],
-        section23:[],
-        section24:[],
-    })
+// Importing loader 
+import WhiteLoader from '../../assets/whiteloader.svg';
 
-    const handleDrop=(item,sectionId)=>{
-       console.log('sectionid------>',sectionId)
-      console.log('item------>',item.id)
-       const {id}=item
+export default function DragDropContainer({
+  candidateData,
+  showNotification,
+  refetchCandidateData,
+  loader
+}) {
+  
+  // Mapping of section name with candidate status
+  const cstatus = new Map([
+    ['section1', 'newresume'],
+    ['section2', 'rs-cc'],
+    ['section3', 'rs-hm'],
+    ['section4', 'test-process'],
+    ['section5', 'interview-process'],
+    ['section6', 'no-show'],
+    ['section7', 'candidate-not-ins'],
+    ['section8', 'candidate-not-reach'],
+    ['section9', 'rr-cc'],
+    ['section10', 'rr-hm'],
+    ['section11', 'r-test'],
+    ['section12', 'rjt-tech-itw'],
+    ['section13', 'rjt-hr-itw'],
+    ['section14', 's-f-itw'],
+    ['section15', 's-not-offer'],
+    ['section16', 'o-released'],
+    ['section17', 'o-accepted'],
+    ['section18', 'o-rejected'],
+    ['section19', 'c-not-joine'],
+    ['section20', 'c-joine'],
+    ['section21', 'quit-after-joine'],
+    ['section22', 'on-hold'],
+    ['section23', 'no-action'],
+    ['section24', 'use-later'],
+  ]);
 
-       setSections((prevSection)=>{
-           const sourceSection=Object.keys(prevSection).find((key)=>(
-              prevSection[key].some((box)=>box.id===id)
-           ))
+  const initialSection = {
+    section1: [],
+    section2: [],
+    section3: [],
+    section4: [],
+    section5: [],
+    section6: [],
+    section7: [],
+    section8: [],
+    section9: [],
+    section10: [],
+    section11: [],
+    section12: [],
+    section13: [],
+    section14: [],
+    section15: [],
+    section16: [],
+    section17: [],
+    section18: [],
+    section19: [],
+    section20: [],
+    section21: [],
+    section22: [],
+    section23: [],
+    section24: [],
+  };
 
-           console.log('sourceSection---->',sourceSection)
-           console.log('sectionId',sectionId)
+  const [sections, setSections] = useState(initialSection);
+  const [statusLoader, setStatusLoader] = useState(false);
 
-           if(sourceSection===sectionId){
-            return (
-                {
-                    ...prevSection
-                }
-            )
-           }
+  // Effect to allocate candidates to sections whenever candidateData changes
+  useEffect(() => {
+    // Initialize a new sections object
+    const newSections = { ...initialSection };
 
-           const box=prevSection[sourceSection].find((box)=>box.id===id)
-           const newItem=prevSection[sourceSection].filter((box)=>box.id!==id)
-           console.log('newitem----->',newItem)
-           return (
-            {
-                ...prevSection,
-                [sourceSection]:prevSection[sourceSection].filter((box)=>box.id!==id),
-                [sectionId]:[...prevSection[sectionId],box]
+    candidateData.forEach((item) => {
+      const status = item.candidate_status;
+      console.log("candidate present status",status)
+      // Find the corresponding section key from cstatus Map
+      const sectionKey = Array.from(cstatus.entries()).find(
+        ([key, value]) => value === status
+      )?.[0] || 'section1'; // Default to 'section1' if status not found
 
-            })
-       })
+      // Assign the candidate to the appropriate section
+      newSections[sectionKey] = [...newSections[sectionKey], item];
+    });
+
+    // Update the sections state
+    setSections(newSections);
+  }, [candidateData]);
+
+  // Handle drop event
+  const handleDrop = async (item, sectionId) => {
+    setStatusLoader(true);
+
+    const { id } = item;
+    const status = cstatus.get(sectionId);
+    console.log("candidate id---->",id)
+    console.log("candidate new status--->",status)
+
+    try {
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/candidate/changecandidatestatus/${id}`, { status });
+      refetchCandidateData();
+      showNotification("Candidate status updated successfully.", "success");
+    } catch (err) {
+      console.error(err);
+      showNotification("Something went wrong while changing candidate status.", "failure");
+    } finally {
+      setStatusLoader(false);
     }
-    console.log(sections)
+  };
+
   return (
     <div className='pt-3 px-4 pb-5 bg-white rounded-md custom-shadow-1'>
-        <h1 className='w-full text-center text-gray-800 text-sm'>Scroll to View Other Resume</h1>
-        
-        <div class="w-full overflow-x-auto whitespace-nowrap mt-2 p-4">
-          
-            <DropSection id='section1' onDrop={handleDrop} sectionItem={{title:"New Resume",count:sections.section1.length,theme:'blue'}}>
-              {
-                sections.section1.map((box)=>(
-                    <DropBox key={box.id} id={box.id} text={box}></DropBox>
-                ))
-              }
-           </DropSection>
-           <DropSection id='section2' onDrop={handleDrop} sectionItem={{title:"Resume Select - Client Recruiter",count:sections.section2.length,theme:'purple'}}>
-              {
-                sections.section2.map((box)=>(
-                    <DropBox key={box.id} id={box.id} text={box}></DropBox>
-                ))
-              }
-           </DropSection>
-           <DropSection id='section3' onDrop={handleDrop} sectionItem={{title:"Resume Select - Hiring Manager",count:sections.section3.length,theme:'purple'}}>
-              {
-                sections.section3.map((box)=>(
-                    <DropBox key={box.id} id={box.id} text={box}></DropBox>
-                ))
-              }
-           </DropSection>
-           <DropSection id='section4' onDrop={handleDrop} sectionItem={{title:"Test in Process",count:sections.section4.length,theme:'purple'}}>
-              {
-                sections.section4.map((box)=>(
-                    <DropBox key={box.id} id={box.id} text={box}></DropBox>
-                ))
-              }
-           </DropSection>
-           <DropSection id='section5' onDrop={handleDrop} sectionItem={{title:"Interview in Process",count:sections.section5.length,theme:'purple'}}>
-              {
-                sections.section5.map((box)=>(
-                    <DropBox key={box.id} id={box.id} text={box}></DropBox>
-                ))
-              }
-           </DropSection>
-           <DropSection id='section6' onDrop={handleDrop} sectionItem={{title:"No show",count:sections.section6.length,theme:'purple'}}>
-              {
-                sections.section6.map((box)=>(
-                    <DropBox key={box.id} id={box.id} text={box}></DropBox>
-                ))
-              }
-           </DropSection>
-           <DropSection id='section7' onDrop={handleDrop} sectionItem={{title:"Candidate Not Interested",count:sections.section7.length,theme:'orange'}}>
-              {
-                sections.section7.map((box)=>(
-                    <DropBox key={box.id} id={box.id} text={box}></DropBox>
-                ))
-              }
-           </DropSection>
-           <DropSection id='section8' onDrop={handleDrop} sectionItem={{title:"Candidate Not Reachable",count:sections.section8.length,theme:'orange'}}>
-              {
-                sections.section8.map((box)=>(
-                    <DropBox key={box.id} id={box.id} text={box}></DropBox>
-                ))
-              }
-           </DropSection>
-           <DropSection id='section9' onDrop={handleDrop} sectionItem={{title:"Resume Reject - Client Recruiter",count:sections.section9.length,theme:'red'}}>
-              {
-                sections.section9.map((box)=>(
-                    <DropBox key={box.id} id={box.id} text={box}></DropBox>
-                ))
-              }
-           </DropSection>
-           <DropSection id='section10' onDrop={handleDrop} sectionItem={{title:"Resume Reject - Hiring Manager",count:sections.section10.length,theme:'red'}}>
-              {
-                sections.section10.map((box)=>(
-                    <DropBox key={box.id} id={box.id} text={box}></DropBox>
-                ))
-              }
-           </DropSection>
-           <DropSection id='section11' onDrop={handleDrop} sectionItem={{title:"Rejected in Test",count:sections.section11.length,theme:'red'}}>
-              {
-                sections.section11.map((box)=>(
-                    <DropBox key={box.id} id={box.id} text={box}></DropBox>
-                ))
-              }
-           </DropSection>
-           <DropSection id='section12' onDrop={handleDrop} sectionItem={{title:"Rejected in Tech Interview",count:sections.section12.length,theme:'red'}}>
-              {
-                sections.section12.map((box)=>(
-                    <DropBox key={box.id} id={box.id} text={box}></DropBox>
-                ))
-              }
-           </DropSection>
-           <DropSection id='section13' onDrop={handleDrop} sectionItem={{title:"Rejected in HR Interview",count:sections.section13.length,theme:'red'}}>
-              {
-                sections.section13.map((box)=>(
-                    <DropBox key={box.id} id={box.id} text={box}></DropBox>
-                ))
-              }
-           </DropSection>
-           <DropSection id='section14' onDrop={handleDrop} sectionItem={{title:"Selected in Final Interview",count:sections.section14.length,theme:'green'}}>
-              {
-                sections.section14.map((box)=>(
-                    <DropBox key={box.id} id={box.id} text={box}></DropBox>
-                ))
-              }
-           </DropSection>
-           <DropSection id='section15' onDrop={handleDrop} sectionItem={{title:"Selected - Won't be Offered",count:sections.section15.length,theme:'green'}}>
-              {
-                sections.section15.map((box)=>(
-                    <DropBox key={box.id} id={box.id} text={box}></DropBox>
-                ))
-              }
-           </DropSection>
-           <DropSection id='section16' onDrop={handleDrop} sectionItem={{title:"Offer Released",count:sections.section16.length,theme:'green'}}>
-              {
-                sections.section16.map((box)=>(
-                    <DropBox key={box.id} id={box.id} text={box}></DropBox>
-                ))
-              }
-           </DropSection>
-           <DropSection id='section17' onDrop={handleDrop} sectionItem={{title:"Offer Accepted",count:sections.section17.length,theme:'green'}}>
-              {
-                sections.section17.map((box)=>(
-                    <DropBox key={box.id} id={box.id} text={box}></DropBox>
-                ))
-              }
-           </DropSection>
-           <DropSection id='section18' onDrop={handleDrop} sectionItem={{title:"Offer Rejected",count:sections.section18.length,theme:'green'}}>
-              {
-                sections.section18.map((box)=>(
-                    <DropBox key={box.id} id={box.id} text={box}></DropBox>
-                ))
-              }
-           </DropSection>
-           <DropSection id='section19' onDrop={handleDrop} sectionItem={{title:"Candidate Not Joining",count:sections.section19.length,theme:'green'}}>
-              {
-                sections.section19.map((box)=>(
-                    <DropBox key={box.id} id={box.id} text={box}></DropBox>
-                ))
-              }
-           </DropSection>
-           <DropSection id='section20' onDrop={handleDrop} sectionItem={{title:"Candidate Joined",count:sections.section20.length,theme:'green'}}>
-              {
-                sections.section20.map((box)=>(
-                    <DropBox key={box.id} id={box.id} text={box}></DropBox>
-                ))
-              }
-           </DropSection>
-           <DropSection id='section21' onDrop={handleDrop} sectionItem={{title:"Quit After Joining",count:sections.section21.length,theme:'green'}}>
-              {
-                sections.section21.map((box)=>(
-                    <DropBox key={box.id} id={box.id} text={box}></DropBox>
-                ))
-              }
-           </DropSection>
-           <DropSection id='section22' onDrop={handleDrop} sectionItem={{title:"On Hold",count:sections.section22.length,theme:'sky'}}>
-              {
-                sections.section22.map((box)=>(
-                    <DropBox key={box.id} id={box.id} text={box}></DropBox>
-                ))
-              }
-           </DropSection>
-           <DropSection id='section23' onDrop={handleDrop} sectionItem={{title:"No Further Action",count:sections.section23.length,theme:'sky'}}>
-              {
-                sections.section23.map((box)=>(
-                    <DropBox key={box.id} id={box.id} text={box}></DropBox>
-                ))
-              }
-           </DropSection>
-           <DropSection id='section24' onDrop={handleDrop} sectionItem={{title:"Use Later",count:sections.section24.length,theme:'sky'}}>
-              {
-                sections.section24.map((box)=>(
-                    <DropBox key={box.id} id={box.id} text={box}></DropBox>
-                ))
-              }
-           </DropSection>
+      {statusLoader && (
+        <div className='fixed inset-0 flex justify-center bg-black z-50 bg-opacity-50 backdrop-blur-md items-center'>
+          <div className='custom-div w-[450px] p-4 flex flex-col items-center'>
+            <img className='h-10 w-10' alt='Loading...' src={WhiteLoader} />
+            <p>Please wait while we update the candidate status.</p>
+          </div>
+        </div>
+      )}
+      
+      <h1 className='w-full text-center text-gray-800 text-sm'>Scroll to View Other Resumes</h1>
+      
+      {loader ? (
+        <div className='mt-10 flex justify-center items-center'>
+          <img className='w-10 h-10' src={WhiteLoader} alt='Loading...' />
+        </div>
+      ) : (
+        <div className="w-full overflow-x-auto whitespace-nowrap mt-2 p-4">
+          {Array.from(cstatus.keys()).map((sectionId) => {
+            // Define titles and themes for each section
+            const sectionDetails = {
+              section1: { title: "New Resume", theme: 'blue' },
+              section2: { title: "Resume Select - Client Recruiter", theme: 'purple' },
+              section3: { title: "Resume Select - Hiring Manager", theme: 'purple' },
+              section4: { title: "Test in Process", theme: 'purple' },
+              section5: { title: "Interview in Process", theme: 'purple' },
+              section6: { title: "No Show", theme: 'purple' },
+              section7: { title: "Candidate Not Interested", theme: 'orange' },
+              section8: { title: "Candidate Not Reachable", theme: 'orange' },
+              section9: { title: "Resume Reject - Client Recruiter", theme: 'red' },
+              section10: { title: "Resume Reject - Hiring Manager", theme: 'red' },
+              section11: { title: "Rejected in Test", theme: 'red' },
+              section12: { title: "Rejected in Tech Interview", theme: 'red' },
+              section13: { title: "Rejected in HR Interview", theme: 'red' },
+              section14: { title: "Selected in Final Interview", theme: 'green' },
+              section15: { title: "Selected - Won't be Offered", theme: 'green' },
+              section16: { title: "Offer Released", theme: 'green' },
+              section17: { title: "Offer Accepted", theme: 'green' },
+              section18: { title: "Offer Rejected", theme: 'green' },
+              section19: { title: "Candidate Not Joining", theme: 'green' },
+              section20: { title: "Candidate Joined", theme: 'green' },
+              section21: { title: "Quit After Joining", theme: 'green' },
+              section22: { title: "On Hold", theme: 'purple' },
+              section23: { title: "No Further Action", theme: 'purple' },
+              section24: { title: "Use Later", theme: 'purple' },
+            };
 
-      </div>
+            const { title, theme } = sectionDetails[sectionId] || { title: "Unknown", theme: 'gray' };
+
+            return (
+              <DropSection
+                key={sectionId}
+                id={sectionId}
+                onDrop={handleDrop}
+                sectionItem={{
+                  title,
+                  count: sections[sectionId].length,
+                  theme
+                }}
+              >
+                {sections[sectionId].map((box) => (
+                  <DropBox key={box.id} id={box.id} text={box} />
+                ))}
+              </DropSection>
+            );
+          })}
+        </div>
+      )}
     </div>
-  )
+  );
 }

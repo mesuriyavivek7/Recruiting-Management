@@ -12,15 +12,20 @@ import Dashboard from "./pages/Dashboard";
 import PostJob from "./pages/PostJob";
 import DemoVideosPage from "./components/DemoVideos";
 import JobPostings from "./pages/jobs/JobPostings";
-import BulkActions from "./components/BulkActions,";
+import BulkActions from "./components/BulkActions";
 import OffersPage from "./components/OffersPage";
 import Support from "./pages/Support";
 import Candidate from "./pages/Candidate/Candidate";
+import EnterpriseTeam from "./pages/Enterpriseteam/EnterpriseTeam";
+import AdminRoute from "./pages/Enterpriseteam/AdminRoute";
 //import components for recruiter agency dashboard
 import RecruitDashboard from "./pages/Dashboard/RecruitDashboard";
 import RecruiterDashboard from "./pages/RecruiterDashboard";
 import Jobs from "./pages/Jobs";
 import UploadResume from "./pages/UploadResume";
+import RecruiterTeam from "./pages/Recruiterteam/RecruiterTeam";
+
+
 
 const App = () => {
   const AppRouter = createBrowserRouter([
@@ -56,9 +61,19 @@ const App = () => {
           path: "jobposting/landing/postjob",
           element: <PostJob />,
         },
+        { 
+          path: "jobposting/landing/postjob/:oldjobid",
+          element: <PostJob />
+        },
         {
           path: "jobposting/landing",
           element: <JobPostings/>,
+        },
+        {
+          path: 'team',
+          element: <AdminRoute>
+                     <EnterpriseTeam></EnterpriseTeam>
+                   </AdminRoute>
         },
         {
           path: "bulkactions",
@@ -97,6 +112,12 @@ const App = () => {
         {
           path:'uploadresume',
           element:<UploadResume/>
+        },
+        {
+          path:'team',
+          element:<AdminRoute>
+                    <RecruiterTeam></RecruiterTeam>
+                 </AdminRoute>
         }
        ]
     }

@@ -28,3 +28,13 @@ export const showJobCommission = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+export const getJobCommissionDetails=async (req,res,next)=>{
+      try{
+         const jobcommission=await JOBCOMMISSION.findOne({job_id:req.params.jobid},{_id:0,createdAt:0,updatedAt:0}).lean()
+         res.status(200).json(jobcommission)
+      }catch(err){
+        next(err)
+      }
+}
+

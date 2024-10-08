@@ -1,4 +1,5 @@
 import RECRUITING from "../models/RECRUITING.js"
+import RECRUITINGTEAM from "../models/RECRUITINGTEAM.js"
 
 
 
@@ -86,4 +87,25 @@ export const acVerified=async (req,res,next)=>{
     }catch(err){
         next(err)
     }
+}
+
+
+export const getAcmanager=async (req,res,next)=>{
+    try{
+       const acmanager=await RECRUITING.findById(req.params.ragencyid,{alloted_account_manager:1,_id:0})
+       res.status(200).json(acmanager.alloted_account_manager)
+    }catch(err){
+        next(err)
+    }
+}
+
+
+export const getTeamMember=async (req,res,next)=>{
+   try{
+      const members=await RECRUITINGTEAM.find({recruiting_agency_id:req.params.reid})
+  
+      res.status(200).json(members)
+   }catch(err){
+     next(err)
+   }
 }

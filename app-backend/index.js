@@ -15,11 +15,13 @@ import authRecruitingRoute from './routes/authRecruiting.js'
 import mailRoute from './routes/mail.js'
 import authEnterpriseRoute from './routes/authEnterprise.js'
 import recruitingRoutes from './routes/recruiting.js'
+import recruitingTeam from './routes/recruitingTeam.js'
 import authRoute from './routes/auth.js'
 import enterpriseRoute from './routes/enterprise.js'
 import enterpriseTeamRoute from './routes/enterpriseTeam.js'
 import jobRoute from './routes/jobs.js'
 import candidateRoute from './routes/candidate.js'
+import messageRoute from './routes/message.js'
 
 // Get the directory name
 const __filename = fileURLToPath(import.meta.url);
@@ -80,11 +82,13 @@ app.use('/api/authrecruiting',authRecruitingRoute)
 app.use('/api/mail',mailRoute)
 app.use('/api/authenterprise',authEnterpriseRoute)
 app.use('/api/recruiting',recruitingRoutes)
+app.use('/api/recruitingteam',recruitingTeam)
 app.use('/api/auth',authRoute)
 app.use('/api/enterprise',enterpriseRoute)
 app.use('/api/enterpriseteam',enterpriseTeamRoute)
 app.use('/api/job',jobRoute)
 app.use('/api/candidate',candidateRoute)
+app.use('/api/message',messageRoute)
 
 app.get('/',(req,res)=>{
     res.send("Bahut maja ara hai bhai🐱")
@@ -92,6 +96,9 @@ app.get('/',(req,res)=>{
 
 // Serve static files from the 'uploads/kycdocs' directory
 app.use('/kycdocs', express.static(path.join(__dirname, 'uploads/kycdocs')));
+
+// Serve static files from the 'uploads/resumedocs' directory
+app.use('/resumedocs',express.static(path.join(__dirname,'uploads/resumedocs')));
 
 //middleware for error handeling
 app.use((err,req,res,next)=>{

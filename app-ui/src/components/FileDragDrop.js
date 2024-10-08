@@ -54,7 +54,7 @@ const FileDragDrop = ({fileuploadname,existfile,fileuploadspan,onFileUpload,file
       e.preventDefault();
       e.stopPropagation();
       const droppedFile = e.dataTransfer.files[0];
-      if (droppedFile && droppedFile.includes(droppedFile.type) && droppedFile.size<=10*1024*1024) {
+      if (droppedFile && fileTypes.includes(droppedFile.type) && droppedFile.size<=10*1024*1024) {
         setFile(droppedFile);
         onFileUpload(droppedFile)
       }else{
@@ -88,7 +88,7 @@ const FileDragDrop = ({fileuploadname,existfile,fileuploadspan,onFileUpload,file
           file && (
 
             <div className='flex mt-4 justify-between gap-4 place-items-center'>
-              <p className="text-green-500">{file.name}</p>
+              <p className="text-green-500 w-52">{(file.savedDraft)?(file.filename):(file.name)}</p>
               <span onClick={handleRemoveFile} className='cursor-pointer hover:text-red-500'><CloseIcon style={{fontSize:"1rem"}}></CloseIcon></span>
             </div>
 

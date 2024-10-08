@@ -1,16 +1,20 @@
 import React, { useContext, useEffect, useState } from 'react'
 import axios from 'axios'
 import { AuthContext } from '../../context/AuthContext';
+import Notification from '../Notification';
+import { useNavigate } from "react-router-dom";
 //importing icons
 import VideocamOutlinedIcon from '@mui/icons-material/VideocamOutlined';
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 import InsertDriveFileOutlinedIcon from '@mui/icons-material/InsertDriveFileOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined'
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import CheckCircleOutlinedIcon from '@mui/icons-material/CheckCircleOutlined';
 
 //import progress bar
 import ProgressBar from "@ramonak/react-progress-bar";
 
-export default function ReumeUploadPopUp({candidateId}) {
+export default function ReumeUploadPopUp({onNext,jobId,candidateId,parentFormDataChange,parentFormData}) {
   const {user}=useContext(AuthContext)
   const [file,setFile]=useState(null)
   const fileTypes=["application/pdf","application/msword","application/vnd.openxmlformats-officedocument.wordprocessingml.document"]
@@ -19,21 +23,31 @@ export default function ReumeUploadPopUp({candidateId}) {
   const [parseFileData,setParseFileData]=useState(null)
   const [currentStep,setCurrentStep]=useState(1)
   const [pancardNo,setPanCardNo]=useState("")
+  const [isDuplicate,setIsDuplicate]=useState(null)
+  const [actionNext,setActionNext]=useState(false)
+  const navigate=useNavigate()
+
+   //for showing notification
+   const [notification,setNotification]=useState(null)
+
+   //for showing notification
+   const showNotification=(message,type)=>{
+    setNotification({message,type})
+   }
 
   const uploadResumeDocs=async ()=>{
         const fileData=new FormData()
-   
         fileData.append('resume',file)
-
         try{
           const res=await axios.post(`${process.env.REACT_APP_API_BASE_URL}/candidate/resumedocs/${candidateId}`,fileData,
           {headers:{"Content-Type":'multipart/form-data'},
           onUploadProgress:(progressEvent)=>{
              const progress=Math.round((progressEvent.loaded * 100) / progressEvent.total)
              setUploadProgress(progress)
-          }
+          },
           },
          )
+         console.log(res.data)
          setParseFileData(res.data)
          console.log("file upload successfully",res)
         }catch(err){
@@ -46,12 +60,72 @@ export default function ReumeUploadPopUp({candidateId}) {
 
   const validatepancardno=()=>{
        let newErrors={}
-       if(!pancardNo) newErrors.pancardno="Please provide pancard no."
+       let regpan=/^([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}?$/
+       if(!pancardNo) newErrors.pancardNo="Please provide pancard no."
+       else if(!regpan.test(pancardNo)) newErrors.pancardNo="Pancard Number is invalid."
+
+       setErrors(newErrors)
+       return Object.keys(newErrors).length===0
   }
 
   const uploadParseFileData=async ()=>{
+     if(validatepancardno()){
+         try{
+           //collecting data
+           const parseDetails={
+             job_id:jobId,
+             recruiter_agency_id:user.recruiting_agency_id,             
+             recruiter_memeber_id:user._id,
+             filepath:parseFileData.filepath,
+             firstname:parseFileData.firstName,
+             lastname:parseFileData.lastName,
+             contactno:parseFileData.mobile,
+             emailid:parseFileData.email,
+             educationdetails:parseFileData.education,
+             pancardnumber:pancardNo
+           }
+           const res=await axios.post(`${process.env.REACT_APP_API_BASE_URL}/candidate/checkparsedetails/${candidateId}`,parseDetails)
+           console.log(res.data)
+           setIsDuplicate(!res.data)
+           handleNext()
+         }catch(err){ 
+           console.log(err)
+           let newErrors={}
+           newErrors.parsefile="There is something wrong to parsing resume file."
+           setErrors(newErrors)
+         }
+     }
          
   }
+
+  //for discard steps and inner process 
+  const handleDiscardProcess=async (type)=>{
+       if(parseFileData){
+          await axios.post(`${process.env.REACT_APP_API_BASE_URL}/candidate/removefile`,{filepath:parseFileData.filepath})
+       }
+       if(type==="removefile"){
+         setCurrentStep(1)
+         setFile(null)
+       }else{
+         navigate('/recruiter/jobs')
+       }
+  }
+
+  //for discard the whole process
+  const handleCancelProcess=async ()=>{
+      try{
+           await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/candidate/cancelprocess`,{data:{
+            filepath:parseFileData.filepath,
+            cid:candidateId
+           }})
+           navigate('/recruiter/jobs')
+      } catch(err){
+        console.log(err)
+        let newErrors={}
+        newErrors.cancelprocess="There is somethig wrong."
+        setErrors(newErrors)
+      }
+  }  
 
   useEffect(()=>{
     if(currentStep===3){
@@ -71,7 +145,6 @@ export default function ReumeUploadPopUp({candidateId}) {
     const selectedFile = e.target.files[0];
     if (selectedFile && fileTypes.includes(selectedFile.type) && selectedFile.size<=10*1024*1024 ) {
       setFile(selectedFile);
-      setErrors({})
     }else{
         let newErrors={}
         newErrors.filetype="Please select pdf or docx file type under 10mb."
@@ -93,13 +166,27 @@ export default function ReumeUploadPopUp({candidateId}) {
     const droppedFile = e.dataTransfer.files[0];
     if(droppedFile && fileTypes.includes(droppedFile.type) && droppedFile.size<=10*1024*1024){
        setFile(droppedFile)
-       setErrors({})
     }else{
       let newErrors={}
       newErrors.filetype="Please select pdf or docx file type under 10mb."
       setErrors(newErrors)
+      showNotification("Please select pdf or docx file type under 10mb.","failure")
     }
   }
+
+   useEffect(()=>{
+    if(actionNext)  handleParentFormData()
+   },[actionNext])
+
+   const handleParentFormData=()=>{
+      parentFormDataChange(parseFileData)
+   }
+
+   useEffect(()=>{
+     if(actionNext) onNext()
+     setActionNext(false)
+   },[parentFormData])
+
 
   const renderUi=()=>{
        switch(currentStep){
@@ -120,10 +207,10 @@ export default function ReumeUploadPopUp({candidateId}) {
                ></input>
               </div> 
             </div>
-            {errors.filetype && <span className='text-red-500 flex justify-between text-sm mt-1 bg-red-200 rounded-md px-2 py-1'>{errors.filetype} <span onClick={()=>setErrors({})}><CancelOutlinedIcon style={{fontSize:"1.2rem",cursor:"pointer"}}></CancelOutlinedIcon></span></span>}
+            {errors.filetype && <span className='text-red-500 flex justify-between text-sm mt-1 bg-red-200 rounded-md px-2 py-1'>{errors.filetype} <span onClick={()=>setErrors({})}><CancelOutlinedIcon style={{fontSize:"1.1rem",cursor:"pointer"}}></CancelOutlinedIcon></span></span>}
            <div className='flex place-content-end mt-3'>
             <div className='flex gap-2'>
-                <button className='rounded-md text-sm border border-blue-400 text-blue-400 p-2 px-3'>Cancel</button>
+                <button onClick={()=>navigate('/recruiter/jobs')} className='rounded-md text-sm border border-blue-400 text-blue-400 p-2 px-3'>Cancel</button>
                 <button onClick={handleNext} disabled={file?false:true} className='disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-black disabled:opacity-30 rounded-md text-sm border text-white bg-blue-400 p-2 px-4'>Next</button>
             </div>
            </div>
@@ -138,22 +225,22 @@ export default function ReumeUploadPopUp({candidateId}) {
                  <span className='h-10 w-10 flex justify-center items-center bg-blue-100 text-blue-400 rounded-full'><InsertDriveFileOutlinedIcon></InsertDriveFileOutlinedIcon></span>
                  <div className='flex flex-col'>
                     <span className='text-[14px] text-gray-400 font-light'>{file.name}</span>
-                    <span className='text-[14px] text-gray-400 '>{file.size} KB</span>
+                    <span className='text-[14px] text-gray-400 '>{Math.round(file.size/1000)} KB</span>
                  </div>
               </div>
-              <span className='text-red-400 cursor-pointer'><DeleteOutlinedIcon></DeleteOutlinedIcon></span>
+              <span onClick={()=>handleDiscardProcess("removefile")} className='text-red-400 cursor-pointer'><DeleteOutlinedIcon></DeleteOutlinedIcon></span>
             </div>
             <div className='my-2'>
               <ProgressBar 
-              bgColor={`${uploadProgress!==100?"#1b6ada":"green"}`}
+              bgColor={uploadProgress!==100?"#1b6ada":(errors.uploaddocs)?("#ef4444"):("green")}
               completed={uploadProgress}></ProgressBar>
             </div>
           </div>
           {errors.uploaddocs && <span className='text-red-500 flex justify-between text-sm mt-1 bg-red-200 rounded-md px-2 py-1'>{errors.uploaddocs} <span onClick={()=>setErrors({})}><CancelOutlinedIcon style={{fontSize:"1.2rem",cursor:"pointer"}}></CancelOutlinedIcon></span></span>}
           <div className='flex place-content-end mt-3'>
             <div className='flex gap-2'>
-                <button className='rounded-md text-sm border border-blue-400 text-blue-400 p-2 px-3'>Cancel</button>
-                <button onClick={handleNext} disabled={uploadProgress===100?false:true} className='disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-black disabled:opacity-30 rounded-md text-sm border text-white bg-blue-400 p-2 px-4'>Next</button>
+                <button onClick={()=>handleDiscardProcess("cancel")} className='rounded-md text-sm border border-blue-400 text-blue-400 p-2 px-3'>Cancel</button>
+                <button onClick={handleNext} disabled={(uploadProgress===100 && (errors.uploaddocs===null || errors.uploaddocs===undefined))?false:true} className='disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-black disabled:opacity-30 rounded-md text-sm border text-white bg-blue-400 p-2 px-4'>Next</button>
             </div>
            </div>
           </div>
@@ -166,26 +253,68 @@ export default function ReumeUploadPopUp({candidateId}) {
                    <div className='flex flex-col gap-1'>
                     <input
                     id='pancardno'
+                    value={pancardNo}
+                    onChange={(e)=>setPanCardNo(e.target.value)}
                     type='text'
                     className='input-field'
                     ></input>
                     <p className='text-[12px] text-gray-500'>please provide candidate pancard number for verification.</p>
                    </div>
               </div>
-              {/* {errors && <span className='text-red-500 flex justify-between text-sm mt-1 bg-red-200 rounded-md px-2 py-1'>{errors} <span onClick={()=>setErrors("")}><CancelOutlinedIcon style={{fontSize:"1.2rem",cursor:"pointer"}}></CancelOutlinedIcon></span></span>} */}
+              {errors.pancardNo && <span className='text-red-500 flex justify-between text-sm mt-1 bg-red-200 rounded-md px-2 py-1'>{errors.pancardNo} <span onClick={()=>setErrors({})}><CancelOutlinedIcon style={{fontSize:"1.2rem",cursor:"pointer"}}></CancelOutlinedIcon></span></span>}
+              {errors.parsefile && <span className='text-red-500 flex justify-between text-sm mt-1 bg-red-200 rounded-md px-2 py-1'>{errors.parsefile} <span onClick={()=>setErrors({})}><CancelOutlinedIcon style={{fontSize:"1.2rem",cursor:"pointer"}}></CancelOutlinedIcon></span></span>}
               <div className='flex place-content-end mt-3'>
                <div className='flex gap-2'>
-                  <button className='rounded-md text-sm border border-blue-400 text-blue-400 p-2 px-3'>Cancel</button>
-                  <button onClick={handleNext} disabled={uploadProgress===100?false:true} className='disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-black disabled:opacity-30 rounded-md text-sm border text-white bg-blue-400 p-2 px-4'>Next</button>
+                  <button onClick={()=>handleDiscardProcess("cancel")} className='rounded-md text-sm border border-blue-400 text-blue-400 p-2 px-3'>Cancel</button>
+                  <button onClick={uploadParseFileData} disabled={!errors.pancardNo?false:true} className='disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-black disabled:opacity-30 rounded-md text-sm border text-white bg-blue-400 p-2 px-4'>Parse</button>
                </div>
               </div>
             </div>
+          )
+        case 4:
+          return (
+            (isDuplicate)?
+            (<div className='mt-4 flex flex-col gap-4'>
+              <div className='flex justify-center items-center'>
+                  <div className='h-28 w-28 rounded-full bg-red-200 text-red-500 flex justify-center items-center'>
+                     <ErrorOutlineIcon style={{fontSize:"3.8rem"}}></ErrorOutlineIcon>
+                  </div> 
+              </div>
+              <div className='flex flex-col gap-1'>
+                <h1 className='text-xl text-center'>Resume duplicacy detected.</h1>
+                <p className='text-gray-400 text-center text-sm'>Uploaded resume is alredy exist for this job role.</p>
+              </div>
+              <div className='flex place-content-center'>
+                <button onClick={()=>navigate('/recruiter/jobs')} className='bg-blue-400 text-[14px] hover:bg-blue-500 rounded-sm text-white px-3 p-2'>Go Back</button>
+              </div>
+            </div>
+            ):
+            (<div className='mt-4 flex flex-col gap-4'>
+              <div className='flex justify-center items-center'>
+               <div className='h-28 w-28 rounded-full bg-blue-400 text-white flex justify-center items-center'>
+                 <CheckCircleOutlinedIcon style={{fontSize:"3.8rem"}}></CheckCircleOutlinedIcon>
+               </div> 
+              </div>
+              <div className='flex flex-col gap-1'>
+                <h1 className='text-xl text-center'>Please check the details entered</h1>
+                <p className='text-gray-400 text-sm text-center'>Your resume has been parsed successfully. We recommend you to cross-check the details before you proceed further</p>
+              </div>
+              {errors.cancelprocess && <span className='text-red-500 flex justify-between text-sm mt-1 bg-red-200 rounded-md px-2 py-1'>{errors.cancelprocess} <span onClick={()=>setErrors({})}><CancelOutlinedIcon style={{fontSize:"1.2rem",cursor:"pointer"}}></CancelOutlinedIcon></span></span>}
+              <div className='flex place-content-end mt-3'>
+               <div className='flex gap-2'>
+                  <button onClick={handleCancelProcess} className='rounded-md text-sm border border-blue-400 text-blue-400 p-2 px-3'>Cancel</button>
+                  <button onClick={()=>setActionNext(true)} disabled={!errors.cancelprocess?false:true} className='disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-black disabled:opacity-30 rounded-md text-sm border text-white bg-blue-400 p-2 px-4'>Procced</button>
+               </div>
+              </div>
+            </div>)
           )
 
        }
   }
 
   return (
+    <div>
+    {notification && <Notification message={notification.message} type={notification.type} onClose={()=>setNotification(null)}></Notification>}
     <div className='fixed inset-0 flex justify-center bg-black z-50 bg-opacity-40 backdrop-blur-md items-center'>
        <div className='bg-white shadow w-[500px] p-4 flex flex-col gap-1 rounded-md'>
          <div className='flex gap-2 items-center'>
@@ -197,10 +326,8 @@ export default function ReumeUploadPopUp({candidateId}) {
          {
           renderUi()
          }
-         
-         
-        
        </div>
     </div>
+  </div>
   )
 }

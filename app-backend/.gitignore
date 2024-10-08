@@ -4,4 +4,4 @@
 /node_modules
 
 #env ignore
-/.env
+.env
