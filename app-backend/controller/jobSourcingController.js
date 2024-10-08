@@ -15,6 +15,17 @@ export const createSourcingDetails=async (req,res,next)=>{
     }
 }
 
+export const showJobSourcingDetails = async (req, res) => {
+    try {
+      const sourcingDetails = await JOBSOURCINGDETAILS.findOne({ job_id: req.params.id });
+      if (!sourcingDetails) {
+        return res.status(404).json({ message: 'Sourcing Details not found' });
+      }
+      res.status(200).json(sourcingDetails);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  };
 
 export const getSourcingDetails=async (req,res,next)=>{
     try{
@@ -24,3 +35,4 @@ export const getSourcingDetails=async (req,res,next)=>{
         next(err)
     }
 }
+

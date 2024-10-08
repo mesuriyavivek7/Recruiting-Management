@@ -28,6 +28,18 @@ export const createJobAttachment=async (req,res,next)=>{
     }
 }
 
+
+export const showJobAttachment = async (req, res) => {
+  try {
+    const attachment = await JOBATTACHEMENT.findOne({job_id:req.params.id});
+    if (!attachment) {
+      return res.status(404).json({ message: 'Attachment not found' });
+    } 
+    res.status(200).json(attachment);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 export const getJobAttachmentsDetails=async (req,res,next)=>{
   try{
     let jobattachment=await JOBATTACHEMENT.findOne({folder_name:req.params.jobid},{_id:0,createdAt:0,updatedAt:0,folder_name:0})

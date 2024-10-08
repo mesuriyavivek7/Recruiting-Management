@@ -2,9 +2,10 @@
 
 import React, { useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Card, TablePagination } from '@mui/material';
+import { Button, Card, Dialog, DialogActions, DialogTitle, TablePagination, TextField } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { columns ,rows} from './RowColDataOfAll'; // Import columns configuration
+
 
 const calculateRowHeight = (params) => {
 
@@ -14,6 +15,65 @@ const calculateRowHeight = (params) => {
 const AllCandidateData = () => {
   const [selectedRowId, setSelectedRowId] = useState(null);
   const navigate = useNavigate();
+
+  const [selectedCandidate, setSelectedCandidate] = useState(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [reasonDialogOpen, setReasonDialogOpen] = useState(false);
+  const [rejectionReason, setRejectionReason] = useState('');
+
+  // Function to handle candidate click
+  const handleCandidateClick = (params) => {
+    setSelectedCandidate(params.row);
+    setDialogOpen(true); // Open the action dialog
+  };
+
+  // Handle Accept action
+  const handleAccept = () => {
+    console.log('Accepted candidate:', selectedCandidate);
+    // Add logic to verify the candidate
+    setDialogOpen(false); // Close dialog after acceptance
+    setSelectedCandidate(null);
+  };
+
+  // Handle Reject action - open the reason dialog
+  const handleReject = () => {
+    setDialogOpen(false); // Close the first dialog
+    setReasonDialogOpen(true); // Open the reason dialog
+  };
+
+  // Handle dialog close
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+    setSelectedCandidate(null);
+  };
+
+  // Handle reason dialog close
+  const handleReasonDialogClose = () => {
+    setReasonDialogOpen(false);
+    setRejectionReason('');
+  };
+
+  // Handle submitting rejection reason
+  const handleSubmitRejection = () => {
+    console.log('Rejected candidate:', selectedCandidate, 'Reason:', rejectionReason);
+    // Add logic to handle rejection
+    setReasonDialogOpen(false); // Close the reason dialog
+    setSelectedCandidate(null);
+    setRejectionReason('');
+  };
+
+  const handleCellClick = (params, event) => {
+    if (params.field === 'candidate_name') {
+      event.stopPropagation(); // Prevent the row click event
+      handleCandidateClick(params); // Call the candidate click handler
+    }
+  };
+ 
+
+  // Get the columns with the handleCandidateClick function passed as an argument
+  const getcolumns = columns(handleCandidateClick);
+
+
 
   const handleRowClick = (id) => {
     setSelectedRowId(id);
@@ -45,13 +105,14 @@ const AllCandidateData = () => {
          
           <DataGrid 
           rows={paginatedRows}
-          columns={columns}
+          columns={getcolumns}
           rowHeight={80} 
           onRowClick={(params) => handleRowClick(params.id)}
           getRowId={(row) => row._id} // Specify the custom ID field
           getRowHeight={calculateRowHeight} 
           pagination={false} 
           pageSize={rowsPerPage} 
+          onCellClick={handleCellClick} // Handle cell click events
           hideFooterPagination={true} 
           disableSelectionOnClick 
            sx={{
@@ -124,6 +185,40 @@ const AllCandidateData = () => {
         rowsPerPageOptions={[5, 10, 25]}
         labelRowsPerPage="Rows per page"
       />
+        {/* Initial Dialog for Candidate Action */}
+      <Dialog open={dialogOpen} onClose={handleDialogClose}>
+        <DialogTitle>Candidate Action</DialogTitle>
+        <div style={{ padding: '16px' }}>
+          <p>What would you like to do with {selectedCandidate ? selectedCandidate.candidate_name : ''}?</p>
+        </div>
+        <DialogActions>
+          <Button onClick={handleAccept} color="primary">Accept</Button>
+          <Button onClick={handleReject} color="secondary">Reject</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Dialog for Rejection Reason */}
+      <Dialog open={reasonDialogOpen} onClose={handleReasonDialogClose}>
+        <DialogTitle>Rejection Reason</DialogTitle>
+        <div style={{ padding: '16px' }}>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Reason"
+            type="text"
+            fullWidth
+            variant="outlined"
+            value={rejectionReason}
+            onChange={(e) => setRejectionReason(e.target.value)}
+          />
+        </div>
+        <DialogActions>
+          <Button onClick={handleReasonDialogClose}>Cancel</Button>
+          <Button onClick={handleSubmitRejection} disabled={!rejectionReason}>
+            Submit
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

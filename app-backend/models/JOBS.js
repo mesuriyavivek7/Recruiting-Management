@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 
+
 const jobSchema=new mongoose.Schema({
     enterprise_id:{
         type:String,
@@ -14,8 +15,11 @@ const jobSchema=new mongoose.Schema({
         required:true
     },
     job_basic_details:{
-        type:String
+        type: mongoose.Schema.Types.ObjectId,
+        ref:'jobbasicdetail'
+       
     },
+    
     job_commission_details:{
         type:String
     },
