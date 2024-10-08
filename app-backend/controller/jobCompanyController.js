@@ -14,3 +14,16 @@ export const createCompanyDetails=async (req,res,next)=>{
         next(err)
     }
 }
+
+
+export const showJobCompanyInfo = async (req, res) => {
+  try {
+    const companyInfo = await JOBCOMPANYINFO.findOne({ job_id: req.params.id });
+    if (!companyInfo) {
+      return res.status(404).json({ message: 'Company Info not found' });
+    }
+    res.status(200).json(companyInfo);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};

@@ -14,3 +14,16 @@ export const createJobSq=async (req,res,next)=>{
      next(err)
     }
 }
+
+
+export const showJobScreeningQuestions = async (req, res) => {
+    try {
+      const screeningQuestions = await JOBSQ.findOne({job_id:req.params.id});
+      if (!screeningQuestions) {
+        return res.status(404).json({ message: 'Screening Questions not found' });
+      }
+      res.status(200).json(screeningQuestions);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  };
