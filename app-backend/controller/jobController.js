@@ -1,6 +1,5 @@
 import JOBBASICDETAILS from "../models/JOBBASICDETAILS.js";
 import JOBS from "../models/JOBS.js";
-import JOBBASICDETAILS from "../models/JOBBASICDETAILS.js";
 import JOBCOMMISSION from "../models/JOBCOMMISSION.js";
 import JOBATTACHEMENT from "../models/JOBATTACHEMENT.js";
 import JOBCOMPANYINFO from "../models/JOBCOMPANYINFO.js";
