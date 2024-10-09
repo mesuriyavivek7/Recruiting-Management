@@ -79,12 +79,21 @@ export const changeMultipleCandidateStatus=async (req,res,next)=>{
      }
 }
 
-
-
-export const getAcCandidateData=async (req,res,next)=>{
-     try{
-       
-     }catch(err){
+export const getRecruiterMemberIds=async (req,res,next)=>{
+    try{
+       const {candidateIds}=req.body
+       const recruiterMemberIds=await Promise.all(candidateIds.map(async (cid)=>{
+             const memberId=await CANDIDATE.findById(cid,{recruiter_member_id:1,candidate_id:1,_id:0})
+             return (
+              {
+                recruiter_member_id:memberId.recruiter_member_id,
+                candidate_id:memberId.candidate_id
+              }
+             )
+       }))
+       res.status(200).json(recruiterMemberIds)
+    }catch(err){
       next(err)
-     }
+    }
 }
+

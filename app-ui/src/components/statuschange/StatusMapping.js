@@ -1,5 +1,6 @@
 // Mapping of section name with candidate status
 export const cstatus = new Map([
+    ['Pending','Under Review'],
     ['newresume',"New Resume"],
     ['rs-cc','Resume Select - Client Recruiter'],
     ['rs-hm','Resume Select - Hiring Manager'],

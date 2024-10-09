@@ -24,7 +24,8 @@ import RecruiterDashboard from "./pages/RecruiterDashboard";
 import Jobs from "./pages/Jobs";
 import UploadResume from "./pages/UploadResume";
 import RecruiterTeam from "./pages/Recruiterteam/RecruiterTeam";
-
+import RecruiterCandidate from "./pages/Recruitercandidate/RecruiterCandidate";
+import RecruiterProfilePage from "./pages/RecruiterProfilePage";
 
 
 const App = () => {
@@ -118,6 +119,14 @@ const App = () => {
           element:<AdminRoute>
                     <RecruiterTeam></RecruiterTeam>
                  </AdminRoute>
+        },
+        {
+          path:'candidate',
+          element:<RecruiterCandidate></RecruiterCandidate>
+        },
+        {
+          path:'srprofilepage',
+          element:<RecruiterProfilePage></RecruiterProfilePage>
         }
        ]
     }

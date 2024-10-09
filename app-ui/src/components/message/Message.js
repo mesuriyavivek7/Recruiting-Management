@@ -40,10 +40,14 @@ export default function Message({setOpenMessageBox}) {
                     </div>
                  </div>):(
                      users.map((user,index)=>(
-                      <div key={index} onClick={()=>selectUserToChat(user)} className='flex border hover:bg-gray-50 cursor-pointer justify-between items-center p-2'>
+                      <div key={index} onClick={()=>selectUserToChat(user)} className='flex border mt-2 hover:bg-gray-50 cursor-pointer justify-between items-center p-2'>
                           <div className='flex gap-2 items-center'>
                               <span className='h-8 w-8 flex justify-center items-center rounded-full bg-blue-400 text-white'><EmailOutlinedIcon></EmailOutlinedIcon></span>
                               <h2>{user.full_name}</h2>
+                          </div>
+                          <div className='flex flex-col items-center text-[13px] leading-4'>
+                              <span className='text-gray-500'>Candiadte</span>
+                              <span>{user.candidate_full_name}</span>
                           </div>
                           <span className='text-gray-500'><MessageOutlinedIcon></MessageOutlinedIcon></span>
                       </div>

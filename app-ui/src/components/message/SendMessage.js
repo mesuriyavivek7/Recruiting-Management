@@ -19,7 +19,7 @@ export default function SendMessage() {
       console.log(selectedUser)
       
       
-      sendMessage(selectedUser.id,content)
+      sendMessage(selectedUser.id,selectedUser.candidate_id,content)
       setContent('')
   }
 

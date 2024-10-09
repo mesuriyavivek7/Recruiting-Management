@@ -1,3 +1,7 @@
+import CANDIDATE from "../models/CANDIDATE.js"
+import CANDIDATEBASICDETAILS from "../models/CANDIDATEBASICDETAILS.js"
+import JOBBASICDETAILS from "../models/JOBBASICDETAILS.js"
+import JOBS from "../models/JOBS.js"
 import RECRUITING from "../models/RECRUITING.js"
 import RECRUITINGTEAM from "../models/RECRUITINGTEAM.js"
 
@@ -108,4 +112,56 @@ export const getTeamMember=async (req,res,next)=>{
    }catch(err){
      next(err)
    }
+}
+
+
+
+export const getCandidateDetails=async (req,res,next)=>{
+    try{
+     //Fetch job data with candidate profile for given recuriting member
+     const candidateList=await CANDIDATE.find({recruiter_member_id:req.params.reid})
+
+     const allCandidateDetails=await Promise.all(candidateList.map(async (citem)=>{
+         const candidatebasicdetails=await CANDIDATEBASICDETAILS.findById(citem.candidate_basic_details)
+
+         const jobstatus=await JOBS.findOne({job_id:citem.job_id},{job_status:1,_id:0})
+         const jobbasicdetails=await JOBBASICDETAILS.findOne({job_id:citem.job_id})
+         
+         //Create candidate object
+         let candidateObj= {
+           id:citem._id,
+           candidate_id:citem.candidate_id,
+           candidate_full_name:`${candidatebasicdetails.first_name} ${candidatebasicdetails.last_name}`,
+           candidate_status:citem.candidate_status,
+           submited:citem.createdAt,
+           updated:citem.updatedAt,
+           notice_period:candidatebasicdetails.notice_period,
+           candidate_mobile_number:candidatebasicdetails.primary_contact_number,
+           candidate_email_address:candidatebasicdetails.primary_email_id,
+           remarks:citem.recruiter_remarks,
+           job_id:jobbasicdetails.job_id,
+           job_title:jobbasicdetails.job_title,
+           job_country:jobbasicdetails.country,
+           job_city:jobbasicdetails.city[0],
+           job_status:jobstatus.job_status
+         }
+
+         return candidateObj
+     }))
+     
+     // Retuen fetched candidate details
+     res.status(200).json(allCandidateDetails)
+    }catch(err){
+       next(err)
+    }
+}
+
+
+export const getAgencyDetailsForProfilePage=async (req,res,next)=>{
+      try{
+          const agency=await RECRUITING.findById(req.params.ragencyid)
+          res.status(200).json(agency)
+      }catch(err){
+          next(err)
+      }
 }

@@ -10,7 +10,7 @@ router.post('/',verifyToken,sendMessage)
 
 
 // Get Messages Between Authenticated User and Another User
-router.get('/:userId',verifyToken,getMessage)
+router.post('/getmsg',verifyToken,getMessage)
 
 export default router
 

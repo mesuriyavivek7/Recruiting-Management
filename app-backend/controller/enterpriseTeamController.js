@@ -40,7 +40,7 @@ export const getCandidateDetails = async (req, res, next) => {
     
     const allCandidateDetails = [];
 
-    // Use Promise.all to resolve all promises before proceeding
+    
     await Promise.all(
       candidateList.map(async (outer) => {
         await Promise.all(

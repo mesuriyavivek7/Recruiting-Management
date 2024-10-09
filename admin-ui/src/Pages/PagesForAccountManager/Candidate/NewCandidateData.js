@@ -38,13 +38,6 @@ const NewCandidateData = () => {
     setPage(0);
   };
 
-  const fetchData=async ()=>{
-     try{
-        const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/getnewcandidatedata/${myValue._id}`)
-     }catch(err){
-
-     }
-  }
 
   // Calculate the rows to display
   const paginatedRows = rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);

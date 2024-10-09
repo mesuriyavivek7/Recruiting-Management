@@ -14,6 +14,9 @@ import axios from "axios"
 import { AuthContext } from '../../context/AuthContext';
 import Notification from "../../components/Notification";
 
+//importing message context for sending messages
+import { MessageContext } from '../../context/MessageContext'
+
 //importing taginput
 import TagsInput from "react-tagsinput";
 import "react-tagsinput/react-tagsinput.css"; // Include the default CSS
@@ -46,6 +49,7 @@ export default function Candidate() {
   const [selectedCandidateRows,setSelectedCandidateRows]=useState([])
   const [multipleActionCandidateData,setMultipleActionCandidateData]=useState([])
   const [multipleActionLoader,setMultipleActionLoader]=useState(false)
+  
 
   //Status chaneg states
   const [selectedStatus,setSelectedStatus]=useState('')
@@ -54,6 +58,13 @@ export default function Candidate() {
   //here we store hiring manager mails
   const [tags,setTags]=useState([])
   const [emailLoad,setEmailLoad]=useState(false)
+
+  //For send messages to multiple candidates 
+  const {sendMessage}=useContext(MessageContext)
+  const [fetchIdsRecruiterLoader,setFetchIdsRecruiterLoader]=useState(false)
+  const [recruiterMemberIds,setRecruiterMemberIds]=useState([])
+  const [content,setContent]=useState('')
+  const [sendMessageLoader,setSendMessageLoader]=useState(false)
 
 
 
@@ -67,7 +78,6 @@ const getDate=(date)=>{
  }
 
 
-  console.log(selectedCandidateRows)
 
   const fetchCandidateData=async ()=>{
        setCandidateLoader(true)
@@ -136,6 +146,46 @@ const getDate=(date)=>{
       showNotification("Add hiring manager mails into input box.",'failure')
    }
   }
+
+  //For Send message to multiple candidate recruiter
+
+  const fetchRecruiterIds=async ()=>{
+        setFetchIdsRecruiterLoader(true)
+        try{
+           const res=await axios.post(`${process.env.REACT_APP_API_BASE_URL}/candidate/getrecruitermemberids`,{candidateIds:selectedCandidateRows})
+           setRecruiterMemberIds(res.data)
+           setFetchIdsRecruiterLoader(false)
+        }catch(err){
+          //handleing error
+          console.log(err)
+          showNotification("Something went wrong while sending multiple candidate messages",'failure')
+          setFetchIdsRecruiterLoader(false)
+        }
+  }
+
+  useEffect(()=>{
+   if(currentTab==="send-message") fetchRecruiterIds()
+  },[currentTab,selectedCandidateRows])
+
+
+  const handleSendMessagesToMultipleCandidates=async ()=>{
+      setSendMessageLoader(true)
+      try{
+          await Promise.all(recruiterMemberIds.map(async (member)=>{
+               await sendMessage(member.recruiter_member_id,member.candidate_id,content)
+          }))
+          setContent('')
+          setSendMessageLoader(false)
+          setOpenMultipleActionTab(false)
+          showNotification("Successfully sending messages to multiple candidates.",'success')
+      }catch(err){
+          console.log(err)
+          showNotification("Something went wrong while sending messages to multiple candidates",'failure')
+          setSendMessageLoader(false)
+      }
+  }
+
+
 
   
 
@@ -255,7 +305,7 @@ const getDate=(date)=>{
                   <span>Send Message To</span>
                   <div className='mt-4 overflow-y-auto h-[330px]'>
                   {
-                        multipleActionLoader?(
+                        multipleActionLoader || fetchIdsRecruiterLoader?(
                             <div className='flex w-full justify-center items-center'>
                                <img src={WhiteLoader} className='w-10 h-10 mt-4'></img>
                             </div>
@@ -292,11 +342,27 @@ const getDate=(date)=>{
                        <textarea
                        className='input-field resize-none'
                        rows={4}
+                       value={content}
+                       onChange={(e)=>setContent(e.target.value)}
                        >
                        </textarea>
                      
-                       <button className='bg-blue-400 absolute text-[14px] flex items-center gap-2 rounded-md top-[64%] right-2 p-2 py-1 text-white'>
-                            <ShareOutlinedIcon></ShareOutlinedIcon> Send Messages for {selectedCandidateRows.length} Resumes
+                       <button
+                        onClick={handleSendMessagesToMultipleCandidates}
+                        disabled={sendMessageLoader || content===""} 
+                        className='bg-blue-400 absolute disabled:bg-white w-64 disabled:cursor-no-drop disabled:text-gray-500 disabled:border text-[14px] flex items-center gap-2 rounded-md top-[64%] right-2 p-2 py-1 text-white'>
+                       {
+                          sendMessageLoader?(
+                           <svg className="w-5 h-5 mr-2 text-black animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l5.6-3.2a10 10 0 00-10.4 0L4 12z"></path>
+                           </svg>
+                          ):(
+                           <span className='flex gap-1 items-center'>
+                              <ShareOutlinedIcon></ShareOutlinedIcon> Send Messages for {selectedCandidateRows.length} Resumes
+                          </span>
+                          )
+                       }
                        </button>
                      </div>
                   </div>
@@ -399,7 +465,7 @@ const getDate=(date)=>{
                   </div>
                </div>
             )
-            break;
+            
        }
   }
 
