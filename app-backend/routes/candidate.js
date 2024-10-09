@@ -5,7 +5,7 @@ import fs from 'fs'
 import { fileURLToPath } from 'url';
 
 import { cancelProcess, checkParseDetails, createAndParseResume, downloadResumeDocs, getResumeFileName, getResumeFilePath, marksAsCompleted, removeResumeFile} from '../controller/resumeController.js'
-import { addAcManager, changeCandidateStatus, changeMultipleCandidateStatus, createCandidate, getCandidateForMultipleAction, updateCandidateRemarks } from '../controller/candidateController.js'
+import { addAcManager, changeCandidateStatus, changeMultipleCandidateStatus, createCandidate, getCandidateForMultipleAction, getRecruiterMemberIds, updateCandidateRemarks } from '../controller/candidateController.js'
 import { checkEmailAndMobile, createCandidateBasicDetails } from '../controller/candidateBasicController.js'
 import { uploadCandidateAttachments } from '../controller/candidateAttachmentsController.js';
 import { uploadCandidateConsetProof } from '../controller/candidateConsetController.js';
@@ -124,8 +124,8 @@ router.post('/getcandidateformultipleaction',getCandidateForMultipleAction)
 //change status for multiple candidates
 router.put('/changemultiplecandidatestatus',changeMultipleCandidateStatus)
 
-//getting info for showing into account manager table
-router.post('/getacmanagercandidatedata/:cid')
+//fetch recruiter member id for particluer the given array of candidate ids
+router.post('/getrecruitermemberids',getRecruiterMemberIds)
 
 export default router
 

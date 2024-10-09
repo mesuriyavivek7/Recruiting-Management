@@ -4,17 +4,22 @@ import { DataGrid } from '@mui/x-data-grid';
 import Box from '@mui/material/Box';
 import axios from 'axios';
 
+//import candidate status mapping
+import { cstatus } from '../statuschange/StatusMapping';
+
 //importing loader
 import WhiteLoader from '../../assets/whiteloader.svg'
 
 //importing icons
 import DescriptionIcon from '@mui/icons-material/Description';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
-export default function CandidateDataShow({selectedRows,setSelectedRows,showNotification,loader,rows,refetchCandidateData}) {
- const [candidateStatusLoader,setCandidateStatusLoader]=useState(false)
+export default function RecruiterCandidateDataShow({showNotification,loader,rows,refetchCandidateData}) {
+//  const [candidateStatusLoader,setCandidateStatusLoader]=useState(false)
  const [remarksLoader,setRemarksLoader]=useState(false)
 
  const [remarks,setRemarks]=useState(null)
+
+ console.log("candiadte rows---->",rows)
 
 const getDate=(date)=>{
   let d=new Date(date)
@@ -36,18 +41,18 @@ const getDays=(date)=>{
   return days
 }
 
-const candiadteStatusChange=async (e,id)=>{
-    try{
-      setCandidateStatusLoader(true)
-      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/candidate/changecandidatestatus/${id}`,{status:e.target.value})
-      await refetchCandidateData()
-    }catch(err){
-      setCandidateStatusLoader(false)
-      showNotification("Something wrong while changeing candidate status.","failure")
-      console.log(err)
-    }
-    setCandidateStatusLoader(false)
-}
+// const candiadteStatusChange=async (e,id)=>{
+//     try{
+//       setCandidateStatusLoader(true)
+//       await axios.post(`${process.env.REACT_APP_API_BASE_URL}/candidate/changecandidatestatus/${id}`,{status:e.target.value})
+//       await refetchCandidateData()
+//     }catch(err){
+//       setCandidateStatusLoader(false)
+//       showNotification("Something wrong while changeing candidate status.","failure")
+//       console.log(err)
+//     }
+//     setCandidateStatusLoader(false)
+// }
 
 
 const viewCandidateResume=async (cid)=>{
@@ -160,39 +165,10 @@ const candidateCol=[
         }
   },
   {
-      field:"cstatus",headerName:"Candidate Status",headerClassName:'super-app-theme--header',width:230,
+      field:"cstatus",headerName:"Candidate Status",headerClassName:'super-app-theme--header',width:250,
       renderCell:(params)=>{
           return (
-              <select 
-              className='input-field'
-              value={params.row.candidate_status}
-              onChange={(e)=>candiadteStatusChange(e,params.row.id)}
-              >
-                  <option value='newresume'>New Resume</option>
-                  <option value='rs-cc'>Resume Select - Client Recruiter</option>
-                  <option value='rs-hm'>Resume Select - Hiring Manager</option>
-                  <option value='test-process'>Test in Process</option>
-                  <option value='interview-process'>Interview in Process</option>
-                  <option value='no-show'>No Show</option>
-                  <option value='candidate-not-ins'>Candidate Not Interested</option>
-                  <option value='candidate-not-reach'>Candidate Not Reachable</option>
-                  <option value='rr-cc'>Resume Reject - Client Recruiter</option>
-                  <option value='rr-hm'>Resume Reject - Hiring Manager</option>
-                  <option value='r-test'>Resueme in Test</option>
-                  <option value='rjt-tech-itw'>Resume Reject in Tech Interview</option>
-                  <option value='rjt-hr-itw'>Rejected in HR Interview</option>
-                  <option value='s-f-itw'>Selected in Final Interview</option>
-                  <option value='s-not-offer'>Selected - Won't be Offered</option>
-                  <option value='o-released'>Offer Released</option>
-                  <option value='o-accepted'>Offer Accepted</option>
-                  <option value='o-rejected'>Offer Rejected</option>
-                  <option value='c-not-joine'>Candidate Not Joined</option>
-                  <option value='c-joine'>Candidate Joined</option>
-                  <option value='quit-after-joine'>Quit After Joining</option>
-                  <option value='on-hold'>On Hold</option>
-                  <option value='no-action'>No Further Action</option>
-                  <option value='use-later'>Use Later</option>
-              </select>
+              <span className={`p-2 border  ${params.row.candidate_status==='Pending'?("border-yellow-500 bg-yellow-100"):("border-orange-400 bg-orange-200")}  rounded-md`}>{cstatus.get(params.row.candidate_status)}</span>
           )
       }
   },
@@ -241,17 +217,7 @@ const candidateCol=[
           )
       }
   },
-  {
-    field:'recruiter_name', headerName:"Recruiter", headerClassName:'super-app-theme--header', width:200,
-    renderCell:(params)=>{
-       return (
-          <div className='flex gap-1 mt-7 items-center'>
-             <span className='h-7 w-7 font-bold rounded-full text-white text-[15px] flex justify-center items-center bg-blue-400'>{params.row.recruiter_name[0].toUpperCase()}</span>
-             <span className='text-sm'>{params.row.recruiter_name}</span>
-          </div>
-       )
-    }
-  },
+  
   {
     field:'remarks',headerName:'Remarks' , headerClassName:'super-app-theme--header',width:200,
     renderCell:(params)=>{
@@ -274,7 +240,7 @@ const candidateCol=[
   
   return (
    <div className='custom-div'>
-     {
+     {/* {
       candidateStatusLoader && 
        <div className='fixed inset-0 flex justify-center bg-black z-50 bg-opacity-50 backdrop-blur-md items-center'>
          <div className='custom-div w-[450px] p-4 items-center'>
@@ -282,7 +248,7 @@ const candidateCol=[
             <p>Please wait till we update resume status.</p>
          </div>
        </div>
-     }
+     } */}
      {remarksLoader && 
       <div className='fixed inset-0 flex justify-center bg-black z-50 bg-opacity-50 backdrop-blur-md items-center'>
          <div className='custom-div w-[450px] p-4 items-center'>
@@ -302,8 +268,8 @@ const candidateCol=[
       rows={rows}
       columns={candidateCol}
       loading={loader}
-      rowSelectionModel={selectedRows}
-      onRowSelectionModelChange={(newRowSelected)=>setSelectedRows(newRowSelected)}
+    //   rowSelectionModel={selectedRows}
+    //   onRowSelectionModelChange={(newRowSelected)=>setSelectedRows(newRowSelected)}
       initialState={{
           pagination: {
             paginationModel: { page: 0, pageSize: 10 },
@@ -311,7 +277,6 @@ const candidateCol=[
         }}
      pageSize={8}
      pageSizeOptions={[5,10]}
-     checkboxSelection
      sx={{
           '& .MuiDataGrid-columnHeaders': {
             background:'red', // Set your desired background color here

@@ -21,7 +21,10 @@ const candidateSchema=new mongoose.Schema({
         type:String,
         default:"Pending"
      },
+     //this remarks is for enterprise 
      remarks:String,
+     //this remarks is for recruiter 
+     recruiter_remarks:String,
      alloted_account_manager:String,
      candidate_basic_details:String,
      candidate_attachments:String,

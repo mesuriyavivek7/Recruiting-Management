@@ -22,17 +22,23 @@ const MessageProvider = ({ children }) => {
       if(user.userType==='enterprise') res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/enterpriseteam/getrecruiterteam/${user._id}`);
       else if (user.userType==='recruiting') res= await axios.get(`${process.env.REACT_APP_API_BASE_URL}/recruitingteam/getenterpriseteam/${user._id}`);
       if(res) setUsers(res.data)
+      console.log('fetched users---->',res.data)
     } catch (err) {
       console.error(err);
     }
   };
+
+
 
   // Select a user to chat with
   const selectUserToChat = async (user) => {
     setSelectedUser(user);
     setLoading(true)
     try {
-      const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/message/${user.id}`,{
+      const res = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/message/getmsg`,{
+        candidate_id:user.candidate_id,
+        otherUserId:user.id
+      },{
         headers: { 'x-auth-token': Cookies.get("t_user") },
       });
       setMessages(res.data);
@@ -44,11 +50,12 @@ const MessageProvider = ({ children }) => {
   };
 
   // Send a message
-  const sendMessage = async (receiverId, content) => {
+  const sendMessage = async (receiverId,candidate_id,content) => {
     setSendLoader(true)
     try {
       const res = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/message`, {
         receiverId,
+        candidate_id,
         receiverModel:(user.userType==='recruiting'?("enterpriseteam"):("recruitingteam")),
         content,
       }, {
