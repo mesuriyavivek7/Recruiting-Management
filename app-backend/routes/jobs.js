@@ -4,23 +4,23 @@ import path from "path"
 import multer from 'multer'
 import { fileURLToPath } from 'url';
 
-import { allotedJobToAcManager, createJobs, getAllJobs } from '../controller/jobController.js'
-import { craeteJobBasicDeatils, showJobDetail } from '../controller/jobBasicController.js'
-import { createJobDraft, deleteJobDraft } from '../controller/jobDraftController.js'
-import { createJobCommission, showJobCommission } from '../controller/jobCommissionController.js'
-import { createCompanyDetails, showJobCompanyInfo } from '../controller/jobCompanyController.js'
-import { createSourcingDetails, showJobSourcingDetails } from '../controller/jobSourcingController.js'
-import { createJobAttachment, showJobAttachment } from '../controller/jobAttachmentController.js'
-import { createJobSq, showJobScreeningQuestions } from '../controller/jobSqController.js';
+// import { allotedJobToAcManager, createJobs,  } from '../controller/jobController.js'
+// import { craeteJobBasicDeatils, showJobDetail } from '../controller/jobBasicController.js'
+// import { createJobDraft, deleteJobDraft } from '../controller/jobDraftController.js'
+// import { createJobCommission, showJobCommission } from '../controller/jobCommissionController.js'
+// import { createCompanyDetails, showJobCompanyInfo } from '../controller/jobCompanyController.js'
+// import { createSourcingDetails, showJobSourcingDetails } from '../controller/jobSourcingController.js'
+// import { createJobAttachment, showJobAttachment } from '../controller/jobAttachmentController.js'
+// import { createJobSq, showJobScreeningQuestions } from '../controller/jobSqController.js';
 
-import { activateJob, addCandidateProfileList, allotedJobToAcManager, createJobs, deleteJobDraftWithOtherDetails, downloadEvaluationForm, getAllJobDetails, getAllJobDraftDetails, getCandidateScreeningQue, getFronLiveJobDetails, getFrontAcceptedJobDetails, getFrontMappedJobDetails, getJobAttachmentsDetailsForCandidate } from '../controller/jobController.js'
-import { craeteJobBasicDeatils, getJobBasicDetails } from '../controller/jobBasicController.js'
+import { activateJob,getAllJobs, addCandidateProfileList, allotedJobToAcManager, createJobs, deleteJobDraftWithOtherDetails, downloadEvaluationForm, getAllJobDetails, getAllJobDraftDetails, getCandidateScreeningQue, getFronLiveJobDetails, getFrontAcceptedJobDetails, getFrontMappedJobDetails, getJobAttachmentsDetailsForCandidate } from '../controller/jobController.js'
+import { craeteJobBasicDeatils,showJobDetail, getJobBasicDetails } from '../controller/jobBasicController.js'
 import { createJobDraft, deleteJobDraft } from '../controller/jobDraftController.js'
-import { createJobCommission, getJobCommissionDetails } from '../controller/jobCommissionController.js'
-import { createCompanyDetails, getJobCompanyDetails } from '../controller/jobCompanyController.js'
-import { createSourcingDetails, getSourcingDetails } from '../controller/jobSourcingController.js'
-import { checkAndRemoveFile, createJobAttachment, getJobAttachmentsDetails, updateJobAttachmentsDetails } from '../controller/jobAttachmentController.js'
-import { createJobSq, getScreeningQue } from '../controller/jobSqController.js';
+import { createJobCommission,showJobCommission, getJobCommissionDetails } from '../controller/jobCommissionController.js'
+import { createCompanyDetails,showJobCompanyInfo, getJobCompanyDetails } from '../controller/jobCompanyController.js'
+import { createSourcingDetails,showJobSourcingDetails, getSourcingDetails } from '../controller/jobSourcingController.js'
+import { checkAndRemoveFile,showJobAttachment, createJobAttachment, getJobAttachmentsDetails, updateJobAttachmentsDetails } from '../controller/jobAttachmentController.js'
+import { createJobSq,showJobScreeningQuestions, getScreeningQue } from '../controller/jobSqController.js';
 
 
 const router=express.Router()
