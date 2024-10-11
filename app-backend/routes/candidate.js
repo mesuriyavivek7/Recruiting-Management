@@ -5,8 +5,8 @@ import fs from 'fs'
 import { fileURLToPath } from 'url';
 
 import { cancelProcess, checkParseDetails, createAndParseResume, downloadResumeDocs, getResumeFileName, getResumeFilePath, marksAsCompleted, removeResumeFile} from '../controller/resumeController.js'
-import { addAcManager, changeCandidateStatus, changeMultipleCandidateStatus, createCandidate, getCandidateForMultipleAction, updateCandidateRemarks } from '../controller/candidateController.js'
-import { checkEmailAndMobile, createCandidateBasicDetails } from '../controller/candidateBasicController.js'
+import { addAcManager, changeCandidateStatus, changeMultipleCandidateStatus, createCandidate, getAcCandidateData, getCandidateForMultipleAction, updateCandidateRemarks } from '../controller/candidateController.js'
+import { checkEmailAndMobile, createCandidateBasicDetails, getCandidateBasicDetails, getCandidateById } from '../controller/candidateBasicController.js'
 import { uploadCandidateAttachments } from '../controller/candidateAttachmentsController.js';
 import { uploadCandidateConsetProof } from '../controller/candidateConsetController.js';
 import { createSqAnswers } from '../controller/candidateSqController.js';
@@ -87,7 +87,8 @@ router.post('/createcandidate/:cid',createCandidate)
 
 //for creating candidate basic details
 router.post('/createcandidatebasicdetails/:orgcid',createCandidateBasicDetails)
-
+router.get('/',getCandidateBasicDetails)
+router.get('/:id',getCandidateById)
 //for uploading candidate other forms
 router.post('/uploadcandidateattachments/:cid',prepareFolder,uploadAttach.fields([
   {name:'evaluation_form',maxCount:1},

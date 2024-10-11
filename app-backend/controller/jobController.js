@@ -1,6 +1,6 @@
 import JOBBASICDETAILS from "../models/JOBBASICDETAILS.js";
 import JOBS from "../models/JOBS.js";
-import JOBBASICDETAILS from "../models/JOBBASICDETAILS.js";
+
 import JOBCOMMISSION from "../models/JOBCOMMISSION.js";
 import JOBATTACHEMENT from "../models/JOBATTACHEMENT.js";
 import JOBCOMPANYINFO from "../models/JOBCOMPANYINFO.js";
@@ -33,7 +33,10 @@ export const createJobs=async (req,res,next)=>{
 
 export const getAllJobs = async (req, res) => {
   try {
-    const jobs = await JOBS.find().populate('job_basic_details').exec();
+    const jobs = await JOBS.find().populate('job_basic_details').populate({
+      path: 'enterprise_member_id',
+      select: 'full_name email',  // Only populate these fields
+    }).exec();
     // const jobBasicDetail = await JOBBASICDETAILS.find();
    
 

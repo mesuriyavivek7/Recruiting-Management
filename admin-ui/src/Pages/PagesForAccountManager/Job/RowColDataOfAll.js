@@ -44,39 +44,70 @@ export const columns = [
   }
   
 ,  
+  
+  
   {
     field: 'recruiter',
     headerName: 'Recruiter',
-    flex: 2,
-    minWidth: 250,
+    flex: 3, 
+    minWidth: 300, 
     headerAlign: 'left',
     align: 'left',
     renderCell: (params) => {
-      const recruiter = params.row.job_basic_details.hiring_managers || 'Unknown Recruiter'; // Fallback if undefined
+      const recruiter = params.row?.enterprise_member_id?.full_name || 'Unknown Recruiter'; // Fallback if undefined
+      const email = params.row?.enterprise_member_id?.email || 'Unknown email'; // Fallback if undefined
+  
       return (
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          {/* Rounded Circle for the first letter of the recruiter's email */}
-          <div
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            padding: '10px 0', 
+            height: '100%', 
+            lineHeight: '1.5', 
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', marginBottom: 4 }}>
+            
+            <div
+              style={{
+                width: 36, 
+                height: 36,
+                borderRadius: '50%',
+                backgroundColor: '#3f51b5',
+                color: '#fff',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginRight: 10, 
+              }}
+            >
+              {recruiter.charAt(0).toUpperCase()}
+            </div>
+            
+            <span style={{  fontSize: '18px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {recruiter}
+            </span>
+          </div>
+         
+          <p
             style={{
-              width: 32,
-              height: 32,
-              borderRadius: '50%',
-              backgroundColor: '#3f51b5',
-              color: '#fff',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginRight: 8,
+              margin: 0,
+              fontSize: '16px',
+              color: 'gray',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
             }}
           >
-            {recruiter.charAt(0).toUpperCase()}
-          </div>
-          {/* Display the recruiter's full email */}
-          {recruiter}
+            {email}
+          </p>
         </div>
       );
     },
   },
+  
   {
     field: 'location',
     headerName: 'Location',

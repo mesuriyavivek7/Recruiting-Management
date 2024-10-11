@@ -7,8 +7,11 @@ const jobSchema=new mongoose.Schema({
         required:true
     },
     enterprise_member_id:{
-        type:String,
+        // type:String,
+         type: mongoose.Schema.Types.ObjectId,
+        ref:'enterpriseteam',
         required:true
+
     },
     job_id:{
         type:String,

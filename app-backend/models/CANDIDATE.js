@@ -22,9 +22,17 @@ const candidateSchema=new mongoose.Schema({
         default:"Pending"
      },
      remarks:String,
-     alloted_account_manager:String,
-     candidate_basic_details:String,
-     candidate_attachments:String,
+     alloted_account_manager:{
+     type:String
+     },
+     candidate_basic_details:{
+      type: mongoose.Schema.Types.ObjectId,
+      ref:'candidatebasicdetail'
+     },
+     candidate_attachments:{
+       type: mongoose.Schema.Types.ObjectId,
+      ref:'candidateattachment'
+     },
      candidate_consent_proof:String,
      candidate_question_answer:String
 },{timestamps:true})

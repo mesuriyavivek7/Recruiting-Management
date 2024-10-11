@@ -75,7 +75,12 @@ return (
                 <FaBriefcase className="mr-3 text-2xl xl:text-3xl text-blue-600" /> Job Profile
               </h2>
               <p className='xl:text-lg'> <strong>Job Title:</strong> {job?.basicDetails?.job_title}</p>
-              <p className='xl:text-lg'><strong>Job Description:</strong> {job?.basicDetails?.job_description}</p>
+              {/* <p className='xl:text-lg'><strong>Job Description:</strong> {job?.basicDetails?.job_description}</p> */}
+              <p className='xl:text-lg'>
+  <strong>Job Description:</strong> 
+  <span dangerouslySetInnerHTML={{ __html: job?.basicDetails?.job_description }} />
+</p>
+
               <p className='xl:text-lg'><strong>permanent remote work:</strong> {job?.basicDetails?.permanent_remote_work? 'Yes' : 'No'}</p>
               <p className='xl:text-lg'><strong>Domain:</strong> {job?.basicDetails?.job_domain}</p>
               <p className='xl:text-lg'><strong>Experience Required:</strong> {job?.basicDetails?.experience?.minexp} - {job?.basicDetails?.experience?.maxexp}</p>

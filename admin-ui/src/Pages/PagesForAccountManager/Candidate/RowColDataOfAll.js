@@ -23,32 +23,32 @@ export const columns =(handleCandidateClick)=> [
       headerAlign: 'left',
       align: 'left',
       renderCell: (params) => {
-        const candidateName = params.row.candidate_name || 'No Title Available'; // Fallback if undefined
-        const pdfLink = params.row.pdfLink; // Get the PDF link from the row data
+        const candidateName = params.row.candidate_basic_details.first_name+" " +params.row.candidate_basic_details.last_name || 'No Title Available'; // Fallback if undefined
+        const pdfLink = params.row.candidate_attachments?.evaluation_form?.filepath; 
     
         return (
           <div style={{ display: 'flex', alignItems: 'center',gap:'30px' }}>
-             <span  style={{ marginLeft: 8, cursor: 'pointer' }} // Ensure cursor pointer
+             <span  style={{ marginLeft: 8, cursor: 'pointer' }} 
        
-              onMouseEnter={(e) => e.currentTarget.style.textDecoration = 'underline'} // Add hover effect
-              onMouseLeave={(e) => e.currentTarget.style.textDecoration = 'none'} // Remove hover effect
+              onMouseEnter={(e) => e.currentTarget.style.textDecoration = 'underline'} 
+              onMouseLeave={(e) => e.currentTarget.style.textDecoration = 'none'} 
                 onClick={() => handleCandidateClick(params)}>{candidateName}</span>
             {/* PDF Icon Button */}
             <IconButton
               size="small"
               onMouseDown={(e) => {
-                e.preventDefault(); // Prevent the default focus behavior
-                e.stopPropagation(); // Prevent the row click event
+                e.preventDefault(); 
+                e.stopPropagation(); 
                 if (pdfLink) {
-                  window.open(pdfLink, '_blank'); // Open PDF in a new tab
+                  window.open(pdfLink, '_blank'); 
                 } else {
-                  alert('PDF link is not available'); // Alert if PDF link is undefined
+                  alert('PDF link is not available'); 
                 }
               }}
-              tabIndex={-1} // Prevent focus
+              tabIndex={-1} 
               sx={{
                 '&:focus': {
-                  outline: 'none', // Remove focus outline
+                  outline: 'none', 
                 },
               }}
             >
@@ -69,7 +69,7 @@ export const columns =(handleCandidateClick)=> [
       align: 'left',
       renderCell: (params) => (
         <div>
-          {params.row.uphire_job_id} - {params.row.job_title}
+          {params.row.job_id} - {params.row.job_title}
         </div>
       ),
     },
@@ -96,6 +96,11 @@ export const columns =(handleCandidateClick)=> [
       minWidth: 150,
       headerAlign: 'left',
       align: 'left',
+      renderCell: (params) => (
+        <div>
+          {params.row.candidate_basic_details.updatedAt}
+        </div>
+      ),
     },
     {
       field: 'notice_period',
@@ -103,7 +108,12 @@ export const columns =(handleCandidateClick)=> [
       flex: 1,
       minWidth: 150,
       headerAlign: 'left',
-      align: 'left',
+      align: 'center',
+      renderCell: (params) => (
+        <div>
+          {params.row.candidate_basic_details.notice_period}
+        </div>
+      ),
     },
     {
       field: 'emai',
@@ -114,7 +124,7 @@ export const columns =(handleCandidateClick)=> [
       align: 'left',
       renderCell: (params) => (
         <div>
-          {params.row.emai} - {params.row.mobile}
+          {params.row.candidate_basic_details.primary_email_id} - {params.row.candidate_basic_details.primary_contact_number}
         </div>
       ),
     },

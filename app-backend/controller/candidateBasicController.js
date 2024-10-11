@@ -23,3 +23,34 @@ export const checkEmailAndMobile=async (req,res,next)=>{
       next(err)
     }
 }
+export const getCandidateBasicDetails = async (req, res, next) => {
+  try {
+    // Find the candidate using the orgcid parameter from the request URL
+    const candidate = await CANDIDATE.find().populate('candidate_basic_details').populate('candidate_attachments').exec()
+ 
+    if (!candidate) return res.status(404).json("Candidate not found");
+
+    
+   
+  
+    res.status(200).json(candidate);
+  } catch (err) {
+    
+    next(err);
+  }
+};
+export const getCandidateById = async (req, res, next) => {
+  try {
+    // Extract the candidate ID from the request parameters
+    const candidateId = req.params.id;  // Assuming the ID is passed in the URL as a parameter like /candidate/:id
+
+    // Find the candidate using the extracted ID
+    const candidate = await CANDIDATE.findOne({ candidate_id: candidateId }).populate('candidate_basic_details');
+
+    if (!candidate) return res.status(404).json({ message: "Candidate not found" });
+
+    res.status(200).json(candidate);
+  } catch (err) {
+    next(err);
+  }
+};

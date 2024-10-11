@@ -118,3 +118,67 @@ export const getNewCandidateId=async (req,res,next)=>{
        next(err)
      }
 }
+
+
+
+
+
+
+
+export const verifyCandidate = async (req, res) => {
+  try {
+    const { candidateId, accepted, rejectionReason } = req.body;
+
+    console.log(`Candidate ID: ${candidateId}`);
+
+    const appBackendUrl = 'http://localhost:8080/api/candidate';
+    const candidateResponse = await axios.get(`${appBackendUrl}/${candidateId}`);
+
+    if (!candidateResponse || !candidateResponse.data) {
+      return res.status(404).json({ message: 'Candidate not found in app-backend' });
+    }
+
+    const candidateDetails = candidateResponse.data;
+    const candidateFullName = `${candidateDetails.candidate_basic_details.first_name} ${candidateDetails.candidate_basic_details.last_name}`;
+
+    if (accepted) {
+      // Find if the candidate is already verified
+      const accountManager = await ACCOUNTMANAGER.findOne({
+        verified_candidate_profile: candidateFullName,
+      });
+
+      if (accountManager) {
+        return res.status(200).json({
+          message: `Candidate ${candidateFullName} is already accepted and verified.`,
+        });
+      }
+
+      const updatedAccountManager = await ACCOUNTMANAGER.findOneAndUpdate(
+        {},
+        { $push: { verified_candidate_profile: candidateFullName } }, 
+        { new: true, upsert: true } 
+      );
+
+      return res.status(200).json({
+        message: 'Candidate accepted and admin-backend updated successfully',
+        updatedAccountManager,
+      });
+    } else {
+      
+      const updatedAccountManager = await ACCOUNTMANAGER.findOneAndUpdate(
+        { verified_candidate_profile: candidateFullName },  
+        { $pull: { verified_candidate_profile: candidateFullName } }, 
+        { new: true }
+      );
+
+      return res.status(200).json({
+        message: `Candidate ${candidateFullName} has been rejected and removed from verified candidates list.`,
+        rejectionReason,
+        updatedAccountManager,
+      });
+    }
+  } catch (error) {
+    console.error('Error updating candidate status:', error);
+    return res.status(500).json({ message: 'Server error' });
+  }
+};

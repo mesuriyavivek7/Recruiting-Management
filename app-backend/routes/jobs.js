@@ -4,14 +4,14 @@ import path from "path"
 import multer from 'multer'
 import { fileURLToPath } from 'url';
 
-import { allotedJobToAcManager, createJobs, getAllJobs } from '../controller/jobController.js'
-import { craeteJobBasicDeatils, showJobDetail } from '../controller/jobBasicController.js'
-import { createJobDraft, deleteJobDraft } from '../controller/jobDraftController.js'
-import { createJobCommission, showJobCommission } from '../controller/jobCommissionController.js'
-import { createCompanyDetails, showJobCompanyInfo } from '../controller/jobCompanyController.js'
-import { createSourcingDetails, showJobSourcingDetails } from '../controller/jobSourcingController.js'
-import { createJobAttachment, showJobAttachment } from '../controller/jobAttachmentController.js'
-import { createJobSq, showJobScreeningQuestions } from '../controller/jobSqController.js';
+import {   getAllJobs } from '../controller/jobController.js'
+import {  showJobDetail } from '../controller/jobBasicController.js'
+
+import {  showJobCommission } from '../controller/jobCommissionController.js'
+import {  showJobCompanyInfo } from '../controller/jobCompanyController.js'
+import {  showJobSourcingDetails } from '../controller/jobSourcingController.js'
+import {  showJobAttachment } from '../controller/jobAttachmentController.js'
+import {  showJobScreeningQuestions } from '../controller/jobSqController.js';
 
 import { activateJob, addCandidateProfileList, allotedJobToAcManager, createJobs, deleteJobDraftWithOtherDetails, downloadEvaluationForm, getAllJobDetails, getAllJobDraftDetails, getCandidateScreeningQue, getFronLiveJobDetails, getFrontAcceptedJobDetails, getFrontMappedJobDetails, getJobAttachmentsDetailsForCandidate } from '../controller/jobController.js'
 import { craeteJobBasicDeatils, getJobBasicDetails } from '../controller/jobBasicController.js'
