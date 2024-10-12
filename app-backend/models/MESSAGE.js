@@ -12,6 +12,10 @@ const messageSchema=new mongoose.Schema({
        required:true,
        enum:['enterpriseteam','recruitingteam']
      },
+     candidate_id:{
+       type:String,
+       required:true
+     },
      receiver:{
         type:mongoose.Schema.Types.ObjectId,
         required:true,

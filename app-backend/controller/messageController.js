@@ -16,7 +16,7 @@ const getUserModel=async (userId)=>{
 
 //send message
 export const sendMessage=async (req,res,next)=>{
-       const {receiverId,receiverModel,content}=req.body
+       const {receiverId,receiverModel,candidate_id,content}=req.body
 
        const senderId=req.user.id
 
@@ -50,6 +50,7 @@ export const sendMessage=async (req,res,next)=>{
          const message=new MESSAGE({
             sender:senderId,
             senderModel,
+            candidate_id,
             receiver:receiverId,
             receiverModel,
             content
@@ -71,17 +72,15 @@ export const sendMessage=async (req,res,next)=>{
 //For getting messages
 
 export const getMessage=async (req,res,next)=>{
-   const otherUserId=req.params.userId
+   const {otherUserId,candidate_id}=req.body
    const currentUserId=req.user.id
-
-
 
    try{
 
       const message=await MESSAGE.find({
          $or:[
-            {sender:currentUserId,receiver:otherUserId},
-            {sender:otherUserId,receiver:currentUserId}
+            {sender:currentUserId,receiver:otherUserId,candidate_id},
+            {sender:otherUserId,receiver:currentUserId,candidate_id}
          ]
       }).sort({timestamp:1})
       .populate('sender','full_name')

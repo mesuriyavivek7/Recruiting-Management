@@ -125,8 +125,8 @@ router.post('/getcandidateformultipleaction',getCandidateForMultipleAction)
 //change status for multiple candidates
 router.put('/changemultiplecandidatestatus',changeMultipleCandidateStatus)
 
-//getting info for showing into account manager table
-router.post('/getacmanagercandidatedata/:cid')
+//fetch recruiter member id for particluer the given array of candidate ids
+router.post('/getrecruitermemberids',getRecruiterMemberIds)
 
 export default router
 

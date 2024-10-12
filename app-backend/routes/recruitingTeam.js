@@ -1,5 +1,6 @@
 import express from 'express'
-import { addJobIntoAcceptList, addNewCandidate, changeAccountStatus, changeCommissionFlag, checkCreadentials, checkIsAdmin, createteammember, getEnterpriseTeamMember, rejectJob, updateJobMappedList } from '../controller/recrutingTeamController.js'
+import { addJobIntoAcceptList, addNewCandidate, changeAccountStatus, changeCommissionFlag, checkCreadentials, checkIsAdmin, createteammember, getEnterpriseTeamMember, getRecruiterCandidateDetails, getRecruiterProfilePageDetails, rejectJob, updateJobMappedList } from '../controller/recrutingTeamController.js'
+
 
 
 const router=express.Router()
@@ -34,5 +35,10 @@ router.put('/changecommisionflag/:rememberid',changeCommissionFlag)
 //for change recruiter team account status
 router.put('/changeaccountstatus/:rememberid',changeAccountStatus)
 
+//for getting candidate details for showing into recruiter candidate page
+router.get('/getcandidatedetails/:rememberid',getRecruiterCandidateDetails)
+
+//for getting recruiter team details for showing into profile page
+router.get('/getredetailsforprofilepage/:reid',getRecruiterProfilePageDetails)
 
 export default router

@@ -37,8 +37,7 @@ router.post('/addcandidateintoverifiedlist/:acmanagerid',addCandidateVerifiedLis
 //get account manager name and mail id
 router.get('/getmailandname/:acmanagerid',getAcmanagerMailandName)
 
+//getting candidate details
 
-//get candidate data
-router.get('/getnewcandidatedata/:acmanagerid',getNewCandidateId)
 
 export default router

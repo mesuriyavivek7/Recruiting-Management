@@ -1,5 +1,4 @@
 import ACCOUNTMANAGER from "../models/ACCOUNTMANAGER.js"
-import axios from 'axios'
 
 //get account manager by master admin id
 export const getAcByMadminId=async (req,res,next)=>{
