@@ -1,5 +1,5 @@
 import express from 'express'
-import { acVerified, allocatedAcManager, changeAccountStatus, changeMail, changepassword, checkPassword, getAcManagerId, getAcPendingEnterprise, getAcmanagerMailandName, getAllPendingMadminVerifyEnterprise, getCompnayName, getEnterprise, getEnterpriseMember, getMobileNo } from '../controller/enterpriseController.js'
+import { acVerified, allocatedAcManager, changeAccountStatus, changeMail, changepassword, checkPassword, getAcManagerId, getAcPendingEnterprise, getAcmanagerMailandName, getAllEnterprise, getAllPendingMadminVerifyEnterprise, getCompnayName, getEnterprise, getEnterpriseMember, getMobileNo } from '../controller/enterpriseController.js'
 
 const router=express.Router()
 
@@ -20,7 +20,7 @@ router.get('/find/:id',getEnterprise)
 
 //for gettign all pending madmin verification enterprise
 router.get('/adminpending',getAllPendingMadminVerifyEnterprise)
-
+router.get('/allenterprise',getAllEnterprise)
 //for change account status 
 router.post('/changestatus',changeAccountStatus)
 

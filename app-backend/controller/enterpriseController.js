@@ -85,6 +85,18 @@ export const getAllPendingMadminVerifyEnterprise=async (req,res,next)=>{
   }
 }
 
+//get all enterprise
+
+export const getAllEnterprise=async(req,res,next)=>{
+
+  try {
+    const allEnterprise=await ENTERPRISE.find();
+    res.status(200).json(allEnterprise)
+  } catch (error) {
+    next(error)
+  }
+}
+
 
 export const changeAccountStatus=async (req,res,next)=>{
   try{
