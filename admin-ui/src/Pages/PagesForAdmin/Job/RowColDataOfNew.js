@@ -94,7 +94,7 @@ export const columns = [
 export const rows = Array(10)
   .fill(null)
   .map((_, index) => ({
-    _id: String(index + 1),
+     _id: `${index + 1}`,
     job_title: "zigo",
     recruiter: "Arati Dangar",
     location: { state: 'Karnataka', country: 'India' },
