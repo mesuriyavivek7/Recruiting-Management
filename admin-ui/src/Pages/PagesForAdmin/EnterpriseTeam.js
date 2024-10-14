@@ -16,15 +16,15 @@ const EnterpriseTeam = () => {
   const navigate = useNavigate();
 
   const handleRowClick = (row) => {
-    setSelectedRow(row); // Store the selected row details
-    setDialogOpen(true); // Open the dialog
+    setSelectedRow(row); 
+    setDialogOpen(true); 
   };
 
-  // State for pagination
+ 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  // Handle pagination change
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -34,10 +34,10 @@ const EnterpriseTeam = () => {
     setPage(0);
   };
 
-  // Calculate the rows to display
+  
   const paginatedRows = rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
-  // Close the dialog
+
   const handleClose = () => {
     setDialogOpen(false);
     setSelectedRow(null);
@@ -45,12 +45,12 @@ const EnterpriseTeam = () => {
 
   return (
     <Card className='mt-4 font-sans shadow-md'  sx={{
-      // Change to your desired border color
-      borderRadius: '8px', // Optional: adjust border radius
-      boxShadow: 3, // Optional: increase shadow intensity
+      
+      borderRadius: '8px', 
+      boxShadow: 3, 
     }}>
     <div>
-      {/* Header Component */}
+    
       <Box 
         display="flex" 
         justifyContent="space-between" 
@@ -63,12 +63,12 @@ const EnterpriseTeam = () => {
         <Button 
           variant="contained" 
           sx={{
-            backgroundColor: '#315370', // Custom background color
+            backgroundColor: '#315370', 
             color: 'white', 
             fontSize: '18px',
-            textTransform: 'none', // Text color
+            textTransform: 'none', 
             '&:hover': {
-              backgroundColor: '#26425a', // Darker shade on hover
+              backgroundColor: '#26425a', 
             },
           }}
           onClick={() => navigate('/master_admin/add_team')}
@@ -122,7 +122,7 @@ const EnterpriseTeam = () => {
         </div>
       </Card>
 
-      {/* Pagination Component */}
+  
       <TablePagination
         component="div"
         count={rows.length}
@@ -134,73 +134,105 @@ const EnterpriseTeam = () => {
         labelRowsPerPage="Rows per page"
       />
 
-      {/* Dialog to show selected row details */}
+     
       
 
       <Dialog
       open={dialogOpen}
       onClose={handleClose}
-      fullWidth // Makes the dialog take the full width of the screen
-      maxWidth="md" // Adjust the max width as needed
+      fullWidth 
+      maxWidth="md" 
     >
-      <DialogTitle className="bg-gray-400 text-white">
+   
+      <DialogTitle className="bg-gray-600 text-white text-lg font-bold">
         Member Details
       </DialogTitle>
-      <DialogContent>
+
+      
+      <DialogContent className="bg-gray-50">
         {selectedRow && (
-          <div className="space-y-4 pt-4"> {/* Adds space between elements */}
-          <Typography variant="h6" className="flex items-center">
-             
-              Name: {selectedRow.en_name}
-            </Typography>
-            <Typography variant="body1" className="flex items-center  text-xl">
-              <FaCalendarAlt className="mr-2 text-blue-600  text-xl" />
-              Created At: {new Date(selectedRow.createdAt).toLocaleDateString()}
-            </Typography>
-            <Typography variant="body1" className="flex items-center  text-xl">
-              <FaUserCheck className="mr-2 text-green-600  text-xl" />
-              Role: {selectedRow.account_role}
-            </Typography>
-            <Typography variant="body1" className="flex items-center  text-xl">
-              <FaBriefcase className="mr-2 text-orange-600  text-xl " />
-              Posted Jobs: {selectedRow.pending_job + selectedRow.active_job}
-            </Typography>
-            <Typography variant="body1" className="flex items-center  text-xl">
-              <FaPhone className="mr-2 text-purple-600  text-xl" />
-              Phone: {selectedRow.phone}
-            </Typography>
-            <Typography variant="body1" className="flex items-center  text-xl">
-              <FaEnvelope className="mr-2 text-red-600  text-xl" />
-              Email: {selectedRow.email}
-            </Typography>
-            <Typography variant="body1" className="flex items-center  text-xl">
-              <span className="text-gray-600  text-xl">Account Status:</span>
-              <span className={`ml-1 text-xl ${selectedRow.status === 'active' ? 'text-green-600' : 'text-red-600'}`}>
-                {selectedRow.status}
-              </span>
-            </Typography>
+          <div className="bg-white shadow-md rounded-lg p-6 my-8">
+    
+            <div className="text-center mb-6">
+              <h2 className="text-2xl font-semibold text-gray-800">{selectedRow.en_name}</h2>
+              <p className="text-gray-500">Member Information</p>
+            </div>
+
+            {/* Professional details container */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Created At */}
+              <div className="flex items-center text-gray-700">
+                <FaCalendarAlt className="mr-2 text-blue-600 text-xl" />
+                <div>
+                  <span className="block font-medium">Created At</span>
+                  <span>{new Date(selectedRow.createdAt).toLocaleDateString()}</span>
+                </div>
+              </div>
+
+              {/* Role */}
+              <div className="flex items-center text-gray-700">
+                <FaUserCheck className="mr-2 text-green-600 text-xl" />
+                <div>
+                  <span className="block font-medium">Role</span>
+                  <span>{selectedRow.account_role}</span>
+                </div>
+              </div>
+
+              {/* Posted Jobs */}
+              <div className="flex items-center text-gray-700">
+                <FaBriefcase className="mr-2 text-orange-600 text-xl" />
+                <div>
+                  <span className="block font-medium">Posted Jobs</span>
+                  <span>{selectedRow.pending_job + selectedRow.active_job}</span>
+                </div>
+              </div>
+
+              {/* Phone */}
+              <div className="flex items-center text-gray-700">
+                <FaPhone className="mr-2 text-purple-600 text-xl" />
+                <div>
+                  <span className="block font-medium">Phone</span>
+                  <span>{selectedRow.phone}</span>
+                </div>
+              </div>
+
+              {/* Email */}
+              <div className="flex items-center text-gray-700">
+                <FaEnvelope className="mr-2 text-red-600 text-xl" />
+                <div>
+                  <span className="block font-medium">Email</span>
+                  <span>{selectedRow.email}</span>
+                </div>
+              </div>
+
+              {/* Account Status */}
+              <div className="flex items-center text-gray-700">
+                <span className="font-medium text-gray-600">Account Status:</span>
+                <span
+                  className={`ml-2 font-semibold ${
+                    selectedRow.status === 'active' ? 'text-green-600' : 'text-red-600'
+                  }`}
+                >
+                  {selectedRow.status}
+                </span>
+              </div>
+            </div>
           </div>
         )}
       </DialogContent>
-      <DialogActions>
-        <Button
+
+      {/* Dialog Actions */}
+      <DialogActions className="bg-gray-100 px-6 py-6">
+        <button
           onClick={handleClose}
-          sx={{
-            color: 'white',
-            backgroundColor: '#315370',
-            '&:hover': {
-              color:'#315370',
-              backgroundColor: '#e3e6ea',
-            },
-            borderRadius: '5px', 
-            padding: '8px 16px', 
-            fontSize: '16px', 
-          }}
+          className="bg-gray-600 hover:bg-blue-230 text-white px-4 py-2 rounded-md transition-all duration-200"
         >
           Close
-        </Button>
+        </button>
       </DialogActions>
     </Dialog>
+
+
     </div>
     </Card>
 
