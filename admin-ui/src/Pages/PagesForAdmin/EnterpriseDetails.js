@@ -1,9 +1,14 @@
+import { Card } from '@mui/material'
 import React from 'react'
 import {FaBriefcase} from 'react-icons/fa'
 
 const EnterpriseDetails = () => {
   return (
-    <div>
+    <Card className='mt-4 font-sans shadow-md' sx={{
+      borderRadius: '8px',
+      boxShadow: 3,
+    }}>
+    <div className='px-5 '>
     
           <div className="space-y-6 flex flex-col items-center p-4 ">
            
@@ -33,6 +38,7 @@ const EnterpriseDetails = () => {
           
         
     </div>
+    </Card>
   )
 }
 
