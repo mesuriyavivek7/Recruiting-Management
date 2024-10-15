@@ -3,7 +3,7 @@ import Button from '@mui/material/Button';
 // Column configuration for the DataGrid
 export const columns = [
     { 
-        field: 'id', 
+        field: '_id', 
         headerName: 'ID', 
         width: 110,
         flex: 0.1 // Fixed width with some flexibility
@@ -93,7 +93,7 @@ export const columns = [
 
 // Sample row data for the DataGrid
 export const rows = Array(10).fill(null).map((_, index) => ({
-    id: index + 1,
+    _id: String(index + 1),
     full_name: "John Doe",
     email: `john.doe${index + 1}@gmail.com`,
     mobile_no: `98765432${index + 1}`,

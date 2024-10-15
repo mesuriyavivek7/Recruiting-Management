@@ -23,6 +23,7 @@ import AdminCandidateTable from './Pages/PagesForAdmin/AdminCandidateTable';
 import AdminCandidateDetails from './Pages/PagesForAdmin/AdminCandidateDetails';
 import Job from './Pages/PagesForAccountManager/Job';
 import AdminJob from './Pages/PagesForAdmin/AdminJob';
+import AdminEnterprise from './Pages/PagesForAdmin/AdminEnterprise';
 import SuperAdmin from './Pages/Dashboard/SuperAdmin';
 import SupperAdminDashboard from './Components/SuperAdminDashboard';
 import SuperEnterpriceTable from './Pages/PagesForSuperAdmin/SuperEnterPriceTable';
@@ -32,6 +33,7 @@ import SuperCandidateTable from './Pages/PagesForSuperAdmin/SuperCandidateTable'
 import SuperCandidateDetails from './Pages/PagesForSuperAdmin/SuperCandidateDetails';
 import SuperAdminJob from './Pages/PagesForSuperAdmin/SuperAdminJob';
 import { useSelector } from 'react-redux';
+
 
 
 
@@ -83,6 +85,11 @@ function App() {
             path: "candidate/:id",
             element: <AdminCandidateDetails/>,
           },
+          {
+            path: "enterprise/:id",
+            element: <AdminEnterprise/>,
+          },
+        
         
         
        ],
