@@ -2,10 +2,12 @@
 
 import * as React from 'react';
 import Box from '@mui/material/Box';
+import { useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import TablePagination from '@mui/material/TablePagination';
 import { rows, columns } from './RowColData';
 import { styled } from '@mui/system';
+import { useNavigate } from 'react-router-dom';
 
 
 const calculateRowHeight = (params) => {
@@ -15,8 +17,20 @@ const calculateRowHeight = (params) => {
 };
 
 export default function AllEnterPriseData() {
+<<<<<<< HEAD
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+=======
+  const [page, setPage] = React.useState(0); 
+  const [rowsPerPage, setRowsPerPage] = React.useState(5); 
+  const [selectedRowId, setSelectedRowId] = useState(null);
+  const navigate = useNavigate();
+
+  const handleRowClick = (id) => {
+    setSelectedRowId(id);
+    navigate(`/master_admin/enterprise/${id}`); 
+  };
+>>>>>>> 019e1de9aabdfa1451a2d07424814ffbdcac6e55
 
   // Pagination handlers
   const handleChangePage = (event, newPage) => {
@@ -35,6 +49,7 @@ export default function AllEnterPriseData() {
         <DataGrid
           rows={rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
           columns={columns}
+<<<<<<< HEAD
           rowHeight={80}
           getRowHeight={calculateRowHeight}
           pagination={false}
@@ -42,6 +57,17 @@ export default function AllEnterPriseData() {
           hideFooterPagination={true}
           disableSelectionOnClick
           sx={{
+=======
+          rowHeight={80} 
+          onRowClick={(params) => handleRowClick(params.id)}
+          getRowId={(rows) => rows._id} // Specify the custom ID field
+          getRowHeight={calculateRowHeight} 
+          pagination={false} 
+          pageSize={rowsPerPage} 
+          hideFooterPagination={true} 
+          disableSelectionOnClick 
+           sx={{
+>>>>>>> 019e1de9aabdfa1451a2d07424814ffbdcac6e55
             '& .MuiDataGrid-root': {
               fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.09rem' },
             },

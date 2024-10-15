@@ -3,11 +3,19 @@ import { fetchEnterpriseData } from '../../../services/api';
 
 // Column configuration for the DataGrid
 export const columns = [
+<<<<<<< HEAD
     {
         field: 'id',
         headerName: 'Sr No.',
         minwidth: 100,
         flex: 1 // Fixed width with some flexibility
+=======
+    { 
+        field: '_id', 
+        headerName: 'ID', 
+        width: 110,
+        flex: 0.1 // Fixed width with some flexibility
+>>>>>>> 019e1de9aabdfa1451a2d07424814ffbdcac6e55
     },
     {
         field: 'full_name',
@@ -69,6 +77,7 @@ export const columns = [
     }
 ];
 
+<<<<<<< HEAD
 
 const data = await fetchEnterpriseData();
 
@@ -82,3 +91,19 @@ export const rows = data.map((enterprise, index) => ({
     city: enterprise.city || "Unknown",
     email_verification: enterprise.isEmailVerified ? "yes" : "no",
 }));
+=======
+// Sample row data for the DataGrid
+export const rows = Array(10).fill(null).map((_, index) => ({
+    _id: String(index + 1),
+    full_name: "John Doe",
+    email: `john.doe${index + 1}@gmail.com`,
+    mobile_no: `98765432${index + 1}`,
+    designation: "Software Developer",
+    company_name: "TechCorp",
+    company_size: 50,
+    country: "USA",
+    state: "California",
+    city: "San Francisco",
+    email_verification: index % 2 === 0 ? "yes" : "no",
+}));
+>>>>>>> 019e1de9aabdfa1451a2d07424814ffbdcac6e55
