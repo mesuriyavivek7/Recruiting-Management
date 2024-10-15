@@ -98,13 +98,6 @@ export default function AllEnterPriseData() {
           }}
         />
       </Box>
-    
-
-
-
-
-    
-
       <TablePagination
         component="div"
         count={rows.length} // Total number of rows

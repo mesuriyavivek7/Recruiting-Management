@@ -1,5 +1,5 @@
 import express from 'express'
-import { addNewCandidate, changeAccountStatus, checkCreadentials, checkIsAdmin, createEnterpriseTeam, getCandidateDetails, getRecruiterTeamMember, getSubmitedCandidateMailId } from '../controller/enterpriseTeamController.js'
+import { addNewCandidate, changeAccountStatus, checkCreadentials, checkIsAdmin, createEnterpriseTeam, getCandidateDetails, getEnterpriseTeam, getRecruiterTeamMember, getSubmitedCandidateMailId } from '../controller/enterpriseTeamController.js'
 
 
 const router=express.Router()
@@ -16,6 +16,8 @@ router.get('/getcandidatedetails/:enmemeberid',getCandidateDetails)
 //for adding candidateid and jobid into received candidate list
 router.put('/addintocandidatelist/:enmemberid',addNewCandidate)
 
+//for getting all enterprise team details by enterprise id
+router.get('/findteam/:enterprise_id', getEnterpriseTeam)
 
 //for getting all recruiterteam id which are connected with enterprise by submiting candidate profile
 router.get('/getrecruiterteam/:enmemberid',getRecruiterTeamMember)
@@ -29,5 +31,4 @@ router.put('/changeaccoutstatus/:eid',changeAccountStatus)
 //get the submited candidate mail id
 router.get('/getthecandidatemails/:ememberid',getSubmitedCandidateMailId)
 
-
-export default router
+export default router;
