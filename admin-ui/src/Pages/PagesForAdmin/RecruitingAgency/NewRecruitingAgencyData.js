@@ -175,6 +175,7 @@ const NewRecruitingAgencyData = () => {
         // rows={rows} 
           columns={cols(handleInactivateButton)}
           rowHeight={80} 
+          getRowId={(rows)=>rows._id}
           onRowClick={handleRowClick}
           pagination={false} 
           pageSize={rowsPerPage} 
