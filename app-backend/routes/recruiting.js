@@ -2,10 +2,10 @@ import express from "express"
 import multer from "multer"
 import path from 'path'
 
-import { acVerified, allocatedAcManager, changeAccountStatus, getAcmanager, getAgencyDetailsForProfilePage, getAllPendingAcmanagerRecruiting, getAllPendingMadminVerifyRAgency,getTeamMember, kycDetailsSubmission, kycDocsSubmission } from "../controller/recruitingController.js"
+import { acVerified, allocatedAcManager, changeAccountStatus, getAcmanager, getAgencyDetailsForProfilePage, getAllPendingAcmanagerRecruiting, getAllPendingMadminVerifyRAgency,getRecruitingAgencies,getRecruitingAgencyById,getTeamMember, kycDetailsSubmission, kycDocsSubmission } from "../controller/recruitingController.js"
+import { getRecruiterMemberIds } from "../controller/candidateController.js"
 
 const router=express.Router()
-
 
 
 //creating disk storage
@@ -53,6 +53,10 @@ router.get('/getteammember/:reid',getTeamMember)
 //for getting recruiter agency details to showing into profile page
 router.get('/getagencydetailsforprofilepage/:ragencyid',getAgencyDetailsForProfilePage)
 
+//for getting all recruiting agency details
+router.get('/getagencies', getRecruitingAgencies)
 
+//for getting particular recruiting agency by id
+router.get("/:r_agency_id", getRecruitingAgencyById)
 
 export default router
