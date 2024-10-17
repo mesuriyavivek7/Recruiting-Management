@@ -1,15 +1,19 @@
 import React from 'react';
-// import RecruitingDetails from './RecruitingDetails';  
-// import RecruitingTeam from './RecruitingTeam';        
-// import RecruitingCandidate from './RecruitingCandidate'; 
+ 
+import RecruitingTeam from './AdminRcTeam';        
+
 import AdminTabView from '../AdminTabView';
-import AllRecruitingAgencyData from './AllRecruitingAgencyData';
+
+
+import AdminRecruitingDetails from './AdminRecrutingDetails';
+import AdminCandidate from './AdminCandidate';
+
 
 const AdminRecruiting = () => {
   const tabs = [
-    { name: 'Recruiting Details', component: <AllRecruitingAgencyData /> },
-    { name: 'Team', component:<AllRecruitingAgencyData />   },//<RecruitingTeam />
-    { name: 'Candidate', component: <AllRecruitingAgencyData />  },//<RecruitingCandidate />
+    { name: 'Recruiting Details', component: <AdminRecruitingDetails/> },
+    { name: 'Team', component:<RecruitingTeam />  },
+    { name: 'Candidate', component: <AdminCandidate/> },//
   ];
 
   return <AdminTabView tabs={tabs} />;

@@ -1,54 +1,57 @@
 
 
-
-import * as React from 'react';
-import Box from '@mui/material/Box';
+import React, { useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import TablePagination from '@mui/material/TablePagination';
-import { rows, columns } from './RowColData'; 
-import { styled } from '@mui/system';
+import { Card, TablePagination } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-
+import { RcCandidatecols ,RcCandidaterow} from './RowColData'; // Import columns configuration
 
 const calculateRowHeight = (params) => {
 
   const contentHeight = params.row ? params.row.content.length / 10 : 50; 
   return Math.max(80, contentHeight); 
 };
-
-export default function AllRecruitingAgencyData() {
-  const [page, setPage] = React.useState(0); 
-  const [rowsPerPage, setRowsPerPage] = React.useState(5); 
-  const [selectedRowId, setSelectedRowId] = React.useState(null);
+const AdminCandidate = () => {
+  const [selectedRowId, setSelectedRowId] = useState(null);
   const navigate = useNavigate();
 
   const handleRowClick = (id) => {
     setSelectedRowId(id);
-    navigate(`/master_admin/recruiting-agency/${id}`); 
+   // navigate(`/master_admin/candidate/${id}`);
   };
 
-  // Pagination handlers
+  // State for pagination
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  // Handle pagination change
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0); // Reset page to 0 when rows per page changes
+    setPage(0);
   };
 
+  // Calculate the rows to display
+  const paginatedRows = RcCandidaterow.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+
   return (
-    <>
-    <p className='text-lg xl:text-2xl'>All Recruiting Agency </p>
-      <Box sx={{ height: 600, width: '100%',paddingTop:'19px' }}>
-        <DataGrid 
-          rows={rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)} 
-          columns={columns}
+    <div>
+      <Card className='mt-9 font-sans px-4'>
+ 
+        <div style={{ height: 600, width: '100%' }} className='pt-4'>
+         
+          <DataGrid 
+          rows={paginatedRows}
+          columns={RcCandidatecols}
           rowHeight={80} 
+          onRowClick={(params) => handleRowClick(params.id)}
+          getRowId={(row) => row._id} // Specify the custom ID field
           getRowHeight={calculateRowHeight} 
           pagination={false} 
           pageSize={rowsPerPage} 
-          onRowClick={(params) => handleRowClick(params.id)}
           hideFooterPagination={true} 
           disableSelectionOnClick 
            sx={{
@@ -109,27 +112,20 @@ export default function AllRecruitingAgencyData() {
            
           }}
         />
-      </Box>
-    
-
-
-
-
-    
-
+        </div>
+      </Card>
       <TablePagination
         component="div"
-        count={rows.length} // Total number of rows
-        page={page} // Current page number
-        onPageChange={handleChangePage} // Handler for changing page
-        rowsPerPage={rowsPerPage} // Rows per page number
-        onRowsPerPageChange={handleChangeRowsPerPage} // Handler for changing rows per page
-        rowsPerPageOptions={[5, 10, 25]} // Rows per page options
-        labelRowsPerPage="Rows per page" // Label
+        count={RcCandidaterow.length}
+        page={page}
+        onPageChange={handleChangePage}
+        rowsPerPage={rowsPerPage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+        rowsPerPageOptions={[5, 10, 25]}
+        labelRowsPerPage="Rows per page"
       />
-    </>
+    </div>
   );
-}
+};
 
-
-
+export default AdminCandidate;

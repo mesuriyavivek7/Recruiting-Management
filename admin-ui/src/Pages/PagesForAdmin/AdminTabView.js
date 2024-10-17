@@ -19,7 +19,7 @@ const AdminTabView = ({ tabs }) => {
             style={{
               backgroundColor: activeTab === tab.name ? '#315370' : '#e0e0e0',
               color: activeTab === tab.name ? 'white' : '#000',
-              fontSize: '16px',
+              fontSize: '18px',
               textTransform: 'none',
               height: '50px',
               border: '2px solid white',
