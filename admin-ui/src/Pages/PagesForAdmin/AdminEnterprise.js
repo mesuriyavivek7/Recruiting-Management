@@ -35,7 +35,7 @@ const AdminEnterprise = () => {
           style={{
             backgroundColor: activeTab === 'Enterprise Details' ? '#315370' : '#e0e0e0',
             color: activeTab === 'Enterprise Details' ? 'white' : '#000',
-            fontSize: '16px',
+            fontSize: '20px',
             height:'50px',
             textTransform: 'none',
             border: '2px solid white', 
@@ -56,7 +56,7 @@ const AdminEnterprise = () => {
           style={{
             backgroundColor: activeTab === 'Team' ? '#315370' : '#e0e0e0',
             color: activeTab === 'Team' ? 'white' : '#000',
-            fontSize: '16px',
+            fontSize: '20px',
             textTransform: 'none',
              height:'50px',
              border: '2px solid white', 
@@ -76,7 +76,7 @@ const AdminEnterprise = () => {
             backgroundColor: activeTab === 'Jobs' ? '#315370' : '#e0e0e0',
             color: activeTab === 'Jobs' ? 'white' : '#000',
             border: '2px solid white', 
-            fontSize: '16px',
+            fontSize: '20px',
             textTransform: 'none',
              height:'50px',
              borderRadius: '0 20px 20px 0',  // Rounded right side
