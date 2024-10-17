@@ -7,6 +7,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import TablePagination from '@mui/material/TablePagination';
 import { rows, columns } from './RowColData'; 
 import { styled } from '@mui/system';
+import { useNavigate } from 'react-router-dom';
 
 
 const calculateRowHeight = (params) => {
@@ -18,6 +19,13 @@ const calculateRowHeight = (params) => {
 export default function AllRecruitingAgencyData() {
   const [page, setPage] = React.useState(0); 
   const [rowsPerPage, setRowsPerPage] = React.useState(5); 
+  const [selectedRowId, setSelectedRowId] = React.useState(null);
+  const navigate = useNavigate();
+
+  const handleRowClick = (id) => {
+    setSelectedRowId(id);
+    navigate(`/master_admin/recruting-agency/${id}`); 
+  };
 
   // Pagination handlers
   const handleChangePage = (event, newPage) => {
@@ -40,6 +48,7 @@ export default function AllRecruitingAgencyData() {
           getRowHeight={calculateRowHeight} 
           pagination={false} 
           pageSize={rowsPerPage} 
+          onRowClick={(params) => handleRowClick(params.id)}
           hideFooterPagination={true} 
           disableSelectionOnClick 
            sx={{

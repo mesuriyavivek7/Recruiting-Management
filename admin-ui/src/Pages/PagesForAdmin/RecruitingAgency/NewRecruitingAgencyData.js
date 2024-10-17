@@ -15,6 +15,7 @@ import {
 import { DataGrid } from '@mui/x-data-grid';
 import Notification from '../../../Components/Notification';
 import {rows,cols} from './NewRowColData'
+import { FaUser, FaEnvelope, FaBuilding, FaUsers, FaBriefcase, FaFlag, FaMapMarkerAlt, FaCity, FaCheckCircle, FaIdCard, FaLinkedin, FaGlobe, FaFilePdf } from 'react-icons/fa';
 
 const NewRecruitingAgencyData = () => {
   const [open, setOpen] = useState(false);
@@ -175,6 +176,7 @@ const NewRecruitingAgencyData = () => {
         // rows={rows} 
           columns={cols(handleInactivateButton)}
           rowHeight={80} 
+          getRowId={(rows)=>rows._id}
           onRowClick={handleRowClick}
           pagination={false} 
           pageSize={rowsPerPage} 
@@ -287,28 +289,44 @@ const NewRecruitingAgencyData = () => {
       </Dialog>
         
        {selectedRow && (
-        <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm" sx={{fontSize:{sm:'16px',xl:'20px'}}}>
-        <DialogTitle sx={{fontSize:{sm:'20px',xl:'25px'},borderBottom: '2px solid black', // Add this line for the border
+        <Dialog open={open} onClose={handleClose} fullWidth maxWidth="lg" sx={{fontSize:{sm:'16px',xl:'20px'}}}>
+        <DialogTitle sx={{fontSize:{sm:'20px',xl:'25px'},borderBottom: '2px solid black', backgroundColor:'#838e9c',// Add this line for the border
     paddingBottom: '8px', }}>Details for {selectedRow?.full_name}</DialogTitle>
         <DialogContent>
           <div className="space-y-6  space-x-2 pt-4 grid grid-cols-2">
-            <p className='pt-6 pl-3'><strong>Id:</strong> {selectedRow?._id}</p>
-            <p><strong>Email:</strong> {selectedRow?.email}</p>
-            <p><strong>Company:</strong> {selectedRow?.company_name}</p>
+            <p className='pt-6 pl-3'>
+            <FaIdCard className='inline mr-2 text-black' /><strong>Id:</strong> {selectedRow?._id}</p>
+            <p>
+            <FaEnvelope className='inline mr-2 text-black' /><strong>Email:</strong> {selectedRow?.email}</p>
+            <p> <FaBuilding className='inline mr-2 text-black' /><strong>Company:</strong> {selectedRow?.company_name}</p>
     
             
-            <p><strong>Company Size:</strong> {selectedRow?.company_size}</p>
-              <p><strong>Designation:</strong> {selectedRow?.designation}</p>
-                  <p><strong>Interested in:</strong> {selectedRow?.interested_in}</p>
-            <p><strong>Country:</strong> {selectedRow?.country}</p>
-            <p><strong>State:</strong> {selectedRow?.state}</p>
-            <p><strong>City:</strong> {selectedRow?.city}</p>
+            <p>          <FaUsers className='inline mr-2 text-black' /><strong>Company Size:</strong> {selectedRow?.company_size}</p>
+              <p> <FaBriefcase className='inline mr-2 text-black' />
+                <strong>Designation:</strong> {selectedRow?.designation}</p>
+                  <p><FaGlobe className='inline mr-2 text-black' />
+                    <strong>Interested in:</strong> {selectedRow?.interested_in}</p>
+            <p>  <FaFlag className='inline mr-2 text-black' />
+              <strong>Country:</strong> {selectedRow?.country}</p>
+            <p>  <FaMapMarkerAlt className='inline mr-2 text-black' />
+              <strong>State:</strong> {selectedRow?.state}</p>
+            <p>
+            <FaCity className='inline mr-2 text-black' />
+              <strong>City:</strong> {selectedRow?.city}</p>
             
-              <p><strong>Email verified:</strong> {(selectedRow?.email_verified)?("Yes"):("No")}</p>
-              <p><strong>Pancard Number:</strong> {selectedRow?.pancard_number}</p>
-              <p><strong>Entity Type:</strong> {selectedRow?.entity_type}</p>
-              <p><strong>Linkedin URL:</strong> {selectedRow?.linkedin_url}</p>
-              <p><strong>Domains:</strong>
+              <p> <FaCheckCircle className='inline mr-2 text-black' />
+                <strong>Email verified:</strong> {(selectedRow?.email_verified)?("Yes"):("No")}</p>
+              <p>      <FaIdCard className='inline mr-2 text-black' />
+                <strong>Pancard Number:</strong> {selectedRow?.pancard_number}</p>
+              <p>
+              <FaBriefcase className='inline mr-2 text-black' />
+                <strong>Entity Type:</strong> {selectedRow?.entity_type}</p>
+              <p>
+              <FaLinkedin className='inline mr-2 text-black' />
+                <strong>Linkedin URL:</strong> {selectedRow?.linkedin_url}</p>
+              <p>
+              <FaGlobe className='inline mr-2 text-black' />
+                <strong>Domains:</strong>
               <div className='flex flex-wrap'>
              {selectedRow?.domains.map((domain, index) => (
                   <div className=' text-md' key={index}>{domain}</div>
@@ -332,17 +350,25 @@ const NewRecruitingAgencyData = () => {
              </div>
           </div>
           {(selectedRow?.account_status.status==="Active")  &&
-          <FormControl fullWidth sx={{ mt: 6 }}>
+          <FormControl fullWidth sx={{ mt: 8 }}>
               <InputLabel id="manager-select-label">Select Account Manager</InputLabel>
               <Select
                 labelId="manager-select-label"
                 value={selectedManager}
                 label="Select Account Manager"
                 onChange={handleManagerChange}
+                MenuProps={{
+                  PaperProps: {
+                    style: {
+                      maxHeight: 48 * 4.5, // Adjust this height to fit your needs
+                      width: 250,
+                    },
+                  },
+                }}
               >
                 {
                   acManager.map((item,i)=>(
-                    <MenuItem key={i} value={item._id}>{item.full_name}</MenuItem>
+                    <MenuItem key={i} value={item._id} sx={{pt:4}}>{item.full_name}</MenuItem>
                   ))
                 }
                 
