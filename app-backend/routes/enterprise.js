@@ -1,5 +1,6 @@
 import express from 'express'
-import { acVerified, allocatedAcManager, changeAccountStatus, changeMail, changepassword, checkPassword, getAcManagerId, getAcPendingEnterprise, getAcmanagerMailandName, getAllEnterprise, getAllPendingMadminVerifyEnterprise, getCompnayName, getEnterprise, getEnterpriseMember, getMobileNo } from '../controller/enterpriseController.js'
+import { acVerified, allocatedAcManager, changeAccountStatus, changeMail, changepassword, checkPassword, getAcManagerId, getAcPendingEnterprise, getAcmanagerMailandName, getAllEnterprise, getAllPendingMadminVerifyEnterprise, getCompnayName, getEnterprise, getEnterpriseMember, getMobileNo, getRecruiterForJob } from '../controller/enterpriseController.js'
+import { getRecruiterMemberIds } from '../controller/candidateController.js'
 
 const router=express.Router()
 
@@ -20,6 +21,10 @@ router.get('/find/:id',getEnterprise)
 
 //for getting all enterprise details
 router.get('/findall', getAllEnterprise)
+
+//for getting the recruiter for each particular job
+router.get('/getrecruiter/:enterpice_id', getRecruiterForJob);
+
 
 //for gettign all pending madmin verification enterprise
 router.get('/adminpending',getAllPendingMadminVerifyEnterprise)

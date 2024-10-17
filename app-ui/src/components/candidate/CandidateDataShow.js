@@ -298,6 +298,7 @@ const candidateCol=[
         },
      }}>
       <DataGrid
+      getRowId={(rows) => rows.id} // Specify the custom ID field
       rowHeight={90}
       rows={rows}
       columns={candidateCol}

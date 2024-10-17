@@ -173,6 +173,7 @@ const NewRecruitingAgencyData = () => {
          rows={recruitingAgency} 
         // rows={paginatedRows} 
         // rows={rows} 
+          getRowId={(rows) => rows.id} // Specify the custom ID field
           columns={cols(handleInactivateButton)}
           rowHeight={80} 
           onRowClick={handleRowClick}

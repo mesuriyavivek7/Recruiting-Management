@@ -74,7 +74,6 @@ export const columns = (handleInactivateButton, handleRowClick) => [
         >
           {params.row.account_status.status === "Active" ? 'Inactivate' : 'Reactivate'}
         </Button>
-
       </div>
     ),
   },
