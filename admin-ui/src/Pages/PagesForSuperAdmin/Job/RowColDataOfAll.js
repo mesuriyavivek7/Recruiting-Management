@@ -180,7 +180,6 @@ export const data = await fetchAllJobDetails();
 export const rows = await Promise.all(
   data.map(async (jobDetails, index) => {
     const e_id = jobDetails.enterprise_id;
-    console.log(jobDetails);
 
     // Fetch recruiter asynchronously
     const recruiter = await fetchRecruiterByEId(e_id);

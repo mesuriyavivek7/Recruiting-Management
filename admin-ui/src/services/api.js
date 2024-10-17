@@ -32,7 +32,7 @@ export const fetchAllJobDetails = async () => {
     }
 }
 
-export const fetchJobBasicDetailsByJobId = async(job_id) => {
+export const fetchJobBasicDetailsByJobId = async (job_id) => {
     try {
         const response = await axios.get(`${uri}/job/getbasicjobdetails/${job_id}`);
         return response.data;
@@ -63,7 +63,7 @@ export const fetchRecuritingAgencyById = async (r_agency_id) => {
     }
 }
 
-export const fetchRecruiterByEId = async(enterprise_id) => {
+export const fetchRecruiterByEId = async (enterprise_id) => {
     try {
         const response = axios.get(`${uri}/enterprise/getrecruiter/${enterprise_id}`);
         return (await response).data;
@@ -93,12 +93,13 @@ export const fetchAllCandidates = async () => {
     }
 }
 
-export const fetchCandidateStatusById = async (basicDetailId) => {
-    try {   
-        const response = axios.get(`${uri}/candidate/getcandidatestatus/${basicDetailId}`);
+export const fetchCandidateStatusById = async (candidate_id) => {
+    try {
+        const response = await axios.get(`${uri}/candidate/getcandidatestatus/${candidate_id}`);
         return response.data;
     } catch (error) {
-        console.error("Error while fecthing candidate status :", error);
+        console.error("Error while fetching candidate status:", error);
         throw error;
     }
 }
+
