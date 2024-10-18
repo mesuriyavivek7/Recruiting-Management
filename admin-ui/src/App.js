@@ -33,6 +33,7 @@ import SuperCandidateTable from './Pages/PagesForSuperAdmin/SuperCandidateTable'
 import SuperCandidateDetails from './Pages/PagesForSuperAdmin/SuperCandidateDetails';
 import SuperAdminJob from './Pages/PagesForSuperAdmin/SuperAdminJob';
 import { useSelector } from 'react-redux';
+import AdminRecruiting from './Pages/PagesForAdmin/RecruitingAgency/AdminRecruting';
 
 
 
@@ -89,6 +90,11 @@ function App() {
             path: "enterprise/:id",
             element: <AdminEnterprise/>,
           },
+          {
+            path: "recruiting-agency/:id",
+            element: <AdminRecruiting/>,
+          },
+        
         
         
         

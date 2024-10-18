@@ -2,8 +2,10 @@ import express from "express"
 import multer from "multer"
 import path from 'path'
 
+
 import { acVerified, allocatedAcManager, changeAccountStatus, getAcmanager, getAgencyDetailsForProfilePage, getAllPendingAcmanagerRecruiting, getAllPendingMadminVerifyRAgency,getRecruitingAgencies,getRecruitingAgencyById,getTeamMember, kycDetailsSubmission, kycDocsSubmission } from "../controller/recruitingController.js"
 import { getRecruiterMemberIds } from "../controller/candidateController.js"
+
 
 const router=express.Router()
 
@@ -49,7 +51,7 @@ router.get('/getacmanagerid/:ragencyid',getAcmanager)
 
 //for getting particlure recruiter agency team member
 router.get('/getteammember/:reid',getTeamMember)
-
+router.get('/getagencies',getRecruitingAgencies)
 //for getting recruiter agency details to showing into profile page
 router.get('/getagencydetailsforprofilepage/:ragencyid',getAgencyDetailsForProfilePage)
 
