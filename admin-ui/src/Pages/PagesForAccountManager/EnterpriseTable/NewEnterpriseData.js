@@ -875,6 +875,7 @@ const NewEnterpriseData = () => {
       <p className='text-lg xl:text-2xl'>New Enterprise</p>
       <div style={{ height: 600, width: '100%', paddingTop: '19px' }}>
         <DataGrid
+          getRowId={(rows) => rows._id} // Specify the custom ID field
           rows={newEnterprise.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
           columns={columns(handleInactivateButton, handleRowClick)} // Pass the function to columns
           rowHeight={80}

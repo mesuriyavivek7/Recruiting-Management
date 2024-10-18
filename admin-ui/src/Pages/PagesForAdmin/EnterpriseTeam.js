@@ -51,34 +51,10 @@ const EnterpriseTeam = () => {
     }}>
     <div>
     
-      <Box 
-        display="flex" 
-        justifyContent="space-between" 
-        alignItems="center" 
-        sx={{ padding: '10px', borderBottom: '1px solid #e0e0e0' }}
-      >
-        <Typography variant="h5" fontWeight="bold">
-          Team Page
-        </Typography>
-        <Button 
-          variant="contained" 
-          sx={{
-            backgroundColor: '#315370', 
-            color: 'white', 
-            fontSize: '18px',
-            textTransform: 'none', 
-            '&:hover': {
-              backgroundColor: '#26425a', 
-            },
-          }}
-          onClick={() => navigate('/master_admin/add_team')}
-        >
-          + Add Member
-        </Button>
-      </Box>
+   
 
       {/* Card with DataGrid */}
-      <Card className="mt-9 font-sans px-6">
+      <div className="py-5 px-6">
         <div style={{ height: 600, width: '100%' }} className="pt-4">
           <DataGrid
             rows={paginatedRows}
@@ -91,36 +67,93 @@ const EnterpriseTeam = () => {
             pageSize={rowsPerPage}
             hideFooterPagination={true}
             disableSelectionOnClick
+            // sx={{
+            //   '& .MuiDataGrid-root': {
+            //     fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.09rem' },
+            //   },
+            //   ' [class^=MuiDataGrid]': { border: 'none' },
+            //   '& .MuiDataGrid-columnHeader': {
+            //     fontWeight: 'bold !important',
+            //     fontSize: { xs: '0.875rem', sm: '1rem', md: '0.7rem', lg: '1.1rem' },
+            //     color: 'black',
+            //     backgroundColor: '#e3e6ea !important',
+            //     minHeight: '60px',
+            //   },
+            //   '& .MuiDataGrid-columnSeparator': {
+            //     color: 'blue',
+            //     visibility: 'visible',
+            //   },
+            //   '& .MuiDataGrid-cell': {
+            //     fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem' },
+            //     minHeight: '2.5rem',
+            //   },
+            //   '& .MuiDataGrid-row': {
+            //     borderBottom: 'none',
+            //   },
+            //   '& .MuiDataGrid-cell:focus': {
+            //     outline: 'none',
+            //   },
+            // }}
             sx={{
               '& .MuiDataGrid-root': {
-                fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.09rem' },
+                fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.09rem' }, 
               },
+           
               ' [class^=MuiDataGrid]': { border: 'none' },
               '& .MuiDataGrid-columnHeader': {
-                fontWeight: 'bold !important',
-                fontSize: { xs: '0.875rem', sm: '1rem', md: '0.7rem', lg: '1.1rem' },
-                color: 'black',
-                backgroundColor: '#e3e6ea !important',
-                minHeight: '60px',
+                fontWeight: 'bold !impotant', 
+                fontSize: { xs: '0.875rem', sm: '1rem', md: '0.7rem', lg: '1.1rem' }, 
+                color: 'black', 
+               
+                 '&:focus': {
+                outline: 'none', 
+                border: 'none',  
               },
-              '& .MuiDataGrid-columnSeparator': {
-                color: 'blue',
-                visibility: 'visible',
+                backgroundColor: '#e3e6ea !important', 
+                minHeight: '60px', 
               },
+               '& .MuiDataGrid-columnHeader:focus-within': {
+          outline: 'none', 
+        },
+       
+             
+           
+              
+        
+        '& .MuiDataGrid-columnSeparator': {
+          color: 'blue',
+          visibility: 'visible', 
+        },
+        
+      
+        '& .MuiDataGrid-cell': {
+          fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem' }, 
+          
+        },
+        
+        '& .MuiDataGrid-cellContent': {
+          display: 'flex',
+          alignItems: 'center', 
+        },
+        '& .MuiDataGrid-cell': {
+          minHeight: '2.5rem', 
+        },
               '& .MuiDataGrid-cell': {
-                fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem' },
-                minHeight: '2.5rem',
+                fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem'}, 
+                
+                
               },
               '& .MuiDataGrid-row': {
-                borderBottom: 'none',
+                borderBottom: 'none', 
               },
               '& .MuiDataGrid-cell:focus': {
-                outline: 'none',
+                outline: 'none', 
               },
+             
             }}
           />
         </div>
-      </Card>
+      </div>
 
   
       <TablePagination
@@ -153,60 +186,60 @@ const EnterpriseTeam = () => {
         {selectedRow && (
           <div className="bg-white shadow-md rounded-lg p-6 my-8">
     
-            <div className="text-center mb-6">
-              <h2 className="text-2xl font-semibold text-gray-800">{selectedRow.en_name}</h2>
-              <p className="text-gray-500">Member Information</p>
+            <div className="text-center mb-8">
+              <h2 className="text-2xl xl:text-3xl font-semibold text-gray-800">{selectedRow.en_name}</h2>
+              <p className="text-gray-500 pt-3">Member Information</p>
             </div>
 
             {/* Professional details container */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Created At */}
               <div className="flex items-center text-gray-700">
-                <FaCalendarAlt className="mr-2 text-blue-600 text-xl" />
-                <div>
-                  <span className="block font-medium">Created At</span>
+                <FaCalendarAlt className="mr-2 text-black text-xl xl:text-2xl" />
+                <div className='flex gap-2 text-xl'>
+                  <span className="block font-medium">Created At:</span>
                   <span>{new Date(selectedRow.createdAt).toLocaleDateString()}</span>
                 </div>
               </div>
 
               {/* Role */}
               <div className="flex items-center text-gray-700">
-                <FaUserCheck className="mr-2 text-green-600 text-xl" />
-                <div>
-                  <span className="block font-medium">Role</span>
+                <FaUserCheck className="mr-2 text-black text-xl xl:text-2xl" />
+                <div className='flex gap-2 text-xl'>
+                  <span className="block font-medium">Role:</span>
                   <span>{selectedRow.account_role}</span>
                 </div>
               </div>
 
               {/* Posted Jobs */}
               <div className="flex items-center text-gray-700">
-                <FaBriefcase className="mr-2 text-orange-600 text-xl" />
-                <div>
-                  <span className="block font-medium">Posted Jobs</span>
+                <FaBriefcase className="mr-2 text-black text-xl xl:text-2xl" />
+                <div className='flex  gap-2 text-xl'>
+                  <span className="block font-medium">Posted Jobs:</span>
                   <span>{selectedRow.pending_job + selectedRow.active_job}</span>
                 </div>
               </div>
 
               {/* Phone */}
               <div className="flex items-center text-gray-700">
-                <FaPhone className="mr-2 text-purple-600 text-xl" />
-                <div>
-                  <span className="block font-medium">Phone</span>
-                  <span>{selectedRow.phone}</span>
+                <FaPhone className="mr-2 text-black text-xl xl:text-2xl" />
+                <div className='flex gap-2 text-xl'>
+                  <span className="block font-medium">Phone:</span>
+                  <span>787858685</span>
                 </div>
               </div>
 
               {/* Email */}
               <div className="flex items-center text-gray-700">
-                <FaEnvelope className="mr-2 text-red-600 text-xl" />
-                <div>
-                  <span className="block font-medium">Email</span>
-                  <span>{selectedRow.email}</span>
+                <FaEnvelope className="mr-2 text-black text-xl xl:text-2xl" />
+                <div className='flex gap-2 text-xl'>
+                  <span className="block font-medium">Email:</span>
+                  <span>a@gmail.com</span>
                 </div>
               </div>
 
               {/* Account Status */}
-              <div className="flex items-center text-gray-700">
+              <div className="flex items-center text-gray-700 text-xl">
                 <span className="font-medium text-gray-600">Account Status:</span>
                 <span
                   className={`ml-2 font-semibold ${
@@ -225,7 +258,7 @@ const EnterpriseTeam = () => {
       <DialogActions className="bg-gray-100 px-6 py-6">
         <button
           onClick={handleClose}
-          className="bg-gray-600 hover:bg-blue-230 text-white px-4 py-2 rounded-md transition-all duration-200"
+          className="bg-gray-600 hover:bg-blue-230 text-white px-4 py-2 text-xl rounded-md transition-all duration-200"
         >
           Close
         </button>

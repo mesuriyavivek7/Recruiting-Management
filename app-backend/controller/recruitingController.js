@@ -178,3 +178,16 @@ export const getRecruitingAgencies = async (req, res, next) => {
         next(error);
     }
 }
+
+export const getRecruitingAgencyById = async(req, res, next) => {
+    try {
+        const r_agency = await RECRUITING.findById(req.params.r_agency_id);
+        if(!r_agency)
+        {
+            return res.status(404).json({message : 'No recruiting agency found.'});
+        }
+        res.status(200).json(r_agency);
+    } catch (error) {
+        next(error);
+    }
+}

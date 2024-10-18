@@ -17,14 +17,14 @@ const calculateRowHeight = (params) => {
 };
 
 export default function AllEnterPriseData() {
-  const [page, setPage] = React.useState(0); 
-  const [rowsPerPage, setRowsPerPage] = React.useState(5); 
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [selectedRowId, setSelectedRowId] = useState(null);
   const navigate = useNavigate();
 
   const handleRowClick = (id) => {
     setSelectedRowId(id);
-    navigate(`/master_admin/enterprise/${id}`); 
+    navigate(`/master_admin/enterprise/${id}`);
   };
 
   // Pagination handlers
@@ -44,15 +44,15 @@ export default function AllEnterPriseData() {
         <DataGrid
           rows={rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
           columns={columns}
-          rowHeight={80} 
+          rowHeight={80}
           onRowClick={(params) => handleRowClick(params.id)}
-          getRowId={(rows) => rows._id} // Specify the custom ID field
-          getRowHeight={calculateRowHeight} 
-          pagination={false} 
-          pageSize={rowsPerPage} 
-          hideFooterPagination={true} 
-          disableSelectionOnClick 
-           sx={{
+          getRowId={(rows) => rows.id} // Specify the custom ID field
+          getRowHeight={calculateRowHeight}
+          pagination={false}
+          pageSize={rowsPerPage}
+          hideFooterPagination={true}
+          disableSelectionOnClick
+          sx={{
             '& .MuiDataGrid-root': {
               fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.09rem' },
             },

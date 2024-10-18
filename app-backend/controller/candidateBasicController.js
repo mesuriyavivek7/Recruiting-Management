@@ -23,3 +23,17 @@ export const checkEmailAndMobile=async (req,res,next)=>{
       next(err)
     }
 }
+
+
+export const getAllCandidateDetails = async(req, res,next) => {
+  try {
+    const candidates = await CANDIDATEBASICDETAILS.find()
+    if(!candidates)
+    {
+      return res.status(404).json({message : "Error to get all candidates"});
+    }
+    res.status(200).json(candidates);
+  } catch (error) {
+    next(error);      
+  }
+}

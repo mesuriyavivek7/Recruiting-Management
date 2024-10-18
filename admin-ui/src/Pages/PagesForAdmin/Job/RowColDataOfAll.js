@@ -1,6 +1,7 @@
-import { formatDistanceToNowStrict } from 'date-fns';
+import { format, formatDistanceToNowStrict } from 'date-fns';
 import React from 'react';
-import { fetchAllJobDetails } from '../../../services/api';
+import { fetchAllJobDetails, fetchJobBasicDetailsByJobId, fetchRecruiterByEId } from '../../../services/api';
+import Button from '@mui/material/Button';
 
 export const columns = [
   {
@@ -82,6 +83,54 @@ export const columns = [
     },
   },
   {
+    field: 'job_status',
+    headerName: 'Job Status',
+    flex: 1.5, // Flexible width with moderate space
+    minWidth: 200, // Minimum width
+    renderCell: (params) => {
+      let backgroundColor;
+      let hoverColor;
+
+      // Determine background and hover colors based on job status
+      switch (params.value) {
+        case 'Pending':
+          backgroundColor = 'blue';
+          hoverColor = 'darkblue';
+          break;
+        case 'Active':
+          backgroundColor = 'green'; // Green for Active
+          hoverColor = 'darkgreen'; // Darker green on hover
+          break;
+        case 'Draft':
+          backgroundColor = 'gray'; // Gray for Draft
+          hoverColor = 'darkgray'; // Darker gray on hover
+          break;
+        default:
+          backgroundColor = 'red'; // Default to red for unknown status
+          hoverColor = 'darkred'; // Dark red on hover
+      }
+
+      return (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+          <Button
+            variant="contained"
+            sx={{
+              backgroundColor: backgroundColor,
+              color: 'white',
+              padding: '8px 16px', // Consistent padding
+              margin: '4px', // Consistent margin
+              '&:hover': {
+                backgroundColor: hoverColor,
+              },
+            }}
+          >
+            {params.value}
+          </Button>
+        </div>
+      );
+    },
+  },
+  {
     field: 'createdAt',
     headerName: 'Created On',
     flex: 1,
@@ -89,35 +138,74 @@ export const columns = [
     headerAlign: 'left',
     align: 'left',
     renderCell: (params) => {
-      const createdAtValue = params.row?.createdAt;
-      const createdOnDate = createdAtValue ? new Date(createdAtValue) : new Date(0);
-      const isValidDate = !isNaN(createdOnDate.getTime());
-      const timeAgo = isValidDate ? formatDistanceToNowStrict(createdOnDate, { addSuffix: true }) : 'Invalid Date';
-      return <div><span>{timeAgo}</span></div>;
+      const createdOnDate = new Date(params.row.createdAt); // Parse ISO date string
+      const formattedDate = format(createdOnDate, 'dd-MMM-yy'); // Format the date as 13-Sep-23
+      const timeAgo = formatDistanceToNowStrict(createdOnDate, { addSuffix: true }); // Get "X days ago"
+
+      return (
+        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%', padding: '8px 0' }}>
+          <p style={{ margin: 0, lineHeight: 1.5 }}>
+            <span>{formattedDate}</span>
+          </p>
+          <p style={{ margin: 0, color: 'gray', lineHeight: 1.5 }}>{timeAgo}</p>
+        </div>
+      );
+    },
+  },
+  {
+    field: 'lastUpdated',
+    headerName: 'Last Updated',
+    flex: 1,
+    minWidth: 150,
+    headerAlign: 'left',
+    align: 'left',
+    renderCell: (params) => {
+      const updatedDate = new Date(params.row.lastUpdated); // Parse ISO date string
+      const formattedDate = format(updatedDate, 'dd-MMM-yy'); // Format the date as 13-Sep-23
+      const timeAgo = formatDistanceToNowStrict(updatedDate, { addSuffix: true }); // Get "X days ago"
+
+      return (
+        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%', padding: '8px 0' }}>
+          <p style={{ margin: 0, lineHeight: 1.5 }}>
+            <span>{formattedDate}</span>
+          </p>
+          <p style={{ margin: 0, color: 'gray', lineHeight: 1.5 }}>{timeAgo}</p>
+        </div>
+      );
     },
   },
 ];
 
 export const data = await fetchAllJobDetails();
+export const rows = await Promise.all(
+  data.map(async (jobDetails, index) => {
+    const e_id = jobDetails.enterprise_id;
+    console.log(jobDetails);
 
-export const rows = data.map((job, index) => {
-  const jobDetails = job?.job_basic_details || {};
-  
+    // Fetch recruiter asynchronously
+    const recruiter = await fetchRecruiterByEId(e_id);
+    const basicjobDetails = await fetchJobBasicDetailsByJobId(jobDetails.job_id);
 
-  return {
-    _id: String(`Job-${index + 1}`),
-    job_title: jobDetails?.job_title || "No Title Available",
-    job_id: jobDetails?.job_id || "No ID Available",
-    recruiter: jobDetails?.hiring_managers || "Unknown Recruiter",
-    location: {
-      state: jobDetails?.state || 'Unknown State',
-      country: jobDetails?.country || 'Unknown Country',
-    },
-    experience: {
-      minexp: jobDetails?.experience?.minexp || 'N/A',
-      maxexp: jobDetails?.experience?.maxexp || 'N/A',
-    },
-    createdAt: jobDetails?.createdAt ? new Date(jobDetails.createdAt) : new Date(),
-  };
-});
+
+    return {
+      _id: String(`${index + 1}`),
+      job_title: basicjobDetails?.job_title || "No Title Available",
+      job_id: jobDetails?.job_id || "No ID Available",
+      recruiter: recruiter || "Unknown Recruiter",  // Assign fetched recruiter or default to "Unknown Recruiter"
+      location: {
+        state: basicjobDetails?.state || 'Unknown State',
+        country: basicjobDetails?.country || 'Unknown Country',
+      },
+      experience: {
+        minexp: basicjobDetails?.experience?.minexp || 'N/A',
+        maxexp: basicjobDetails?.experience?.maxexp || 'N/A',
+      },
+      job_status: jobDetails.job_status,
+      createdAt: jobDetails?.createdAt ? new Date(jobDetails.createdAt) : new Date(),
+      lastUpdated : jobDetails?.updatedAt ? new Date(jobDetails.updatedAt) : new Date()
+    };
+  })
+);
+
+
 

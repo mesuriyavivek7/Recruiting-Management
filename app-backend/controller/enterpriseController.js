@@ -66,25 +66,6 @@ export const changepassword = async (req, res, next) => {
   }
 }
 
-
-export const getEnterprise = async (req, res, next) => {
-  try {
-    const enterprise = await ENTERPRISE.findById(req.params.id)
-    res.status(200).json(enterprise)
-  } catch (err) {
-    next(err)
-  }
-}
-
-export const getAllEnterprise = async (req, res, next )=> {
-  try {
-    const enterprises = await ENTERPRISE.find();
-    res.status(200).json(enterprises);
-  } catch (error) {
-    next(error)
-  }
-}
-
 export const getAllPendingMadminVerifyEnterprise = async (req, res, next) => {
   try {
     const pendingenterprise = await ENTERPRISE.find({ admin_verified: false })
@@ -189,5 +170,37 @@ export const getAcmanagerMailandName = async (req, res, next) => {
     res.status(200).json(user.data)
   } catch (err) {
     next(err)
+  }
+}
+
+export const getEnterprise = async (req, res, next) => {
+  try {
+    const enterprise = await ENTERPRISE.findById(req.params.id)
+    res.status(200).json(enterprise)
+  } catch (err) {
+    next(err)
+  }
+}
+
+export const getAllEnterprise = async (req, res, next) => {
+  try {
+    const enterprises = await ENTERPRISE.find();
+    res.status(200).json(enterprises);
+  } catch (error) {
+    next(error)
+  }
+}
+
+
+export const getRecruiterForJob = async (req, res, next) => {
+  try {
+    const enterpice_id = req.params.enterpice_id;
+    const recruiter = await ENTERPRISE.findById(enterpice_id);
+    if (!recruiter) {
+      return res.status(404).json({ message: "Error to get the recuriter for particluer job " });
+    }
+    res.status(200).json(recruiter.full_name);
+  } catch (error) {
+    next(error);
   }
 }

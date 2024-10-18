@@ -62,7 +62,7 @@ export const columns = [
       </div>
     ),
   },
-  
+
   {
     field: 'createdOn',
     headerName: 'Created On',
@@ -74,27 +74,23 @@ export const columns = [
       const createdOnDate = new Date(params.row.createdOn);
       const formattedDate = format(createdOnDate, 'dd-MMM-yy'); // Format the date as 13-Sep-23
       const timeAgo = formatDistanceToNowStrict(createdOnDate, { addSuffix: true }); // Get "X days ago"
-  
+
       return (
-        <div
-          
-        >
-         
+        <div>
           <span>{formattedDate}</span>
-       
-          <span style={{ fontSize: '0.9em', color: '#888',paddingLeft:'8px' }}>({timeAgo})</span>
+          <span style={{ fontSize: '0.9em', color: '#888', paddingLeft: '8px' }}>({timeAgo})</span>
         </div>
       );
     },
   },
-  
+
 ];
 
 
 export const rows = Array(10)
   .fill(null)
   .map((_, index) => ({
-     _id: `${index + 1}`,
+    _id: `${index + 1}`,
     job_title: "zigo",
     recruiter: "Arati Dangar",
     location: { state: 'Karnataka', country: 'India' },

@@ -145,6 +145,7 @@ const NewEnterpriseData = () => {
       <div style={{ height: 600, width: '100%', paddingTop: '19px' }}>
         <DataGrid
           rows={newEnterprise}
+          getRowId={(rows) => rows.id} // Specify the custom ID field
           columns={columns(handleInactivateButton, handleRowClick)} // Pass the function to columns
           rowHeight={80}
           onRowClick={(params) => handleRowClick(params.row)}
