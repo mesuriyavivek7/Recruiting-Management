@@ -5,9 +5,6 @@ const recruitingagencySchema=new mongoose.Schema({
         type:String,
         required:true
     },
-    profile_picture:{
-       type:String
-    },
     email:{
         type:String,
         required:true
@@ -26,6 +23,24 @@ const recruitingagencySchema=new mongoose.Schema({
     },
     company_description:{
        type:String
+    },
+    company_age:{
+      type:String
+    },
+    country_preference_one:{
+      type:String
+    },
+    country_preference_two:{
+      type:String
+    },
+    certificate_of_incorporation:{
+      filename:String,
+      filepath:String,
+      filetype:String
+    },
+    experience_usa_sourcing:{
+      type:Boolean,
+      default:false
     },
     company_size:{
         type:String,

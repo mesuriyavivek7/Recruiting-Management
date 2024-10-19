@@ -6,6 +6,9 @@ import Notification from "../../components/Notification";
 import axios from "axios";
 import {AuthContext} from '../../context/AuthContext'
 
+//importing icons
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
 const Login = () => {
   const navigate=useNavigate()
@@ -42,11 +45,20 @@ const Login = () => {
     setFormData((prevData)=>({...prevData,[name]:value}))
   }
 
+ //For the password
+  const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+
+    const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword);
+    };
+
+
   const validateForm=()=>{
     let newErrors={}
     if(!formData.email) newErrors.email="Email address is required"
     if(!formData.password) newErrors.password="Password is required"
-    if(Object.keys(newErrors).length>0) showNotification("Please fill out appropriate fields...!")
+    // if(Object.keys(newErrors).length>0) showNotification("Please fill out appropriate fields...!",'failure')
     setErrors(newErrors)
     return Object.keys(newErrors).length===0
 
@@ -129,24 +141,25 @@ const Login = () => {
                     ) 
                   }
                 </div>
-                <div className="flex-start gap-2 w-full">
+                <div className="flex-start relative gap-2 w-full">
                   <label id="password" className="input-label">
                     Enter Password
                   </label>
                   <input
-                    type="password"
-                    name="password"
-                    id="password"
-                    className="input-field"
-                    value={formData.password}
-                    onChange={handleChange}
-                    required
-                  />
+                   id="password"
+                   name="password"
+                   type={showPassword ? 'text' : 'password'}
+                   value={formData.password}
+                   onChange={handleChange}
+                   className="input-field"
+                />
+                 <button type="button" className="right-2  top-8 absolute"  onClick={togglePasswordVisibility} >
+                    {showPassword ? <VisibilityIcon style={{fontSize:"1.2rem"}}></VisibilityIcon> : <VisibilityOffIcon style={{fontSize:"1.2rem"}}></VisibilityOffIcon> }
+                  </button>
                   {
                     errors.password && (
                       <p className="text-red-600 text-xs">{errors.password}</p>
                     )
-
                   }
                 </div>
                 <p className="text-end my-3">

@@ -80,7 +80,14 @@ const EnterpriseSignup = () => {
   
 
   const handleCountryChange = (event) => {
-    const selectedCountryId = parseInt(event.target.value);
+    const value=event.target.value
+    if(value===""){
+      setFormData((prevData)=>({...prevData,country:'',state:'',city:''}))
+      setSelectedCountry('');
+      setSelectedState('');
+      setSelectedCity('')
+    }else{
+    const selectedCountryId = parseInt(value);
     setSelectedCountry(selectedCountryId);
     setSelectedState('');
     setSelectedCity('')
@@ -90,30 +97,46 @@ const EnterpriseSignup = () => {
         break;
        }
     }
+  }
     
   };
 
   const handleStateChange = (event) => {
-    const selectedStateId = parseInt(event.target.value);
-    setSelectedState(selectedStateId);
-    setSelectedCity('')
-    for(let i of states){
-      if(parseInt(i.state_id)===selectedStateId){
-       setFormData((prevData) => ({ ...prevData, state: i.state_name}));
-       break;
+    const value=event.target.value
+    if(value===""){
+      setFormData((prevData)=>({...prevData,state:'',city:''}))
+      setSelectedState('');
+      setSelectedCity('')
+    }else{
+      const selectedStateId = parseInt(event.target.value);
+      setSelectedState(selectedStateId);
+      setSelectedCity('')
+      for(let i of states){
+        if(parseInt(i.state_id)===selectedStateId){
+         setFormData((prevData) => ({ ...prevData, state: i.state_name}));
+         break;
+        }
       }
-   }
+    }
+   
   };
 
   const handleCityChange = (event) => {
-    const selectedCityId = parseInt(event.target.value);
-    setSelectedCity(selectedCityId);
-    for(let i of cities){
-      if(parseInt(i.city_id)===selectedCityId){
-       setFormData((prevData) => ({ ...prevData, city: i.city_name}));
-       break;
+    const value=event.target.value
+    if(value===""){
+      setFormData((prevData)=>({...prevData,city:''}))
+      setSelectedCity('')
+    }else{
+      const selectedCityId = parseInt(event.target.value);
+      setSelectedCity(selectedCityId);
+      for(let i of cities){
+       if(parseInt(i.city_id)===selectedCityId){
+        setFormData((prevData) => ({ ...prevData, city: i.city_name}));
+        break;
+       }
       }
-   }
+    }
+    
   };
 
    useEffect(()=>{
@@ -160,6 +183,8 @@ const EnterpriseSignup = () => {
        }
   }
 
+  console.log(formData)
+
   const validateForm=()=>{
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     let newErrors={};
@@ -174,7 +199,7 @@ const EnterpriseSignup = () => {
     if (!formData.country) newErrors.country = "Country is required";
     if (!formData.state) newErrors.state = "State is required";
     if (!formData.city) newErrors.city = "City is required";
-    if(Object.keys(newErrors).length>0) showNotification("Please fill out appropriate fields...!","failure")
+    // if(Object.keys(newErrors).length>0) showNotification("Please fill out appropriate fields...!","failure")
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   }
@@ -270,7 +295,7 @@ const EnterpriseSignup = () => {
                     className="input-field"
                   />
                   {errors.name && (
-                  <p className="text-red-600 text-xs my-2">{errors.name}</p>
+                  <p className="text-red-600 text-xs">{errors.name}</p>
                 )}
                 </div>
                 <div className="flex-start gap-2 w-full">
@@ -359,6 +384,9 @@ const EnterpriseSignup = () => {
                     <option value="2000-10,000">2000-10,000</option>
                     <option value="10,000+">10,000+</option>
                   </select>
+                  {errors.size && (
+                    <p className="text-red-600 text-xs">{errors.size}</p>
+                   )}
                 </div>
                 <div className="flex-start gap-2 w-full">
                   <label htmlFor="country" className="input-label">
@@ -394,7 +422,7 @@ const EnterpriseSignup = () => {
                     className="input-field custom-select"
                     onChange={handleStateChange}
                   >
-                    <option value="">Self State</option>
+                    <option value="">Select State</option>
                     {states
                     .filter(
                       (state) => parseInt(state.country_id) === selectedCountry
@@ -421,7 +449,7 @@ const EnterpriseSignup = () => {
                     value={selectedCity}
                     onChange={handleCityChange}
                   >
-                    <option value="">Self City</option>
+                    <option value="">Select City</option>
                     {cities
                     .filter((city) => parseInt(city.state_id) === selectedState)
                     .map((city) => (

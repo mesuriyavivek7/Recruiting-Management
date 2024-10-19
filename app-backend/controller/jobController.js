@@ -376,3 +376,74 @@ export const addCandidateProfileList=async (req,res,next)=>{
        next(err)
     }
 }
+
+export const getJobBasicDetailsForPreview=async (req,res,next)=>{
+    try{
+        const job=await JOBS.findOne({job_id:req.params.jobid})
+
+        const jobBasicDetails=await JOBBASICDETAILS.findById(job.job_basic_details)
+        res.status(200).json(jobBasicDetails)
+    }catch(err){
+        next(err)
+    }
+}
+
+export const getJobCompanyDetailsForPreview=async (req,res,next)=>{
+     try{
+        const job=await JOBS.findOne({job_id:req.params.jobid})
+
+        const jobCompanyDetails=await JOBCOMPANYINFO.findById(job.job_company_details)
+        res.status(200).json(jobCompanyDetails)
+     }catch(err){
+       next(err)
+     }
+}
+
+export const getJobSourcingGuidelinesForPreview=async (req,res,next)=>{
+     try{
+        const job=await JOBS.findOne({job_id:req.params.jobid})
+
+        const jobSourcingGuidelines=await JOBSOURCINGDETAILS.findById(job.job_sourcing_guidelines)
+        res.status(200).json(jobSourcingGuidelines)
+     }catch(err){
+        next(err)
+     }
+}
+
+export const getJobStatusForPreview=async (req,res,next)=>{
+   try{
+      const job=await JOBS.findOne({job_id:req.params.jobid},{job_status:1,_id:0})
+      res.status(200).json(job.job_status)
+   }catch(err){
+      next(err)
+   }
+}
+
+export const getJobCommissionDetailsForPreview=async (req,res,next)=>{
+  try{
+    const job=await JOBS.findOne({job_id:req.params.jobid})
+    const jobcommissiondetails=await JOBCOMMISSION.findById(job.job_commission_details)
+    res.status(200).json(jobcommissiondetails)
+  }catch(err){
+    next(err)
+  }
+}
+
+export const createJobUpdates=async (req,res,next)=>{
+   try{
+     await JOBS.findOneAndUpdate({job_id:req.params.jobid},{$push:{job_updates:req.body.text}})
+     res.status(200).json("Created new job update")
+   }catch(err){
+     next(err)
+   }
+}
+
+
+export const getJobUpdates=async (req,res,next)=>{
+    try{
+       const job=await JOBS.findOne({job_id:req.params.jobid},{job_updates:1,_id:0})
+       res.status(200).json(job.job_updates)
+    }catch(err){
+       next(err)
+    }
+}

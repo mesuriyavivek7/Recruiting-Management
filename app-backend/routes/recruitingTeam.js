@@ -1,5 +1,5 @@
 import express from 'express'
-import { addJobIntoAcceptList, addNewCandidate, changeAccountStatus, changeCommissionFlag, checkCreadentials, checkIsAdmin, createteammember, getEnterpriseTeamMember, getRecruiterCandidateDetails, getRecruiterProfilePageDetails, rejectJob, updateJobMappedList } from '../controller/recrutingTeamController.js'
+import { addJobIntoAcceptList, addNewCandidate, changeAccountStatus, changeCommissionFlag, checkCreadentials, checkEmailAddress, checkIsAdmin, checkMobileNo, createteammember, getEnterpriseTeamMember, getRecruiterCandidateDetails, getRecruiterProfilePageDetails, rejectJob, updateJobMappedList, updateRecruiterTeamDetails } from '../controller/recrutingTeamController.js'
 
 
 
@@ -40,5 +40,15 @@ router.get('/getcandidatedetails/:rememberid',getRecruiterCandidateDetails)
 
 //for getting recruiter team details for showing into profile page
 router.get('/getredetailsforprofilepage/:reid',getRecruiterProfilePageDetails)
+
+//for updated recruiter team member details
+router.put('/updatedetails/:rememberid',updateRecruiterTeamDetails)
+
+//for check email address for recruiting team
+router.post('/checkemailaddress/:rememberid',checkEmailAddress)
+
+//for check mobile no for recruiting team
+router.post('/checkmobileno/:rememberid',checkMobileNo)
+
 
 export default router

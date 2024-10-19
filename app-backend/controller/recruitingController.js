@@ -4,7 +4,7 @@ import JOBBASICDETAILS from "../models/JOBBASICDETAILS.js"
 import JOBS from "../models/JOBS.js"
 import RECRUITING from "../models/RECRUITING.js"
 import RECRUITINGTEAM from "../models/RECRUITINGTEAM.js"
-
+import fs from 'fs'
 
 
 //for kyc details submission
@@ -164,4 +164,48 @@ export const getAgencyDetailsForProfilePage=async (req,res,next)=>{
       }catch(err){
           next(err)
       }
+}
+
+export const updateAgencyDetails=async (req,res,next)=>{
+      try{
+         const {company_name,company_size,country,state,city,company_age,linkedin_url,company_description,domains,firm_type,country_preference_one,country_preference_two,experience_usa_sourcing}=req.body
+         await RECRUITING.findByIdAndUpdate(req.params.ragencyid,{$set:{company_name,company_size,country,state,city,company_age,linkedin_url,company_description,domains,firm_type,country_preference_one,country_preference_two,experience_usa_sourcing}})
+         res.status(200).json('Recruiting agency details updated.')
+      }catch(err){
+         next(err)
+      }
+}
+
+
+export const uploadCoiCertificate=async (req,res,next)=>{
+     try{
+        const r_id=req.params.ragencyid
+        const filedata={
+           filename:req.file.filename,
+           filepath:req.file.path,
+           filetype:req.file.mimetype
+        }
+        await RECRUITING.findByIdAndUpdate(r_id,{$set:{certificate_of_incorporation:filedata}})
+        res.status(200).json("Certification upload successfully")
+     }catch(err){
+         next(err)
+     }
+}
+
+
+
+
+export const checkAndRemoveCoiFile=async (req,res,next)=>{
+     try{
+          const recruiter=await RECRUITING.findById(req.params.ragencyid,{certificate_of_incorporation:1})
+
+          if(recruiter.certificate_of_incorporation && fs.existsSync(recruiter.certificate_of_incorporation.filepath)){
+             fs.unlinkSync(recruiter.certificate_of_incorporation.filepath)
+             await RECRUITING.findByIdAndUpdate(req.params.ragencyid,{$set:{certificate_of_incorporation:null}})
+          }
+          res.status(200).json('Check and remove coi file')
+          
+     }catch(err){
+        next(err)
+     }
 }

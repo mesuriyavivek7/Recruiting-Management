@@ -17,7 +17,6 @@ const jobSchema=new mongoose.Schema({
     job_basic_details:{
         type: mongoose.Schema.Types.ObjectId,
         ref:'jobbasicdetail'
-       
     },
     
     job_commission_details:{
@@ -46,6 +45,7 @@ const jobSchema=new mongoose.Schema({
     alloted_account_manager:{
         type:String
     },
+    job_updates:[String],
     job_request:[String],
     accepted_recruiting_agency:[String],
     mapped_recruiting_agency_member:[String],

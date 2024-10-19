@@ -2,11 +2,9 @@ import express from "express"
 import multer from "multer"
 import path from 'path'
 
-import { acVerified, allocatedAcManager, changeAccountStatus, getAcmanager, getAgencyDetailsForProfilePage, getAllPendingAcmanagerRecruiting, getAllPendingMadminVerifyRAgency,getTeamMember, kycDetailsSubmission, kycDocsSubmission } from "../controller/recruitingController.js"
+import { acVerified, allocatedAcManager, changeAccountStatus, checkAndRemoveCoiFile, getAcmanager, getAgencyDetailsForProfilePage, getAllPendingAcmanagerRecruiting, getAllPendingMadminVerifyRAgency,getTeamMember, kycDetailsSubmission, kycDocsSubmission, updateAgencyDetails, uploadCoiCertificate } from "../controller/recruitingController.js"
 
 const router=express.Router()
-
-
 
 //creating disk storage
 const storage=multer.diskStorage({
@@ -19,6 +17,17 @@ const storage=multer.diskStorage({
 })
 
 const upload=multer({storage})
+
+const coistorage=multer.diskStorage({
+    destination:(req,file,cb)=>{
+        cb(null,'uploads/coidocs/');
+    },
+    filename:(req,file,cb)=>{
+        cb(null,Date.now()+path.extname(file.originalname))
+    }
+})
+
+const uploadcoi=multer({storage:coistorage})
 
 //router for upload kyc details
 
@@ -53,6 +62,12 @@ router.get('/getteammember/:reid',getTeamMember)
 //for getting recruiter agency details to showing into profile page
 router.get('/getagencydetailsforprofilepage/:ragencyid',getAgencyDetailsForProfilePage)
 
+//For update recruiting agency details
+router.put('/updateagencydetails/:ragencyid',updateAgencyDetails)
 
+//Check and remove coi file
+router.put('/checkandremovecoifile/:ragencyid',checkAndRemoveCoiFile)
 
+//For upload coi certificate
+router.post('/uploadcoi/:ragencyid',uploadcoi.single('file'),uploadCoiCertificate)
 export default router

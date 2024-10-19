@@ -5,7 +5,7 @@ import fs from 'fs'
 import { fileURLToPath } from 'url';
 
 import { cancelProcess, checkParseDetails, createAndParseResume, downloadResumeDocs, getResumeFileName, getResumeFilePath, marksAsCompleted, removeResumeFile} from '../controller/resumeController.js'
-import { addAcManager, changeCandidateStatus, changeMultipleCandidateStatus, createCandidate, getCandidateForMultipleAction, getRecruiterMemberIds, updateCandidateRemarks } from '../controller/candidateController.js'
+import { addAcManager, changeCandidateStatus, changeMultipleCandidateStatus, createCandidate, downloadCandidateAttachments, getAcManagerName, getCandidateAllDetails, getCandidateForMultipleAction, getJobBasicDetails, getRecruiterMemberIds, updateCandidateRemarks, viewCandidateAttachments } from '../controller/candidateController.js'
 import { checkEmailAndMobile, createCandidateBasicDetails } from '../controller/candidateBasicController.js'
 import { uploadCandidateAttachments } from '../controller/candidateAttachmentsController.js';
 import { uploadCandidateConsetProof } from '../controller/candidateConsetController.js';
@@ -113,6 +113,7 @@ router.get('/getresumefilename/:cid',getResumeFileName)
 //download resume docs
 router.get('/downloadresumedocs/:cid',downloadResumeDocs)
 
+//For check resume file type
 router.get('/resumefilepath/:cid',getResumeFilePath)
 
 //updating candidate remarks
@@ -126,6 +127,21 @@ router.put('/changemultiplecandidatestatus',changeMultipleCandidateStatus)
 
 //fetch recruiter member id for particluer the given array of candidate ids
 router.post('/getrecruitermemberids',getRecruiterMemberIds)
+
+//Get particluer candidate by id
+router.get('/getcandidatealldetails/:cid',getCandidateAllDetails)
+
+//Get job basic details using candidate id
+router.get('/getjobbasicdetails/:cid',getJobBasicDetails)
+
+//Get allocated candidate account manager
+router.get('/getacmanagername/:cid',getAcManagerName)
+
+//For downloading candidate attachments 
+router.post('/downloadcandidateattachments',downloadCandidateAttachments)
+
+//For view candidate attachments
+router.get('/viewcandidateattachments/:candidateId/:fileName',viewCandidateAttachments)
 
 export default router
 
