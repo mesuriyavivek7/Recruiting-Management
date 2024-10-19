@@ -32,6 +32,7 @@ export default function AllRecruitingAgencyData() {
     <>
       <Box sx={{ height: 600, width: '100%' }}>
         <DataGrid 
+          getRowId={(rows) => rows.id} // Specify the custom ID field
           rows={rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)} 
           columns={columns}
           rowHeight={80} 

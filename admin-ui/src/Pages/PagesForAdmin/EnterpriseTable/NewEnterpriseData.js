@@ -1,5 +1,3 @@
-
-
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
@@ -119,13 +117,13 @@ const NewEnterpriseData = () => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_APP_URL}/enterprise/adminpending`);
       const data = response.data;
-  
+
       // Ensure each row has a unique `id`
       const rowsWithIds = data.map((item) => ({
         ...item,
         id: item._id  // Assuming `_id` is unique
       }));
-  
+
       setNewEnterprise(rowsWithIds);
     } catch (err) {
       showNotification('There is something wrong..!', 'failure');
@@ -147,6 +145,7 @@ const NewEnterpriseData = () => {
       <div style={{ height: 600, width: '100%', paddingTop: '19px' }}>
         <DataGrid
           rows={newEnterprise}
+          getRowId={(rows) => rows.id} // Specify the custom ID field
           columns={columns(handleInactivateButton, handleRowClick)} // Pass the function to columns
           rowHeight={80}
           onRowClick={(params) => handleRowClick(params.row)}
@@ -204,16 +203,16 @@ const NewEnterpriseData = () => {
       )}
 
       {/* Inactivate Account Dialog */}
-      
+
 
       {/* Assign Account Manager Dialog */}
       <Dialog open={openpopup} onClose={handleCloseInactivateButton}>
-         <DialogTitle>Inactivate Enterprise</DialogTitle>
-         <DialogContent>
-           <DialogContentText>
-             Please provide a reason why you want to inactivate this account.
+        <DialogTitle>Inactivate Enterprise</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Please provide a reason why you want to inactivate this account.
           </DialogContentText>
-           <TextField
+          <TextField
             autoFocus
             margin="dense"
             label="Reason"
@@ -225,121 +224,123 @@ const NewEnterpriseData = () => {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseInactivateButton}  sx={{
-                        fontSize: { xs: "12px", sm: "14px", xl: "17px" },
-                        width: { xl: "80px", sm: "40px" },
-                        color:'white',
-                        backgroundColor:
-                          "#315370",
-                        "&:hover": {
-                          backgroundColor:"gray"
-                        },
-                        textTransform: "none",
-                      }}>
+          <Button onClick={handleCloseInactivateButton} sx={{
+            fontSize: { xs: "12px", sm: "14px", xl: "17px" },
+            width: { xl: "80px", sm: "40px" },
+            color: 'white',
+            backgroundColor:
+              "#315370",
+            "&:hover": {
+              backgroundColor: "gray"
+            },
+            textTransform: "none",
+          }}>
             Cancel
           </Button>
-          <Button onClick={handleSubmitButton}  sx={{
-                        fontSize: { xs: "12px", sm: "14px", xl: "17px" },
-                        width: { xl: "100px", sm: "50px" },
-                        // height:"30px",
-                       color:'white',
-                        backgroundColor:
-                          "#315370",
-                        "&:hover": {
-                          backgroundColor:"gray"
-                        },
-                        textTransform: "none",
-                    
-                      }}>
-               {inactivateLoad &&
-                <span className="absolute inset-0 flex items-center justify-center">
-                                          <svg className="w-5 h-5 text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l5.6-3.2a10 10 0 00-10.4 0L4 12z"></path>
-                                          </svg>
-                                     </span>
-                                     }
-                                     
-                                     {!inactivateLoad && <span>Submit</span>}
+          <Button onClick={handleSubmitButton} sx={{
+            fontSize: { xs: "12px", sm: "14px", xl: "17px" },
+            width: { xl: "100px", sm: "50px" },
+            // height:"30px",
+            color: 'white',
+            backgroundColor:
+              "#315370",
+            "&:hover": {
+              backgroundColor: "gray"
+            },
+            textTransform: "none",
+
+          }}>
+            {inactivateLoad &&
+              <span className="absolute inset-0 flex items-center justify-center">
+                <svg className="w-5 h-5 text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l5.6-3.2a10 10 0 00-10.4 0L4 12z"></path>
+                </svg>
+              </span>
+            }
+
+            {!inactivateLoad && <span>Submit</span>}
           </Button>
         </DialogActions>
       </Dialog>
-        
-       {selectedRow && (
-        <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm" sx={{fontSize:{sm:'16px',xl:'20px'}}}>
-        <DialogTitle sx={{fontSize:{sm:'20px',xl:'25px'},borderBottom: '2px solid black', // Add this line for the border
-    paddingBottom: '8px', }}>Details for {selectedRow?.full_name}</DialogTitle>
-        <DialogContent>
-          <div className="space-y-6  space-x-2 pt-4 grid grid-cols-2">
-            <p className='pt-6 pl-3'><strong>Id:</strong> {selectedRow?._id}</p>
-            <p><strong>Email:</strong> {selectedRow?.email}</p>
-            <p><strong>Mobile No:</strong> {selectedRow?.mobileno}</p>
-            <p><strong>Company:</strong> {selectedRow?.company_name}</p>
-            <p><strong>Designation:</strong> {selectedRow?.designation}</p>
-            
-            <p><strong>Company Size:</strong> {selectedRow?.company_size}</p>
-            <p><strong>Country:</strong> {selectedRow?.country}</p>
-            <p><strong>State:</strong> {selectedRow?.state}</p>
-            <p><strong>City:</strong> {selectedRow?.city}</p>
-            <p><strong>Email Verified:</strong> {(selectedRow?.email_verified)?("Yes"):("No")}</p>
-            
-          </div>
-          {
-            (selectedRow?.account_status.status==="Active") && (
-             <FormControl fullWidth sx={{ mt: 6 }}>
-                <InputLabel id="manager-select-label">Select Account Manager</InputLabel>
-                  <Select
-                  labelId="manager-select-label"
-                  value={selectedManager}
-                  label="Select Account Manager"
-                  onChange={handleManagerChange}
-                >
-                 {
-                   acManager.map((item,i)=>(
-                     <MenuItem key={i} value={item._id}>{item.full_name}</MenuItem>
-                   ))
-                 }
-               
-                </Select>
-            </FormControl>
-            )
-          }
-          { 
-            (selectedRow?.account_status.status==="Inactive") && (
-               <div className='my-6'>
-                  <p className='text-red-500 text-xl text-center'>This Account is Inactivated</p>
-               </div>)
-          }
-        </DialogContent>
 
-        {   (selectedRow?.account_status.status==="Active") &&
-            ( <DialogActions>
-                 <Button
-                   variant="contained"
-                   disabled={!selectedManager}
-                   onClick={handleAssignAcManager}
-                   sx={{ backgroundColor: selectedManager ? '#315370' : 'gray', color: 'white' }}
-                   className='h-8'
-                 >
-                   {assignLoad && 
-                   <span className="absolute inset-0 flex items-center justify-center">
-                                          <svg className="w-5 h-5 text-black animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l5.6-3.2a10 10 0 00-10.4 0L4 12z"></path>
-                                          </svg>
-                                     </span>
-                                     }
-                                     
-                                     {!assignLoad && <span className='text-white'>Assign</span>}
-                 </Button>
-                 <Button onClick={handleClose} color="secondary">
-                   Cancel
-                 </Button>
-               </DialogActions> )
-        }
-      </Dialog>
-        )}
-      
+      {selectedRow && (
+        <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm" sx={{ fontSize: { sm: '16px', xl: '20px' } }}>
+          <DialogTitle sx={{
+            fontSize: { sm: '20px', xl: '25px' }, borderBottom: '2px solid black', // Add this line for the border
+            paddingBottom: '8px',
+          }}>Details for {selectedRow?.full_name}</DialogTitle>
+          <DialogContent>
+            <div className="space-y-6  space-x-2 pt-4 grid grid-cols-2">
+              <p className='pt-6 pl-3'><strong>Id:</strong> {selectedRow?._id}</p>
+              <p><strong>Email:</strong> {selectedRow?.email}</p>
+              <p><strong>Mobile No:</strong> {selectedRow?.mobileno}</p>
+              <p><strong>Company:</strong> {selectedRow?.company_name}</p>
+              <p><strong>Designation:</strong> {selectedRow?.designation}</p>
+
+              <p><strong>Company Size:</strong> {selectedRow?.company_size}</p>
+              <p><strong>Country:</strong> {selectedRow?.country}</p>
+              <p><strong>State:</strong> {selectedRow?.state}</p>
+              <p><strong>City:</strong> {selectedRow?.city}</p>
+              <p><strong>Email Verified:</strong> {(selectedRow?.email_verified) ? ("Yes") : ("No")}</p>
+
+            </div>
+            {
+              (selectedRow?.account_status.status === "Active") && (
+                <FormControl fullWidth sx={{ mt: 6 }}>
+                  <InputLabel id="manager-select-label">Select Account Manager</InputLabel>
+                  <Select
+                    labelId="manager-select-label"
+                    value={selectedManager}
+                    label="Select Account Manager"
+                    onChange={handleManagerChange}
+                  >
+                    {
+                      acManager.map((item, i) => (
+                        <MenuItem key={i} value={item._id}>{item.full_name}</MenuItem>
+                      ))
+                    }
+
+                  </Select>
+                </FormControl>
+              )
+            }
+            {
+              (selectedRow?.account_status.status === "Inactive") && (
+                <div className='my-6'>
+                  <p className='text-red-500 text-xl text-center'>This Account is Inactivated</p>
+                </div>)
+            }
+          </DialogContent>
+
+          {(selectedRow?.account_status.status === "Active") &&
+            (<DialogActions>
+              <Button
+                variant="contained"
+                disabled={!selectedManager}
+                onClick={handleAssignAcManager}
+                sx={{ backgroundColor: selectedManager ? '#315370' : 'gray', color: 'white' }}
+                className='h-8'
+              >
+                {assignLoad &&
+                  <span className="absolute inset-0 flex items-center justify-center">
+                    <svg className="w-5 h-5 text-black animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l5.6-3.2a10 10 0 00-10.4 0L4 12z"></path>
+                    </svg>
+                  </span>
+                }
+
+                {!assignLoad && <span className='text-white'>Assign</span>}
+              </Button>
+              <Button onClick={handleClose} color="secondary">
+                Cancel
+              </Button>
+            </DialogActions>)
+          }
+        </Dialog>
+      )}
+
     </>
   );
 };
