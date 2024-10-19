@@ -113,27 +113,17 @@ export const getAllCandidates = async (req, res, next) => {
 
 export const getCandidateStatusById = async (req, res, next) => {
   try {
-    const basicDetailId = req.params.basicDetailId;
+    const candidateId = req.params.candidate_id;
 
-    // Find the candidate by candidate_basic_details in the candidatebasicdetails collection
-    const candidateBasicDetail = await CANDIDATEBASICDETAILS.findOne({
-      _id: basicDetailId
-    });
-
-    if (!candidateBasicDetail) {
-      return res.status(404).json({ message: "Candidate basic details not found" });
-    }
-
-    // Now use the candidate_id to find the corresponding candidate in the CANDIDATES table
+    // find the corresponding candidate in the CANDIDATES table
     const candidate = await CANDIDATE.findOne({
-      candidate_basic_details: basicDetailId
+      candidate_id: candidateId
     });
 
     if (!candidate) {
       return res.status(404).json({ message: "Candidate not found in CANDIDATES table" });
     }
-
-    return res.status(200).json({ status: candidate.candidate_status });
+    res.status(200).json(candidate);
   } catch (error) {
     next(error);
   }

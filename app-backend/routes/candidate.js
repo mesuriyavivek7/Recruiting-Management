@@ -131,7 +131,7 @@ router.get('/details', getAllCandidateDetails);
 
 router.get('/allcandidates', getAllCandidates);
 
-router.get('/getcandidatestatus/:basicDetailId', getCandidateStatusById);
+router.get('/getcandidatestatus/:candidate_id', getCandidateStatusById);
 
 export default router
 
