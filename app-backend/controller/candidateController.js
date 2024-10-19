@@ -209,6 +209,7 @@ export const viewCandidateAttachments=async (req,res,next)=>{
     }catch(err){
        next(err)
     }
+}
 
 export const getCandidateStatusById = async (req, res, next) => {
   try {

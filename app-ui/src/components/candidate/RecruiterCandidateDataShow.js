@@ -157,27 +157,12 @@ const candidateCol=[
               <div className="flex gap-2">
                   <span onClick={()=>viewCandidateResume(params.row.candidate_id)} className='text-blue-400 cursor-pointer'><DescriptionIcon style={{fontSize:'1.3rem'}}/></span>
                   <span onClick={()=>downloadCandidateResume(params.row.candidate_id)} className='text-blue-400 cursor-pointer'><FileDownloadIcon style={{fontSize:'1.3rem'}}/></span>
-  //column for candidate data
-  const candidateCol = [
-    { field: 'id', headerName: 'ID', headerClassName: 'super-app-theme--header', width: 70, },
-    {
-      field: "name&id", headerName: 'Candidate Name/CID', headerClassName: 'super-app-theme--header', width: 250,
-      renderCell: (params) => {
-        return (
-          <div className="flex items-center gap-6">
-            <div className="flex flex-col gap-1">
-              <p className='text-sm text-blue-400'>{params.row.candidate_full_name}</p>
-              <span className='text-sm text-blue-400'>{params.row.candidate_id}</span>
-            </div>
-            <div className="flex gap-2">
-              <span onClick={() => viewCandidateResume(params.row.candidate_id)} className='text-blue-400 cursor-pointer'><DescriptionIcon style={{ fontSize: '1.3rem' }} /></span>
-              <span onClick={() => downloadCandidateResume(params.row.candidate_id)} className='text-blue-400 cursor-pointer'><FileDownloadIcon style={{ fontSize: '1.3rem' }} /></span>
-            </div>
-          </div>
+              </div>
+           </div>
         )
       }
-    },
-    {
+  },
+  {
       field: "jobid&title", headerName: 'Uphire Job Id/Name', headerClassName: 'super-app-theme--header', width: 250,
       renderCell: (params) => {
         return (
@@ -913,49 +898,7 @@ const handleClosePopUpBox=async ()=>{
      </div>
         
       )
-      
-
-     
-
      }
-     <Box sx={{
-      height:600,width:'100%',
-      '& .super-app-theme--header': {
-          backgroundColor: '#edf3fd',
-        },
-     }}>
-      <DataGrid
-      rowHeight={90}
-      rows={rows}
-      columns={candidateCol}
-      loading={loader}
-      initialState={{
-          pagination: {
-            paginationModel: { page: 0, pageSize: 10 },
-          },
-        }}
-     pageSize={8}
-     pageSizeOptions={[5,10]}
-     sx={{
-          '& .MuiDataGrid-columnHeaders': {
-            background:'red', // Set your desired background color here
-            color: '#124791', // Optional: Set text color
-            fontSize:'1rem',
-            fontWeight:'bold'
-          },
-        }}
-      ></DataGrid>
-  return (
-    <div className='custom-div'>
-      {/* {
-      candidateStatusLoader && 
-       <div className='fixed inset-0 flex justify-center bg-black z-50 bg-opacity-50 backdrop-blur-md items-center'>
-         <div className='custom-div w-[450px] p-4 items-center'>
-            <img className='h-10 w-10' alt='' src={WhiteLoader}></img>
-            <p>Please wait till we update resume status.</p>
-         </div>
-       </div>
-     } */}
       {remarksLoader &&
         <div className='fixed inset-0 flex justify-center bg-black z-50 bg-opacity-50 backdrop-blur-md items-center'>
           <div className='custom-div w-[450px] p-4 items-center'>
