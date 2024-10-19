@@ -607,7 +607,8 @@ export const sendVerificationMailEnterprise=async (req,res,next)=>{
 }
 
 
-//sending email for verification when user update his email address
+
+//sending email for verification when enterprise user update his email address
 export const sendEmailUpdateVerificationEnterprise=async (req,res,next)=>{
 
     const token=jwt.sign(req.body,process.env.JWT)

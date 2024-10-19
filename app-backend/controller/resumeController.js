@@ -190,6 +190,9 @@ export const downloadResumeDocs=async (req,res,next)=>{
      }
 }
 
+
+
+
 export const getResumeFilePath=async (req,res,next)=>{
       try{
         const doctype=await RESUMEDOCS.findOne({candidate_id:req.params.cid},{filetype:1,_id:0})
@@ -198,3 +201,4 @@ export const getResumeFilePath=async (req,res,next)=>{
           next(err)
       }
 }
+

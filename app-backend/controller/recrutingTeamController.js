@@ -1,4 +1,5 @@
 import RECRUITINGTEAM from '../models/RECRUITINGTEAM.js'
+import RECRUITING from '../models/RECRUITING.js';
 import JOBS from '../models/JOBS.js';
 import bcrypt from 'bcryptjs'
 import ENTERPRISETEAM from '../models/ENTERPRISETEAM.js';
@@ -191,6 +192,49 @@ export const getRecruiterProfilePageDetails=async (req,res,next)=>{
       try{
           const member=await RECRUITINGTEAM.findById(req.params.reid)
           res.status(200).json(member)
+      }catch(err){
+         next(err)
+      }
+}
+
+export const updateRecruiterTeamDetails=async (req,res,next)=>{
+     try{
+        const {full_name,mobile_no,email,profile_picture}=req.body
+        const update=await RECRUITINGTEAM.findByIdAndUpdate(req.params.rememberid,{$set:{full_name,mobileno:mobile_no,email,profile_picture}})
+        if(update.isAdmin){
+            await RECRUITING.findByIdAndUpdate(update.recruiting_agency_id,{$set:{full_name,mobileno:mobile_no,email}})
+        }
+        res.status(200).json('Recruiter team member details updated.')
+     }catch(err){
+        next(err)
+     }
+}
+
+
+export const checkMobileNo=async (req,res,next)=>{
+       try{
+            const mobileno=await RECRUITINGTEAM.findOne({mobileno:req.body.mobile_no})
+            if(mobileno){
+                res.status(200).json(true)
+            }else{
+                res.status(200).json(false)
+            }
+            
+       }catch(err){
+           next(err)
+       }
+}
+
+
+export const checkEmailAddress=async (req,res,next)=>{
+      try{
+         const email=await RECRUITINGTEAM.findOne({email:req.body.email})
+         if(email){
+            res.status(200).json(true)
+         }else{
+            res.status(200).json(false)
+         }
+         
       }catch(err){
          next(err)
       }

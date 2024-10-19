@@ -4,16 +4,8 @@ import path from "path"
 import multer from 'multer'
 import { fileURLToPath } from 'url';
 
-// import { allotedJobToAcManager, createJobs,  } from '../controller/jobController.js'
-// import { craeteJobBasicDeatils, showJobDetail } from '../controller/jobBasicController.js'
-// import { createJobDraft, deleteJobDraft } from '../controller/jobDraftController.js'
-// import { createJobCommission, showJobCommission } from '../controller/jobCommissionController.js'
-// import { createCompanyDetails, showJobCompanyInfo } from '../controller/jobCompanyController.js'
-// import { createSourcingDetails, showJobSourcingDetails } from '../controller/jobSourcingController.js'
-// import { createJobAttachment, showJobAttachment } from '../controller/jobAttachmentController.js'
-// import { createJobSq, showJobScreeningQuestions } from '../controller/jobSqController.js';
 
-import { activateJob,getAllJobs, addCandidateProfileList, allotedJobToAcManager, createJobs, deleteJobDraftWithOtherDetails, downloadEvaluationForm, getAllJobDetails, getAllJobDraftDetails, getCandidateScreeningQue, getFronLiveJobDetails, getFrontAcceptedJobDetails, getFrontMappedJobDetails, getJobAttachmentsDetailsForCandidate } from '../controller/jobController.js'
+import { activateJob,getAllJobs, addCandidateProfileList, allotedJobToAcManager, createJobs, deleteJobDraftWithOtherDetails, downloadEvaluationForm, getAllJobDetails, getAllJobDraftDetails, getCandidateScreeningQue, getFronLiveJobDetails, getFrontAcceptedJobDetails, getFrontMappedJobDetails, getJobAttachmentsDetailsForCandidate, getJobBasicDetailsForPreview, getJobCompanyDetailsForPreview, getJobSourcingGuidelinesForPreview, getJobStatusForPreview, getJobCommissionDetailsForPreview, createJobUpdates, getJobUpdates } from '../controller/jobController.js'
 import { craeteJobBasicDeatils,showJobDetail, getJobBasicDetails } from '../controller/jobBasicController.js'
 import { createJobDraft, deleteJobDraft } from '../controller/jobDraftController.js'
 import { createJobCommission,showJobCommission, getJobCommissionDetails } from '../controller/jobCommissionController.js'
@@ -177,8 +169,28 @@ router.get('/getcandidatescreeningque/:jobid',getCandidateScreeningQue)
 //for dowloading evaluation file
 router.get('/download/evaluationform/:jobid',downloadEvaluationForm)
 
-
 //add candidate profile into jobs candidate profile list
 router.post('/addcandidateprofilelist/:jobid',addCandidateProfileList)
+
+//for getting job basic details to show into preview page
+router.get('/getjobbasicdetailsforpreview/:jobid',getJobBasicDetailsForPreview)
+
+//for getting company details to show into preview page
+router.get('/getcompanydetailsforpreview/:jobid',getJobCompanyDetailsForPreview)
+
+//for getting job sourcing guidelines to show into preview page
+router.get('/getsourcingguidelinesforpreview/:jobid',getJobSourcingGuidelinesForPreview)
+
+//for getting job status to show into preview page
+router.get('/getjobstatusforpreview/:jobid',getJobStatusForPreview)
+
+//for getting job commission details to show into preview page
+router.get('/getjobcommissiondetailsforpreview/:jobid',getJobCommissionDetailsForPreview)
+
+//for creating job updates
+router.post('/createjobupdates/:jobid',createJobUpdates)
+
+//for getting job updates for preview
+router.get('/getjobupdates/:jobid',getJobUpdates)
 
 export default router

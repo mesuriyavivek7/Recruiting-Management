@@ -1,7 +1,18 @@
 import { response } from "express";
 import CANDIDATE from "../models/CANDIDATE.js";
+import CANDIDATEATTACHMENT from "../models/CANDIDATEATTACHMENT.js";
 import CANDIDATEBASICDETAILS from "../models/CANDIDATEBASICDETAILS.js";
+import CANDIDATECONSETPROOF from "../models/CANDIDATECONSETPROOF.js";
+import CANDIDATESQANSWER from "../models/CANDIDATESQANSWER.js";
 import JOBBASICDETAILS from "../models/JOBBASICDETAILS.js";
+import axios from "axios";
+import path from 'path'
+import { fileURLToPath } from 'url';
+import fs from 'fs'
+
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export const createCandidate = async (req, res, next) => {
   try {
@@ -110,6 +121,94 @@ export const getAllCandidates = async (req, res, next) => {
     next(error);
   }
 }
+
+export const getCandidateAllDetails=async (req,res,next)=>{
+   try{
+      const candidate=await CANDIDATE.findOne({candidate_id:req.params.cid})
+      let candidateBasicDetails=null
+      let candidateAttachments=null
+      let candidateSQ=null
+      let candidateConsetProof=null
+      
+      if(candidate.candidate_basic_details) candidateBasicDetails=await CANDIDATEBASICDETAILS.findById(candidate.candidate_basic_details)
+      if(candidate.candidate_attachments) candidateAttachments=await CANDIDATEATTACHMENT.findById(candidate.candidate_attachments)
+      if(candidate.candidate_question_answer) candidateSQ=await CANDIDATESQANSWER.findById(candidate.candidate_question_answer)
+      if(candidate.candidate_consent_proof) candidateConsetProof=await CANDIDATECONSETPROOF.findById(candidate.candidate_consent_proof)
+
+
+      let obj={
+        candidateBasicDetails,
+        candidateAttachments,
+        candidateSQ,
+        candidateConsetProof,
+        candidateStatus:candidate.candidate_status
+      }
+
+      res.status(200).json(obj)
+
+   }catch(err){
+     next(err)
+   }
+}
+
+
+export const getJobBasicDetails=async (req,res,next)=>{
+     try{
+       const jobid=await CANDIDATE.findOne({candidate_id:req.params.cid},{job_id:1,_id:0})
+       const jobbasicdetails=await JOBBASICDETAILS.findOne({job_id:jobid.job_id})
+       res.status(200).json(jobbasicdetails)
+     }catch(err){
+       next(err)
+     }
+}
+
+export const getAcManagerName=async (req,res,next)=>{
+      try{
+        const acmanager=await CANDIDATE.findOne({candidate_id:req.params.cid},{alloted_account_manager:1,_id:0})
+        if(acmanager.alloted_account_manager){
+           const nameandmail=await axios.get(`${process.env.ADMIN_SERVER_URL}/accountmanager/getmailandname/${acmanager.alloted_account_manager}`)
+           res.status(200).json(nameandmail.data)
+        }else{
+           res.status(200).json(null)
+        }
+      }catch(err){
+        next(err)
+      }
+}
+
+export const downloadCandidateAttachments=async (req,res,next)=>{
+  try{
+   const {filePath,fileName}=req.body
+   
+   const fileExist=fs.existsSync(filePath)
+
+   if(fileExist){
+    res.download(filePath,fileName)
+   }else{
+    res.status(404).json("File path not found.")
+   }
+  }catch(err){
+    next(err)
+  }
+}
+
+
+export const viewCandidateAttachments=async (req,res,next)=>{
+    try{
+      const {candidateId,fileName}=req.params
+      const filepath=path.join(__dirname,'..','uploads','candidatedocs',candidateId,fileName)
+      console.log(filepath)
+      fs.access(filepath,fs.constants.F_OK,(err)=>{
+        if(err){
+          return res.status(404).json('My File not found')
+        }else{
+          res.sendFile(filepath)
+        }
+      })
+      
+    }catch(err){
+       next(err)
+    }
 
 export const getCandidateStatusById = async (req, res, next) => {
   try {

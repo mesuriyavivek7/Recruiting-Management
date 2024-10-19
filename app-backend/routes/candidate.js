@@ -4,8 +4,9 @@ import path from 'path'
 import fs from 'fs'
 import { fileURLToPath } from 'url';
 
-import { cancelProcess, checkParseDetails, createAndParseResume, downloadResumeDocs, getResumeFileName, getResumeFilePath, marksAsCompleted, removeResumeFile } from '../controller/resumeController.js'
-import { addAcManager, changeCandidateStatus, changeMultipleCandidateStatus, createCandidate, getAllCandidates, getCandidateForMultipleAction, getCandidateStatusById, getRecruiterMemberIds, updateCandidateRemarks } from '../controller/candidateController.js'
+
+import { cancelProcess, checkParseDetails, createAndParseResume, downloadResumeDocs, getResumeFileName, getResumeFilePath, marksAsCompleted, removeResumeFile} from '../controller/resumeController.js';
+import { addAcManager, changeCandidateStatus, changeMultipleCandidateStatus, createCandidate, downloadCandidateAttachments, getAcManagerName, getAllCandidates, getCandidateAllDetails, getCandidateForMultipleAction, getCandidateStatusById, getJobBasicDetails, getRecruiterMemberIds, updateCandidateRemarks, viewCandidateAttachments } from '../controller/candidateController.js';
 import { checkEmailAndMobile, createCandidateBasicDetails, getAllCandidateDetails } from '../controller/candidateBasicController.js'
 import { uploadCandidateAttachments } from '../controller/candidateAttachmentsController.js';
 import { uploadCandidateConsetProof } from '../controller/candidateConsetController.js';
@@ -113,7 +114,9 @@ router.get('/getresumefilename/:cid', getResumeFileName)
 //download resume docs
 router.get('/downloadresumedocs/:cid', downloadResumeDocs)
 
-router.get('/resumefilepath/:cid', getResumeFilePath)
+//For check resume file type
+router.get('/resumefilepath/:cid',getResumeFilePath)
+
 
 //updating candidate remarks
 router.post('/updatecandidateremarks/:orgcid', updateCandidateRemarks)
@@ -132,6 +135,21 @@ router.get('/details', getAllCandidateDetails);
 router.get('/allcandidates', getAllCandidates);
 
 router.get('/getcandidatestatus/:candidate_id', getCandidateStatusById);
+
+//Get particluer candidate by id
+router.get('/getcandidatealldetails/:cid',getCandidateAllDetails)
+
+//Get job basic details using candidate id
+router.get('/getjobbasicdetails/:cid',getJobBasicDetails)
+
+//Get allocated candidate account manager
+router.get('/getacmanagername/:cid',getAcManagerName)
+
+//For downloading candidate attachments 
+router.post('/downloadcandidateattachments',downloadCandidateAttachments)
+
+//For view candidate attachments
+router.get('/viewcandidateattachments/:candidateId/:fileName',viewCandidateAttachments)
 
 export default router
 
