@@ -3,7 +3,7 @@ import multer from "multer"
 import path from 'path'
 
 
-import { acVerified, allocatedAcManager, changeAccountStatus, checkAndRemoveCoiFile, getAcmanager, getAgencyDetailsForProfilePage, getAllPendingAcmanagerRecruiting, getAllPendingMadminVerifyRAgency, getRecruitingAgencies, getRecruitingAgencyById, getTeamMember, kycDetailsSubmission, kycDocsSubmission, updateAgencyDetails,
+import { acVerified, allocatedAcManager, changeAccountStatus, checkAndRemoveCoiFile, getAcmanager, getAgencyDetailsForProfilePage, getAllPendingAcmanagerRecruiting, getAllPendingMadminVerifyRAgency, getRecruitingAgencies, getRecruitingAgencyById, getTeamMember, kycDetailsSubmission, kycDocsSubmission, updateAgencyDetails, uploadCoiCertificate } from "../controller/recruitingController.js";
 import { getRecruiterMemberIds } from "../controller/candidateController.js"
 
 
