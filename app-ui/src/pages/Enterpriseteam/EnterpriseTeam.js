@@ -14,6 +14,9 @@ import "react-phone-input-2/lib/style.css";
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import AddIcon from '@mui/icons-material/Add';
 
+//importing loader
+import WhiteLoader from '../../assets/whiteloader.svg'
+
 export default function EnterpriseTeam() {
  const {user}=useContext(AuthContext)
  const [enterpriseMember,setEnterpriseMember]=useState([])
@@ -34,7 +37,7 @@ export default function EnterpriseTeam() {
     try {
       const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/enterprise/getenterprisemember/${user.enterprise_id}`)
       console.log(res.data)
-      setEnterpriseMember(res.data)
+      setEnterpriseMember(res.data.map((item,index)=>({...item,table_id:index+1})))
       setLoading(false)
     } catch (err) {
       setLoading(false)
@@ -148,14 +151,60 @@ export default function EnterpriseTeam() {
 
   }
 
+
+  const getShortText=(text)=>{
+    if(!text) return ''
+    let arr=text.split(' ')
+    let str=''
+    if(arr.length>=2){
+         str+=arr[0][0].toUpperCase()
+         str+=arr[1][0].toUpperCase()
+    }else{
+        str+=arr[0][0].toUpperCase()
+    }
+    return str
+}
+
+
+  const [openPreviewBox,setOpenPreviewBox]=useState(false)
+  const [previewLoader,setPreviewLoader]=useState(false)
+  const [enterpriseDetails,setEnterpriseDetails]=useState(null)
+
+  const handleOpenPreviewBox=async (id)=>{
+       setOpenPreviewBox(true)
+       handleFetchEnterpriseDetails(id)
+  }
+
+  const handleClosePreviewBox=async ()=>{
+    setOpenPreviewBox(false)
+    setEnterpriseDetails(null)
+
+  }
+
+
+  //For fetch enterprise details
+  const handleFetchEnterpriseDetails=async (enmemberid)=>{
+        try{
+          setPreviewLoader(true)
+          const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/enterpriseteam/${enmemberid}`)
+          if(res.data) setEnterpriseDetails(res.data)
+        }catch(err){
+           setPreviewLoader(false)
+           console.log(err)
+           showNotification("Something went wrong..!",'failure')
+        }
+        setPreviewLoader(false)
+  }
+
+  
   //creating enterprise team col
   const enterpriseteamcol = [
-    { field: 'id', headerName: 'ID', headerClassName: 'super-app-theme--header', width: 80, },
+    { field: 'table_id', headerName: 'ID', headerClassName: 'super-app-theme--header', width: 80, },
     {
       field: "enterprise_member_name", headerClassName: 'super-app-theme--header', headerName: 'En Name', width: 260,
       renderCell: (params) => {
         return (
-          <div className='flex items-center gap-2'>
+          <div onClick={()=>handleOpenPreviewBox(params.row.id)} className='flex cursor-pointer items-center gap-2'>
             <span className='h-7 w-7 flex justify-center font-semibold items-center rounded-full text-white bg-blue-400'>{params.row.full_name[0].toUpperCase()}</span>
             <h2>{params.row.full_name}</h2>
           </div>
@@ -223,7 +272,7 @@ export default function EnterpriseTeam() {
 
       {
         openPopUp && (
-          <div className='fixed inset-0 z-50 flex justify-center bg-opacity-50 backdrop-blur-md items-center'>
+          <div className='fixed inset-0 z-10 flex justify-center bg-opacity-50 backdrop-blur-md items-center'>
             <div className="rounded-md overflow-hidden border-gray-100 border-1 max-w-md w-full">
               <div className='relative w-full bg-white py-2'>
                 <span className='absolute cursor-pointer flex items-center text-green-600 text-sm left-2 top-4' onClick={() => setOpenPopUp(false)}><ArrowBackIosIcon style={{ fontSize: '1rem' }}></ArrowBackIosIcon>Back</span>
@@ -304,6 +353,42 @@ export default function EnterpriseTeam() {
           </div>
         )
       }
+     {
+       openPreviewBox  && 
+       <div className='fixed inset-0 z-10 flex bg-black justify-center bg-opacity-50 backdrop-blur-md items-center'>
+          <div className='custom-div w-[35%] overflow-hidden p-0 rounded-md'>
+             <div className='flex items-center gap-2 p-2 px-3'>
+                  <span onClick={handleClosePreviewBox} className='text-gray-400 cursor-pointer'><ArrowBackIosIcon style={{fontSize:'1.4rem'}}></ArrowBackIosIcon></span>
+                  <h2 className='text-xl font-medium text-gray-700'>User Details</h2>
+             </div>
+             {
+              (previewLoader)?(
+                <div className='w-full h-full flex justify-center items-center'>
+                  <img src={WhiteLoader} className='h-10 w-10'></img>
+                </div>
+              ):(
+              enterpriseDetails && 
+                <div className='p-3 w-full bg-white-200'>
+                    <div className='custom-div flex-row'>
+                        {
+                          enterpriseDetails.profile_picture?(
+                             <img src={enterpriseDetails.profile_picture} className='h-14 w-14 rounded-full'></img>
+                          ):(
+                            <span className='h-10 w-10 flex justify-center items-center rounded-full bg-blue-400 text-white'>{getShortText(enterpriseDetails.full_name)}</span>
+                          )
+                        }
+                        <div className='flex flex-col gap-1'>
+                          <span>{enterpriseDetails.full_name} <small className='text-gray-500'>{enterpriseDetails.isAdmin?("(Admin)"):("(Enterprise Member)")}</small></span>
+                          <a href={`mailto:${enterpriseDetails.email}`} className='text-blue-400  text-sm tracking-wide underline-offset-1'>{enterpriseDetails.email}</a>
+                          <a href={`tel:${enterpriseDetails.mobileno}`} className='text-blue-400 text-sm tracking-wide underline-offset-1'>+{enterpriseDetails.mobileno}</a>
+                        </div>
+                    </div>
+                  </div>
+              )
+             }
+          </div>
+      </div>
+     }
 
       <div className='custom-div gap-6'>
         {notification && <Notification message={notification.message} type={notification.type} onClose={() => setNotification(null)}></Notification>}
@@ -322,7 +407,6 @@ export default function EnterpriseTeam() {
           },
         }}>
           <DataGrid
-            getRowId={(rows) => rows.id} // Specify the custom ID field
             rowHeight={90}
             rows={enterpriseMember}
             columns={enterpriseteamcol}

@@ -80,4 +80,5 @@ router.get("/:r_agency_id", getRecruitingAgencyById)
 
 //For upload coi certificate
 router.post('/uploadcoi/:ragencyid',uploadcoi.single('file'),uploadCoiCertificate)
+
 export default router

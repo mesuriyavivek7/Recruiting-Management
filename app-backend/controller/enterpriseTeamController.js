@@ -195,3 +195,12 @@ export const getEnterpriseTeam = async (req, res, next) => {
     next(error);
   }
 }
+
+export const getOneEnterpriseMember=async (req,res,next)=>{
+  try{
+    const enmember=await ENTERPRISETEAM.findById(req.params.enmemberid)
+    res.status(200).json(enmember)
+  }catch(err){
+    next(err)
+  }
+}
