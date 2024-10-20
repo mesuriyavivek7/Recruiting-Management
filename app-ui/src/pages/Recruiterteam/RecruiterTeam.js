@@ -115,7 +115,10 @@ const checkCreadentials=async ()=>{
       try{
          const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/recruiting/getteammember/${user.recruiting_agency_id}`)
          console.log(res.data)
-         setRecruitingMember(res.data)
+         setRecruitingMember(res.data.map((item, index) => ({
+          ...item,
+          id: index + 1,
+        })))
          setLoader(false)
       }catch(err){
         setLoader(false)
@@ -152,13 +155,40 @@ const checkCreadentials=async ()=>{
         }
   }
 
+  const getShortText=(text)=>{
+       if(!text) return ''
+       let arr=text.split(' ')
+       let str=''
+       if(arr.length>=2){
+            str+=arr[0][0].toUpperCase()
+            str+=arr[1][0].toUpperCase()
+       }else{
+           str+=arr[0][0].toUpperCase()
+       }
+       return str
+  }
+
+  const [openPreviewBox,setOpenPreviewBox]=useState(false)
+  const [recruiterDetails,setRecruiterDetails]=useState(null)
+
+  const handleOpenPreviewBox=(index)=>{
+     setRecruiterDetails(recruitingMember[index])
+     setOpenPreviewBox(true)
+  }
+
+  const handleClosePreviewBox=()=>{
+     setRecruiterDetails(null)
+     setOpenPreviewBox(false)
+  }
+
+  
 
   //creating recruiting team col
   const recruitingteamCol=[
     {field:'id',headerName:'ID',headerClassName:'super-app-theme--header', width: 120,
       renderCell:(params)=>{
          return (
-            <span>{params.row._id}</span>
+            <span>{params.row.id}</span>
          )
       }
     },
@@ -166,7 +196,7 @@ const checkCreadentials=async ()=>{
         field:"recruiting_member_name",headerClassName:'super-app-theme--header',headerName:'Re. Name',width:260,
         renderCell:(params)=>{
             return (
-                <div className='flex items-center gap-2'>
+                <div onClick={()=>handleOpenPreviewBox(params.row.id-1)} className='flex cursor-pointer items-center gap-2'>
                     <span className='h-7 w-7 flex justify-center font-semibold items-center rounded-full text-white bg-blue-400'>{params.row.full_name[0].toUpperCase()}</span>
                     <h2>{params.row.full_name}</h2>
                 </div>
@@ -242,6 +272,38 @@ const checkCreadentials=async ()=>{
   return (
     <>
     {notification && <Notification message={notification.message} type={notification.type} onClose={()=>setNotification(null)}></Notification>}
+    {
+     openPreviewBox &&
+      <div className='fixed z-10 inset-0 flex justify-center bg-opacity-50 backdrop-blur-md bg-black items-center'>
+            <div className='custom-div rounded-md overflow-hidden p-0 w-[35%]'>
+                <div className='flex items-center bg-white gap-2 p-2 px-3'>
+                  <span onClick={handleClosePreviewBox} className='text-gray-400 cursor-pointer'><ArrowBackIosIcon style={{fontSize:'1.4rem'}}></ArrowBackIosIcon></span>
+                  <h2 className='text-xl font-medium text-gray-700'>User Details</h2>
+                </div>
+                {
+                  recruiterDetails && 
+                  <div className='p-3 w-full bg-white-200'>
+                    <div className='custom-div flex-row'>
+                        {
+                          recruiterDetails.profile_picture?(
+                             <img src={recruiterDetails.profile_picture} className='h-14 w-14 rounded-full'></img>
+                          ):(
+                            <span className='h-10 w-10 flex justify-center items-center rounded-full bg-blue-400 text-white'>{getShortText(recruiterDetails.full_name)}</span>
+                          )
+                        }
+                        <div className='flex flex-col gap-1'>
+                          <span>{recruiterDetails.full_name} <small className='text-gray-500'>{recruiterDetails.isAdmin?("(Admin)"):("(Recruiter Member)")}</small></span>
+                          <a href={`mailto:${recruiterDetails.email}`}  className='text-blue-400  text-sm tracking-wide underline-offset-1'>{recruiterDetails.email}</a>
+                          <a href={`tel:${recruiterDetails.mobileno}`} className='text-blue-400 text-sm tracking-wide underline-offset-1'>+{recruiterDetails.mobileno}</a>
+                        </div>
+                    </div>
+                  </div>
+                }
+                
+            </div>
+     </div>
+
+    }
 
     {
         openPopUp && (

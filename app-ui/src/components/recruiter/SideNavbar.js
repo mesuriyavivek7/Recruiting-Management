@@ -8,20 +8,22 @@ import { ReactComponent as OffersIcon } from "../../assets/asset25.svg";
 import { ReactComponent as VideosIcon } from "../../assets/asset24.svg";
 import { ReactComponent as SettingsIcon } from "../../assets/asset26.svg";
 import { ReactComponent as ChatsIcon } from "../../assets/asset27.svg";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import Support from "../../pages/Support"; 
 
 const SideNavbar = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isSupportVisible, setIsSupportVisible] = useState(false); // State for pop-up visibility
 
+  const location=useLocation()
+
+  const currentPath=location.pathname
+  
+
   const handleExpand = () => {
     setIsExpanded(!isExpanded);
   };
 
-  const toggleNavbar = () => {
-    setIsExpanded(!isExpanded);
-  };
 
   const toggleSupportPopup = () => {
     setIsSupportVisible(!isSupportVisible); // Toggle pop-up visibility
@@ -39,28 +41,28 @@ const SideNavbar = () => {
       </div>
       
       <Link to="dashboard">
-        <div className="hover:bg-gray-400 rounded-md p-2 flex items-center">
+        <div className={`hover:bg-gray-400 ${currentPath==='/recruiter/dashboard' && "bg-gray-400"} rounded-md p-2 flex items-center`}>
           <DashboardIcon className="w-[24px] text-white" />
           {isExpanded && <span className="ml-3 text-white">Dashboard</span>}
         </div>
       </Link>
       
       <Link to="jobs">
-        <div className="hover:bg-gray-400 rounded-md p-2 flex items-center">
+        <div className={`hover:bg-gray-400 ${currentPath==='/recruiter/jobs' && "bg-gray-400"} rounded-md p-2 flex items-center`}>
           <JobsIcon className="w-[24px] text-white" />
           {isExpanded && <span className="ml-3 text-white">Jobs</span>}
         </div>
       </Link>
       
       <Link to="candidate">
-        <div className="hover:bg-gray-400 rounded-md p-2 flex items-center">
+        <div className={`hover:bg-gray-400 ${currentPath==='/recruiter/candidate' && "bg-gray-400"} rounded-md p-2 flex items-center`}>
           <CandidatesIcon className="w-[24px] text-white" />
           {isExpanded && <span className="ml-3 text-white">Candidates</span>}
         </div>
       </Link>
       
       <Link to="team">
-        <div className="hover:bg-gray-400 rounded-md p-2 flex items-center">
+        <div className={`hover:bg-gray-400 ${currentPath==="/recruiter/team" && "bg-gray-400"} rounded-md p-2 flex items-center`}>
           <GroupIcon className="w-[24px] text-white" />
           {isExpanded && <span className="ml-3 text-white">Team</span>}
         </div>

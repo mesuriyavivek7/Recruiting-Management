@@ -204,3 +204,4 @@ export const getRecruiterForJob = async (req, res, next) => {
     next(error);
   }
 }
+

@@ -1,11 +1,15 @@
 import express from 'express'
-import { addNewCandidate, changeAccountStatus, checkCreadentials, checkIsAdmin, createEnterpriseTeam, getCandidateDetails, getEnterpriseTeam, getRecruiterTeamMember, getSubmitedCandidateMailId } from '../controller/enterpriseTeamController.js'
+import { addNewCandidate, changeAccountStatus, checkCreadentials, checkIsAdmin, createEnterpriseTeam, getCandidateDetails, getEnterpriseTeam, getOneEnterpriseMember, getRecruiterTeamMember, getSubmitedCandidateMailId } from '../controller/enterpriseTeamController.js'
+
 
 
 const router=express.Router()
 
 //create team 
 router.post('/',createEnterpriseTeam)
+
+//Get the enterprise team member
+router.get('/:enmemberid',getOneEnterpriseMember)
 
 //check email and mobile alredy exist or not
 router.post('/checkcreadentials',checkCreadentials)
