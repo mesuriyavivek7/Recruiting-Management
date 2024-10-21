@@ -6,7 +6,9 @@ import {
   TablePagination,
   InputLabel,
   Select,
-  FormControl
+  FormControl,
+  CircularProgress,
+  Box
 } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import Notification from '../../../Components/Notification';
@@ -25,7 +27,7 @@ const NewEnterpriseData = () => {
   const [reason, setReason] = useState('');
   const [selectInactive, setSelectInactive] = useState(null);
   const [selectedRow, setSelectedRow] = useState(null);
-
+  const [loading, setLoading] = React.useState(false); // Loader state
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
@@ -33,6 +35,15 @@ const NewEnterpriseData = () => {
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
+
+
+  React.useEffect(() => {
+    // Simulate data fetching with a loader
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false); // Stop loading after data is "fetched"
+    }, 1000); // Simulate 1 second loading time
+  }, [newEnterprise, page, rowsPerPage]); 
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
@@ -142,6 +153,11 @@ const NewEnterpriseData = () => {
   return (
     <>
       <p className='text-lg xl:text-2xl'>New Enterprise</p>
+      {loading ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 400 ,color:'#315370'}}>
+          <CircularProgress />
+        </Box>
+      ) : (
       <div style={{ height: 600, width: '100%', paddingTop: '19px' }}>
         <DataGrid
           rows={newEnterprise}
@@ -192,7 +208,7 @@ const NewEnterpriseData = () => {
           }}
         />
       </div>
-
+      )}
       {notification && (
         <Notification
           open={true}
@@ -339,6 +355,18 @@ const NewEnterpriseData = () => {
             </DialogActions>)
           }
         </Dialog>
+      )}
+       {!loading && (
+      <TablePagination
+        component="div"
+        count={newEnterprise.length}
+        page={page} // Current page number
+        onPageChange={handleChangePage} // Handler for changing page
+        rowsPerPage={rowsPerPage} // Rows per page number
+        onRowsPerPageChange={handleChangeRowsPerPage} // Handler for changing rows per page
+        rowsPerPageOptions={[5, 10, 25]} // Rows per page options
+        labelRowsPerPage="Rows per page" // Label
+      />
       )}
 
     </>

@@ -14,6 +14,8 @@ import { ReactComponent as ChatsIcon } from "../assets/asset27.svg";
 import { NavLink, useLocation } from "react-router-dom";
 import { PiBuildingApartmentFill } from "react-icons/pi";
 import { PiBuildingOfficeThin } from "react-icons/pi";
+import { MdWork } from 'react-icons/md'
+import { FaBriefcase } from "react-icons/fa";
 
 const SideNavbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -37,22 +39,28 @@ const SideNavbar = () => {
   };
   return (
     <div className={`p-3 relative bg-blue-230 border-t  border-t-gray-400 flex flex-col gap-2 transition-width duration-300 font-noto-sans ease-in-out ${isOpen ? "w-64" : "w-20"}`}>
-      <div className={`hover:bg-gray-400 rounded-md p-2 ${!isOpen && "justify-center"} flex gap-2`} onClick={toggleSidebar}>
+      <div className={`hover:bg-gray-400 rounded-md p-2 ${!isOpen && "justify-center"} flex gap-2`} onClick={toggleSidebar}
+      title={!isOpen ? "Collaps" : ""} >
         <ExpandIcon className="w-[24px] text-white" />
         <span className=""></span>
         {isOpen && <span className="text-white">Collaps</span>}
       </div>
+      
       <NavLink
-        to={getNavLinkPath("/master_admin/dashboard/")}
-        className={({ isActive }) => `hover:bg-gray-400 rounded-md p-2 ${!isOpen && "justify-center"} flex gap-2 ${isActive ? 'bg-gray-400' : ''}`}
-      >
-        <DashboardIcon className="w-[24px] text-white" />
-        <span className=""></span>
-        {isOpen && <span className="text-white">Dashboard</span>}
-      </NavLink>
+  to={getNavLinkPath("/master_admin/dashboard/")}
+  className={({ isActive }) =>
+    `hover:bg-gray-400 rounded-md p-2  ${!isOpen && "justify-center"} flex gap-2 ${isActive ? 'bg-gray-400' : ''}`
+  }
+  title={!isOpen ? "Dashboard" : ""} // Tooltip when sidebar is closed
+>
+  <DashboardIcon className="w-[26px] text-white" />
+  {isOpen && <span className="text-white">Dashboard</span>}
+</NavLink>
+
       <NavLink
         to={getNavLinkPath("/master_admin/enterprise")}
         className={({ isActive }) => `hover:bg-gray-400 rounded-md p-2 ${!isOpen && "justify-center"} flex gap-2 ${isActive ? 'bg-gray-400' : ''}`}
+        title={!isOpen ? "Enterprise" : ""}
       >
           
           <PiBuildingApartmentFill style={{ color: 'white', fontSize: '28px' }}/>
@@ -62,6 +70,7 @@ const SideNavbar = () => {
       <NavLink
         to={getNavLinkPath("/master_admin/recruiting-agency")}
         className={({ isActive }) => `hover:bg-gray-400 rounded-md p-2 ${!isOpen && "justify-center"} flex gap-2 ${isActive ? 'bg-gray-400' : ''}`}
+        title={!isOpen ? "Recruiting Agency" : ""}
       >
         <ActionIcon className="w-[24px] text-white" />
         <span className=""></span>
@@ -70,14 +79,16 @@ const SideNavbar = () => {
       <NavLink
         to={getNavLinkPath("/master_admin/jobs")}
         className={({ isActive }) => `hover:bg-gray-400 rounded-md p-2 ${!isOpen && "justify-center"} flex gap-2 ${isActive ? 'bg-gray-400' : ''}`}
+        title={!isOpen ? "Job" : ""}
       >
-        <PostIcon className="w-[24px] text-white" />
+           <FaBriefcase style={{ color: 'white', fontSize: '22px' }} /> 
         <span className=""></span>
-        {isOpen && <span className="text-white">Post a Job</span>}
+        {isOpen && <span className="text-white">Job</span>}
       </NavLink>
       <NavLink
         to={getNavLinkPath("/master_admin/candidates")}
         className={({ isActive }) => `hover:bg-gray-400 rounded-md p-2 ${!isOpen && "justify-center"} flex gap-2 ${isActive ? 'bg-gray-400' : ''}`}
+        title={!isOpen ? "Candidates" : ""}
       >
         <CandidatesIcon className="w-[24px] text-white" />
         <span className=""></span>
