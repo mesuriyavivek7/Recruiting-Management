@@ -2,10 +2,11 @@ import { ThemeProvider } from '@emotion/react';
 import axios from 'axios';
 const uri = process.env.REACT_APP_API_APP_URL
 
-export const fetchEnterpriseData = async (enterprise_id) => {
+export const fetchEnterpriseData = async () => {
     try {
         const response = await axios.get(`${uri}/enterprise/findall`)
         return response.data;
+        
     } catch (error) {
         console.error("Error fetching enterprise details: ", error);
         throw error;
@@ -102,4 +103,32 @@ export const fetchCandidateStatusById = async (candidate_id) => {
         throw error;
     }
 }
+
+//get the account manager name and email
+export const fetchAccountManager = async(ac_manager_id) => {
+    try {
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/accountmanager/getmailandname/${ac_manager_id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error while fetching account manager details : ", error);
+        throw error;
+    }
+}
+
+// Search enterprise by name
+export const fetchEnterprises = async (query = '') => {
+    try {
+        const response = await axios.get(`${uri}/api/enterprises/search`, {
+            params: {
+                q: query
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching enterprises:', error);
+        return [];
+    }
+};
+
+
 

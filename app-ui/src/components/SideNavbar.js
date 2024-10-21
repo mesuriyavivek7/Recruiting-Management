@@ -12,11 +12,15 @@ import Support from "../pages/Support";
 //importing icons
 import PeopleOutlinedIcon from '@mui/icons-material/PeopleOutlined';
 
-import { Link } from "react-router-dom";
+import { Link ,useLocation} from "react-router-dom";
 
 const SideNavbar = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isSupportVisible, setIsSupportVisible] = useState(false); // State for pop-up visibility
+
+  const location=useLocation()
+
+  const currentPath=location.pathname
 
   const toggleNavbar = () => {
     setIsExpanded(!isExpanded);
@@ -39,7 +43,7 @@ const SideNavbar = () => {
 
       {/* Navigation Links */}
       <Link to="dashboard">
-        <div className="hover:bg-gray-400 rounded-md p-2 flex items-center gap-2">
+        <div className={`hover:bg-gray-400 ${currentPath==="/employer/dashboard" && "bg-gray-400"} rounded-md p-2 flex items-center gap-2`}>
           <DashboardIcon className="w-[24px] text-white" />
           {isExpanded && <span className="text-white">Dashboard</span>}
         </div>
@@ -48,48 +52,48 @@ const SideNavbar = () => {
 
     
        <Link to="candidate">
-        <div className="hover:bg-gray-400 rounded-md flex items-center gap-2 p-2">
+        <div className={`hover:bg-gray-400 ${currentPath==="/employer/candidate" && "bg-gray-400"} rounded-md flex items-center gap-2 p-2`}>
           <CandidatesIcon className="w-[24px] text-white" />
           {isExpanded && <span className="text-white">Candidates</span>}
         </div>
       </Link>
 
       <Link to="jobposting/landing">
-        <div className="hover:bg-gray-400 rounded-md p-2 flex items-center gap-2">
+        <div className={`hover:bg-gray-400 ${currentPath==="/employer/jobposting/landing" && "bg-gray-400"} rounded-md p-2 flex items-center gap-2`}>
           <PostIcon className="w-[24px] text-white" />
           {isExpanded && <span className="text-white">Post a Job</span>}
         </div>
       </Link>
 
        <Link to="team">
-        <div className="hover:bg-gray-400 rounded-md flex items-center gap-2 p-2">
+        <div className={`hover:bg-gray-400 ${currentPath==="/employer/team" && "bg-gray-400"} rounded-md flex items-center gap-2 p-2`}>
           <span className="w-[24px] text-white"><PeopleOutlinedIcon></PeopleOutlinedIcon></span>
           {isExpanded && <span className="text-white">Team</span>}
         </div>
       </Link>
       <Link to="bulkactions">
-        <div className="hover:bg-gray-400 rounded-md p-2 flex items-center gap-2">
+        <div className={`hover:bg-gray-400 ${currentPath==="/employer/bulkactions" && "bg-gray-400"} rounded-md p-2 flex items-center gap-2`}>
           <ActionIcon className="w-[24px] text-white" />
           {isExpanded && <span className="text-white">Bulk Actions</span>}
         </div>
       </Link>
 
       <Link to="offers">
-        <div className="hover:bg-gray-400 rounded-md p-2 flex items-center gap-2">
+        <div className={`hover:bg-gray-400 ${currentPath==="/employer/offers" && "bg-gray-400"} rounded-md p-2 flex items-center gap-2`}>
           <OffersIcon className="w-[24px] text-white" />
           {isExpanded && <span className="text-white">Offers</span>}
         </div>
       </Link>
 
       <Link to="demovideos">
-        <div className="hover:bg-gray-400 rounded-md p-2 flex items-center gap-2">
+        <div className={`hover:bg-gray-400 ${currentPath==="/employer/demovideos" && "bg-gray-400"} rounded-md p-2 flex items-center gap-2`}>
           <VideosIcon className="w-[24px] text-white" />
           {isExpanded && <span className="text-white">Demo Videos</span>}
         </div>
       </Link>
 
       <Link to="settings">
-        <div className="hover:bg-gray-400 rounded-md p-2 flex items-center gap-2">
+        <div className={`hover:bg-gray-400 ${currentPath==="/employer/settings" && "bg-gray-400"} rounded-md p-2 flex items-center gap-2`}>
           <SettingsIcon className="w-[24px] text-white" />
           {isExpanded && <span className="text-white">Settings</span>}
         </div>

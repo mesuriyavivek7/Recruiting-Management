@@ -146,7 +146,6 @@ export const columns = [
 ];
 
 export const data = await fetchAllCandidateDetails();
-console.log(data);
 
 
 export const rows = await Promise.all(
@@ -177,5 +176,3 @@ export const rows = await Promise.all(
     };
   })
 );
-
-console.log(rows);

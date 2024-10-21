@@ -1,13 +1,21 @@
 // columns.js
 import { Button } from '@mui/material';
 // enterpriseColumns.js
+
 export const getFormateDate = (cdate) => {
-  let d = new Date(cdate);
+  console.log("cdate", cdate);
+  if (!cdate) return "N/A";  // Handle null or undefined dates
+  const d = new Date(cdate);
+
+  // Ensure date parsing is successful
+  if (isNaN(d.getTime())) return "Invalid Date";
+
   return `${d.getDate()}-${d.getMonth() + 1}-${d.getFullYear()}`;
 };
 
+
 export const columns = (handleInactivateButton, handleRowClick) => [
-  { field: '_id', headerName: 'ID', width: 150 },
+  { field: 'id', headerName: 'ID', width: 150 },
   { field: 'full_name', headerName: 'Full Name', width: 200 },
   { field: 'email', headerName: 'Email', width: 250 },
   { field: 'mobileno', headerName: 'Mobile No.', width: 150 },
@@ -26,13 +34,6 @@ export const columns = (handleInactivateButton, handleRowClick) => [
         {params.value ? 'Yes' : 'No'}
       </span>
     ),
-  },
-
-  {
-    field: 'createdAt',
-    headerName: 'Created At',
-    width: 180,
-    valueFormatter: (params) => getFormateDate(params.value),
   },
   {
     field: 'account_status',

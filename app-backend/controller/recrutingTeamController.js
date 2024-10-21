@@ -239,3 +239,19 @@ export const checkEmailAddress=async (req,res,next)=>{
          next(err)
       }
 }
+
+export const getDashBoardCount=async (req,res,next)=>{
+      try{
+        const recruitingmemeber=await RECRUITINGTEAM.findById(req.params.rememberid)
+        const pending_candidate_count=await CANDIDATE.countDocuments({$and:[{recruiter_member_id:req.params.rememberid},{candidate_status:"Pending"}]})
+        const obj={
+            job_accepted_count:recruitingmemeber.accepted_jobs.length,
+            submited_candidate_profile_count:recruitingmemeber.submited_candidate_profile.length,
+            pending_candidate_count
+        }
+
+        res.status(200).json(obj)
+      }catch(err){
+         next(err)
+      }
+}

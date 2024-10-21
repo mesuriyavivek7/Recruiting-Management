@@ -1,4 +1,4 @@
-import React,{useState,useContext} from 'react'
+import React,{useState,useContext, useEffect} from 'react'
 import VideocamOutlinedIcon from '@mui/icons-material/VideocamOutlined';
 import BackupTableOutlinedIcon from '@mui/icons-material/BackupTableOutlined';
 import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
@@ -65,6 +65,13 @@ export default function RecruiterDashboard() {
   const [errors,setErrors]=useState({})
   const [teamLoad,setTeamLoad]=useState(false)
   const [notification,setNotification]=useState(null)
+
+  const [dashBoardCount,setDashBoardCount]=useState({
+    job_accepted_count:0,
+    submited_candidate_profile_count:0,
+    pending_candidate_count:0
+  })
+
 
   //for showing notification
   const showNotification=(message,type)=>{
@@ -136,7 +143,20 @@ export default function RecruiterDashboard() {
 
   }
 
-  
+  //fetch Dashboard count
+  const fetchDashBoardCount=async ()=>{
+      try{
+         const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/recruitingteam/getdashboardcount/${user._id}`)
+         if(res.data) setDashBoardCount(res.data)
+      }catch(err){
+         console.log(err)
+         showNotification("Something went wrong..!",'failure')
+      }
+  }
+
+  useEffect(()=>{
+    fetchDashBoardCount()
+  },[])
 
 
 
@@ -147,7 +167,7 @@ export default function RecruiterDashboard() {
        }
        {
         openPopUp && (
-          <div className='fixed inset-0 flex justify-center bg-opacity-50 backdrop-blur-md bg-black items-center'>
+          <div className='fixed inset-0 z-10 flex justify-center bg-opacity-50 backdrop-blur-md bg-black items-center'>
             <div className="rounded-md overflow-hidden border-gray-100 border-1 max-w-md w-full">
               <div className='relative w-full bg-white py-2'>
                 <span className='absolute cursor-pointer flex items-center text-green-600 text-sm left-2 top-4' onClick={()=>setOpenPopUp(false)}><ArrowBackIosIcon style={{fontSize:'1rem'}}></ArrowBackIosIcon>Back</span>
@@ -293,7 +313,7 @@ export default function RecruiterDashboard() {
                 <div className='flex w-full flex-col gap-1'>
                   <div className='flex gap-2 items-center'>
                       <div className='h-2 w-2 bg-green-400 rounded-full'></div>
-                      <h1 className='text-black-200 text-2xl'>0</h1>
+                      <h1 className='text-black-200 text-2xl'>{dashBoardCount.job_accepted_count}</h1>
                   </div>
                   <p className='text-sm text-gray-400'>Accepted</p>
                 </div>
@@ -331,9 +351,9 @@ export default function RecruiterDashboard() {
                 <div className='flex w-full flex-col gap-1'>
                   <div className='flex gap-2 items-center'>
                       <div className='h-2 w-2 bg-orange-400 rounded-full'></div>
-                      <h1 className='text-black-200 text-2xl'>0</h1>
+                      <h1 className='text-black-200 text-2xl'>{dashBoardCount.submited_candidate_profile_count}</h1>
                   </div>
-                  <p className='text-sm text-gray-400'>No Resume Submitted</p>
+                  <p className='text-sm text-gray-400'>Resume Submitted</p>
                 </div>
                 <div className='flex justify-between w-full'>
                     <div className='flex gap-1 items-center'>
@@ -350,7 +370,7 @@ export default function RecruiterDashboard() {
                 <div className='flex w-full flex-col gap-1'>
                   <div className='flex gap-2 items-center'>
                       <div className='h-2 w-2 bg-orange-200 rounded-full'></div>
-                      <h1 className='text-black-200 text-2xl'>0</h1>
+                      <h1 className='text-black-200 text-2xl'>{dashBoardCount.pending_candidate_count}</h1>
                   </div>
                   <p className='text-sm text-gray-400'>Pending Acceptance</p>
                 </div>

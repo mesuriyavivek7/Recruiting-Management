@@ -1,5 +1,5 @@
 import express from 'express'
-import { addJobIntoAcceptList, addNewCandidate, changeAccountStatus, changeCommissionFlag, checkCreadentials, checkEmailAddress, checkIsAdmin, checkMobileNo, createteammember, getEnterpriseTeamMember, getRecruiterCandidateDetails, getRecruiterProfilePageDetails, rejectJob, updateJobMappedList, updateRecruiterTeamDetails } from '../controller/recrutingTeamController.js'
+import { addJobIntoAcceptList, addNewCandidate, changeAccountStatus, changeCommissionFlag, checkCreadentials, checkEmailAddress, checkIsAdmin, checkMobileNo, createteammember, getDashBoardCount, getEnterpriseTeamMember, getRecruiterCandidateDetails, getRecruiterProfilePageDetails, rejectJob, updateJobMappedList, updateRecruiterTeamDetails } from '../controller/recrutingTeamController.js'
 
 
 
@@ -50,5 +50,7 @@ router.post('/checkemailaddress/:rememberid',checkEmailAddress)
 //for check mobile no for recruiting team
 router.post('/checkmobileno/:rememberid',checkMobileNo)
 
+//For getting dashboard counts
+router.get('/getdashboardcount/:rememberid',getDashBoardCount)
 
 export default router
