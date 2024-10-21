@@ -1,5 +1,5 @@
 import express from 'express'
-import { acVerified, allocatedAcManager, changeAccountStatus, changeMail, changepassword, checkPassword, getAcManagerId, getAcPendingEnterprise, getAcmanagerMailandName, getAllEnterprise, getAllPendingMadminVerifyEnterprise, getCompnayName, getEnterprise, getEnterpriseMember, getMobileNo, getRecruiterForJob } from '../controller/enterpriseController.js'
+import { SearchEnterpriseByName, acVerified, allocatedAcManager, changeAccountStatus, changeMail, changepassword, checkPassword, getAcManagerId, getAcPendingEnterprise, getAcmanagerMailandName, getAllEnterprise, getAllPendingMadminVerifyEnterprise, getCompnayName, getEnterprise, getEnterpriseMember, getMobileNo, getRecruiterForJob } from '../controller/enterpriseController.js'
 import { getRecruiterMemberIds } from '../controller/candidateController.js'
 
 const router=express.Router()
@@ -52,6 +52,9 @@ router.get('/getenterprisemember/:eid',getEnterpriseMember)
 
 //for getting account manager email id and name
 router.get('/getacmanagermailandname/:eid',getAcmanagerMailandName)
+
+//for searching the enterprise by full name
+router.get('/search', SearchEnterpriseByName);
 
 
 export default router

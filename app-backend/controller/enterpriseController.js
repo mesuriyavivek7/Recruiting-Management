@@ -4,8 +4,7 @@ import JOBS from "../models/JOBS.js";
 import bcrypt from 'bcryptjs'
 import axios from 'axios'
 import { sendEmailUpdateVerificationEnterprise } from "./mailController.js";
-
-
+import { Op } from 'sequelize';
 
 export const getMobileNo = async (req, res, next) => {
   try {
@@ -205,3 +204,14 @@ export const getRecruiterForJob = async (req, res, next) => {
   }
 }
 
+export const SearchEnterpriseByName = async (req, res, next) => {
+  const searchQuery = req.query.q;
+  try {
+    console.log(`Searching for: ${searchQuery}`);
+    // Fetch enterprises matching the search query
+    const enterprises = await ENTERPRISE.find({ full_name: { $regex: searchQuery, $options: 'i' } });
+    res.json(enterprises);
+  } catch (error) {
+    next(error);
+  }
+}
