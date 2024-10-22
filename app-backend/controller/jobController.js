@@ -431,7 +431,7 @@ export const getJobCommissionDetailsForPreview=async (req,res,next)=>{
 
 export const createJobUpdates=async (req,res,next)=>{
    try{
-     await JOBS.findOneAndUpdate({job_id:req.params.jobid},{$push:{job_updates:req.body.text}})
+     await JOBS.findOneAndUpdate({job_id:req.params.jobid},{$push:{job_updates:{text:req.body.text}}})
      res.status(200).json("Created new job update")
    }catch(err){
      next(err)
@@ -446,4 +446,31 @@ export const getJobUpdates=async (req,res,next)=>{
     }catch(err){
        next(err)
     }
+}
+
+export const getJobAttachmentsDetailsForPreview=async (req,res,next)=>{
+    try{
+      const job=await JOBS.findOne({job_id:req.params.jobid})
+
+      const jobAttachments=await JOBATTACHEMENT.findById(job.job_attachments)
+      res.status(200).json(jobAttachments)
+    }catch(err){
+       next(err)
+    }
+}
+
+export const getAcManagerNameAndMail=async (req,res,next)=>{
+   try{
+      const job=await JOBS.findOne({job_id:req.params.jobid})
+      
+      if(job.alloted_account_manager){
+         const acdetails=await axios.get(`${process.env.ADMIN_SERVER_URL}/accountmanager/getmailandname/${job.alloted_account_manager}`)
+         res.status(200).json(acdetails.data)
+      }else{
+        res.status(200).json(null)
+      }
+
+   }catch(err){
+     next(err)
+   }
 }

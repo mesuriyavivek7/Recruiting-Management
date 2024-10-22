@@ -5,7 +5,7 @@ import multer from 'multer'
 import { fileURLToPath } from 'url';
 
 
-import { activateJob,getAllJobs, addCandidateProfileList, allotedJobToAcManager, createJobs, deleteJobDraftWithOtherDetails, downloadEvaluationForm, getAllJobDetails, getAllJobDraftDetails, getCandidateScreeningQue, getFronLiveJobDetails, getFrontAcceptedJobDetails, getFrontMappedJobDetails, getJobAttachmentsDetailsForCandidate, getJobBasicDetailsForPreview, getJobCompanyDetailsForPreview, getJobSourcingGuidelinesForPreview, getJobStatusForPreview, getJobCommissionDetailsForPreview, createJobUpdates, getJobUpdates } from '../controller/jobController.js'
+import { activateJob,getAllJobs, addCandidateProfileList, allotedJobToAcManager, createJobs, deleteJobDraftWithOtherDetails, downloadEvaluationForm, getAllJobDetails, getAllJobDraftDetails, getCandidateScreeningQue, getFronLiveJobDetails, getFrontAcceptedJobDetails, getFrontMappedJobDetails, getJobAttachmentsDetailsForCandidate, getJobBasicDetailsForPreview, getJobCompanyDetailsForPreview, getJobSourcingGuidelinesForPreview, getJobStatusForPreview, getJobCommissionDetailsForPreview, createJobUpdates, getJobUpdates, getJobAttachmentsDetailsForPreview, getAcManagerNameAndMail } from '../controller/jobController.js'
 import { craeteJobBasicDeatils,showJobDetail, getJobBasicDetails } from '../controller/jobBasicController.js'
 import { createJobDraft, deleteJobDraft } from '../controller/jobDraftController.js'
 import { createJobCommission,showJobCommission, getJobCommissionDetails } from '../controller/jobCommissionController.js'
@@ -192,5 +192,11 @@ router.post('/createjobupdates/:jobid',createJobUpdates)
 
 //for getting job updates for preview
 router.get('/getjobupdates/:jobid',getJobUpdates)
+
+//for getting job attachments details for showing into preview page
+router.get('/getjobattachmentsforpreview/:jobid',getJobAttachmentsDetailsForPreview)
+
+//for getting ac manager mail and name for showing into preview page
+router.get('/getacmanagerforpreview/:jobid',getAcManagerNameAndMail)
 
 export default router
