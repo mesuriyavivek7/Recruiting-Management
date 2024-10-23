@@ -2,7 +2,7 @@ import Button from '@mui/material/Button';
 import { fetchRecuritingAgencies } from '../../../services/api';
 export const columns = [
   {
-    field: 'id',
+    field: 'displayIndex',
     headerName: 'Sr No.',
     minWidth: 100,
     flex: 0.1,
@@ -86,7 +86,8 @@ const data = await fetchRecuritingAgencies();
 
 export const rows = data.map((agency, index) => {
   return {
-    id: index + 1,
+    id: agency._id,
+    displayIndex : index + 1,
     full_name: agency.full_name || `User ${index + 1}`,
     email: agency.email || `user${index + 1}@example.com`,
     designation: agency.designation || "Not Provided",

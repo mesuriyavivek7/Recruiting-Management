@@ -5,28 +5,35 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
 import TablePagination from '@mui/material/TablePagination';
-import { rows, columns } from './RowColData'; 
+import { rows, columns } from './RowColData';
 import { styled } from '@mui/system';
 import { useNavigate } from 'react-router-dom';
+import { fetchRecuritingAgencyById } from '../../../services/api';
 
 
 const calculateRowHeight = (params) => {
 
-  const contentHeight = params.row ? params.row.content.length / 10 : 50; 
-  return Math.max(80, contentHeight); 
+  const contentHeight = params.row ? params.row.content.length / 10 : 50;
+  return Math.max(80, contentHeight);
 };
 
 export default function AllRecruitingAgencyData() {
-  const [page, setPage] = React.useState(0); 
-  const [rowsPerPage, setRowsPerPage] = React.useState(5); 
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [selectedRowId, setSelectedRowId] = React.useState(null);
   const navigate = useNavigate();
 
-  const handleRowClick = (id) => {
-    setSelectedRowId(id);
-    navigate(`/master_admin/recruiting-agency/${id}`); 
+  const handleRowClick = async (params) => {
+    const id = params.id;
+    const displayIndex = params?.row?.displayIndex;
+    try {
+      const response = await fetchRecuritingAgencyById(id);
+      // Pass the entire response as state
+      navigate(`/master_admin/recruiting-agency/${displayIndex}`, { state: { RecuritingAgenciesDetails: response } });
+    } catch (error) {
+      console.error('Error fetching enterprise data:', error);
+    }
   };
-
   // Pagination handlers
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -39,84 +46,84 @@ export default function AllRecruitingAgencyData() {
 
   return (
     <>
-    <p className='text-lg xl:text-2xl'>All Recruiting Agency </p>
-      <Box sx={{ height: 600, width: '100%',paddingTop:'19px' }}>
-        <DataGrid 
+      <p className='text-lg xl:text-2xl'>All Recruiting Agency </p>
+      <Box sx={{ height: 600, width: '100%', paddingTop: '19px' }}>
+        <DataGrid
           getRowId={(rows) => rows.id} // Specify the custom ID field
-          rows={rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)} 
+          rows={rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
           columns={columns}
-          rowHeight={80} 
-          getRowHeight={calculateRowHeight} 
-          pagination={false} 
-          pageSize={rowsPerPage} 
-          onRowClick={(params) => handleRowClick(params.id)}
-          hideFooterPagination={true} 
-          disableSelectionOnClick 
-           sx={{
+          rowHeight={80}
+          getRowHeight={calculateRowHeight}
+          pagination={false}
+          pageSize={rowsPerPage}
+          onRowClick={(params) => handleRowClick(params)}
+          hideFooterPagination={true}
+          disableSelectionOnClick
+          sx={{
             '& .MuiDataGrid-root': {
-              fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.09rem' }, 
+              fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.09rem' },
             },
-         
+
             ' [class^=MuiDataGrid]': { border: 'none' },
             '& .MuiDataGrid-columnHeader': {
-              fontWeight: 'bold !impotant', 
-              fontSize: { xs: '0.875rem', sm: '1rem', md: '0.7rem', lg: '1.1rem' }, 
-              color: 'black', 
-             
-               '&:focus': {
-              outline: 'none', 
-              border: 'none',  
+              fontWeight: 'bold !impotant',
+              fontSize: { xs: '0.875rem', sm: '1rem', md: '0.7rem', lg: '1.1rem' },
+              color: 'black',
+
+              '&:focus': {
+                outline: 'none',
+                border: 'none',
+              },
+              backgroundColor: '#e3e6ea !important',
+              minHeight: '60px',
             },
-              backgroundColor: '#e3e6ea !important', 
-              minHeight: '60px', 
+            '& .MuiDataGrid-columnHeader:focus-within': {
+              outline: 'none',
             },
-             '& .MuiDataGrid-columnHeader:focus-within': {
-        outline: 'none', 
-      },
-     
-           
-         
-            
-      
-      '& .MuiDataGrid-columnSeparator': {
-        color: 'blue',
-        visibility: 'visible', 
-      },
-      
-    
-      '& .MuiDataGrid-cell': {
-        fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem' }, 
-        
-      },
-      
-      '& .MuiDataGrid-cellContent': {
-        display: 'flex',
-        alignItems: 'center', 
-      },
-      '& .MuiDataGrid-cell': {
-        minHeight: '2.5rem', 
-      },
+
+
+
+
+
+            '& .MuiDataGrid-columnSeparator': {
+              color: 'blue',
+              visibility: 'visible',
+            },
+
+
             '& .MuiDataGrid-cell': {
-              fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem'}, 
-              
-              
+              fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem' },
+
+            },
+
+            '& .MuiDataGrid-cellContent': {
+              display: 'flex',
+              alignItems: 'center',
+            },
+            '& .MuiDataGrid-cell': {
+              minHeight: '2.5rem',
+            },
+            '& .MuiDataGrid-cell': {
+              fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem' },
+
+
             },
             '& .MuiDataGrid-row': {
-              borderBottom: 'none', 
+              borderBottom: 'none',
             },
             '& .MuiDataGrid-cell:focus': {
-              outline: 'none', 
+              outline: 'none',
             },
-           
+
           }}
         />
       </Box>
-    
 
 
 
 
-    
+
+
 
       <TablePagination
         component="div"
