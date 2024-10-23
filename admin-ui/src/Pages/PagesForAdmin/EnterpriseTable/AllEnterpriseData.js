@@ -1,12 +1,9 @@
-
-
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import { useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import TablePagination from '@mui/material/TablePagination';
 import { rows, columns } from './RowColData';
-import { styled } from '@mui/system';
 import { useNavigate } from 'react-router-dom';
 import { Button, CircularProgress, IconButton, InputAdornment, TextField } from '@mui/material';
 import { FaSearch } from 'react-icons/fa';
@@ -14,7 +11,7 @@ import { FaSearch } from 'react-icons/fa';
 
 const calculateRowHeight = (params) => {
 
-  const contentHeight = params.row ? params.row.content.length / 10 : 50;
+  const contentHeight = params?.row ? params?.row?.content?.length / 10 : 50;
   return Math.max(80, contentHeight);
 };
 
@@ -187,7 +184,7 @@ export default function AllEnterPriseData() {
            rows={filteredRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
           columns={columns}
           rowHeight={80}
-          onRowClick={(params) => handleRowClick(params.id)}
+          onRowClick={(params) => handleRowClick(params?.id)}
           getRowId={(rows) => rows.id} // Specify the custom ID field
           getRowHeight={calculateRowHeight}
           pagination={false}

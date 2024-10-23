@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import {
+  Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions,
+  TextField, TablePagination, Select, MenuItem, FormControl, InputLabel
   Button, Card, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, TextField, MenuItem,
   TablePagination,
   InputLabel,
@@ -27,19 +29,14 @@ const NewEnterpriseData = () => {
   const [reason, setReason] = useState('');
   const [selectInactive, setSelectInactive] = useState(null);
   const [selectedRow, setSelectedRow] = useState(null);
-
   const [loading, setLoading] = React.useState(false); // Loader state
-  
-
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
 
   // Pagination handlers
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
+  const handleChangePage = (event, newPage) => setPage(newPage);
 
 
   React.useEffect(() => {
@@ -52,13 +49,14 @@ const NewEnterpriseData = () => {
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0); // Reset page to 0 when rows per page changes
+    setPage(0);
   };
 
   const showNotification = (message, type) => {
     setNotification({ message, type });
   };
 
+  // Handle inactivate account
   const handleInactivateButton = async (e, item) => {
     e.stopPropagation();
     if (item.account_status.status === 'Active') {
@@ -66,11 +64,16 @@ const NewEnterpriseData = () => {
       setOpenpopup(true);
     } else {
       try {
-        await axios.post(`${process.env.REACT_APP_API_APP_URL}/enterprise/changestatus`, { id: item._id, status: item.account_status.status, reason, admin_id: myValue.userData._id });
+        await axios.post(`${process.env.REACT_APP_API_APP_URL}/enterprise/changestatus`, {
+          id: item._id,
+          status: item.account_status.status,
+          reason,
+          admin_id: myValue.userData._id,
+        });
         fetchEnterprise();
-        showNotification('Successfully account status changed.', 'success');
+        showNotification('Successfully changed account status.', 'success');
       } catch (err) {
-        showNotification('Something went wrong in changing account status..!', 'failure');
+        showNotification('Error changing account status!', 'failure');
       }
     }
   };
@@ -87,12 +90,17 @@ const NewEnterpriseData = () => {
   const handleSubmitButton = async () => {
     try {
       setInactivateLoad(true);
-      await axios.post(`${process.env.REACT_APP_API_APP_URL}/enterprise/changestatus`, { id: selectInactive._id, status: selectInactive.account_status.status, reason, admin_id: myValue.userData._id });
+      await axios.post(`${process.env.REACT_APP_API_APP_URL}/enterprise/changestatus`, {
+        id: selectInactive._id,
+        status: selectInactive.account_status.status,
+        reason,
+        admin_id: myValue.userData._id,
+      });
       fetchEnterprise();
       setOpenpopup(false);
-      showNotification('Successfully account status changed.', 'success');
+      showNotification('Successfully changed account status.', 'success');
     } catch (err) {
-      showNotification('Something went wrong in changing account status..!', 'failure');
+      showNotification('Error changing account status!', 'failure');
     }
     setInactivateLoad(false);
   };
@@ -100,14 +108,15 @@ const NewEnterpriseData = () => {
   const handleAssignAcManager = async () => {
     try {
       setAssignLoad(true);
-      await axios.post(`${process.env.REACT_APP_API_APP_URL}/enterprise/allocatedacmanager`, { en_id: selectedRow._id, ac_id: selectedManager });
-      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/accountmanager/addenterprise`, { ac_id: selectedManager, en_id: selectedRow._id });
-      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/masteradmin/rmventerprisependinglist`, { m_id: myValue.userData._id, en_id: selectedRow._id });
+      await axios.post(`${process.env.REACT_APP_API_APP_URL}/enterprise/allocatedacmanager`, {
+        en_id: selectedRow._id,
+        ac_id: selectedManager,
+      });
       fetchEnterprise();
       handleClose();
-      showNotification('Successfully assigned to account manager', 'success');
+      showNotification('Assigned to account manager successfully', 'success');
     } catch (err) {
-      showNotification('Something went wrong assigning Enterprise to account manager..!', 'failure');
+      showNotification('Error assigning enterprise to account manager!', 'failure');
     }
     setAssignLoad(false);
   };
@@ -131,25 +140,22 @@ const NewEnterpriseData = () => {
   const fetchEnterprise = async () => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_APP_URL}/enterprise/adminpending`);
-      const data = response.data;
-      
-      const rowsWithIds = data.map((item, index) => ({
+      const rowsWithIds = response.data.map((item, index) => ({
         ...item,
         id: index + 1
       }));
       setNewEnterprise(rowsWithIds);
     } catch (err) {
-      showNotification('There is something wrong..!', 'failure');
+      showNotification('Error fetching enterprises!', 'failure');
     }
   };
-  
 
   const fetchAccountManager = async () => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/accountmanager/madmin/${myValue.userData._id}`);
       setAcManager(response.data);
     } catch (err) {
-      showNotification('There is something wrong....!', 'failure');
+      showNotification('Error fetching account managers!', 'failure');
     }
   };
 
@@ -164,52 +170,30 @@ const NewEnterpriseData = () => {
       <div style={{ height: 600, width: '100%', paddingTop: '19px' }}>
         <DataGrid
           rows={newEnterprise}
-          getRowId={(rows) => rows.id} // Specify the custom ID field
-          columns={columns(handleInactivateButton, handleRowClick)} // Pass the function to columns
+          getRowId={(rows) => rows.id}
+          columns={columns(handleInactivateButton, handleRowClick)}
           rowHeight={80}
-          onRowClick={(params) => handleRowClick(params.row)}
-          pagination={false}
+          onRowClick={(params) => handleRowClick(params?.row)}
           pageSize={rowsPerPage}
-          hideFooterPagination={true}
+          pagination={false}
           sx={{
             '& .MuiDataGrid-root': {
               fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.09rem' },
             },
-            '[class^=MuiDataGrid]': { border: 'none' },
             '& .MuiDataGrid-columnHeader': {
               fontWeight: 'bold !important',
               fontSize: { xs: '0.875rem', sm: '1rem', md: '0.7rem', lg: '1.1rem' },
-              color: 'black',
-              '&:focus': {
-                outline: 'none',
-                border: 'none',
-              },
-              backgroundColor: '#e3e6ea !important',
-              minHeight: '60px',
-            },
-            '& .MuiDataGrid-columnHeader:focus-within': {
-              outline: 'none',
-            },
-            '& .MuiDataGrid-columnSeparator': {
-              color: 'blue',
-              visibility: 'visible',
-            },
-            '& .MuiDataGrid-cell': {
-              fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem' },
-              minHeight: '2.5rem',
-            },
-            '& .MuiDataGrid-cellContent': {
-              display: 'flex',
-              alignItems: 'center',
-            },
-            '& .MuiDataGrid-row': {
-              borderBottom: 'none',
-            },
-            '& .MuiDataGrid-cell:focus': {
-              outline: 'none',
+              backgroundColor: '#e3e6ea',
             },
           }}
         />
+        <TablePagination
+          component="div"
+          count={newEnterprise.length}
+          page={page}
+          onPageChange={handleChangePage}
+          rowsPerPage={rowsPerPage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
       </div>
       )}
       {notification && (
@@ -219,72 +203,68 @@ const NewEnterpriseData = () => {
           type={notification.type}
           onClose={() => setNotification(null)}
         />
-      )}
+      </div>
 
-      {/* Inactivate Account Dialog */}
+      {/* Dialog for inactivating an enterprise */}
       <Dialog open={openpopup} onClose={handleCloseInactivateButton}>
-        <DialogTitle>Inactivate Enterprise</DialogTitle>
+        <DialogTitle>Reason for Inactivating</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Please provide a reason why you want to inactivate this account.
+            Provide a reason for inactivating this enterprise:
           </DialogContentText>
           <TextField
             autoFocus
             margin="dense"
+            id="reason"
             label="Reason"
             type="text"
             fullWidth
-            variant="outlined"
             value={reason}
             onChange={(e) => setReason(e.target.value)}
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseInactivateButton}>
-            Cancel
-          </Button>
-          <Button onClick={handleSubmitButton}>
-            {inactivateLoad && <span>Loading...</span>}
-            {!inactivateLoad && <span>Submit</span>}
+          <Button onClick={handleCloseInactivateButton} color="primary">Cancel</Button>
+          <Button onClick={handleSubmitButton} color="primary" disabled={inactivateLoad}>
+            {inactivateLoad ? 'Inactivating...' : 'Submit'}
           </Button>
         </DialogActions>
       </Dialog>
 
-      {/* Assign Account Manager Dialog */}
-      {selectedRow && (
-        <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
-          <DialogTitle>Details for {selectedRow?.full_name}</DialogTitle>
-          <DialogContent>
-            <div className="space-y-6 space-x-2 pt-4 grid grid-cols-2">
-              <p><strong>Id:</strong> {selectedRow?._id}</p>
-              <p><strong>Email:</strong> {selectedRow?.email}</p>
-              <p><strong>Mobile No:</strong> {selectedRow?.mobileno}</p>
-              <FormControl fullWidth variant="outlined">
-                <InputLabel>Select Account Manager</InputLabel>
-                <Select
-                  value={selectedManager}
-                  onChange={handleManagerChange}
-                  label="Select Account Manager"
-                >
-                  {acManager?.map((manager) => (
-                    <MenuItem key={manager._id} value={manager._id}>
-                      {manager.first_name} {manager.last_name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </div>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleClose}>
-              Cancel
-            </Button>
-            <Button onClick={handleAssignAcManager}>
-              {assignLoad && <span>Loading...</span>}
-              {!assignLoad && <span>Assign</span>}
-            </Button>
-          </DialogActions>
-        </Dialog>
+      {/* Dialog for assigning account manager */}
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>Assign Account Manager</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Select an account manager to assign this enterprise to:
+          </DialogContentText>
+          <FormControl fullWidth margin="normal">
+            <InputLabel id="select-account-manager-label">Account Manager</InputLabel>
+            <Select
+              labelId="select-account-manager-label"
+              value={selectedManager}
+              onChange={handleManagerChange}
+              label="Account Manager"
+            >
+              {acManager.map((manager) => (
+                <MenuItem key={manager._id} value={manager._id}>
+                  {manager.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">Cancel</Button>
+          <Button onClick={handleAssignAcManager} color="primary" disabled={assignLoad}>
+            {assignLoad ? 'Assigning...' : 'Submit'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Notification */}
+      {notification && (
+        <Notification message={notification.message} type={notification.type} />
       )}
        {!loading && (
       <TablePagination
