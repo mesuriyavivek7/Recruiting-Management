@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Card, TablePagination } from '@mui/material';
+import { Card, CircularProgress, TablePagination } from '@mui/material';
 import {  Button, Box, Typography, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { columns ,rows} from './RowColDataOfAll'; // Import columns configuration
@@ -18,7 +18,8 @@ const AccountManagerTable = () => {
   const [selectedRow, setSelectedRow] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const navigate = useNavigate();
-
+  const [loading, setLoading] = React.useState(false); 
+ 
   const handleRowClick = (row) => {
 
     
@@ -51,7 +52,13 @@ const AccountManagerTable = () => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
-
+  React.useEffect(() => {
+    // Simulate data fetching with a loader
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false); // Stop loading after data is "fetched"
+    }, 1000); // Simulate 1 second loading time
+  }, [rows, page, rowsPerPage]);
   // Calculate the rows to display
   const paginatedRows = rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
@@ -59,6 +66,11 @@ const AccountManagerTable = () => {
     <div>
       <Card className='mt-14 font-sans px-6'>
         <p className='text-lg xl:text-2xl'>Account Managers</p>
+        {loading ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 400 ,color:'#315370'}}>
+          <CircularProgress />
+        </Box>
+      ) : (
         <div style={{ height: 600, width: '100%' }} className='pt-4'>
          
           <DataGrid 
@@ -130,7 +142,7 @@ const AccountManagerTable = () => {
            
           }}
         />
-        </div>
+        </div>)}
       </Card>
       <TablePagination
         component="div"

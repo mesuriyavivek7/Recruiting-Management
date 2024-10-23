@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Card, TablePagination, Button, Box, Typography, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+import { Card, TablePagination, Button, Box, Typography, Dialog, DialogTitle, DialogContent, DialogActions, CircularProgress } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { columns, rows } from './RowColOfEnterpriseTeam'; // Import columns configuration
 
@@ -14,7 +14,8 @@ const EnterpriseTeam = () => {
   const [selectedRow, setSelectedRow] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const navigate = useNavigate();
-
+  
+  const [loading, setLoading] = React.useState(false); // Loader state
   const handleRowClick = (row) => {
     setSelectedRow(row); 
     setDialogOpen(true); 
@@ -24,7 +25,13 @@ const EnterpriseTeam = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-
+  React.useEffect(() => {
+    // Simulate data fetching with a loader
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false); // Stop loading after data is "fetched"
+    }, 1000); // Simulate 1 second loading time
+  }, [rows, page, rowsPerPage]);
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -55,6 +62,11 @@ const EnterpriseTeam = () => {
 
       {/* Card with DataGrid */}
       <div className="py-5 px-6">
+      {loading ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 400 ,color:'#315370'}}>
+          <CircularProgress />
+        </Box>
+      ) : (
         <div style={{ height: 600, width: '100%' }} className="pt-4">
           <DataGrid
             rows={paginatedRows}
@@ -67,33 +79,7 @@ const EnterpriseTeam = () => {
             pageSize={rowsPerPage}
             hideFooterPagination={true}
             disableSelectionOnClick
-            // sx={{
-            //   '& .MuiDataGrid-root': {
-            //     fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.09rem' },
-            //   },
-            //   ' [class^=MuiDataGrid]': { border: 'none' },
-            //   '& .MuiDataGrid-columnHeader': {
-            //     fontWeight: 'bold !important',
-            //     fontSize: { xs: '0.875rem', sm: '1rem', md: '0.7rem', lg: '1.1rem' },
-            //     color: 'black',
-            //     backgroundColor: '#e3e6ea !important',
-            //     minHeight: '60px',
-            //   },
-            //   '& .MuiDataGrid-columnSeparator': {
-            //     color: 'blue',
-            //     visibility: 'visible',
-            //   },
-            //   '& .MuiDataGrid-cell': {
-            //     fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem' },
-            //     minHeight: '2.5rem',
-            //   },
-            //   '& .MuiDataGrid-row': {
-            //     borderBottom: 'none',
-            //   },
-            //   '& .MuiDataGrid-cell:focus': {
-            //     outline: 'none',
-            //   },
-            // }}
+           
             sx={{
               '& .MuiDataGrid-root': {
                 fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.09rem' }, 
@@ -152,10 +138,12 @@ const EnterpriseTeam = () => {
              
             }}
           />
-        </div>
+        </div>)}
       </div>
 
-  
+      {!loading && (
+      
+     
       <TablePagination
         component="div"
         count={rows.length}
@@ -166,7 +154,7 @@ const EnterpriseTeam = () => {
         rowsPerPageOptions={[5, 10, 25]}
         labelRowsPerPage="Rows per page"
       />
-
+    )}
      
       
 
