@@ -1,6 +1,3 @@
-
-
-
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
@@ -81,10 +78,6 @@ export default function AllRecruitingAgencyData() {
               outline: 'none',
             },
 
-
-
-
-
             '& .MuiDataGrid-columnSeparator': {
               color: 'blue',
               visibility: 'visible',
@@ -118,13 +111,6 @@ export default function AllRecruitingAgencyData() {
           }}
         />
       </Box>
-
-
-
-
-
-
-
       <TablePagination
         component="div"
         count={rows.length} // Total number of rows

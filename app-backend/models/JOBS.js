@@ -45,7 +45,13 @@ const jobSchema=new mongoose.Schema({
     alloted_account_manager:{
         type:String
     },
-    job_updates:[String],
+    job_updates:[{
+        text:String,
+        timestamps:{
+            type:Date,
+            default:Date.now
+        }
+    }],
     job_request:[String],
     accepted_recruiting_agency:[String],
     mapped_recruiting_agency_member:[String],

@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Card, TablePagination } from '@mui/material';
+import { Box, Card, CircularProgress, TablePagination } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { columns, rows } from './RowColDataOfAll'; // Import columns configuration
 
@@ -13,7 +13,7 @@ const calculateRowHeight = (params) => {
 const AdminMappedCandidateData = () => {
   const [selectedRowId, setSelectedRowId] = useState(null);
   const navigate = useNavigate();
-
+  const [loading, setLoading] = React.useState(false); // Loader state
   const handleRowClick = (id) => {
     setSelectedRowId(id);
     navigate(`/master_admin/candidate/${id}`);
@@ -22,6 +22,14 @@ const AdminMappedCandidateData = () => {
   // State for pagination
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  React.useEffect(() => {
+    // Simulate data fetching with a loader
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false); // Stop loading after data is "fetched"
+    }, 1000); // Simulate 1 second loading time
+  }, [rows, page, rowsPerPage]);
 
   // Handle pagination change
   const handleChangePage = (event, newPage) => {
@@ -38,6 +46,11 @@ const AdminMappedCandidateData = () => {
 
   return (
     <div>
+       {loading ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 400 ,color:'#315370'}}>
+          <CircularProgress />
+        </Box>
+      ) : (
       <Card className='mt-9 font-sans'>
         <p className='text-lg xl:text-2xl'>Mapped Candidates</p>
         <div style={{ height: 600, width: '100%' }} className='pt-4'>
@@ -112,7 +125,7 @@ const AdminMappedCandidateData = () => {
             }}
           />
         </div>
-      </Card>
+      </Card>)}
       <TablePagination
         component="div"
         count={rows.length}

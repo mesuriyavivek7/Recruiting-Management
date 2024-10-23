@@ -11,6 +11,8 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  CircularProgress,
+  Box,
 } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import Notification from '../../../Components/Notification';
@@ -30,11 +32,21 @@ const NewRecruitingAgencyData = () => {
   const [selectedManager, setSelectedManager] = useState('');
   const [page, setPage] = React.useState(0); 
   const [rowsPerPage, setRowsPerPage] = React.useState(5); 
+  const [loading, setLoading] = React.useState(false); // Loader state
 
   // Pagination handlers
   const handleManagerChange = (event) => {
         setSelectedManager(event.target.value);
       };
+
+      React.useEffect(() => {
+        // Simulate data fetching with a loader
+        setLoading(true);
+        setTimeout(() => {
+          setLoading(false); // Stop loading after data is "fetched"
+        }, 1000); // Simulate 1 second loading time
+      }, [rows, page, rowsPerPage]);
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -160,6 +172,12 @@ const NewRecruitingAgencyData = () => {
     <div>
       {notification && <Notification message={notification.message} type={notification.type} onClose={() => setNotification(null)} />}
       <p className='text-lg xl:text-2xl'>New Recruiting Agency</p>
+      <div>
+      {loading ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 400 ,color:'#315370'}}>
+          <CircularProgress />
+        </Box>
+      ) : (
       <Card className='mt-4 font-sans'>
         
         <div style={{ height: 600, width: '100%'}}>
@@ -177,7 +195,7 @@ const NewRecruitingAgencyData = () => {
           getRowId={(rows) => rows.id} // Specify the custom ID field
           columns={cols(handleInactivateButton)}
           rowHeight={80} 
-          getRowId={(rows)=>rows._id}
+ 
           onRowClick={handleRowClick}
           pagination={false} 
           pageSize={rowsPerPage} 
@@ -417,8 +435,9 @@ const NewRecruitingAgencyData = () => {
         }
       </Dialog>
         )}
-      </Card>
+      </Card>)}
 
+      {!loading && (
       <TablePagination
         component="div"
         count={paginatedRows.length} // Total number of rows
@@ -428,7 +447,8 @@ const NewRecruitingAgencyData = () => {
         onRowsPerPageChange={handleChangeRowsPerPage} // Handler for changing rows per page
         rowsPerPageOptions={[5, 10, 25]} // Rows per page options
         labelRowsPerPage="Rows per page" // Label
-      />
+      />)}
+    </div>
     </div>
   );
 };
