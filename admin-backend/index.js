@@ -1,7 +1,6 @@
 import express from "express"
 import dotenv from "dotenv"
 
-
 //importing mongoose
 import mongoose from "mongoose"
 
@@ -17,9 +16,6 @@ import mailRoute from './routes/mail.js'
 
 const app=express()
 dotenv.config()
-
-
-
 
 //cors settings
 const corsOptions={
@@ -38,14 +34,10 @@ const corsOptions={
 //middleware for using cors
 app.use(cors(corsOptions));
 
-
-
 //this middleware for authentication
 app.use(cookieParser())
 //using json middleware where we can easily get our json data
 app.use(express.json())
-
-
 
 
 //connecting with mongodb atlas
@@ -71,7 +63,6 @@ app.use('/api/auth',authRoute)
 app.use('/api/masteradmin',masteradminRoute)
 app.use('/api/accountmanager',accountmanagerRoute)
 app.use('/api',mailRoute)
-
 
 
 //middleware for error handeling

@@ -5,12 +5,12 @@ import { DataGrid } from '@mui/x-data-grid';
 import TablePagination from '@mui/material/TablePagination';
 import { rows, columns } from './RowColData';
 import { useNavigate } from 'react-router-dom';
+import { fetchEnterpriseById } from '../../../services/api';
 import { Button, CircularProgress, IconButton, InputAdornment, TextField } from '@mui/material';
 import { FaSearch } from 'react-icons/fa';
 
 
 const calculateRowHeight = (params) => {
-
   const contentHeight = params?.row ? params?.row?.content?.length / 10 : 50;
   return Math.max(80, contentHeight);
 };
@@ -18,19 +18,22 @@ const calculateRowHeight = (params) => {
 export default function AllEnterPriseData() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [selectedRowId, setSelectedRowId] = useState(null);
   const navigate = useNavigate();
 
+  const handleRowClick = async (params) => {
+    const id = params.id;
+    const displayIndex = params?.row?.displayIndex;
+    try {
+      const response = await fetchEnterpriseById(id);
+      // Pass the entire response as state
+      navigate(`/master_admin/enterprise/${displayIndex}`, { state: { enterpriseDetails: response } });
+    } catch (error) {
+      console.error('Error fetching enterprise data:', error);
+    }
   const [searchTerm, setSearchTerm] = React.useState(''); // State for search
   const [filterStatus, setFilterStatus] = React.useState('All'); // Filter status state
   const [filteredRows, setFilteredRows] = React.useState(rows);
   const [loading, setLoading] = React.useState(false); // Loader state
-
-  const handleRowClick = (id) => {
-    setSelectedRowId(id);
-    navigate(`/master_admin/enterprise/${id}`);
-  };
-
 
   React.useEffect(() => {
     // Simulate data fetching with a loader
@@ -63,7 +66,7 @@ export default function AllEnterPriseData() {
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0); // Reset page to 0 when rows per page changes
+    setPage(0); 
   };
 
   return (
@@ -184,8 +187,8 @@ export default function AllEnterPriseData() {
            rows={filteredRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
           columns={columns}
           rowHeight={80}
-          onRowClick={(params) => handleRowClick(params?.id)}
-          getRowId={(rows) => rows.id} // Specify the custom ID field
+          onRowClick={handleRowClick} // Pass the params directly
+          getRowId={(row) => row.id} // Specify the custom ID field
           getRowHeight={calculateRowHeight}
           pagination={false}
           pageSize={rowsPerPage}
@@ -195,13 +198,11 @@ export default function AllEnterPriseData() {
             '& .MuiDataGrid-root': {
               fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.09rem' },
             },
-
             ' [class^=MuiDataGrid]': { border: 'none' },
             '& .MuiDataGrid-columnHeader': {
-              fontWeight: 'bold !impotant',
+              fontWeight: 'bold !important',
               fontSize: { xs: '0.875rem', sm: '1rem', md: '0.7rem', lg: '1.1rem' },
               color: 'black',
-
               '&:focus': {
                 outline: 'none',
                 border: 'none',
@@ -230,7 +231,6 @@ export default function AllEnterPriseData() {
             '& .MuiDataGrid-cell:focus': {
               outline: 'none',
             },
-
           }}
         />
       </Box>)}
@@ -250,6 +250,3 @@ export default function AllEnterPriseData() {
     </>
   );
 }
-
-
-

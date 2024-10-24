@@ -1,29 +1,27 @@
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+
 import Admin from './Pages/Dashboard/Admin';
-import EnterpriceTable from './Pages/PagesForAdmin/EnterPriceTable';
 import AdminDashboard from './Components/AdminDashboard';
-
-
-
-
-
-import Login from './Pages/Login/Login';
+import EnterpriceTable from './Pages/PagesForAdmin/EnterPriceTable';
 import RecruitingAgencyTable from './Pages/PagesForAdmin/RecruitingAgencyTable';
-import AccountManagerDashboard from './Components/AccountManagerDashboard';
-import AccountManager from './Pages/Dashboard/AccountManager';
-import AccountRecruitingAgencyTable from './Pages/PagesForAccountManager/AccountRecruitingAgencyTable';
-import AccountEnterpriceTable from './Pages/PagesForAccountManager/AccountEnterPriceTable';
-import AccountJobTable from './Pages/PagesForAccountManager/AccountJobTable';
-
-import AccountCandidateTable from './Pages/PagesForAccountManager/AccountCandidateTable';
-import CandidateDetails from './Pages/PagesForAccountManager/CandidateDetails';
 import AdminJobTable from './Pages/PagesForAdmin/AdminJobTable';
 import AdminCandidateTable from './Pages/PagesForAdmin/AdminCandidateTable';
-
-import AdminCandidateDetails from './Pages/PagesForAdmin/AdminCandidateDetails';
-import Job from './Pages/PagesForAccountManager/Job';
 import AdminJob from './Pages/PagesForAdmin/AdminJob';
+import AdminCandidateDetails from './Pages/PagesForAdmin/AdminCandidateDetails';
 import AdminEnterprise from './Pages/PagesForAdmin/AdminEnterprise';
+import AdminRecruiting from './Pages/PagesForAdmin/RecruitingAgency/AdminRecruting';
+import Login from './Pages/Login/Login';
+
+import AccountManager from './Pages/Dashboard/AccountManager';
+import AccountManagerDashboard from './Components/AccountManagerDashboard';
+import AccountEnterpriceTable from './Pages/PagesForAccountManager/AccountEnterPriceTable';
+import AccountRecruitingAgencyTable from './Pages/PagesForAccountManager/AccountRecruitingAgencyTable';
+import AccountJobTable from './Pages/PagesForAccountManager/AccountJobTable';
+import AccountCandidateTable from './Pages/PagesForAccountManager/AccountCandidateTable';
+import Job from './Pages/PagesForAccountManager/Job';
+import CandidateDetails from './Pages/PagesForAccountManager/CandidateDetails';
+
 import SuperAdmin from './Pages/Dashboard/SuperAdmin';
 import SupperAdminDashboard from './Components/SuperAdminDashboard';
 import SuperEnterpriceTable from './Pages/PagesForSuperAdmin/SuperEnterPriceTable';
@@ -32,11 +30,6 @@ import SuperJobTable from './Pages/PagesForSuperAdmin/SuperJobTable';
 import SuperCandidateTable from './Pages/PagesForSuperAdmin/SuperCandidateTable';
 import SuperCandidateDetails from './Pages/PagesForSuperAdmin/SuperCandidateDetails';
 import SuperAdminJob from './Pages/PagesForSuperAdmin/SuperAdminJob';
-import { useSelector } from 'react-redux';
-import AdminRecruiting from './Pages/PagesForAdmin/RecruitingAgency/AdminRecruting';
-
-
-
 
 function App() {
   const userData = useSelector((state) => state.admin?.userData);
@@ -44,148 +37,134 @@ function App() {
   const AppRouter = createBrowserRouter(
     [
       {
-        path:"/",
-        // element:<Login></Login>
+        path: "/",
         element: !userData ? <Login /> : <Navigate to={`/${userData.admin_type}/dashboard`} />
       },
       {
-        path:"/master_admin",
-        // element: <Admin/>,
+        path: "/master_admin",
         element: userData?.admin_type === "master_admin" ? <Admin /> : <Navigate to="/" />,
         children: [
           {
-            index: true, 
+            index: true,
             element: <AdminDashboard />,
           },
           {
             path: "dashboard",
-            element: <AdminDashboard/>,
-           },
-          {
-            path: "enterprise",
-            element: <EnterpriceTable/>,
+            element: <AdminDashboard />,
           },
           {
-          
+            path: "enterprise",
+            element: <EnterpriceTable />,
+          },
+          {
             path: "recruiting-agency",
-            element: <RecruitingAgencyTable/>,
+            element: <RecruitingAgencyTable />,
           },
           {
             path: "jobs",
-            element: <AdminJobTable/>,
+            element: <AdminJobTable />,
           },
           {
             path: "candidates",
-            element: <AdminCandidateTable/>,
+            element: <AdminCandidateTable />,
           },
           {
             path: "job/:id",
-            element: <AdminJob/>,
+            element: <AdminJob />,
           },
           {
             path: "candidate/:id",
-            element: <AdminCandidateDetails/>,
+            element: <AdminCandidateDetails />,
           },
           {
             path: "enterprise/:id",
-            element: <AdminEnterprise/>,
+            element: <AdminEnterprise />,
           },
           {
             path: "recruiting-agency/:id",
-            element: <AdminRecruiting/>,
+            element: <AdminRecruiting />,
           },
-        
-        
-        
-        
-       ],
+        ],
       },
       {
-        path:"/account_manager",
-        // element: <AccountManager/>,
+        path: "/account_manager",
         element: userData?.admin_type === "account_manager" ? <AccountManager /> : <Navigate to="/" />,
         children: [
           {
-            index: true, 
-            element: <AccountManagerDashboard/>,
+            index: true,
+            element: <AccountManagerDashboard />,
           },
           {
             path: "dashboard",
-            element: <AccountManagerDashboard/>,
-           },
+            element: <AccountManagerDashboard />,
+          },
           {
             path: "enterprise",
-            element: <AccountEnterpriceTable/>,
+            element: <AccountEnterpriceTable />,
           },
           {
             path: "recruiting-agency",
-            element: <AccountRecruitingAgencyTable/>,
+            element: <AccountRecruitingAgencyTable />,
           },
           {
             path: "jobs",
-            element: <AccountJobTable/>,
+            element: <AccountJobTable />,
           },
           {
             path: "candidates",
-            element: <AccountCandidateTable/>,
+            element: <AccountCandidateTable />,
           },
           {
             path: "job/:id",
-            element: <Job/>,
+            element: <Job />,
           },
           {
             path: "candidate/:id",
-            element: <CandidateDetails/>,
+            element: <CandidateDetails />,
           },
-         
-        
-       ],
+        ],
       },
       {
-        path:"/super_admin",
-        // element: <SuperAdmin/>,
+        path: "/super_admin",
         element: userData?.admin_type === "super_admin" ? <SuperAdmin /> : <Navigate to="/" />,
         children: [
           {
-            index: true, 
-            element: <SupperAdminDashboard/>,
+            index: true,
+            element: <SupperAdminDashboard />,
           },
           {
             path: "dashboard",
-            element: <SupperAdminDashboard/>,
-           },
+            element: <SupperAdminDashboard />,
+          },
           {
             path: "enterprise",
-            element: <SuperEnterpriceTable/>,
+            element: <SuperEnterpriceTable />,
           },
           {
             path: "recruiting-agency",
-            element: <SuperRecruitingAgencyTable/>,
+            element: <SuperRecruitingAgencyTable />,
           },
           {
             path: "jobs",
-            element: <SuperJobTable/>,
+            element: <SuperJobTable />,
           },
           {
             path: "candidates",
-            element: <SuperCandidateTable/>,
+            element: <SuperCandidateTable />,
           },
           {
             path: "job/:id",
-            element: <SuperAdminJob/>,
+            element: <SuperAdminJob />,
           },
           {
             path: "candidate/:id",
-            element: <SuperCandidateDetails/>,
+            element: <SuperCandidateDetails />,
           },
-         
-        
-       ],
+        ],
       },
-     
-
     ]
   );
+
   return (
     <div className="App max-w-[100vw] max-h-screen">
       <RouterProvider router={AppRouter} />

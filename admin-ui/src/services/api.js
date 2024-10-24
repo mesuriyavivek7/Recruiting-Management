@@ -1,10 +1,10 @@
-import { ThemeProvider } from '@emotion/react';
 import axios from 'axios';
-const uri = process.env.REACT_APP_API_APP_URL
+const app_be_uri = process.env.REACT_APP_API_APP_URL
+const admin_be_uri = process.env.REACT_APP_API_BASE_URL
 
 export const fetchEnterpriseData = async () => {
     try {
-        const response = await axios.get(`${uri}/enterprise/findall`)
+        const response = await axios.get(`${app_be_uri}/enterprise/findall`)
         return response.data;
         
     } catch (error) {
@@ -13,9 +13,19 @@ export const fetchEnterpriseData = async () => {
     }
 };
 
+export const fetchEnterpriseById = async(enterprise_id) => {
+    try {
+        const response = await axios.get(`${app_be_uri}/enterprise/find/${enterprise_id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error while fetching the particular enterprise details: ", error);
+        throw error;
+    }
+}
+
 export const fetchEnterpriseTeam = async (enterprise_id) => {
     try {
-        const response = await axios.get(`${uri}/enterprise/${enterprise_id}`)
+        const response = await axios.get(`${app_be_uri}/enterprise/${enterprise_id}`)
         return response.data;
     } catch (error) {
         console.error("Error fetching enterprise team : ", error);
@@ -25,7 +35,7 @@ export const fetchEnterpriseTeam = async (enterprise_id) => {
 
 export const fetchAllJobDetails = async () => {
     try {
-        const response = await axios.get(`${uri}/job`);
+        const response = await axios.get(`${app_be_uri}/job`);
         return response.data;
     } catch (error) {
         console.error("Error fetching job details : ", error);
@@ -35,7 +45,7 @@ export const fetchAllJobDetails = async () => {
 
 export const fetchJobBasicDetailsByJobId = async (job_id) => {
     try {
-        const response = await axios.get(`${uri}/job/getbasicjobdetails/${job_id}`);
+        const response = await axios.get(`${app_be_uri}/job/getbasicjobdetails/${job_id}`);
         return response.data;
     } catch (error) {
         console.error("Error while fetching the job basic details by job id : ", error);
@@ -45,7 +55,7 @@ export const fetchJobBasicDetailsByJobId = async (job_id) => {
 
 export const fetchRecuritingAgencies = async () => {
     try {
-        const response = await axios.get(`${uri}/recruiting/getagencies`);
+        const response = await axios.get(`${app_be_uri}/recruiting/getagencies`);
         return response.data;
     } catch (error) {
         console.error("Error fetching recruiting agencies: ", error);
@@ -55,7 +65,7 @@ export const fetchRecuritingAgencies = async () => {
 
 export const fetchRecuritingAgencyById = async (r_agency_id) => {
     try {
-        const response = await axios.get(`${uri}/recruiting/${r_agency_id}`)
+        const response = await axios.get(`${app_be_uri}/recruiting/${r_agency_id}`)
 
         return response.data;
     } catch (error) {
@@ -66,17 +76,17 @@ export const fetchRecuritingAgencyById = async (r_agency_id) => {
 
 export const fetchRecruiterByEId = async (enterprise_id) => {
     try {
-        const response = axios.get(`${uri}/enterprise/getrecruiter/${enterprise_id}`);
+        const response = axios.get(`${app_be_uri}/enterprise/getrecruiter/${enterprise_id}`);
         return (await response).data;
     } catch (error) {
-        console.error("Error while fetching the recuriter for the job", error);
+        console.error("Error while fetching the recapp_be_uriter for the job", error);
         throw error;
     }
 }
 
 export const fetchAllCandidateDetails = async () => {
     try {
-        const response = await axios.get(`${uri}/candidate/details`)
+        const response = await axios.get(`${app_be_uri}/candidate/details`)
         return response.data;
     } catch (error) {
         console.error("Error whilte fetching all candidates basic details : ", error);
@@ -86,7 +96,7 @@ export const fetchAllCandidateDetails = async () => {
 
 export const fetchAllCandidates = async () => {
     try {
-        const response = axios.get(`${uri}/candidate/allcandidates`)
+        const response = axios.get(`${app_be_uri}/candidate/allcandidates`)
         return response.data;
     } catch (error) {
         console.error("Error whilte fetching all candidates : ", error);
@@ -96,7 +106,7 @@ export const fetchAllCandidates = async () => {
 
 export const fetchCandidateStatusById = async (candidate_id) => {
     try {
-        const response = await axios.get(`${uri}/candidate/getcandidatestatus/${candidate_id}`);
+        const response = await axios.get(`${app_be_uri}/candidate/getcandidatestatus/${candidate_id}`);
         return response.data;
     } catch (error) {
         console.error("Error while fetching candidate status:", error);
@@ -107,7 +117,7 @@ export const fetchCandidateStatusById = async (candidate_id) => {
 //get the account manager name and email
 export const fetchAccountManager = async(ac_manager_id) => {
     try {
-        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/accountmanager/getmailandname/${ac_manager_id}`);
+        const response = await axios.get(`${admin_be_uri}/accountmanager/getmailandname/${ac_manager_id}`);
         return response.data;
     } catch (error) {
         console.error("Error while fetching account manager details : ", error);
@@ -115,10 +125,21 @@ export const fetchAccountManager = async(ac_manager_id) => {
     }
 }
 
+//get the all account manager details
+export const fetchAccountManagerDetails = async() => {
+    try {
+        const response = await axios.get(`${admin_be_uri}/accountmanager/findall`);
+        return response.data;
+    } catch (error) {
+        console.error("Error while fetching all account manager details : ", error);
+        throw error;
+    }
+}
+
 // Search enterprise by name
 export const fetchEnterprises = async (query = '') => {
     try {
-        const response = await axios.get(`${uri}/api/enterprises/search`, {
+        const response = await axios.get(`${app_be_uri}/api/enterprises/search`, {
             params: {
                 q: query
             }
