@@ -1,47 +1,108 @@
-import { Card } from '@mui/material'
-import React from 'react'
-import {FaBriefcase} from 'react-icons/fa'
+
+
+
+import { Card, Typography, Box, Grid } from '@mui/material';
+import React from 'react';
+import { FaBriefcase, FaBuilding, FaInfoCircle } from 'react-icons/fa'; // Importing relevant icons
 
 const EnterpriseDetails = () => {
   return (
-    <Card className='mt-4 font-sans shadow-md' sx={{
-      borderRadius: '8px',
-      boxShadow: 3,
-    }}>
-    <div className='lg:px-5 px-3 bg-blue-120'>
-    
-          <div className="space-y-6 bg-blue-120 flex flex-col items-center p-4 ">
-           
-            <div className=" bg-blue-120 p-4 rounded-lg  w-full  space-y-2 ">
-              <div className=' space-y-3 bg-blue-120'>
-            
-              <h2 className="text-xl  xl:text-2xl font-semibold text-gray-800  flex items-center">
-                <FaBriefcase className="mr-3 text-2xl xl:text-3xl text-black" /> Enterprise Details
-              </h2>
-              <div className='pl-36 pt-4 gap-2 grid grid-cols-2'>
-              <p className="xl:text-xl text-lg"><strong>Full Name:</strong> Software Engineer</p>
-              <p className=" xl:text-xl text-lg"><strong>Email:</strong> arati@gmail.com</p>
-              <p className=" xl:text-xl text-lg"><strong>Mobile Number:</strong> 87544786756</p>
-              <p className=" xl:text-xl text-lg"><strong>Designation:</strong> xjk</p>
-              <p className=" xl:text-xl text-lg"><strong>Company Name:</strong> odoo</p>
-              <p className=" xl:text-xl text-lg"><strong>Country:</strong> USA</p>
-              <p className=" xl:text-xl text-lg"><strong>State:</strong>California</p>
-              <p className=" xl:text-xl text-lg"><strong>City:</strong> nesco</p>
-              <p className=" xl:text-xl text-lg"><strong>Email Verification:</strong> yes</p>
-              <p className=" xl:text-xl text-lg"><strong>Admin Verified:</strong> yes</p>
-              <p className=" xl:text-xl text-lg"><strong>Allocated Account Manager:</strong> John sinha</p>
+    <Card className="mt-4 font-sans py-6" sx={{ borderRadius: '8px', boxShadow: 3, backgroundColor: '#f0f0f0', padding: 3 }}>
+      
+      {/* First Section: Enterprise Details */}
+      <Box sx={{ mb: 2, pb: 2, borderBottom: '4px solid white' }}>
+        <Typography variant="h5" fontWeight="bold" className="flex items-center mb-2">
+          <FaBriefcase className="mr-2 text-black" /> Enterprise Details
+        </Typography>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
+              <Typography variant="body1"><strong>Full Name:</strong> Software Engineer</Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
+              <Typography variant="body1"><strong>Phone Number:</strong> 87544786756</Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
+              <Typography variant="body1"><strong>Email:</strong> arati@gmail.com</Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
+              <Typography variant="body1"><strong>Designation:</strong> Software Engineer</Typography>
+            </Box>
+          </Grid>
+        </Grid>
+      </Box>
 
-              </div>
-              
-              </div>
-            </div>
-            
-            </div> 
-          
-        
-    </div>
+      {/* Second Section: Company Details */}
+      <Box sx={{ mb: 2, pb: 2, borderBottom: '4px solid white' }}>
+        <Typography variant="h5" fontWeight="bold" className="flex items-center mb-2">
+          <FaBuilding className="mr-2 text-black" /> Company Details
+        </Typography>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
+              <Typography variant="body1"><strong>Company Name:</strong> Odoo</Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
+              <Typography variant="body1"><strong>Company Size:</strong> 500-1000 Employees</Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
+              <Typography variant="body1"><strong>Country:</strong> USA</Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
+              <Typography variant="body1"><strong>State:</strong> California</Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
+              <Typography variant="body1"><strong>City:</strong> Nesco</Typography>
+            </Box>
+          </Grid>
+        </Grid>
+      </Box>
+
+      {/* Third Section: Other Details */}
+      <Box>
+        <Typography variant="h5" fontWeight="bold" className="flex items-center mb-2">
+          <FaInfoCircle className="mr-2 text-black" /> Other Details
+        </Typography>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
+              <Typography variant="body1"><strong>Email Verified:</strong> Yes</Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
+              <Typography variant="body1"><strong>Account Status:</strong> Active</Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
+              <Typography variant="body1"><strong>Allocated Account Manager:</strong> John Sinha</Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
+              <Typography variant="body1"><strong>Admin Verified:</strong> Yes</Typography>
+            </Box>
+          </Grid>
+        </Grid>
+      </Box>
+
     </Card>
-  )
-}
+  );
+};
 
-export default EnterpriseDetails
+export default EnterpriseDetails;

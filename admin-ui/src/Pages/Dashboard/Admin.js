@@ -3,7 +3,8 @@ import React, { useEffect } from "react";
 // import { Outlet } from "react-router-dom";
 import SideNavbar from "../../Components/SideNavbar";
 import Navbar from "../../Components/Navbar";
-
+import {rows} from "../PagesForAdmin/EnterpriseTable/RowColData"
+import { rowsr } from "../PagesForAdmin/RecruitingAgency/RowColData";
 
 
 import { Outlet, useNavigate } from "react-router-dom";
@@ -22,7 +23,7 @@ const Admin = () => {
 
   return ( 
     <div className="flex flex-col w-screen max-w-[100vw] h-[100vh] max-h-screen relative overflow-hidden ">
-      <Navbar/>
+      <Navbar enterpriseData={rows} recruiterData={rowsr}/>
       <div className="flex w-full h-full relative gap-9 ">
         <SideNavbar/>
         
