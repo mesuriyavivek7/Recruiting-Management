@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Card, TablePagination } from '@mui/material';
+import { Box, Card, CircularProgress, TablePagination } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { columns ,rows} from './RowColDataOfAll'; // Import columns configuration
 
@@ -14,6 +14,7 @@ const calculateRowHeight = (params) => {
 const AdminAllCandidateData = () => {
   const [selectedRowId, setSelectedRowId] = useState(null);
   const navigate = useNavigate();
+  const [loading, setLoading] = React.useState(false); // Loader state
 
   const handleRowClick = (id) => {
     setSelectedRowId(id);
@@ -24,6 +25,13 @@ const AdminAllCandidateData = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
+  React.useEffect(() => {
+    // Simulate data fetching with a loader
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false); // Stop loading after data is "fetched"
+    }, 1000); // Simulate 1 second loading time
+  }, [rows, page, rowsPerPage]);
   // Handle pagination change
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -39,6 +47,11 @@ const AdminAllCandidateData = () => {
 
   return (
     <div>
+       {loading ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 400 ,color:'#315370'}}>
+          <CircularProgress />
+        </Box>
+      ) : (
       <Card className='mt-9 font-sans'>
         <p className='text-lg xl:text-2xl'>All Candidates</p>
         <div style={{ height: 600, width: '100%' }} className='pt-4'>
@@ -113,7 +126,9 @@ const AdminAllCandidateData = () => {
           }}
         />
         </div>
-      </Card>
+      </Card>)}
+
+      {!loading && (
       <TablePagination
         component="div"
         count={rows.length}
@@ -124,6 +139,7 @@ const AdminAllCandidateData = () => {
         rowsPerPageOptions={[5, 10, 25]}
         labelRowsPerPage="Rows per page"
       />
+      )}
     </div>
   );
 };

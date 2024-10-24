@@ -4,7 +4,7 @@ import { fetchEnterpriseData, fetchAccountManager } from '../../../services/api'
 // Column configuration for the DataGrid
 export const columns = [
     {
-        field: 'id',
+        field: 'displayIndex',
         headerName: 'ID',
         width: 110,
         flex: 0.1 // Fixed width with some flexibility
@@ -120,7 +120,6 @@ export const columns = [
 ];
 
 const data = await fetchEnterpriseData();
-console.log(data);
 
 export const rows = await Promise.all(
     data
@@ -129,7 +128,8 @@ export const rows = await Promise.all(
             const accountManager = await fetchAccountManager(enterprise.allocated_account_manager);
 
             return {
-                id: index + 1,
+                id: enterprise._id,
+                displayIndex: index + 1,
                 full_name: enterprise.full_name || `User ${index + 1}`,
                 email: enterprise.email || `user${index + 1}@example.com`,
                 designation: enterprise.designation || "Not Provided",

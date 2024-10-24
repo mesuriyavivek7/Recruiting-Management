@@ -1,10 +1,13 @@
 import express from 'express'
-import { addCandidatePendingList, addCandidateVerifiedList, addEnterprise, addJobIntoVerifyList, addJobsPendingList, addRecruiting, addVerifiedRecruitng, getAcByMadminId, getAcManagerEmail, getAcmanagerMailandName} from '../controller/accountmanagerController.js'
+import { addCandidatePendingList, addCandidateVerifiedList, addEnterprise, addJobIntoVerifyList, addJobsPendingList, addRecruiting, addVerifiedRecruitng, getAcByMadminId, getAcManagerEmail, getAcmanagerMailandName, getAllAccountManagers} from '../controller/accountmanagerController.js'
 
 const router=express.Router()
 
 //get account manager by particuler master admin id
 router.get('/madmin/:id',getAcByMadminId)
+
+//get all account manager details
+router.get('/findall', getAllAccountManagers);
 
 //add enterprise into pending list
 router.post('/addenterprise',addEnterprise)
@@ -36,7 +39,6 @@ router.post('/addcandidateintoverifiedlist/:acmanagerid',addCandidateVerifiedLis
 //get account manager name and mail id
 router.get('/getmailandname/:acmanagerid',getAcmanagerMailandName)
 
-//getting candidate details
 
 
 export default router

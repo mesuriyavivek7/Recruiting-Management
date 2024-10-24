@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Card, TablePagination, Tabs, Tab, Button, TextField, Divider, IconButton , Typography, Box, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+import { Card, TablePagination, Tabs, Tab, Button, TextField, Divider, IconButton , Typography, Box, Dialog, DialogTitle, DialogContent, DialogActions, CircularProgress } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import {   FaCaretDown } from 'react-icons/fa';
 import { FaBusinessTime,FaBullseye,FaThumbsUp,FaBan,FaStar,FaQuestionCircle ,FaFilePdf,FaFileAlt,FaFileAudio, FaMapMarkerAlt, FaBriefcase, FaInfoCircle,FaPaperclip, FaUsers,FaShareAlt,FaExternalLinkAlt,FaDollarSign,FaClock,FaCalendarAlt } from 'react-icons/fa';
@@ -69,7 +69,14 @@ const EnterpriseJob = () => {
       [section]: !prev[section],
     }));
   };
-
+  const [loading, setLoading] = React.useState(false); // Loader state
+  React.useEffect(() => {
+    // Simulate data fetching with a loader
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false); // Stop loading after data is "fetched"
+    }, 1000); // Simulate 1 second loading time
+  }, [rows, page, rowsPerPage]);
   // Calculate the rows to display
   const paginatedRows = rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
@@ -79,6 +86,11 @@ const EnterpriseJob = () => {
         borderRadius: '8px',
         boxShadow: 3,
       }}>
+         {loading ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 400 ,color:'#315370'}}>
+          <CircularProgress />
+        </Box>
+      ) : (
         <div className='px-6 py-5'>
           
 
@@ -133,10 +145,13 @@ const EnterpriseJob = () => {
               }}
             />
           </div>
-        </div>
+        </div>)}
       </Card>
 
       {/* Pagination Component */}
+      {!loading && (
+      
+     
       <TablePagination
         component="div"
         count={rows.length}
@@ -147,7 +162,7 @@ const EnterpriseJob = () => {
         rowsPerPageOptions={[5, 10, 25]}
         labelRowsPerPage="Rows per page"
       />
-
+      )}
    
       <Dialog open={dialogOpen} onClose={handleCloseDialog} maxWidth="xl" fullWidth PaperProps={{
       sx: {

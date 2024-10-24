@@ -1,7 +1,6 @@
-// columns.js
 import { Button } from '@mui/material';
-// enterpriseColumns.js
 
+// Function to format date
 export const getFormateDate = (cdate) => {
   console.log("cdate", cdate);
   if (!cdate) return "N/A";  // Handle null or undefined dates
@@ -13,7 +12,7 @@ export const getFormateDate = (cdate) => {
   return `${d.getDate()}-${d.getMonth() + 1}-${d.getFullYear()}`;
 };
 
-
+// DataGrid columns configuration
 export const columns = (handleInactivateButton, handleRowClick) => [
   { field: 'id', headerName: 'ID', width: 150 },
   { field: 'full_name', headerName: 'Full Name', width: 200 },
@@ -31,7 +30,7 @@ export const columns = (handleInactivateButton, handleRowClick) => [
     width: 180,
     renderCell: (params) => (
       <span className={`px-8 py-2 rounded-2xl text-md text-white ${params.value ? 'bg-green-500' : 'bg-red-500'}`}>
-        {params.value ? 'Yes' : 'No'}
+        {params?.value ? 'Yes' : 'No'}
       </span>
     ),
   },
@@ -39,10 +38,9 @@ export const columns = (handleInactivateButton, handleRowClick) => [
     field: 'account_status',
     headerName: 'Account Status',
     width: 200,
-
     renderCell: (params) => (
       <span className={`px-8 py-2 rounded-2xl text-md text-white ${params.value.status === 'Active' ? 'bg-green-600' : 'bg-gray-500'}`}>
-        {params.value.status}
+        {params?.value?.status}
       </span>
     ),
   },
@@ -53,27 +51,19 @@ export const columns = (handleInactivateButton, handleRowClick) => [
     renderCell: (params) => (
       <div className="flex gap-2 pt-4">
         <Button
-          onClick={(e) => handleInactivateButton(e, params.row)}
-
+          onClick={(e) => handleInactivateButton(e, params?.row)}
           variant="contained"
-
           sx={{
             fontSize: { xs: "12px", sm: "16px", xl: "18px" },
             width: { xl: "120px", sm: "120px" },
-
-            backgroundColor:
-              "#315370",
-            "&:hover": {
-              backgroundColor: "gray"
-            },
+            backgroundColor: "#315370",
+            "&:hover": { backgroundColor: "gray" },
             textTransform: "none",
             outline: 'none', // Remove outline on focus
-            '&:focus': {
-              outline: 'none', // Ensure no outline on focus
-            },
+            '&:focus': { outline: 'none' },
           }}
         >
-          {params.row.account_status.status === "Active" ? 'Inactivate' : 'Reactivate'}
+          {params?.row?.account_status?.status === "Active" ? 'Inactivate' : 'Reactivate'}
         </Button>
       </div>
     ),

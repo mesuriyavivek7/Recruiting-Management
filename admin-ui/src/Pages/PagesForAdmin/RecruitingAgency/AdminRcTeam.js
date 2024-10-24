@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Card, TablePagination, Button, Box, Typography, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+import { Card, TablePagination, Button, Box, Typography, Dialog, DialogTitle, DialogContent, DialogActions, CircularProgress } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { RcTeamCols,RcTeamrows } from './RowColData'; // Import columns configuration
 
@@ -14,6 +14,7 @@ const AdminRcTeam = () => {
   const [selectedRow, setSelectedRow] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const navigate = useNavigate();
+  const [loading, setLoading] = React.useState(false); // Loader state
 
   const handleRowClick = (row) => {
     setSelectedRow(row); 
@@ -24,6 +25,13 @@ const AdminRcTeam = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
+  React.useEffect(() => {
+    // Simulate data fetching with a loader
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false); // Stop loading after data is "fetched"
+    }, 1000); // Simulate 1 second loading time
+  }, [RcTeamrows, page, rowsPerPage]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -51,10 +59,15 @@ const AdminRcTeam = () => {
     }}>
     <div>
     
-   
+  
 
       {/* Card with DataGrid */}
       <div className="py-5 px-6">
+      {loading ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 400 ,color:'#315370'}}>
+          <CircularProgress />
+        </Box>
+      ) : (
         <div style={{ height: 600, width: '100%' }} className="pt-4">
           <DataGrid
             rows={paginatedRows}
@@ -126,9 +139,10 @@ const AdminRcTeam = () => {
              
             }}
           />
-        </div>
+        </div>)}
       </div>
 
+      {!loading && (
   
       <TablePagination
         component="div"
@@ -139,7 +153,7 @@ const AdminRcTeam = () => {
         onRowsPerPageChange={handleChangeRowsPerPage}
         rowsPerPageOptions={[5, 10, 25]}
         labelRowsPerPage="Rows per page"
-      />
+      />)}
 
      
       

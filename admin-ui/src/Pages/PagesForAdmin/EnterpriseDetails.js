@@ -1,12 +1,40 @@
 
 
 
-import { Card, Typography, Box, Grid } from '@mui/material';
-import React from 'react';
-import { FaBriefcase, FaBuilding, FaInfoCircle } from 'react-icons/fa'; // Importing relevant icons
+
+import {  Typography, Box, Grid } from '@mui/material';
+
+import { FaBuilding, FaInfoCircle } from 'react-icons/fa'; // Importing relevant icons
+
+import { Card } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { FaBriefcase } from 'react-icons/fa';
+import { useLocation } from 'react-router-dom';
+import { fetchAccountManager } from '../../services/api'; 
+
 
 const EnterpriseDetails = () => {
+  const location = useLocation();
+  const { enterpriseDetails } = location.state || {}; // Access the passed state
+  const [accountManager, setAccountManager] = useState(null); 
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (enterpriseDetails?.allocated_account_manager) {
+        try {
+          const managerData = await fetchAccountManager(enterpriseDetails.allocated_account_manager);
+          setAccountManager(managerData);
+        } catch (error) {
+          console.error('Error fetching account manager data:', error);
+        }
+      }
+    };
+
+    fetchData();
+  }, [enterpriseDetails]); 
+
   return (
+
     <Card className="mt-4 font-sans py-6" sx={{ borderRadius: '8px', boxShadow: 3, backgroundColor: '#f0f0f0', padding: 3 }}>
       
       {/* First Section: Enterprise Details */}
@@ -17,22 +45,22 @@ const EnterpriseDetails = () => {
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
             <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
-              <Typography variant="body1"><strong>Full Name:</strong> Software Engineer</Typography>
+              <Typography variant="body1"><strong>Full Name:</strong>{enterpriseDetails?.full_name}</Typography>
             </Box>
           </Grid>
           <Grid item xs={12} sm={6}>
             <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
-              <Typography variant="body1"><strong>Phone Number:</strong> 87544786756</Typography>
+              <Typography variant="body1"><strong>Mobile Number:</strong>{enterpriseDetails?.mobileno}</Typography>
             </Box>
           </Grid>
           <Grid item xs={12} sm={6}>
             <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
-              <Typography variant="body1"><strong>Email:</strong> arati@gmail.com</Typography>
+              <Typography variant="body1"><strong>Email:</strong> {enterpriseDetails?.email}</Typography>
             </Box>
           </Grid>
           <Grid item xs={12} sm={6}>
             <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
-              <Typography variant="body1"><strong>Designation:</strong> Software Engineer</Typography>
+              <Typography variant="body1"><strong>Designation:</strong> {enterpriseDetails?.designation</Typography>
             </Box>
           </Grid>
         </Grid>
@@ -46,27 +74,27 @@ const EnterpriseDetails = () => {
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
             <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
-              <Typography variant="body1"><strong>Company Name:</strong> Odoo</Typography>
+              <Typography variant="body1"><strong>Company Name:</strong> {enterpriseDetails?.company_name}</Typography>
             </Box>
           </Grid>
           <Grid item xs={12} sm={6}>
             <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
-              <Typography variant="body1"><strong>Company Size:</strong> 500-1000 Employees</Typography>
+              <Typography variant="body1"><strong>Company Size:</strong> {enterpriseDetails?.company_size}</Typography>
             </Box>
           </Grid>
           <Grid item xs={12} sm={6}>
             <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
-              <Typography variant="body1"><strong>Country:</strong> USA</Typography>
+              <Typography variant="body1"><strong>Country:</strong> {enterpriseDetails?.country}</Typography>
             </Box>
           </Grid>
           <Grid item xs={12} sm={6}>
             <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
-              <Typography variant="body1"><strong>State:</strong> California</Typography>
+              <Typography variant="body1"><strong>State:</strong>{enterpriseDetails?.state}</Typography>
             </Box>
           </Grid>
           <Grid item xs={12} sm={6}>
             <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
-              <Typography variant="body1"><strong>City:</strong> Nesco</Typography>
+              <Typography variant="body1"><strong>City:</strong> {enterpriseDetails?.city}</Typography>
             </Box>
           </Grid>
         </Grid>
@@ -80,22 +108,22 @@ const EnterpriseDetails = () => {
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
             <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
-              <Typography variant="body1"><strong>Email Verified:</strong> Yes</Typography>
+              <Typography variant="body1"><strong>Email Verified:</strong> {enterpriseDetails?.email_verified ? 'Yes' : 'No'}</Typography>
             </Box>
           </Grid>
           <Grid item xs={12} sm={6}>
             <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
-              <Typography variant="body1"><strong>Account Status:</strong> Active</Typography>
+              <Typography variant="body1"><strong>Account Status:</strong>{enterpriseDetails?.account_status.status}</Typography>
             </Box>
           </Grid>
           <Grid item xs={12} sm={6}>
             <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
-              <Typography variant="body1"><strong>Allocated Account Manager:</strong> John Sinha</Typography>
+              <Typography variant="body1"><strong>Allocated Account Manager:</strong> {accountManager?.full_name}</Typography>
             </Box>
           </Grid>
           <Grid item xs={12} sm={6}>
             <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
-              <Typography variant="body1"><strong>Admin Verified:</strong> Yes</Typography>
+              <Typography variant="body1"><strong>Admin Verified:</strong> {enterpriseDetails?.admin_verified ? 'Yes' : 'No'}</Typography>
             </Box>
           </Grid>
         </Grid>
@@ -104,5 +132,6 @@ const EnterpriseDetails = () => {
     </Card>
   );
 };
+
 
 export default EnterpriseDetails;
