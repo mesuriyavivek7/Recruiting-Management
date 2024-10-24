@@ -1,8 +1,4 @@
-
-
-
-
-import {  Typography, Box, Grid } from '@mui/material';
+import { Typography, Box, Grid } from '@mui/material';
 
 import { FaBuilding, FaInfoCircle } from 'react-icons/fa'; // Importing relevant icons
 
@@ -60,7 +56,7 @@ const EnterpriseDetails = () => {
           </Grid>
           <Grid item xs={12} sm={6}>
             <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
-              <Typography variant="body1"><strong>Designation:</strong> {enterpriseDetails?.designation</Typography>
+              <Typography variant="body1"><strong>Designation:</strong> {enterpriseDetails?.designation}</Typography>
             </Box>
           </Grid>
         </Grid>
