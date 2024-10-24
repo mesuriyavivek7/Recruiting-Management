@@ -15,6 +15,8 @@ import {
 import Notification from '../../../Components/Notification';
 import { DataGrid } from '@mui/x-data-grid';
 import { columns } from './NewRowColData ';
+import { FaEnvelope, FaPhone, FaBriefcase, FaBuilding, FaUsers, FaGlobe, FaMapMarkerAlt, FaCity } from 'react-icons/fa';
+
 
 const NewEnterpriseData = () => {
   const myValue = useSelector((state) => state.admin);
@@ -187,13 +189,7 @@ const NewEnterpriseData = () => {
             },
           }}
         />
-        <TablePagination
-          component="div"
-          count={newEnterprise.length}
-          page={page}
-          onPageChange={handleChangePage}
-          rowsPerPage={rowsPerPage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
+       
       </div>
       )}
       {notification && (
@@ -231,36 +227,139 @@ const NewEnterpriseData = () => {
         </DialogActions>
       </Dialog>
 
-      {/* Dialog for assigning account manager */}
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Assign Account Manager</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Select an account manager to assign this enterprise to:
-          </DialogContentText>
-          <FormControl fullWidth margin="normal">
-            <InputLabel id="select-account-manager-label">Account Manager</InputLabel>
+     
+
+   
+
+{selectedRow && (
+  <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
+    {/* Dialog Title */}
+    <DialogTitle className="bg-gray-600 text-white text-lg font-bold">
+      Details for {selectedRow?.full_name}
+    </DialogTitle>
+
+    {/* Dialog Content */}
+    <DialogContent className="bg-gray-50">
+      <div className="bg-white shadow-md rounded-lg p-6 my-8">
+        <div className="text-center mb-8">
+          <h2 className="text-2xl xl:text-3xl font-semibold text-gray-800">
+            {selectedRow.full_name}
+          </h2>
+          <p className="text-gray-500 pt-3">Member Information</p>
+        </div>
+
+        {/* Professional details container */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Email */}
+          <div className="flex items-center text-gray-700">
+            <FaEnvelope className="mr-2 text-black text-xl xl:text-2xl" />
+            <div className="flex gap-2 text-xl">
+              <span className="block font-medium">Email:</span>
+              <span>{selectedRow?.email}</span>
+            </div>
+          </div>
+
+          {/* Mobile No */}
+          <div className="flex items-center text-gray-700">
+            <FaPhone className="mr-2 text-black text-xl xl:text-2xl" />
+            <div className="flex gap-2 text-xl">
+              <span className="block font-medium">Mobile No:</span>
+              <span>{selectedRow?.mobileno}</span>
+            </div>
+          </div>
+
+          {/* Designation */}
+          <div className="flex items-center text-gray-700">
+            <FaBriefcase className="mr-2 text-black text-xl xl:text-2xl" />
+            <div className="flex gap-2 text-xl">
+              <span className="block font-medium">Designation:</span>
+              <span>{selectedRow?.designation}</span>
+            </div>
+          </div>
+
+          {/* Company Name */}
+          <div className="flex items-center text-gray-700">
+            <FaBuilding className="mr-2 text-black text-xl xl:text-2xl" />
+            <div className="flex gap-2 text-xl">
+              <span className="block font-medium">Company Name:</span>
+              <span>{selectedRow?.company_name}</span>
+            </div>
+          </div>
+
+          {/* Company Size */}
+          <div className="flex items-center text-gray-700">
+            <FaUsers className="mr-2 text-black text-xl xl:text-2xl" />
+            <div className="flex gap-2 text-xl">
+              <span className="block font-medium">Company Size:</span>
+              <span>{selectedRow?.company_size}</span>
+            </div>
+          </div>
+
+          {/* Country */}
+          <div className="flex items-center text-gray-700">
+            <FaGlobe className="mr-2 text-black text-xl xl:text-2xl" />
+            <div className="flex gap-2 text-xl">
+              <span className="block font-medium">Country:</span>
+              <span>{selectedRow?.country}</span>
+            </div>
+          </div>
+
+          {/* State */}
+          <div className="flex items-center text-gray-700">
+            <FaMapMarkerAlt className="mr-2 text-black text-xl xl:text-2xl" />
+            <div className="flex gap-2 text-xl">
+              <span className="block font-medium">State:</span>
+              <span>{selectedRow?.state}</span>
+            </div>
+          </div>
+
+          {/* City */}
+          <div className="flex items-center text-gray-700">
+            <FaCity className="mr-2 text-black text-xl xl:text-2xl" />
+            <div className="flex gap-2 text-xl">
+              <span className="block font-medium">City:</span>
+              <span>{selectedRow?.city}</span>
+            </div>
+          </div>
+
+          {/* Account Manager Selection */}
+          <FormControl fullWidth variant="outlined">
+            <InputLabel>Select Account Manager</InputLabel>
             <Select
-              labelId="select-account-manager-label"
               value={selectedManager}
               onChange={handleManagerChange}
-              label="Account Manager"
+              label="Select Account Manager"
             >
-              {acManager.map((manager) => (
+              {acManager?.map((manager) => (
                 <MenuItem key={manager._id} value={manager._id}>
                   {manager.name}
                 </MenuItem>
               ))}
             </Select>
           </FormControl>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary">Cancel</Button>
-          <Button onClick={handleAssignAcManager} color="primary" disabled={assignLoad}>
-            {assignLoad ? 'Assigning...' : 'Submit'}
-          </Button>
-        </DialogActions>
-      </Dialog>
+        </div>
+      </div>
+    </DialogContent>
+
+    {/* Dialog Actions */}
+    <DialogActions className="bg-gray-100 px-6 py-6">
+      <Button
+        onClick={handleClose}
+        className="bg-gray-600 hover:bg-blue-230 text-white px-4 py-2 text-xl rounded-md"
+      >
+        Cancel
+      </Button>
+      <Button
+        onClick={handleAssignAcManager}
+        className="bg-gray-600 hover:bg-blue-230 text-white px-4 py-2 text-xl rounded-md"
+      >
+        {assignLoad && <span>Loading...</span>}
+        {!assignLoad && <span>Assign</span>}
+      </Button>
+    </DialogActions>
+  </Dialog>
+)}
+
 
       {/* Notification */}
       {notification && (
@@ -279,15 +378,8 @@ const NewEnterpriseData = () => {
       />
       )}
 
-      {/* Pagination */}
-      <TablePagination
-        component="div"
-        count={newEnterprise.length}
-        page={page}
-        onPageChange={handleChangePage}
-        rowsPerPage={rowsPerPage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
+
+     
     </>
   );
 };
