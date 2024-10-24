@@ -6,15 +6,21 @@ import { Box } from '@mui/material'
 import HtmlContent from '../HtmlContent';
 import CopyToClipBoard from '../CopyToClipBoard';
 
+//import components
+import CandidateDataShowJobPreview from '../candidate/CandidateDataShowJobPreview';
+
 //For html text editor
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
+import WhiteLoader from '../../assets/whiteloader.svg'
 //importing icons
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import KeyboardArrowDownOutlinedIcon from '@mui/icons-material/KeyboardArrowDownOutlined';
 import KeyboardArrowUpOutlinedIcon from '@mui/icons-material/KeyboardArrowUpOutlined';
 import InsertDriveFileOutlinedIcon from '@mui/icons-material/InsertDriveFileOutlined';
+import DescriptionIcon from '@mui/icons-material/Description';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
 
 //import images
 import FireIcon from '../../assets/asset39.png'
@@ -36,12 +42,13 @@ const [jobAttachments,setJobAttachments]=useState(null)
 const [candidateDetails,setCandidateDetails]=useState(null)
 const [acManager,setAcManager]=useState(null)
 const [jobStatus,setJobStatus]=useState(null)
+const [jobHotMark,setJobHotMark]=useState(false)
+const [markLoader,setMarkLoader]=useState(false)
 
 
 const handleFetchJobDetails=async (jobid)=>{
      try{
        const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/job/getjobbasicdetailsforpreview/${jobid}`)
-       console.log("job basic details---->",res.data)
        if(res.data){
         setJobBasicDetails(res.data)
         setJobDescription(res.data.job_description)
@@ -55,7 +62,6 @@ const handleFetchJobDetails=async (jobid)=>{
 const handleFetchJobStatus=async (jobid)=>{
     try{ 
        const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/job/getjobstatusforpreview/${jobid}`)
-       console.log("job status--->",res.data)
        if(res.data) setJobStatus(res.data)
     }catch(err){
        console.log(err)
@@ -66,7 +72,6 @@ const handleFetchJobStatus=async (jobid)=>{
 const handleFetchClientDescription=async (jobid)=>{
     try{
        const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/job/getcompanydetailsforpreview/${jobid}`)
-       console.log("job client description---->",res.data)
        if(res.data) setClientDescription(res.data)
     }catch(err){
        console.log(err)
@@ -77,7 +82,6 @@ const handleFetchClientDescription=async (jobid)=>{
 const handleFetchJobUpdates=async (jobid)=>{
    try{
       const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/job/getjobupdates/${jobid}`)
-      console.log('job updates----->',res.data)
       if(res.data) setJobUpdates(res.data)
    }catch(err){
      console.log(err)
@@ -88,7 +92,6 @@ const handleFetchJobUpdates=async (jobid)=>{
 const handleFetchAcManager=async (jobid)=>{
   try{
      const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/job/getacmanagerforpreview/${jobid}`)
-     console.log('ac manager---->',res.data)
      if(res.data) setAcManager(res.data)
   }catch(err){
     console.log(err)
@@ -100,7 +103,6 @@ const handleFetchAcManager=async (jobid)=>{
 const handleFetchJobAttachments=async (jobid)=>{ 
    try{
       const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/job/getjobattachmentsforpreview/${jobid}`)
-      console.log('job attachments--->',res.data)
       if(res.data) setJobAttachments(res.data)
    }catch(err){
      console.log(err)
@@ -111,7 +113,6 @@ const handleFetchJobAttachments=async (jobid)=>{
 const handleFetchJobCommissionDetails=async (jobid)=>{
    try{
     const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/job/getjobcommissiondetailsforpreview/${jobid}`)
-    console.log('commissio details---->',res.data)
     if(res.data) setJobCommissionDetails(res.data)
    }catch(err){
       console.log(err)
@@ -122,7 +123,6 @@ const handleFetchJobCommissionDetails=async (jobid)=>{
 const handleFetchJobSourcingGuidelines=async (jobid)=>{
    try{
       const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/job/getsourcingguidelinesforpreview/${jobid}`)
-      console.log('sourcing guidelines--->',res.data)
       if(res.data) setSourcingGuidelines(res.data)
    }catch(err){
      console.log(err)
@@ -130,8 +130,113 @@ const handleFetchJobSourcingGuidelines=async (jobid)=>{
    }
 }
 
+const handleFetchJobCandidate=async (jobid)=>{
+   try{
+     const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/job/getjobcandidatesforpreview/${jobid}`)
+     if(res.data) setCandidateDetails(res.data.map((candidate,index)=>({...candidate,id:index+1})))
+   }catch(err){
+     console.log(err)
+     showNotification("Something went wrong...!",'failure')
+   }
+}
+
+console.log("candidate details----->",candidateDetails)
+
+const handleFetchJobHotMark=async (jobid)=>{
+  if(!markLoader){
+    try{
+      setMarkLoader(true)
+       const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/job/getjobhotmark/${jobid}`)
+       setJobHotMark(res.data)
+    }catch(err){
+      setMarkLoader(false)
+      console.log(err)
+      showNotification("Something went wrong...",'failure')
+    }
+    setMarkLoader(false)
+  }
+}
+
+
+
+const viewJobAttachments=async (jobid,fileName,fileType)=>{ 
+   try{
+      let orgfilename=null
+       switch(fileType){
+           case "application/pdf":
+            orgfilename=fileName+".pdf"
+            break;
+           case "application/msword":
+            orgfilename=fileName+".doc"
+            break;
+           case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+            orgfilename=fileName+'.docx'
+            break;
+           case "video/mpeg":
+            orgfilename=fileName+'.mp3'
+            break;
+           case "video/mp4":
+            orgfilename=fileName+'.mp4'
+            break;
+           case "audio/wav":
+            orgfilename=fileName+'.wav'
+            break;
+           default:
+            break;
+       }
+       console.log(orgfilename)
+      if(orgfilename){
+        const fileUrl=`http://localhost:8080/api/job/viewjobattachments/${jobid}/${orgfilename}`
+        window.open(fileUrl,'_blank')
+      }else{
+        showNotification("Unsupported file type.",'failure')
+      }
+   
+   }catch(err){
+     console.log(err)
+     showNotification("Something went wrong while opening job attachments.")
+   }
+}
+
+const downloadJobAttachments=async (jobid,filePath,fileName,filetype)=>{
+   try{
+      //Fetch which type of file we are gonna download 
+      const fileExtenstion=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/job/getjobattachmentfiletype/${jobid}/${filetype}`)
+      const res=await axios.post(`${process.env.REACT_APP_API_BASE_URL}/job/downloadjobattachments`,{filePath,fileName},
+      {
+        responseType:'blob'
+      })
+
+      let fileType=['application/msword','application/pdf','application/vnd.openxmlformats-officedocument.wordprocessingml.document']
+      if(res.status===200 && fileType.includes(fileExtenstion.data)){
+         const blob=new Blob([res.data], {type:fileExtenstion.data})
+         const url=window.URL.createObjectURL(blob)
+         const link=document.createElement('a')
+         link.href=url
+         link.setAttribute('download',filetype)
+         document.body.appendChild(link)
+         link.click()
+         link.remove()
+      }else{
+        showNotification("File is not supported for download.",'failure')
+      }
+
+   }catch(err){
+     console.log(err)
+     showNotification("Something went wrong while downloading job attachments.",'failure')
+   }
+}
+
 const [jobUpdateMessage,setJobUpdateMessage]=useState('')
 const [messageLoader,setMessageLoader]=useState(false)
+
+const getTextLength=(htmlContent)=>{
+  const div=document.createElement('div')
+  div.innerHTML=htmlContent
+  const text=div.textContent || div.innerText || ''
+  return text.length
+}
+
 
 const [openJobDetails,setOpenJobDetails]=useState(true)
 const [openJobDescription,setOpenJobDescription]=useState(false)
@@ -156,23 +261,37 @@ const handleSendJobUpdateMessage=async ()=>{
 }
 
 
-const handleOpenPreviewBox=(jobid)=>{
+const handleOpenPreviewBox=async (jobid)=>{
    setPriviewLoader(true)
    setOpenPreviewBox(true)
    //For fetching job details
-   handleFetchJobDetails(jobid)
-   handleFetchJobAttachments(jobid)
-   handleFetchClientDescription(jobid)
-   handleFetchJobSourcingGuidelines(jobid)
-   handleFetchJobStatus(jobid)
-   handleFetchAcManager(jobid)
-   handleFetchJobUpdates(jobid)
-   handleFetchJobCommissionDetails(jobid)
+   await handleFetchJobDetails(jobid)
+   await handleFetchJobAttachments(jobid)
+   await handleFetchClientDescription(jobid)
+   await handleFetchJobSourcingGuidelines(jobid)
+   await handleFetchJobStatus(jobid)
+   await handleFetchAcManager(jobid)
+   await handleFetchJobUpdates(jobid)
+   await handleFetchJobCommissionDetails(jobid)
+   await handleFetchJobHotMark(jobid)
+
+   //For fetching candidate details
+   await handleFetchJobCandidate(jobid)
 
    setPriviewLoader(false)
 }
 
-const handleClosePreviewBox=(jobid)=>{
+const handleChangeJobHotMark=async (jobid)=>{
+      try{
+        await axios.put(`${process.env.REACT_APP_API_BASE_URL}/job/changejobhotmark/${jobid}`,{mark:jobHotMark})
+        await handleFetchJobHotMark(jobid)
+      }catch(err){
+        console.log(err)
+        showNotification("Something went wrong while changeing job Remarks.",'failure')
+      }
+}
+
+const handleClosePreviewBox=()=>{
   setOpenPreviewBox(false)
    setJobBasicDetails(null)
    setJobUpdates([])
@@ -183,12 +302,15 @@ const handleClosePreviewBox=(jobid)=>{
    setJobStatus(null)
    setJobDescription(null)
    setClientDescription(null)
+   setJobHotMark(false)
+   setMarkLoader(false)
 
    setOpenJobDetails(true)
    setOpenJobDescription(false)
    setOpenClientDescription(false)
    setOpenSourcingGuidelines(false)
    setJobAttachments(false)
+   
 
    setJobUpdateMessage('')
 }
@@ -306,10 +428,14 @@ const formats = [
       <div className='fixed inset-0 flex justify-center bg-black z-10 bg-opacity-50 backdrop-blur-md items-center'>
           <div className='custom-div gap-0 p-0 w-[90%] overflow-hidden'>
               <div className='relative flex w-full p-2 flex-col gap-2 bg-gradient-to-r from-cyan-100 to-blue-200'>
-                 <div className='p-2 absolute rounded-md bg-slate-100 right-4 top-2 flex items-center gap-2'>
-                     <img src={FireIcon} className='grayscale w-5 h-5'></img>
-                     <span className='text-gray-400'>Mark As Hot Job</span>
-                 </div>
+                 {
+                  jobBasicDetails && 
+                  <div onClick={()=>handleChangeJobHotMark(jobBasicDetails.job_id)} className={`p-2 ${markLoader?("cursor-not-allowed"):("cursor-pointer")} absolute rounded-md ${jobHotMark?("bg-blue-400"):("bg-slate-100")} right-4 top-2 flex items-center gap-2`}>
+                     <img src={FireIcon} className={`${!jobHotMark && "grayscale"} w-5 h-5`}></img>
+                     <span className={`${jobHotMark?("text-white"):("text-gray-400")}`}>Mark As Hot Job</span>
+                  </div>
+                 }
+                
                  <div className='flex gap-2 items-center'>
                      <span onClick={handleClosePreviewBox} className='text-gray-500 cursor-pointer '><ArrowBackIosIcon style={{fontSize:'1.2rem', fontWeight:'bold'}}></ArrowBackIosIcon></span>
                      <div className='flex flex-col gap-2'>
@@ -359,18 +485,28 @@ const formats = [
                      </div>
                  </div>
                  <div className='flex mt-2 gap-6 px-4'>
-                    <div className={`cursor-pointer ${currentTab==="job" && "text-blue-400"} hover:text-blue-400`}>
+                    <div onClick={()=>setCurrentTab('job')} className={`cursor-pointer ${currentTab==="job" && "text-blue-400"} hover:text-blue-400`}>
                       Job
                       {currentTab==='job' && <hr className='bg-blue-400 h-1'></hr>}
                     </div>
-                    <div className={`cursor-pointer ${currentTab==="candidate" && "text-blue-400"} hover:text-blue-400`}>
+                    <div onClick={()=>setCurrentTab('candidate')} className={`cursor-pointer ${currentTab==="candidate" && "text-blue-400"} hover:text-blue-400`}>
                       Candidate Pipeline
                       {currentTab==='candidate' && <hr className='bg-blue-400 h-1'></hr>}
                     </div>
                  </div>
               </div>
-              <div className='bg-white-200 w-full flex gap-3 p-3'>
-                <div className='relative flex-1 custom-div gap-0 h-[600px] p-0'>
+
+              {
+                   (previewLoader)?(
+                      <div className='flex w-full h-[600px] items-center justify-center'>
+                         <img src={WhiteLoader} className='w-10 h-10'></img>
+                      </div>
+                   ):(
+                    
+                      currentTab==="job"?(
+
+                        <div className='bg-white-200 w-full flex gap-3 p-3'>
+                        <div className='relative flex-1 custom-div gap-0 h-[600px] p-0'>
                         <div className='border-b w-full p-2'>
                           <span className='text-blue-400'>Job Updates</span>
                         </div>
@@ -391,7 +527,7 @@ const formats = [
                             formats={formats}
                             theme="snow"
                             />
-                            <button onClick={handleSendJobUpdateMessage} disabled={jobUpdateMessage.length===0} className='disabled:bg-gray-300 w-36 disabled:cursor-not-allowed absolute bottom-0 right-3 rounded-sm p-2 bg-blue-400 text-white'>
+                            <button onClick={handleSendJobUpdateMessage} disabled={getTextLength(jobUpdateMessage)===0} className='disabled:bg-gray-300 w-36 disabled:cursor-not-allowed absolute bottom-0 right-3 rounded-sm p-2 bg-blue-400 text-white'>
                                 {
                                   messageLoader
                                   ?(
@@ -406,8 +542,8 @@ const formats = [
                             </button>
                         </div>
                 </div>
-                <div className='flex-1 custom-div gap-2 overflow-hidden p-0 bg-white'>
-                   <div className='w-full overflow-scroll h-[600px]'>
+                <div className='flex-1 overflow-hidden rounded-md shadow p-0 bg-white'>
+                   <div className='overflow-y-auto h-[600px]'>
                    {
                         jobBasicDetails && 
                         <div>
@@ -464,19 +600,19 @@ const formats = [
                           <div className='flex flex-col gap-2'>
                              <div className='flex items-center gap-2'>
                                <span className='text-sm w-32'>Client Name</span>
-                               <span className='text-[14px] w-52 font-semibold'>{clientDescription && clientDescription.client_name}</span>
+                               <span className='text-[14px] w-32 font-semibold'>{clientDescription && clientDescription.client_name}</span>
                              </div>
                             <div className='flex items-center gap-2'>
                                <span className='text-sm w-32'>Experience</span>
-                               <span className='text-[14px] w-52 font-semibold'>{`${jobBasicDetails.experience.minexp} - ${jobBasicDetails.experience.maxexp} Years`}</span>
+                               <span className='text-[14px] w-32 font-semibold'>{`${jobBasicDetails.experience.minexp} - ${jobBasicDetails.experience.maxexp} Years`}</span>
                             </div>
                             <div className='flex items-center gap-2'>
                               <span className='text-sm w-32'>Replacement Terms</span>
-                              <span className='text-[14px] w-52 font-semibold'>{jobCommissionDetails && jobCommissionDetails.commission_details.replacement_clause} Days</span>
+                              <span className='text-[14px] w-32 font-semibold'>{jobCommissionDetails && jobCommissionDetails.commission_details.replacement_clause} Days</span>
                             </div>
                             <div className='flex items-center gap-2'>
                               <span className='text-sm w-32'>SP Payout</span>
-                              <span className='text-[14px] w-52 font-semibold'>
+                              <span className='text-[14px] w-32 font-semibold'>
                                {jobCommissionDetails && (jobCommissionDetails.commission_details.commission_type==="Percentage"
                                ?(`${jobCommissionDetails.commission_details.commission_percentage_pay}%`)
                                :(jobCommissionDetails.work_type==="full_time"?
@@ -564,15 +700,72 @@ const formats = [
                                </div>
                                {
                                 openJobAttachments && 
-                                 <div className='flex flex-col gap-1'>
+                                  <div className='flex flex-col gap-1'>
+                                    {
+                                      jobAttachments.sample_cv && 
+                                       <div className='flex border-b justify-between p-2 items-center'>
+                                         <div className='flex gap-2 items-center'>
+                                            <span className='h-9 w-9 text-blue-400 flex justify-center rounded-full items-center bg-blue-100'><InsertDriveFileOutlinedIcon style={{fontSize:'1.2rem'}}></InsertDriveFileOutlinedIcon></span>
+                                            <div className='flex flex-col'>
+                                              <span className='text-sm'>{jobAttachments.sample_cv.filename}</span>
+                                              <small className='text-gray-400'>Sample cv</small>
+                                            </div> 
+                                         </div>
+                                         <div className='flex gap-2 items-center'>
+                                          <span onClick={()=>viewJobAttachments(jobAttachments.folder_name,"sample_cv",jobAttachments.sample_cv.filetype)} className='text-blue-400 cursor-pointer'><DescriptionIcon style={{fontSize:'1.4rem'}}></DescriptionIcon></span>
+                                          <span onClick={()=>downloadJobAttachments(jobAttachments.folder_name,jobAttachments.sample_cv.filepath,jobAttachments.sample_cv.filename,'sample_cv')} className='text-blue-400 cursor-pointer'><FileDownloadIcon style={{fontSize:'1.4rem'}}></FileDownloadIcon></span>
+                                         </div>
+                                       </div>
+
+                                    }
                                     {
                                       jobAttachments.evaluation_form && 
                                        <div className='flex border-b justify-between p-2 items-center'>
                                          <div className='flex gap-2 items-center'>
                                             <span className='h-9 w-9 text-blue-400 flex justify-center rounded-full items-center bg-blue-100'><InsertDriveFileOutlinedIcon style={{fontSize:'1.2rem'}}></InsertDriveFileOutlinedIcon></span>
-                                            <span className='text-sm'>{jobAttachments.evaluation_form.filename}</span>
+                                            <div className='flex flex-col'>
+                                              <span className='text-sm'>{jobAttachments.evaluation_form.filename}</span>
+                                              <small className='text-gray-400'>Evaluation form</small>
+                                            </div>  
+                                         </div>
+                                         <div className='flex gap-2 items-center'>
+                                          <span onClick={()=>viewJobAttachments(jobAttachments.folder_name,"evaluation_form",jobAttachments.evaluation_form.filetype)} className='text-blue-400 cursor-pointer'><DescriptionIcon style={{fontSize:'1.4rem'}}></DescriptionIcon></span>
+                                          <span onClick={()=>downloadJobAttachments(jobAttachments.folder_name,jobAttachments.evaluation_form.filepath,jobAttachments.evaluation_form.filename,'evaluation_form')} className='text-blue-400 cursor-pointer'><FileDownloadIcon style={{fontSize:'1.4rem'}}></FileDownloadIcon></span>
                                          </div>
                                        </div>
+                                    }
+                                    {
+                                      jobAttachments.audio_brief && 
+                                       <div className='flex border-b justify-between p-2 items-center'>
+                                         <div className='flex gap-2 items-center'>
+                                            <span className='h-9 w-9 text-blue-400 flex justify-center rounded-full items-center bg-blue-100'><InsertDriveFileOutlinedIcon style={{fontSize:'1.2rem'}}></InsertDriveFileOutlinedIcon></span>
+                                            <div className='flex flex-col'>
+                                               <span className='text-sm'>{jobAttachments.audio_brief.filename}</span>
+                                               <small className='text-gray-400'>Audio Brief</small>
+                                            </div>
+                                         </div>
+                                         <div className='flex gap-2 items-center'>
+                                          <span onClick={()=>viewJobAttachments(jobAttachments.folder_name,'audio_brief',jobAttachments.audio_brief.filetype)} className='text-blue-400 cursor-pointer'><DescriptionIcon style={{fontSize:'1.4rem'}}></DescriptionIcon></span>
+                                          <span onClick={()=>downloadJobAttachments(jobAttachments.folder_name,jobAttachments.audio_brief.filepath,jobAttachments.audio_brief.filename,'audio_brief')} className='text-blue-400 cursor-pointer'><FileDownloadIcon style={{fontSize:'1.4rem'}}></FileDownloadIcon></span>
+                                         </div>
+                                       </div>
+                                    }
+                                    {
+                                      jobAttachments.other_docs && 
+                                       <div className='flex border-b justify-between p-2 items-center'>
+                                         <div className='flex gap-2 items-center'>
+                                            <span className='h-9 w-9 text-blue-400 flex justify-center rounded-full items-center bg-blue-100'><InsertDriveFileOutlinedIcon style={{fontSize:'1.2rem'}}></InsertDriveFileOutlinedIcon></span>
+                                            <div className='flex flex-col'>
+                                             <span className='text-sm'>{jobAttachments.other_docs.filename}</span>
+                                             <small className='text-gray-400'>Other docs</small>
+                                            </div>               
+                                         </div>
+                                         <div className='flex gap-2 items-center'>
+                                          <span onClick={()=>viewJobAttachments(jobAttachments.folder_name,"other_docs",jobAttachments.other_docs.filetype)} className='text-blue-400 cursor-pointer'><DescriptionIcon style={{fontSize:'1.4rem'}}></DescriptionIcon></span>
+                                          <span onClick={()=>downloadJobAttachments(jobAttachments.folder_name,jobAttachments.other_docs.filepath,jobAttachments.other_docs.filename,'other_docs')} className='text-blue-400 cursor-pointer'><FileDownloadIcon style={{fontSize:'1.4rem'}}></FileDownloadIcon></span>
+                                         </div>
+                                       </div>
+
                                     }
                                  </div>
                                }
@@ -581,6 +774,13 @@ const formats = [
                    </div>
                 </div>
               </div>
+                      ):(
+                         <CandidateDataShowJobPreview candidateRows={candidateDetails}></CandidateDataShowJobPreview>
+                      )
+
+                   )
+              }
+             
           </div>
       </div>
      }

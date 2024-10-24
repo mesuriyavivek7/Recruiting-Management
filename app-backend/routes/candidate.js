@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url';
 
 
 import { cancelProcess, checkParseDetails, createAndParseResume, downloadResumeDocs, getResumeFileName, getResumeFilePath, marksAsCompleted, removeResumeFile} from '../controller/resumeController.js';
-import { addAcManager, changeCandidateStatus, changeMultipleCandidateStatus, createCandidate, downloadCandidateAttachments, getAcManagerName, getAllCandidates, getCandidateAllDetails, getCandidateForMultipleAction, getCandidateStatusById, getJobBasicDetails, getRecruiterMemberIds, updateCandidateRemarks, viewCandidateAttachments } from '../controller/candidateController.js';
+import { addAcManager, changeCandidateStatus, changeMultipleCandidateStatus, createCandidate, downloadCandidateAttachments, getAcManagerName, getAllCandidates, getCandidate, getCandidateAllDetails, getCandidateForMultipleAction, getCandidateStatusById, getJobBasicDetails, getJobCandidateForPreview, getRecruiterMemberIds, updateCandidateRemarks, viewCandidateAttachments } from '../controller/candidateController.js';
 import { checkEmailAndMobile, createCandidateBasicDetails, getAllCandidateDetails } from '../controller/candidateBasicController.js'
 import { uploadCandidateAttachments } from '../controller/candidateAttachmentsController.js';
 import { uploadCandidateConsetProof } from '../controller/candidateConsetController.js';
@@ -64,6 +64,9 @@ const uploadAttach = multer({ storage: storageattachments })
 const uploadConsent = multer({ storage: consentStorage })
 
 //for creating new candidate
+
+//for get the one candidate by its id
+router.get('/:cid',getCandidate)
 
 //for attaching candidate resume and parsign it
 router.post('/resumedocs/:cid', upload.single('resume'), createAndParseResume)
@@ -150,6 +153,9 @@ router.post('/downloadcandidateattachments',downloadCandidateAttachments)
 
 //For view candidate attachments
 router.get('/viewcandidateattachments/:candidateId/:fileName',viewCandidateAttachments)
+
+//For get candidate details for job preview
+router.get('/getcandidatejobpreview/:cid',getJobCandidateForPreview)
 
 export default router
 

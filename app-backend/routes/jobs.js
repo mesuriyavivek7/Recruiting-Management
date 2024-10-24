@@ -5,7 +5,7 @@ import multer from 'multer'
 import { fileURLToPath } from 'url';
 
 
-import { activateJob,getAllJobs, addCandidateProfileList, allotedJobToAcManager, createJobs, deleteJobDraftWithOtherDetails, downloadEvaluationForm, getAllJobDetails, getAllJobDraftDetails, getCandidateScreeningQue, getFronLiveJobDetails, getFrontAcceptedJobDetails, getFrontMappedJobDetails, getJobAttachmentsDetailsForCandidate, getJobBasicDetailsForPreview, getJobCompanyDetailsForPreview, getJobSourcingGuidelinesForPreview, getJobStatusForPreview, getJobCommissionDetailsForPreview, createJobUpdates, getJobUpdates, getJobAttachmentsDetailsForPreview, getAcManagerNameAndMail } from '../controller/jobController.js'
+import { activateJob,getAllJobs, addCandidateProfileList, allotedJobToAcManager, createJobs, deleteJobDraftWithOtherDetails, downloadEvaluationForm, getAllJobDetails, getAllJobDraftDetails, getCandidateScreeningQue, getFronLiveJobDetails, getFrontAcceptedJobDetails, getFrontMappedJobDetails, getJobAttachmentsDetailsForCandidate, getJobBasicDetailsForPreview, getJobCompanyDetailsForPreview, getJobSourcingGuidelinesForPreview, getJobStatusForPreview, getJobCommissionDetailsForPreview, createJobUpdates, getJobUpdates, getJobAttachmentsDetailsForPreview, getAcManagerNameAndMail, viewJobAttachments, downloadJobAttachments, getJobAttachmentFileType, getJobHotMark, changeJobHotMark, getJobCandidatesForPreview } from '../controller/jobController.js'
 import { craeteJobBasicDeatils,showJobDetail, getJobBasicDetails } from '../controller/jobBasicController.js'
 import { createJobDraft, deleteJobDraft } from '../controller/jobDraftController.js'
 import { createJobCommission,showJobCommission, getJobCommissionDetails } from '../controller/jobCommissionController.js'
@@ -198,5 +198,23 @@ router.get('/getjobattachmentsforpreview/:jobid',getJobAttachmentsDetailsForPrev
 
 //for getting ac manager mail and name for showing into preview page
 router.get('/getacmanagerforpreview/:jobid',getAcManagerNameAndMail)
+
+//for view job attachments
+router.get('/viewjobattachments/:jobid/:filename',viewJobAttachments)
+
+//for download job attachments file
+router.post('/downloadjobattachments',downloadJobAttachments)
+
+//for get job hot_mark for preview
+router.get('/getjobhotmark/:jobid',getJobHotMark)
+
+//for change job hot mark
+router.put('/changejobhotmark/:jobid',changeJobHotMark)
+
+//for get job attachments file type
+router.get('/getjobattachmentfiletype/:jobid/:filetype',getJobAttachmentFileType)
+
+//for getting jobs accepted candidate details for preview
+router.get('/getjobcandidatesforpreview/:jobid',getJobCandidatesForPreview)
 
 export default router
