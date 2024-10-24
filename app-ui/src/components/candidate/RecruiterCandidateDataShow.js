@@ -611,19 +611,19 @@ const handleClosePopUpBox=async ()=>{
                           <div className='flex flex-col gap-2'>
                             <div className='flex items-center gap-2'>
                                <span className='text-sm w-32'>Current Annual Salary</span>
-                               <span className='text-[14px] w-52 font-semibold'>{candidateBasicDetails.current_annual_salary}</span>
+                               <span className='text-[14px] w-32 font-semibold'>{candidateBasicDetails.current_annual_salary}</span>
                             </div>
                             <div className='flex items-center gap-2'>
                                <span className='text-sm w-32'>Expected Annual Salary</span>
-                               <span className='text-[14px] w-52 font-semibold'>{candidateBasicDetails.expected_annual_salary}</span>
+                               <span className='text-[14px] w-32 font-semibold'>{candidateBasicDetails.expected_annual_salary}</span>
                             </div>
                             <div className='flex items-center gap-2'>
                               <span className='text-sm w-32'>Country</span>
-                              <span className='text-[14px] w-52 font-semibold'>{candidateBasicDetails.country}</span>
+                              <span className='text-[14px] w-32 font-semibold'>{candidateBasicDetails.country}</span>
                             </div>
                             <div className='flex items-center gap-2'>
                               <span className='text-sm w-32'>Qualification</span>
-                              <span className='text-[14px] w-52 font-semibold'>{candidateBasicDetails.education_qualification}</span>
+                              <span className='text-[14px] w-32 font-semibold'>{candidateBasicDetails.education_qualification}</span>
                             </div>
                          </div>
                        </div>

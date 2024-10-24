@@ -32,6 +32,14 @@ export const addAcManager = async (req, res, next) => {
   }
 }
 
+export const getCandidate= async (req,res,next)=>{
+   try{
+     const candidate=await CANDIDATE.findById(req.params.cid)
+     res.status(200).json(candidate)
+   } catch(err){
+     next(err)
+   }
+}
 
 export const changeCandidateStatus = async (req, res, next) => {
   try {
@@ -197,7 +205,6 @@ export const viewCandidateAttachments=async (req,res,next)=>{
     try{
       const {candidateId,fileName}=req.params
       const filepath=path.join(__dirname,'..','uploads','candidatedocs',candidateId,fileName)
-      console.log(filepath)
       fs.access(filepath,fs.constants.F_OK,(err)=>{
         if(err){
           return res.status(404).json('My File not found')
@@ -227,4 +234,27 @@ export const getCandidateStatusById = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+}
+
+export const getJobCandidateForPreview=async (req,res,next)=>{ 
+    try{
+      const candidate=await CANDIDATE.findById(req.params.cid)
+
+      const candidateBasicDetails=await CANDIDATEBASICDETAILS.findById(candidate.candidate_basic_details)
+      
+      const obj={
+        candidate_full_name:`${candidateBasicDetails.first_name} ${candidateBasicDetails.last_name}`,
+        candidate_email:candidateBasicDetails.primary_email_id,
+        candidate_contact_no:candidateBasicDetails.primary_contact_number,
+        candidate_id:candidate.candidate_id,
+        candidate_status:candidate.candidate_status,
+        create_date:candidate.createdAt,
+        update_date:candidate.updatedAt
+      }
+
+      res.status(200).json(obj)
+
+    }catch(err){
+      next(err)
+    }
 }

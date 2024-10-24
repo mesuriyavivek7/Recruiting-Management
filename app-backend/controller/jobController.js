@@ -8,9 +8,15 @@ import JOBSOURCINGDETAILS from "../models/JOBSOURCINGDETAILS.js";
 import JOBSQ from "../models/JOBSQ.js";
 import RECRUITINGTEAM from "../models/RECRUITINGTEAM.js";
 
+import path from 'path'
+import { fileURLToPath } from 'url';
 import fs from 'fs'
+
 import axios from 'axios'
 
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 
 export const createJobs=async (req,res,next)=>{
@@ -468,6 +474,112 @@ export const getAcManagerNameAndMail=async (req,res,next)=>{
          res.status(200).json(acdetails.data)
       }else{
         res.status(200).json(null)
+      }
+
+   }catch(err){
+     next(err)
+   }
+}
+
+
+export const viewJobAttachments=async (req,res,next)=>{
+    try{
+      const {jobid,filename}=req.params
+      const filepath=path.join(__dirname,'..','uploads','jobdocs',jobid,filename)
+      fs.access(filepath,fs.constants.F_OK,(err)=>{
+        if(err){
+          return res.status(404).json("File not found")
+        }else{
+          res.sendFile(filepath)
+        }
+      })
+    }catch(err){
+      next(err)
+    }
+}
+
+export const downloadJobAttachments=async (req,res,next)=>{
+    
+    try{
+      const {filePath,fileName}=req.body
+      const fileExist=fs.existsSync(filePath)
+
+      if(fileExist){
+        res.download(filePath,fileName)
+      }else{
+        res.status(404).json("File path not found.!")
+      }
+    }catch(err){
+       next(err)
+    }
+}
+
+export const getJobAttachmentFileType=async (req,res,next)=>{
+    try{
+      const file=await JOBATTACHEMENT.findOne({folder_name:req.params.jobid})
+      let jobAttachFileType=null
+      switch(req.params.filetype){
+           case "evaluation_form":
+            jobAttachFileType=file.evaluation_form.filetype
+            break;
+           
+           case "sample_cv":
+            jobAttachFileType=file.sample_cv.filetype
+            break;
+
+           case "other_docs":
+            jobAttachFileType=file.other_docs.filetype
+            break;
+
+          case "audio_brief":
+            jobAttachFileType=file.audio_brief.filetype
+            break;
+      }
+      res.status(200).json(jobAttachFileType)
+    }catch(err){
+       next(err)
+    }
+}
+
+
+export const getJobHotMark=async (req,res,next)=>{
+    try{
+      const job=await JOBS.findOne({job_id:req.params.jobid})
+      if(job.mark_hot_job){
+        res.status(200).json(job.mark_hot_job)
+      }else{
+        res.status(200).json(false)
+      }
+    }catch(err){
+       next(err)
+    }
+}
+
+export const changeJobHotMark=async (req,res,next)=>{
+   try{
+      await JOBS.findOneAndUpdate({job_id:req.params.jobid},{$set:{mark_hot_job:!req.body.mark}})
+      res.status(200).json('Job Mark updated')
+   }catch(err){
+     next(err)
+   }
+}
+
+export const getJobCandidatesForPreview=async (req,res,next)=>{
+  
+   try{
+      let candidate=await JOBS.findOne({job_id:req.params.jobid},{posted_candidate_profiles:1,_id:0})
+      
+      if(candidate.posted_candidate_profiles){
+
+      const candidateIds=candidate.posted_candidate_profiles
+      let candidateDetails=await Promise.all(candidateIds.map(async (id)=>{
+          const cdetails=await axios.get(`${process.env.APP_SERVER_URL}/candidate/getcandidatejobpreview/${id}`)
+          return cdetails.data
+      }))
+       
+      res.status(200).json(candidateDetails)
+      }else{
+        res.status(200).json([])
       }
 
    }catch(err){

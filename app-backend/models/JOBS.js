@@ -18,7 +18,6 @@ const jobSchema=new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref:'jobbasicdetail'
     },
-    
     job_commission_details:{
         type:String
     },
@@ -41,6 +40,10 @@ const jobSchema=new mongoose.Schema({
     job_status:{
         type:String,
         required:true
+    },
+    mark_hot_job:{
+        type:Boolean,
+        default:false
     },
     alloted_account_manager:{
         type:String
