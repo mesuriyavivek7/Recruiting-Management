@@ -3,14 +3,7 @@ import { useSelector } from 'react-redux';
 import axios from 'axios';
 import {
   Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions,
-  TextField, TablePagination, Select, MenuItem, FormControl, InputLabel
-  Button, Card, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, TextField, MenuItem,
-  TablePagination,
-  InputLabel,
-  Select,
-  FormControl,
-  CircularProgress,
-  Box
+  TextField, TablePagination, Select, MenuItem, FormControl, InputLabel, Card, CircularProgress, Box
 } from '@mui/material';
 import Notification from '../../../Components/Notification';
 import { DataGrid } from '@mui/x-data-grid';
@@ -194,6 +187,7 @@ const NewEnterpriseData = () => {
           onPageChange={handleChangePage}
           rowsPerPage={rowsPerPage}
           onRowsPerPageChange={handleChangeRowsPerPage}
+        />
       </div>
       )}
       {notification && (
@@ -203,8 +197,7 @@ const NewEnterpriseData = () => {
           type={notification.type}
           onClose={() => setNotification(null)}
         />
-      </div>
-
+      )}
       {/* Dialog for inactivating an enterprise */}
       <Dialog open={openpopup} onClose={handleCloseInactivateButton}>
         <DialogTitle>Reason for Inactivating</DialogTitle>
@@ -266,28 +259,6 @@ const NewEnterpriseData = () => {
       {notification && (
         <Notification message={notification.message} type={notification.type} />
       )}
-       {!loading && (
-      <TablePagination
-        component="div"
-        count={newEnterprise.length}
-        page={page} // Current page number
-        onPageChange={handleChangePage} // Handler for changing page
-        rowsPerPage={rowsPerPage} // Rows per page number
-        onRowsPerPageChange={handleChangeRowsPerPage} // Handler for changing rows per page
-        rowsPerPageOptions={[5, 10, 25]} // Rows per page options
-        labelRowsPerPage="Rows per page" // Label
-      />
-      )}
-
-      {/* Pagination */}
-      <TablePagination
-        component="div"
-        count={newEnterprise.length}
-        page={page}
-        onPageChange={handleChangePage}
-        rowsPerPage={rowsPerPage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-      />
     </>
   );
 };

@@ -137,7 +137,7 @@ export const fetchAccountManagerDetails = async() => {
 }
 
 // Search enterprise by name
-export const fetchEnterprises = async (query = '') => {
+export const SearchEnterprises = async (query = '') => {
     try {
         const response = await axios.get(`${app_be_uri}/api/enterprises/search`, {
             params: {

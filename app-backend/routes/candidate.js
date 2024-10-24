@@ -7,7 +7,7 @@ import { fileURLToPath } from 'url';
 
 import { cancelProcess, checkParseDetails, createAndParseResume, downloadResumeDocs, getResumeFileName, getResumeFilePath, marksAsCompleted, removeResumeFile} from '../controller/resumeController.js';
 import { addAcManager, changeCandidateStatus, changeMultipleCandidateStatus, createCandidate, downloadCandidateAttachments, getAcManagerName, getAllCandidates, getCandidate, getCandidateAllDetails, getCandidateForMultipleAction, getCandidateStatusById, getJobBasicDetails, getJobCandidateForPreview, getRecruiterMemberIds, updateCandidateRemarks, viewCandidateAttachments } from '../controller/candidateController.js';
-import { checkEmailAndMobile, createCandidateBasicDetails, getAllCandidateDetails } from '../controller/candidateBasicController.js'
+import { checkEmailAndMobile, createCandidateBasicDetails, getAllCandidateBasicDetails } from '../controller/candidateBasicController.js'
 import { uploadCandidateAttachments } from '../controller/candidateAttachmentsController.js';
 import { uploadCandidateConsetProof } from '../controller/candidateConsetController.js';
 import { createSqAnswers } from '../controller/candidateSqController.js';
@@ -65,8 +65,6 @@ const uploadConsent = multer({ storage: consentStorage })
 
 //for creating new candidate
 
-//for get the one candidate by its id
-router.get('/:cid',getCandidate)
 
 //for attaching candidate resume and parsign it
 router.post('/resumedocs/:cid', upload.single('resume'), createAndParseResume)
@@ -133,7 +131,7 @@ router.put('/changemultiplecandidatestatus', changeMultipleCandidateStatus)
 //fetch recruiter member id for particluer the given array of candidate ids
 router.post('/getrecruitermemberids', getRecruiterMemberIds)
 
-router.get('/details', getAllCandidateDetails);
+router.get('/details/', getAllCandidateBasicDetails);
 
 router.get('/allcandidates', getAllCandidates);
 
@@ -156,6 +154,9 @@ router.get('/viewcandidateattachments/:candidateId/:fileName',viewCandidateAttac
 
 //For get candidate details for job preview
 router.get('/getcandidatejobpreview/:cid',getJobCandidateForPreview)
+
+//for get the one candidate by its id
+router.get('/:cid',getCandidate)
 
 export default router
 
