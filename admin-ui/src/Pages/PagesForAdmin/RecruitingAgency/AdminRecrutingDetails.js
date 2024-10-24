@@ -1,10 +1,16 @@
+
+
 import { Card } from '@mui/material';
+import {  Typography, Box, Grid } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { ReactComponent as ActionIcon } from "./../../../assets/asset23.svg";
 import { useLocation } from 'react-router-dom';
+import { FaFileAlt } from 'react-icons/fa'
+import { FaBriefcase, FaBuilding, FaInfoCircle } from 'react-icons/fa';
 import { fetchAccountManager } from '../../../services/api';
 
 const AdminRecruitingDetails = () => {
+
 
   const location = useLocation();
   const { RecuritingAgenciesDetails } = location.state || {}; // Access the passed state
@@ -47,79 +53,136 @@ const AdminRecruitingDetails = () => {
     return value ?? 'N/A'; // Handle undefined/null with 'N/A'
   };
 
-  return (
-    <Card
-      className="mt-4 font-sans shadow-md"
-      sx={{
-        borderRadius: '8px',
-        boxShadow: 3,
-      }}
-    >
-      <div className="lg:px-5 px-3 bg-blue-120">
-        <div className="space-y-6 bg-blue-120 flex flex-col items-center p-4">
-          <div className="bg-blue-120 p-4 rounded-lg w-full space-y-2">
-            <div className="space-y-3 bg-blue-120">
-              <h2 className="text-xl xl:text-2xl font-semibold text-gray-800 gap-4 flex items-center">
-                <ActionIcon className="w-9" /> Recruiting Agency Details
-              </h2>
-              <div className="pl-36 pt-4 gap-2 grid grid-cols-2">
-                <p className="xl:text-xl text-lg">
-                  <strong>Full Name:</strong> {renderValue(RecuritingAgenciesDetails?.full_name)}
-                </p>
-                <p className="xl:text-xl text-lg">
-                  <strong>Email:</strong> {renderValue(RecuritingAgenciesDetails?.email)}
-                </p>
-                <p className="xl:text-xl text-lg">
-                  <strong>Designation:</strong> {renderValue(RecuritingAgenciesDetails?.designation)}
-                </p>
-                <p className="xl:text-xl text-lg">
-                  <strong>Company Name:</strong> {renderValue(RecuritingAgenciesDetails?.company_name)}
-                </p>
-                <p className="xl:text-xl text-lg">
-                  <strong>Company Size:</strong> {renderValue(RecuritingAgenciesDetails?.company_size)}
-                </p>
-                <p className="xl:text-xl text-lg">
-                  <strong>LinkedIn Url:</strong> {renderValue(RecuritingAgenciesDetails?.linkedin_url)}
-                </p>
-                <p className="xl:text-xl text-lg">
-                  <strong>Email Verification:</strong> {renderValue(RecuritingAgenciesDetails?.email_verification ? 'Yes' : 'No')}
-                </p>
-                <p className="xl:text-xl text-lg">
-                  <strong>Country:</strong> {renderValue(RecuritingAgenciesDetails?.country)}
-                </p>
-                <p className="xl:text-xl text-lg">
-                  <strong>Domains:</strong> {renderValue(RecuritingAgenciesDetails?.domains)}
-                </p>
-                <p className="xl:text-xl text-lg">
-                  <strong>City:</strong> {renderValue(RecuritingAgenciesDetails?.city)}
-                </p>
-                <p className="xl:text-xl text-lg">
-                  <strong>State:</strong> {renderValue(RecuritingAgenciesDetails?.state)}
-                </p>
-                <p className="xl:text-xl text-lg">
-                  <strong>Kyc Verification:</strong> {renderValue(RecuritingAgenciesDetails?.kyc_verification ? 'Yes' : 'No')}
-                </p>
-                <p className="xl:text-xl text-lg">
-                  <strong>Account Status: </strong>
-                  {RecuritingAgenciesDetails?.account_status?.status === 'Active'
-                    ? 'Active'
-                    : renderValue(RecuritingAgenciesDetails?.account_status?.remark)}
-                </p>
-                <p className="xl:text-xl text-lg">
-                  <strong>Allocated Account Manager:</strong> {renderValue(accountManager?.full_name)}
-                </p>
-                <p className="xl:text-xl text-lg">
-                  <strong>Kyc Details:</strong> {renderValue(kycData.details)}
-                </p>
-                <p className="xl:text-xl text-lg">
-                  <strong>Kyc Documents:</strong> {renderValue(kycData.documents)}
-                </p>
 
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+
+
+
+
+  
+  return (
+    <Card className="mt-4 font-sans py-6" sx={{ borderRadius: '8px', boxShadow: 3, backgroundColor: '#f0f0f0', padding: 3 }}>
+      
+   
+      <Box sx={{ mb: 2, pb: 2, borderBottom: '4px solid white' }}>
+        <Typography variant="h5" fontWeight="bold" className="flex items-center mb-2">
+          <FaBriefcase className="mr-2 text-black" /> Recruiting Agency Details
+        </Typography>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
+              <Typography variant="body1"><strong>Full Name:</strong>{renderValue(RecuritingAgenciesDetails?.full_name)}</Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
+              <Typography variant="body1"><strong>Phone Number:</strong>  {renderValue(RecuritingAgenciesDetails?.mobileno)}</Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
+              <Typography variant="body1"><strong>Email:</strong>  {renderValue(RecuritingAgenciesDetails?.email)}</Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
+              <Typography variant="body1"><strong>Designation:</strong>{renderValue(RecuritingAgenciesDetails?.designation)}</Typography>
+            </Box>
+          </Grid>
+        </Grid>
+      </Box>
+
+      {/* Second Section: Company Details */}
+      <Box sx={{ mb: 2, pb: 2, borderBottom: '4px solid white' }}>
+        <Typography variant="h5" fontWeight="bold" className="flex items-center mb-2">
+          <FaBuilding className="mr-2 text-black" /> Company Details
+        </Typography>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
+              <Typography variant="body1"><strong>Company Name:</strong> {renderValue(RecuritingAgenciesDetails?.company_name)}</Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
+              <Typography variant="body1"><strong>Company Size:</strong> {renderValue(RecuritingAgenciesDetails?.company_size)}</Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
+              <Typography variant="body1"><strong>Country:</strong>{renderValue(RecuritingAgenciesDetails?.country)}</Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
+              <Typography variant="body1"><strong>State:</strong>{renderValue(RecuritingAgenciesDetails?.state)}</Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
+              <Typography variant="body1"><strong>City:</strong> {renderValue(RecuritingAgenciesDetails?.city)}</Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
+              <Typography variant="body1"><strong>Linkedin URL:</strong>  {renderValue(RecuritingAgenciesDetails?.linkedin_url)}</Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
+              <Typography variant="body1"><strong>Domains:</strong> {renderValue(RecuritingAgenciesDetails?.domains)}</Typography>
+            </Box>
+          </Grid>
+        </Grid>
+      </Box>
+      <Box sx={{ mb: 2, pb: 2, borderBottom: '4px solid white' }}>
+        <Typography variant="h5" fontWeight="bold" className="flex items-center mb-2">
+          <FaFileAlt className="mr-2 text-black" /> Kyc Details
+        </Typography>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
+              <Typography variant="body1"> <strong>KYC Details:</strong>{renderValue(kycData.details)}
+                
+                </Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
+              <Typography variant="body1"><strong>KYC Documents:</strong>{renderValue(kycData.documents)}
+                
+                </Typography>
+            </Box>
+          </Grid>
+         
+        </Grid>
+      </Box>
+      {/* Third Section: Other Details */}
+      <Box>
+        <Typography variant="h5" fontWeight="bold" className="flex items-center mb-2">
+          <FaInfoCircle className="mr-2 text-black" /> Other Details
+        </Typography>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
+              <Typography variant="body1"><strong>Email Verification:</strong>  {renderValue(RecuritingAgenciesDetails?.email_verification ? 'Yes' : 'No')}</Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
+              <Typography variant="body1"><strong>Kyc Verification:</strong> {renderValue(RecuritingAgenciesDetails?.kyc_verification ? 'Yes' : 'No')}</Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
+              <Typography variant="body1"><strong>Allocated Account Manager:</strong> {renderValue(accountManager?.full_name)}</Typography>
+            </Box>
+          </Grid>
+         
+        </Grid>
+      </Box>
+
+
+ 
     </Card>
   );
 };

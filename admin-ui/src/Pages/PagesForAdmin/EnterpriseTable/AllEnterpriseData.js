@@ -42,6 +42,7 @@ export default function AllEnterPriseData() {
       setLoading(false); // Stop loading after data is "fetched"
     }, 1000); // Simulate 1 second loading time
   }, [rows, page, rowsPerPage]);
+
   const handleSearch = () => {
     const newFilteredRows = rows.filter((row) => {
       const matchesSearch = row.full_name.toLowerCase().includes(searchTerm.toLowerCase());
@@ -50,6 +51,7 @@ export default function AllEnterPriseData() {
     });
     setFilteredRows(newFilteredRows);
   };
+  
   const handleFilterClick = (status) => {
     setFilterStatus(status);
     const newFilteredRows = rows.filter((row) => {
