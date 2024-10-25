@@ -6,7 +6,6 @@ export const columns = [
   {
     field: '_id',
     headerName: 'ID',
-    flex: 1,
     minWidth: 100,
     headerAlign: 'left',
     align: 'left',
@@ -14,9 +13,8 @@ export const columns = [
 
   {
     field: 'en_name',
-    headerName: 'En Name',
-    flex: 2,
-    minWidth: 250,
+    headerName: 'Enterprise Name',
+    minWidth: 230,
     headerAlign: 'left',
     align: 'left',
     renderCell: (params) => (
@@ -45,54 +43,16 @@ export const columns = [
   {
     field: 'account_role',
     headerName: 'Account Role',
-    flex: 2,
     minWidth: 200,
     headerAlign: 'left',
     align: 'left',
-    renderCell: (params) => {
-        const status = params.value; // Adjust this based on how the data is structured
-    
-        return (
-          <span
-            className={`px-4 py-2 rounded-md text-md text-white ${
-              status === 'Admin' ? 'bg-blue-600' : 'bg-yellow-500'
-            }`}
-          >
-            {status}
-          </span>
-        );
-      },
-  },
-  
-  {
-    field: 'active_job',
-    headerName: 'Active Jobs',
-    flex: 2,
-    minWidth: 200,
-    headerAlign: 'left',
-    align: 'left',
-  },
-  {
-    field: 'pending_job',
-    headerName: 'Pending Jobs',
-    flex: 2,
-    minWidth: 200,
-    headerAlign: 'left',
-    align: 'left',
-  },
-  {
-    field: 'status',
-    headerName: 'Status',
-    width: 200,
-    
     renderCell: (params) => {
       const status = params.value; // Adjust this based on how the data is structured
-  
+
       return (
         <span
-          className={`px-4 py-2 rounded-2xl text-md text-white ${
-            status === 'Active' ? 'bg-green-600' : 'bg-gray-500'
-          }`}
+          className={`px-4 py-2 rounded-md text-md text-white ${status === 'Admin' ? 'bg-blue-600' : 'bg-yellow-500'
+            }`}
         >
           {status}
         </span>
@@ -100,7 +60,40 @@ export const columns = [
     },
   },
 
-{
+  {
+    field: 'active_job',
+    headerName: 'Active Jobs',
+    minWidth: 180,
+    headerAlign: 'left',
+    align: 'left',
+  },
+  {
+    field: 'pending_job',
+    headerName: 'Pending Jobs',
+    minWidth: 180,
+    headerAlign: 'left',
+    align: 'left',
+  },
+  {
+    field: 'status',
+    headerName: 'Status',
+    width: 200,
+
+    renderCell: (params) => {
+      const status = params.value; // Adjust this based on how the data is structured
+
+      return (
+        <span
+          className={`px-4 py-2 rounded-2xl text-md text-white ${status === 'Active' ? 'bg-green-600' : 'bg-gray-500'
+            }`}
+        >
+          {status}
+        </span>
+      );
+    },
+  },
+
+  {
     field: 'createdAt',
     headerName: 'Created At',
     flex: 1,
@@ -128,18 +121,5 @@ export const columns = [
       );
     },
   },
-  
+
 ];
-
-
-export const rows = Array(10)
-  .fill(null)
-  .map((_, index) => ({
-     _id: `${index + 1}`,
-    en_name: "zigo",
-    account_role: "mentor",
-    active_job: 10,
-    createdAt: new Date(2024, 7, index + 1), // Example date (varying days in August 2023)
-    pending_job:5,
-    status:'Active',
-  }));

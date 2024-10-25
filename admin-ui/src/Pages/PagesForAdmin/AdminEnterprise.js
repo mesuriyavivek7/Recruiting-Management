@@ -3,8 +3,11 @@ import { Button } from '@mui/material';
 import EnterpriseDetails from './EnterpriseDetails';
 import EnterpriseTeam from './EnterpriseTeam';
 import EnterpriseJob from './EnterpriseJob';
+import { useLocation } from 'react-router-dom';
 
 const AdminEnterprise = () => {
+  const location = useLocation();
+  const { enterpriseDetails } = location.state || {}; // Access the passed state
   const [activeTab, setActiveTab] = useState('Enterprise Details');
 
   const handleTabChange = (tab) => {
@@ -81,17 +84,17 @@ const AdminEnterprise = () => {
         <div>
           {activeTab === 'Enterprise Details' && (
             <div className='pt-9'>
-              <EnterpriseDetails />
-            </div>
-          )}
-          {activeTab === 'Team' && (
-            <div className='pt-9 '>
-              <EnterpriseTeam />
+              <EnterpriseDetails enterpriseDetails={enterpriseDetails} />
             </div>
           )}
           {activeTab === 'Jobs' && (
             <div className='pt-9 '>
-              <EnterpriseJob />
+              <EnterpriseJob enterpriseDetails={enterpriseDetails} />
+            </div>
+          )}
+          {activeTab === 'Team' && (
+            <div className='pt-9 '>
+              <EnterpriseTeam enterpriseDetails={enterpriseDetails} />
             </div>
           )}
 

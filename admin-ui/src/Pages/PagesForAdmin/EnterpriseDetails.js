@@ -9,25 +9,23 @@ import { useLocation } from 'react-router-dom';
 import { fetchAccountManager } from '../../services/api'; 
 
 
-const EnterpriseDetails = () => {
-  const location = useLocation();
-  const { enterpriseDetails } = location.state || {}; // Access the passed state
+const EnterpriseDetails = ({enterpriseDetails}) => {
   const [accountManager, setAccountManager] = useState(null); 
 
   useEffect(() => {
     const fetchData = async () => {
-      if (enterpriseDetails?.allocated_account_manager) {
-        try {
-          const managerData = await fetchAccountManager(enterpriseDetails.allocated_account_manager);
-          setAccountManager(managerData);
-        } catch (error) {
-          console.error('Error fetching account manager data:', error);
+        if (enterpriseDetails?.allocated_account_manager) {
+            try {
+                const managerData = await fetchAccountManager(enterpriseDetails?.allocated_account_manager);
+                setAccountManager(managerData);
+            } catch (error) {
+                console.error('Error fetching account manager data:', error);
+            }
         }
-      }
     };
 
     fetchData();
-  }, [enterpriseDetails]); 
+  }, [enterpriseDetails]);
 
   return (
 

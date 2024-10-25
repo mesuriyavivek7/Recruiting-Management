@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url';
 
 
 import { activateJob,getAllJobs, addCandidateProfileList, allotedJobToAcManager, createJobs, deleteJobDraftWithOtherDetails, downloadEvaluationForm, getAllJobDetails, getAllJobDraftDetails, getCandidateScreeningQue, getFronLiveJobDetails, getFrontAcceptedJobDetails, getFrontMappedJobDetails, getJobAttachmentsDetailsForCandidate, getJobBasicDetailsForPreview, getJobCompanyDetailsForPreview, getJobSourcingGuidelinesForPreview, getJobStatusForPreview, getJobCommissionDetailsForPreview, createJobUpdates, getJobUpdates, getJobAttachmentsDetailsForPreview, getAcManagerNameAndMail, viewJobAttachments, downloadJobAttachments, getJobAttachmentFileType, getJobHotMark, changeJobHotMark, getJobCandidatesForPreview } from '../controller/jobController.js'
-import { craeteJobBasicDeatils,showJobDetail, getJobBasicDetails } from '../controller/jobBasicController.js'
+import { craeteJobBasicDeatils,showJobDetail, getJobBasicDetails, getJobDetailsByEnId } from '../controller/jobBasicController.js'
 import { createJobDraft, deleteJobDraft } from '../controller/jobDraftController.js'
 import { createJobCommission,showJobCommission, getJobCommissionDetails } from '../controller/jobCommissionController.js'
 import { createCompanyDetails,showJobCompanyInfo, getJobCompanyDetails } from '../controller/jobCompanyController.js'
@@ -130,6 +130,9 @@ router.delete('/deletedraftwithjobs/:jobid',deleteJobDraftWithOtherDetails)
 
 //for getting basic job details
 router.get("/getbasicjobdetails/:jobid",getJobBasicDetails)
+
+//for getting basic job details by enterprise id
+router.get('/getjobdetails/:e_id', getJobDetailsByEnId)
 
 //for getting job commission details
 router.get("/getjobcommissiondetails/:jobid",getJobCommissionDetails)

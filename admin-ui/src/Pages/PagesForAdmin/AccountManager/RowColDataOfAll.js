@@ -87,6 +87,7 @@ export const columns = [
 // Fetching data
 export const data = await fetchAccountManagerDetails();
 
+
 // Transform data into rows dynamically
 export const rows = data.map((item, index) => ({
   _id: index + 1,  // Assuming item has an _id
