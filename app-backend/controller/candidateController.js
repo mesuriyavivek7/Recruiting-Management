@@ -258,3 +258,32 @@ export const getJobCandidateForPreview=async (req,res,next)=>{
       next(err)
     }
 }
+
+export const getCandidateAttachmentFileType=async (req,res,next)=>{
+   try{
+     const attachment=await CANDIDATEATTACHMENT.findOne({folder_name:req.params.cid})
+
+     let jobAttachmentFileType=null
+     switch(req.params.filetype){
+         case "evaluation_form":
+          jobAttachmentFileType=attachment.evaluation_form.filetype
+          break;
+
+         case "audio_brief":
+          jobAttachmentFileType=attachment.audio_brief.filetype
+          break;
+
+         case "other_docs":
+          jobAttachmentFileType=attachment.other_docs.filetype
+          break;
+
+         default:
+          break;
+     }
+
+     res.status(200).json(jobAttachmentFileType)
+
+   }catch(err){
+     next(err)
+   }
+}
