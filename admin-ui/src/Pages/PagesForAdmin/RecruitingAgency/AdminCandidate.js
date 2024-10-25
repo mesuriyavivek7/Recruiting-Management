@@ -1,37 +1,75 @@
-
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { Box, Card, CircularProgress, TablePagination } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import { RcCandidatecols ,RcCandidaterow} from './RowColData'; // Import columns configuration
+import { RcCandidatecols } from './RowColData'; 
+import { fetchCandidateDetailsByRecruiterId, fetchCandidateStatusById, fetchJobBasicDetailsByJobId } from '../../../services/api';
+import { cstatus } from '../../../constants/jobStatusMapping';
 
 const calculateRowHeight = (params) => {
-
-  const contentHeight = params.row ? params.row.content.length / 10 : 50; 
-  return Math.max(80, contentHeight); 
+  const contentHeight = params.row ? params.row.content.length / 10 : 50;
+  return Math.max(80, contentHeight);
 };
-const AdminCandidate = () => {
-  const [selectedRowId, setSelectedRowId] = useState(null);
-  const navigate = useNavigate();
-  const [loading, setLoading] = React.useState(false); // Loader state
 
-  const handleRowClick = (id) => {
-    setSelectedRowId(id);
-   // navigate(`/master_admin/candidate/${id}`);
-  };
+const AdminCandidate = ({ recuritingAgenciesDetails }) => {
+  const [RcCandidaterow, setRcCandidaterow] = useState([]);
+  const [selectedRowId, setSelectedRowId] = useState(null);
+  const [loading, setLoading] = useState(false); // Loader state
 
   // State for pagination
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  React.useEffect(() => {
-    // Simulate data fetching with a loader
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false); // Stop loading after data is "fetched"
-    }, 1000); // Simulate 1 second loading time
-  }, [RcCandidaterow, page, rowsPerPage]);
+  const generateRowsFromDetails = async (details) => {
+    const data = await fetchCandidateDetailsByRecruiterId(details._id);
+
+    // Generate rows in the desired format
+    const rows = await Promise.all(
+      data.map(async (candidateDetails, index) => {
+        const c_id = candidateDetails.candidate_id;
+
+        const candidate = await fetchCandidateStatusById(c_id);
+        const job_basic_details = await fetchJobBasicDetailsByJobId(candidate.job_id);
+
+        // Get candidate status, defaulting to "Status Unavailable" if not found
+        const candidateStatusKey = candidate.candidate_status || "Status Unavailable";
+        const candidateStatus = cstatus.get(candidateStatusKey) || candidateStatusKey; // Map status or use original
+
+        return {
+          _id: String(index + 1),
+          candidate_name: {
+            first_name: candidateDetails?.first_name || 'No First Name',
+            last_name: candidateDetails?.last_name || 'No Last Name',
+          },
+          job_title: job_basic_details?.job_title || "No Job Title",
+          job_id: job_basic_details?.job_id || "No Job Id",
+          candidate_status: candidateStatus,
+          submitted: candidateDetails?.createdAt || "No Submission Date",
+          lastUpdated: candidateDetails?.updatedAt || "No Update Date",
+          notice_period: candidateDetails?.notice_period || "N/A",
+          email: candidateDetails?.primary_email_id || "No Email",
+          mobile: candidateDetails?.primary_contact_number || "No Contact Number"
+        };
+      })
+    );
+
+    return rows; 
+  };
+
+  useEffect(() => {
+    if (recuritingAgenciesDetails) {
+      setLoading(true);
+      generateRowsFromDetails(recuritingAgenciesDetails).then((fetchedRows) => {
+        setRcCandidaterow(fetchedRows);
+        setLoading(false);
+      });
+    }
+  }, [recuritingAgenciesDetails]);
+
+  const handleRowClick = (id) => {
+    setSelectedRowId(id);
+    // navigate(`/master_admin/candidate/${id}`);
+  };
+
   // Handle pagination change
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -47,97 +85,83 @@ const AdminCandidate = () => {
 
   return (
     <div>
-       {loading ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 400 ,color:'#315370'}}>
+      {loading ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 400, color: '#315370' }}>
           <CircularProgress />
         </Box>
       ) : (
-      <Card className='mt-9 font-sans px-4'>
- 
-        <div style={{ height: 600, width: '100%' }} className='pt-4'>
-         
-          <DataGrid 
-          rows={paginatedRows}
-          columns={RcCandidatecols}
-          rowHeight={80} 
-          onRowClick={(params) => handleRowClick(params.id)}
-          getRowId={(row) => row._id} // Specify the custom ID field
-          getRowHeight={calculateRowHeight} 
-          pagination={false} 
-          pageSize={rowsPerPage} 
-          hideFooterPagination={true} 
-          disableSelectionOnClick 
-           sx={{
-            '& .MuiDataGrid-root': {
-              fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.09rem' }, 
-            },
-         
-            ' [class^=MuiDataGrid]': { border: 'none' },
-            '& .MuiDataGrid-columnHeader': {
-              fontWeight: 'bold !impotant', 
-              fontSize: { xs: '0.875rem', sm: '1rem', md: '0.7rem', lg: '1.1rem' }, 
-              color: 'black', 
-             
-               '&:focus': {
-              outline: 'none', 
-              border: 'none',  
-            },
-              backgroundColor: '#e3e6ea !important', 
-              minHeight: '60px', 
-            },
-             '& .MuiDataGrid-columnHeader:focus-within': {
-        outline: 'none', 
-      },
-     
-           
-         
-            
-      
-      '& .MuiDataGrid-columnSeparator': {
-        color: 'blue',
-        visibility: 'visible', 
-      },
-      
-    
-      '& .MuiDataGrid-cell': {
-        fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem' }, 
-        
-      },
-      
-      '& .MuiDataGrid-cellContent': {
-        display: 'flex',
-        alignItems: 'center', 
-      },
-      '& .MuiDataGrid-cell': {
-        minHeight: '2.5rem', 
-      },
-            '& .MuiDataGrid-cell': {
-              fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem'}, 
-              
-              
-            },
-            '& .MuiDataGrid-row': {
-              borderBottom: 'none', 
-            },
-            '& .MuiDataGrid-cell:focus': {
-              outline: 'none', 
-            },
-           
-          }}
-        />
-        </div>
-      </Card>)}
+        <Card className='mt-9 font-sans px-4'>
+          <div style={{ height: 600, width: '100%' }} className='pt-4'>
+            <DataGrid
+              rows={paginatedRows}
+              columns={RcCandidatecols}
+              rowHeight={80}
+              onRowClick={(params) => handleRowClick(params.id)}
+              getRowId={(row) => row._id} // Specify the custom ID field
+              getRowHeight={calculateRowHeight}
+              pagination={false}
+              pageSize={rowsPerPage}
+              hideFooterPagination={true}
+              disableSelectionOnClick
+              sx={{
+                '& .MuiDataGrid-root': {
+                  fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.09rem' },
+                },
+                ' [class^=MuiDataGrid]': { border: 'none' },
+                '& .MuiDataGrid-columnHeader': {
+                  fontWeight: 'bold !impotant',
+                  fontSize: { xs: '0.875rem', sm: '1rem', md: '0.7rem', lg: '1.1rem' },
+                  color: 'black',
+                  '&:focus': {
+                    outline: 'none',
+                    border: 'none',
+                  },
+                  backgroundColor: '#e3e6ea !important',
+                  minHeight: '60px',
+                },
+                '& .MuiDataGrid-columnHeader:focus-within': {
+                  outline: 'none',
+                },
+                '& .MuiDataGrid-columnSeparator': {
+                  color: 'blue',
+                  visibility: 'visible',
+                },
+                '& .MuiDataGrid-cell': {
+                  fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem' },
+                },
+                '& .MuiDataGrid-cellContent': {
+                  display: 'flex',
+                  alignItems: 'center',
+                },
+                '& .MuiDataGrid-cell': {
+                  minHeight: '2.5rem',
+                },
+                '& .MuiDataGrid-cell': {
+                  fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem' },
+                },
+                '& .MuiDataGrid-row': {
+                  borderBottom: 'none',
+                },
+                '& .MuiDataGrid-cell:focus': {
+                  outline: 'none',
+                },
+              }}
+            />
+          </div>
+        </Card>
+      )}
       {!loading && (
-      <TablePagination
-        component="div"
-        count={RcCandidaterow.length}
-        page={page}
-        onPageChange={handleChangePage}
-        rowsPerPage={rowsPerPage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-        rowsPerPageOptions={[5, 10, 25]}
-        labelRowsPerPage="Rows per page"
-      />)}
+        <TablePagination
+          component="div"
+          count={RcCandidaterow.length}
+          page={page}
+          onPageChange={handleChangePage}
+          rowsPerPage={rowsPerPage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+          rowsPerPageOptions={[5, 10, 25]}
+          labelRowsPerPage="Rows per page"
+        />
+      )}
     </div>
   );
 };
