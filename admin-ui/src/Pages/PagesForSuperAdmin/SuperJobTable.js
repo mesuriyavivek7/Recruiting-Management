@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Avatar, Button, Card, CardHeader, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, TablePagination } from '@mui/material';
+import {  Button } from '@mui/material';
 
 
 import NewJobData from './Job/NewJobData';

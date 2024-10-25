@@ -3,7 +3,7 @@ import React from "react";
 import { ReactComponent as JobsIcon } from "../../assets/asset21.svg";
 import { ReactComponent as ActionIcon } from "../../assets/asset23.svg";
 
-import { Link, NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 const User = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2  xl:grid-cols-4  gap-6 p-3 ">

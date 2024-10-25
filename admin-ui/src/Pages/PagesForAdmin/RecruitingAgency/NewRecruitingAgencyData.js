@@ -17,7 +17,7 @@ import {
 import { DataGrid } from '@mui/x-data-grid';
 import Notification from '../../../Components/Notification';
 import {rows,cols} from './NewRowColData'
-import { FaUser, FaEnvelope, FaBuilding, FaUsers, FaBriefcase, FaFlag, FaMapMarkerAlt, FaCity, FaCheckCircle, FaIdCard, FaLinkedin, FaGlobe, FaFilePdf } from 'react-icons/fa';
+import {  FaEnvelope, FaBuilding, FaUsers, FaBriefcase, FaFlag, FaMapMarkerAlt, FaCity, FaCheckCircle, FaIdCard, FaLinkedin, FaGlobe, FaFilePdf } from 'react-icons/fa';
 
 const NewRecruitingAgencyData = () => {
   const [open, setOpen] = useState(false);
@@ -123,20 +123,7 @@ const NewRecruitingAgencyData = () => {
     setOpen(true);
   };
 
-  // const handleAssignAcManager = async () => {
-  //   try {
-  //     await axios.post(`${process.env.REACT_APP_API_APP_URL}/recruiting/acverified`, { id: selectedRow._id });
-  //     await axios.post(`${process.env.REACT_APP_API_BASE_URL}/accountmanager/addverifiedrecruiting`, {
-  //       m_id: myValue.userData._id,
-  //       ra_id: selectedRow._id,
-  //     });
-  //     fetchRecruitingAgency();
-  //     handleClose();
-  //     showNotification("Successfully recruiting agency verified.", "success");
-  //   } catch (err) {
-  //     showNotification("There is something wrong....!", "failure");
-  //   }
-  // };
+
   const handleAssignAcManager=async ()=>{
          try{
             //allocated recruiting agency to account manager
