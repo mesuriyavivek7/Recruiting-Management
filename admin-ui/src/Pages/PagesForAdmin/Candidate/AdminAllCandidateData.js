@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Box, Button, Card, CircularProgress, IconButton, InputAdornment, TablePagination, TextField } from '@mui/material';
+import { Box, Button, Card, CircularProgress, IconButton, InputAdornment, TextField } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { columns ,rows} from './RowColDataOfAll'; // Import columns configuration
 import { FaSearch } from 'react-icons/fa';
@@ -240,9 +240,15 @@ const AdminAllCandidateData = () => {
           onRowClick={(params) => handleRowClick(params.id)}
           getRowId={(row) => row._id} // Specify the custom ID field
           getRowHeight={calculateRowHeight} 
-          pagination={false} 
+         // pagination={false} 
           pageSize={rowsPerPage} 
-          hideFooterPagination={true} 
+          pageSizeOptions={[5, 10]}
+          initialState={{
+            pagination: {
+              paginationModel: { page: 0, pageSize: 10 },
+            },
+          }}
+         // hideFooterPagination={true} 
           disableSelectionOnClick 
            sx={{
             '& .MuiDataGrid-root': {
@@ -305,18 +311,7 @@ const AdminAllCandidateData = () => {
         </div>
       </Card>)}
 
-      {!loading && (
-      <TablePagination
-        component="div"
-        count={filteredRows.length}
-        page={page}
-        onPageChange={handleChangePage}
-        rowsPerPage={rowsPerPage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-        rowsPerPageOptions={[5, 10, 25]}
-        labelRowsPerPage="Rows per page"
-      />
-      )}
+    
     </div>
   );
 };

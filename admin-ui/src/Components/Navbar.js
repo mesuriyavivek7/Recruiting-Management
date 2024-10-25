@@ -6,15 +6,17 @@ import asset29 from "../assets/asset29.svg";
 import logo from "../assets/logo.jpeg"
 import asset15 from "../assets/asset15.svg";
 import { Link } from "react-router-dom";
-import { Dialog, DialogContent, Button, TextField, IconButton, Box, DialogActions } from "@mui/material";
+import { Dialog, DialogContent, Button, TextField, Box, DialogActions } from "@mui/material";
 
 const Navbar = ({ enterpriseData, recruiterData }) => {
   const [showProfilePopup, setShowProfilePopup] = useState(false);
   const [popupSearchTerm, setPopupSearchTerm] = useState("");
   const [openSearchDialog, setOpenSearchDialog] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
+  
   const [showEnterpriseData, setShowEnterpriseData] = useState(true); // State to toggle between enterprise and recruiter data
   const profileRef = useRef(null);
+  const searchRef = useRef(null); // reference for main search input
 
   // Handle profile click
   const handleProfileClick = () => {
@@ -42,16 +44,18 @@ const Navbar = ({ enterpriseData, recruiterData }) => {
 
   
   const handleSearchFocus = () => {
-    setOpenSearchDialog(true);
-    setDialogOpen(true)
+   
+    if (!dialogOpen) setDialogOpen(true);
   };
 
+ 
   const handleCloseDialog = () => {
-    setOpenSearchDialog(false); // Close MUI Dialog
-    setPopupSearchTerm(""); // Clear search term
-    setDialogOpen(false)
+    setDialogOpen(false);
+    setPopupSearchTerm("");
+    setTimeout(() => {
+      if (document.activeElement) document.activeElement.blur();
+    }, 100); // Adjust timeout if needed
   };
-
   // Filter data based on search term
   const filteredEnterpriseData = enterpriseData.filter((item) =>
     item.full_name.toLowerCase().includes(popupSearchTerm.toLowerCase())
@@ -79,7 +83,8 @@ const Navbar = ({ enterpriseData, recruiterData }) => {
             name="search"
             id="search"
             placeholder="Search"
-            onFocus={handleSearchFocus}
+            onClick={handleSearchFocus}
+            ref={searchRef}
             className="bg-white w-full pl-10 pr-4 py-2 border border-gray-300 focus:border-blue-500 focus:outline-none focus:w-full focus:scale-110 focus:shadow-lg transition duration-300"
           />
         </div>
@@ -107,15 +112,17 @@ const Navbar = ({ enterpriseData, recruiterData }) => {
         </div>
       )}
 
-      {/* Dialog for popup search */}
+      
       <Dialog
-        open={openSearchDialog} // Controls the dialog visibility
+        
+
+        open={dialogOpen}
         onClose={handleCloseDialog}
         fullWidth
         maxWidth="lg"
       >
         <DialogContent className="relative bg-white p-6">
-          {/* Popup Search Bar */}
+         
           <div className="flex place-items-center gap-2 mb-4">
             <TextField
               fullWidth
@@ -131,7 +138,7 @@ const Navbar = ({ enterpriseData, recruiterData }) => {
             />
           </div>
 
-          {/* Buttons to toggle data */}
+         
           <div className="flex gap-4 mb-4">
             <Button
               variant="contained"
@@ -159,7 +166,7 @@ const Navbar = ({ enterpriseData, recruiterData }) => {
             </Button>
           </div>
 
-          {/* Search Results in Box (Card Components) */}
+          
           <div className="border-t pt-4 max-h-[400px] overflow-y-auto">
             {popupSearchTerm && (
               <>
@@ -206,7 +213,7 @@ const Navbar = ({ enterpriseData, recruiterData }) => {
             )}
           </div>
 
-          {/* Close Button */}
+
           
         </DialogContent>
 

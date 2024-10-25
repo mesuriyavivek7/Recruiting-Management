@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
-import TablePagination from '@mui/material/TablePagination';
+
 import { rows, columns } from './RowColData';
 import { styled } from '@mui/system';
 import { useNavigate } from 'react-router-dom';
@@ -225,13 +225,21 @@ export default function AllRecruitingAgencyData() {
         <DataGrid
           getRowId={(rows) => rows.id} // Specify the custom ID field
           rows={filteredRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
+           initialState={{
+            pagination: {
+              paginationModel: { page: 0, pageSize: 10 },
+            },
+          }}
           columns={columns}
           rowHeight={80}
           getRowHeight={calculateRowHeight}
-          pagination={false}
+          
           pageSize={rowsPerPage}
+          
+          pageSizeOptions={[5, 10]}
           onRowClick={(params) => handleRowClick(params)}
-          hideFooterPagination={true}
+          //hideFooterPagination={true}
+          
           disableSelectionOnClick
           sx={{
             '& .MuiDataGrid-root': {
@@ -288,19 +296,12 @@ export default function AllRecruitingAgencyData() {
           }}
         />
       </Box>
-      <TablePagination
-        component="div"
-        count={filteredRows.length}
-        page={page} 
-        onPageChange={handleChangePage} 
-        rowsPerPage={rowsPerPage} 
-        onRowsPerPageChange={handleChangeRowsPerPage} 
-        rowsPerPageOptions={[5, 10, 25]} 
-        labelRowsPerPage="Rows per page" // Label
-      />
+     
+
     </>
   );
 }
+
 
 
 

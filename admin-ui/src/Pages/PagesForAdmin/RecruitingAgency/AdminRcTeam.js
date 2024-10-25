@@ -76,9 +76,15 @@ const AdminRcTeam = () => {
             onRowClick={(params) => handleRowClick(params.row)} // Pass the whole row object
             getRowId={(row) => row.id} // Specify the custom ID field
             getRowHeight={calculateRowHeight}
-            pagination={false}
+           // pagination={false}
             pageSize={rowsPerPage}
-            hideFooterPagination={true}
+           // hideFooterPagination={true}
+           initialState={{
+            pagination: {
+              paginationModel: { page: 0, pageSize: 10 },
+            },
+          }}
+          pageSizeOptions={[5, 10]}
             disableSelectionOnClick
             
             sx={{
@@ -142,19 +148,7 @@ const AdminRcTeam = () => {
         </div>)}
       </div>
 
-      {!loading && (
-  
-      <TablePagination
-        component="div"
-        count={RcTeamrows.length}
-        page={page}
-        onPageChange={handleChangePage}
-        rowsPerPage={rowsPerPage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-        rowsPerPageOptions={[5, 10, 25]}
-        labelRowsPerPage="Rows per page"
-      />)}
-
+    
      
       
 

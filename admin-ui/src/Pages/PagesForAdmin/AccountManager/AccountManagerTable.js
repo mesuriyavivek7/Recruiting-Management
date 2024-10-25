@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Card, TablePagination } from '@mui/material';
+import { Card } from '@mui/material';
 import {  Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { columns, rows } from './RowColDataOfAll'; // Import columns configuration
@@ -58,9 +58,16 @@ const AccountManagerTable = () => {
             onRowClick={(params) => handleRowClick(params.row)} // Pass the whole row object
             getRowId={(row) => row._id} // Specify the custom ID field onRowClick={(params) => handleRowClick(params.row)} // Pass the whole row object
             getRowHeight={calculateRowHeight}
-            pagination={false}
+          // pagination={false}
+            
             pageSize={rowsPerPage}
-            hideFooterPagination={true}
+            pageSizeOptions={[5, 10]}
+            initialState={{
+              pagination: {
+                paginationModel: { page: 0, pageSize: 10 },
+              },}}
+            
+           // hideFooterPagination={true}
             disableSelectionOnClick
             sx={{
               '& .MuiDataGrid-root': {
@@ -115,16 +122,7 @@ const AccountManagerTable = () => {
           />
         </div>
       </Card>
-      <TablePagination
-        component="div"
-        count={rows.length}
-        page={page}
-        onPageChange={handleChangePage}
-        rowsPerPage={rowsPerPage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-        rowsPerPageOptions={[5, 10, 25]}
-        labelRowsPerPage="Rows per page"
-      />
+      
       <Dialog
         open={dialogOpen}
         onClose={handleClose}

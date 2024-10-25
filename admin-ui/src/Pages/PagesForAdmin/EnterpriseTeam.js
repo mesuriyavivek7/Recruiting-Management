@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Card, TablePagination, Box, Dialog, DialogTitle, DialogContent, DialogActions, CircularProgress } from '@mui/material';
+import { Card,  Box, Dialog, DialogTitle, DialogContent, DialogActions, CircularProgress } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { columns, rows } from './RowColOfEnterpriseTeam'; // Import columns configuration
 
@@ -75,9 +75,15 @@ const EnterpriseTeam = () => {
             onRowClick={(params) => handleRowClick(params.row)} // Pass the whole row object
             getRowId={(row) => row._id} // Specify the custom ID field
             getRowHeight={calculateRowHeight}
-            pagination={false}
+           // pagination={false}
             pageSize={rowsPerPage}
-            hideFooterPagination={true}
+            initialState={{
+              pagination: {
+                paginationModel: { page: 0, pageSize: 10 },
+              },
+            }}
+            pageSizeOptions={[5, 10]}
+           // hideFooterPagination={true}
             disableSelectionOnClick
            
             sx={{
@@ -141,7 +147,7 @@ const EnterpriseTeam = () => {
         </div>)}
       </div>
 
-      {!loading && (
+      {/* {!loading && (
       
      
       <TablePagination
@@ -154,7 +160,7 @@ const EnterpriseTeam = () => {
         rowsPerPageOptions={[5, 10, 25]}
         labelRowsPerPage="Rows per page"
       />
-    )}
+    )} */}
      
       
 

@@ -241,10 +241,15 @@ const AdminAllJobData = () => {
           onRowClick={(params) => handleRowClick(params.id)}
           getRowId={(row) => row._id} // Specify the custom ID field
           getRowHeight={calculateRowHeight} 
-          pagination={false} 
+          // pagination={false} 
           pageSize={rowsPerPage} 
-          
-          hideFooterPagination={true} 
+          initialState={{
+            pagination: {
+              paginationModel: { page: 0, pageSize: 10 },
+            },
+          }}
+          pageSizeOptions={[5, 10]}
+          //hideFooterPagination={true} 
           disableSelectionOnClick 
            sx={{
             '& .MuiDataGrid-root': {
@@ -307,17 +312,7 @@ const AdminAllJobData = () => {
         </div>)}
       </Card>
 
-      {!loading && (
-      <TablePagination
-        component="div"
-        count={filteredRows.length}
-        page={page}
-        onPageChange={handleChangePage}
-        rowsPerPage={rowsPerPage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-        rowsPerPageOptions={[5, 10, 25]}
-        labelRowsPerPage="Rows per page"
-      />)}
+     
     </div>
   );
 };

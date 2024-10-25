@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Card, TablePagination, TextField, Box, Dialog,  CircularProgress } from '@mui/material';
+import { Card,  TextField, Box, Dialog,  CircularProgress } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 import { FaBullseye,FaThumbsUp,FaBan,FaStar,FaFilePdf,FaFileAlt,FaFileAudio, FaMapMarkerAlt, FaBriefcase, FaInfoCircle,FaPaperclip, FaUsers,FaShareAlt,FaExternalLinkAlt,FaDollarSign,FaClock,FaCalendarAlt } from 'react-icons/fa';
@@ -112,9 +112,15 @@ const EnterpriseJob = () => {
               rowHeight={80}
               onRowClick={(params) => handleRowClick(params.id)}
               getRowId={(row) => row._id}
-              pagination={false} 
+              //pagination={false} 
               pageSize={rowsPerPage} 
-              hideFooterPagination={true} 
+              initialState={{
+                pagination: {
+                  paginationModel: { page: 0, pageSize: 10 },
+                },
+              }}
+              pageSizeOptions={[5, 10]}
+             // hideFooterPagination={true} 
               disableSelectionOnClick 
               sx={{
                 '& .MuiDataGrid-root': {
@@ -148,21 +154,7 @@ const EnterpriseJob = () => {
         </div>)}
       </Card>
 
-      {/* Pagination Component */}
-      {!loading && (
-      
      
-      <TablePagination
-        component="div"
-        count={rows.length}
-        page={page}
-        onPageChange={handleChangePage}
-        rowsPerPage={rowsPerPage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-        rowsPerPageOptions={[5, 10, 25]}
-        labelRowsPerPage="Rows per page"
-      />
-      )}
    
       <Dialog open={dialogOpen} onClose={handleCloseDialog} maxWidth="xl" fullWidth PaperProps={{
       sx: {
