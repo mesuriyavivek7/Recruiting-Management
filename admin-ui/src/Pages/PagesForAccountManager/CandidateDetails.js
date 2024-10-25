@@ -1,8 +1,8 @@
 import React from 'react';
 import { Tabs, Tab, Box } from '@mui/material';
-import { FaBriefcase, FaMapMarkerAlt, FaInfoCircle, FaBook,  FaFileAlt, FaLock, FaUsers, FaDollarSign, FaExclamationTriangle } from 'react-icons/fa';
+import { FaBriefcase, FaMapMarkerAlt, FaBook,  FaFileAlt, FaLock, FaUsers, FaDollarSign, FaExclamationTriangle } from 'react-icons/fa';
 import { FaUser, FaPhone, FaHome, FaBuilding, FaAddressBook, FaGraduationCap, FaIdCard, FaPassport, FaShieldAlt, FaAmbulance, FaMoneyCheckAlt, FaCogs, FaComment } from 'react-icons/fa';
-import { MdEmail, MdPhone } from 'react-icons/md';
+import { MdEmail, } from 'react-icons/md';
 
 const CandidateDetails = () => {
   const [value, setValue] = React.useState('two');

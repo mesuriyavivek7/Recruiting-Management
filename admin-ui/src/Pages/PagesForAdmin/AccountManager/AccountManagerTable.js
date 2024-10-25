@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { Card, TablePagination } from '@mui/material';
-import { Button, Box, Typography, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+import {  Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { columns, rows } from './RowColDataOfAll'; // Import columns configuration
-import { FaPhone, FaEnvelope, FaUserCheck, FaBriefcase, FaCalendarAlt, FaUsers, FaUserClock, FaClipboardList, FaBusinessTime, FaBuilding, FaUserTie } from 'react-icons/fa';
+import {  FaBriefcase, FaUsers, FaUserClock, FaClipboardList, FaBusinessTime, FaBuilding, FaUserTie } from 'react-icons/fa';
 const calculateRowHeight = (params) => {
 
   const contentHeight = params.row ? params.row.content.length / 10 : 50;

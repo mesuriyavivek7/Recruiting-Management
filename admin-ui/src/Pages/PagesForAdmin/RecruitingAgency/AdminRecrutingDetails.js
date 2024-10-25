@@ -3,7 +3,7 @@
 import { Card } from '@mui/material';
 import {  Typography, Box, Grid } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import { ReactComponent as ActionIcon } from "./../../../assets/asset23.svg";
+
 import { useLocation } from 'react-router-dom';
 import { FaFileAlt } from 'react-icons/fa'
 import { FaBriefcase, FaBuilding, FaInfoCircle } from 'react-icons/fa';
@@ -109,7 +109,7 @@ const AdminRecruitingDetails = () => {
           </Grid>
           <Grid item xs={12} sm={6}>
             <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
-              <Typography variant="body1"><strong>Country:</strong>{renderValue(RecuritingAgenciesDetails?.country)}</Typography>
+              <Typography variant="body1"><strong>Country:</strong>{" "}{renderValue(RecuritingAgenciesDetails?.country)}</Typography>
             </Box>
           </Grid>
           <Grid item xs={12} sm={6}>

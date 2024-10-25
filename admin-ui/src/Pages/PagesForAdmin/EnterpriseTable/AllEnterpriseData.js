@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import { useState } from 'react';
+
 import { DataGrid } from '@mui/x-data-grid';
 import TablePagination from '@mui/material/TablePagination';
 import { rows, columns } from './RowColData';
@@ -73,7 +73,7 @@ export default function AllEnterPriseData() {
 
   return (
     <>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} gap={2}>
         {/* Left-side Search Bar */}
         <TextField
           label="Search..."
@@ -81,18 +81,23 @@ export default function AllEnterPriseData() {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           sx={{
-            width: '500px',
+            width: '600px',
             borderRadius: '12px',
-            height: '20px',
+            
             '& .MuiOutlinedInput-root': {
+              padding: '0', 
+              '& input': {
+                height: '30px', 
+                padding: '8px', 
+              },
               '& fieldset': {
-                borderColor: 'gray', // Default border color
+                borderColor: 'gray', 
               },
               '&:hover fieldset': {
-                borderColor: '#315370', // Border color on hover
+                borderColor: '#315370', 
               },
               '&.Mui-focused fieldset': {
-                borderColor: '#315370', // Border color when focused (typing)
+                borderColor: '#315370', 
               },
             },
           }} // Adjust width as necessary
@@ -105,78 +110,125 @@ export default function AllEnterPriseData() {
               </InputAdornment>
             ),
           }}
+          
         />
 
-        {/* Right-side Filter Buttons */}
-        <Box display="flex" gap={1}>
-          <Button
-              variant={filterStatus === 'All' ? 'contained' : 'outlined'}
-              onClick={() => handleFilterClick('All')}
-              sx={{
-                backgroundColor: filterStatus === 'All' ? '#315370' : '#e0e0e0',
-                color: filterStatus === 'All' ? 'white' : 'gray',
-                borderColor: 'gray',
-                fontSize: '16px',
-                height:'50px',
-                textTransform: 'none',
-                border: '2px solid ', 
-                borderRadius: '10px',  // Rounded left side
-                width: '120px',
-                marginLeft: '10px',
-                '&:hover': {
-                  backgroundColor: filterStatus === 'All' ? '#315380' : '#e0e0e0',
-                },
-              }}
-            >
-              All
-            </Button>
+<Box display="flex" justifyContent="center" alignItems="center" gap={0}>
+    <Button
+      variant={filterStatus === 'All' ? 'contained' : ''}
+      onClick={() => handleFilterClick('All')}
+      disableElevation
+      sx={{
+        backgroundColor: filterStatus === 'All' ? '#315370' : '#e0e0e0',
+        color: filterStatus === 'All' ? 'white' : 'gray',
+        fontSize: '16px',
+        height: '45px',
+        textTransform: 'none',
+        borderRadius: '20px 0 0 20px', // Rounded left side
+        width: '120px',
+        border: '1px solid gray', // Add border
+        borderRight: 'none', // Remove right border to connect buttons
+        outline: 'none', // Remove outline
+        boxShadow: 'none', // Remove box shadow
+        '&:hover': {
+          backgroundColor: filterStatus === 'All' ? '#315380' : '#e0e0e0',
+          outline: 'none', // Remove outline on hover
+          boxShadow: 'none', // Remove box shadow on hover
+        },
+        '&:focus': {
+          outline: 'none', // Remove focus outline
+          boxShadow: 'none', // Remove focus box shadow
+        },
+        '&:focus-visible': {
+          outline: 'none', // Remove browser-specific focus outline
+          boxShadow: 'none',
+        },
+        '&:active': {
+          outline: 'none', // Remove outline when button is active
+          boxShadow: 'none', // Remove box-shadow when active
+        },
+      }}
+    >
+      All
+    </Button>
 
-            <Button
-              variant={filterStatus === 'Active' ? 'contained' : 'outlined'}
-              onClick={() => handleFilterClick('Active')}
-              sx={{
-                backgroundColor: filterStatus === 'Active' ? '#315370' : '#e0e0e0',
-                color: filterStatus === 'Active' ? 'white' : 'gray',
-                borderColor: 'gray',
-                fontSize: '16px',
-                height:'50px',
-                textTransform: 'none',
-                border: '2px solid ', 
-                borderRadius: '10px',  // Rounded left side
-                width: '120px',
-                marginLeft: '10px',
-                '&:hover': {
-                  backgroundColor: filterStatus === 'Active' ? '#315380' : '#e0e0e0',
-                },
-              }}
-            >
-              Active
-            </Button>
+    <Button
+      variant={filterStatus === 'Active' ? 'contained' : ''}
+      onClick={() => handleFilterClick('Active')}
+      disableElevation
+      sx={{
+        backgroundColor: filterStatus === 'Active' ? '#315370' : '#e0e0e0',
+        color: filterStatus === 'Active' ? 'white' : 'gray',
+        fontSize: '16px',
+        height: '45px',
+        textTransform: 'none',
+        width: '120px',
+        border: '1px solid gray', // Add border
+        borderRadius: '0', // No rounded corners
+        outline: 'none', // Remove outline
+      boxShadow: 'none', // Remove box shadow
+        borderRight: 'none', // Remove right border to connect buttons
+        '&:hover': {
+          backgroundColor: filterStatus === 'Active' ? '#315380' : '#e0e0e0',
+          outline: 'none', // Remove outline on hover
+          boxShadow: 'none', // Remove box shadow on hover
+        },
+        '&:focus': {
+          outline: 'none', // Remove focus outline
+          boxShadow: 'none', // Remove focus box shadow
+        },
+        '&:focus-visible': {
+          outline: 'none', // Remove browser-specific focus outline
+          boxShadow: 'none',
+        },
+        '&:active': {
+          outline: 'none', // Remove outline when button is active
+          boxShadow: 'none', // Remove box-shadow when active
+        },
+      }}
+    >
+      Active
+    </Button>
 
-            <Button
-              variant={filterStatus === 'Pending' ? 'contained' : ''}
-              onClick={() => handleFilterClick('Pending')}
-              sx={{
-                backgroundColor: filterStatus === 'Pending' ? '#315370' : '#e0e0e0',
-                color: filterStatus === 'Pending' ? 'white' : 'gray',
-                borderColor: 'gray',
-                fontSize: '16px',
-                height:'50px',
-                textTransform: 'none',
-                border: '2px solid ', 
-                borderRadius: '10px',  // Rounded left side
-                width: '120px',
-                marginLeft: '10px',
-                '&:hover': {
-                  backgroundColor: filterStatus === 'Pending' ? '#315380' : '#e0e0e0',
-                },
-              }}
-            >
-              Pending
-            </Button>
-        </Box>
+    <Button
+      variant={filterStatus === 'Pending' ? 'contained' : ''}
+      onClick={() => handleFilterClick('Pending')}
+      disableElevation
+      sx={{
+        backgroundColor: filterStatus === 'Pending' ? '#315370' : '#e0e0e0',
+        color: filterStatus === 'Pending' ? 'white' : 'gray',
+        fontSize: '16px',
+        height: '45px',
+        textTransform: 'none',
+        width: '120px',
+        border: '1px solid gray', // Add border
+        borderRadius: '0 20px 20px 0', // Rounded right side
+        outline: 'none', // Remove outline
+        boxShadow: 'none', // Remove box shadow
+        '&:hover': {
+          backgroundColor: filterStatus === 'Pending' ? '#315380' : '#e0e0e0',
+          outline: 'none', // Remove outline on hover
+          boxShadow: 'none', // Remove box shadow on hover
+        },
+        '&:focus': {
+          outline: 'none', // Remove focus outline
+          boxShadow: 'none', // Remove focus box shadow
+        },
+        '&:focus-visible': {
+          outline: 'none', // Remove browser-specific focus outline
+          boxShadow: 'none',
+        },
+        '&:active': {
+          outline: 'none', // Remove outline when button is active
+          boxShadow: 'none', // Remove box-shadow when active
+        },
+      }}
+    >
+      Pending
+    </Button>
+  </Box>
       </Box>
-      <p className='text-lg xl:text-2xl pt-12'>All Enterprise</p>
+      <p className='text-lg xl:text-2xl pt-9'>All Enterprise</p>
 
       {loading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 400 ,color:'#315370'}}>

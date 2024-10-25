@@ -1,7 +1,7 @@
 import React from "react";
 import { ReactComponent as JobsIcon } from "../../assets/asset21.svg";
 import { ReactComponent as ActionIcon } from "../../assets/asset23.svg";
-import { Link, NavLink } from "react-router-dom";
+import { Link} from "react-router-dom";
 import AccountManagerTable from "./AccountManager/AccountManagerTable";
 const User = () => {
   return (

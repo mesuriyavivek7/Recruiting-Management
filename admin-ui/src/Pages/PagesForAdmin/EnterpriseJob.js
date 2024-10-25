@@ -1,10 +1,10 @@
 
 import React, { useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Card, TablePagination, Tabs, Tab, Button, TextField, Divider, IconButton , Typography, Box, Dialog, DialogTitle, DialogContent, DialogActions, CircularProgress } from '@mui/material';
+import { Card, TablePagination, TextField, Box, Dialog,  CircularProgress } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import {   FaCaretDown } from 'react-icons/fa';
-import { FaBusinessTime,FaBullseye,FaThumbsUp,FaBan,FaStar,FaQuestionCircle ,FaFilePdf,FaFileAlt,FaFileAudio, FaMapMarkerAlt, FaBriefcase, FaInfoCircle,FaPaperclip, FaUsers,FaShareAlt,FaExternalLinkAlt,FaDollarSign,FaClock,FaCalendarAlt } from 'react-icons/fa';
+
+import { FaBullseye,FaThumbsUp,FaBan,FaStar,FaFilePdf,FaFileAlt,FaFileAudio, FaMapMarkerAlt, FaBriefcase, FaInfoCircle,FaPaperclip, FaUsers,FaShareAlt,FaExternalLinkAlt,FaDollarSign,FaClock,FaCalendarAlt } from 'react-icons/fa';
 
 import { columns, rows } from './RowColOfEnterpriseJob'; 
 
