@@ -1,5 +1,4 @@
 import Cookies from 'js-cookie';
-
 let user = null
 const cookievalue = Cookies.get('admin_user')
 const localUserData = JSON.parse(localStorage.getItem('userData')) || null
@@ -23,12 +22,8 @@ const AdminReducer = (state = initialState, action) => {
     case 'SET_USER_DATA':
 
       const adminCookie = Cookies.get('admin_user');
-
-
       if (adminCookie) {
         localStorage.setItem('userData', JSON.stringify(action.payload));
-
-
         return {
           ...state,
           userData: action.payload,

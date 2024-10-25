@@ -48,8 +48,6 @@ const AdminRecruitingDetails = ({ recuritingAgenciesDetails }) => {
 
   return (
     <Card className="mt-4 font-sans py-6" sx={{ borderRadius: '8px', boxShadow: 3, backgroundColor: '#f0f0f0', padding: 3 }}>
-
-
       <Box sx={{ mb: 2, pb: 2, borderBottom: '4px solid white' }}>
         <Typography variant="h5" fontWeight="bold" className="flex items-center mb-2">
           <FaBriefcase className="mr-2 text-black" /> Recruiting Agency Details
