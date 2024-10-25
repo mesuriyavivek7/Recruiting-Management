@@ -106,6 +106,17 @@ export const fetchRecruiterByEId = async (enterprise_id) => {
     }
 }
 
+// get recuriting team by r_agency_id
+export const fetchRecuritingTeam = async(r_agency_id)=>{
+    try {
+        const response = axios.get(`${app_be_uri}/recruitingteam/getrecuritingteam/${r_agency_id}`);
+        return (await response).data;
+    } catch (error) {
+        console.error("Error while fetching the recuriting team details by r_agency_id :", error);
+        throw error;
+    }
+}
+
 export const fetchAllCandidateDetails = async () => {
     try {
         const response = await axios.get(`${app_be_uri}/candidate/details`)
@@ -132,6 +143,16 @@ export const fetchCandidateStatusById = async (candidate_id) => {
         return response.data;
     } catch (error) {
         console.error("Error while fetching candidate status:", error);
+        throw error;
+    }
+}
+
+export const fetchCandidateDetailsByRecruiterId = async(recruiter_id) =>{
+    try {
+        const response = await axios.get(`${app_be_uri}/candidate/getbasicdetails/${recruiter_id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error whilte fetching all candidates basic details by recruiter_id: ", error);
         throw error;
     }
 }

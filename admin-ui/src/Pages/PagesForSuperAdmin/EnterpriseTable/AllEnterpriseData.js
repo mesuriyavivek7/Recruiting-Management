@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
 import TablePagination from '@mui/material/TablePagination';
 import { rows, columns } from './RowColData';
-import { styled } from '@mui/system';
+
 
 
 const calculateRowHeight = (params) => {

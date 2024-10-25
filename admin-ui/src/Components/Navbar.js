@@ -1,8 +1,7 @@
 
 
 import React, { useEffect, useRef, useState } from "react";
-import asset1 from "../assets/asset 1.png";
-import asset18 from "../assets/asset18.svg";
+
 import asset29 from "../assets/asset29.svg";
 import logo from "../assets/logo.jpeg"
 import asset15 from "../assets/asset15.svg";
