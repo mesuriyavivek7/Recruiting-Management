@@ -92,20 +92,5 @@ export const columns = [
       );
     },
   },
-  
-  
-  
-  
-  
 ];
 
-
-export const rows = Array(10)
-  .fill(null)
-  .map((_, index) => ({
-     _id: `${index + 1}`,
-    job_title: "zigo",
-    enterprise: "Arati Dangar",
-    status: 'Active',
-    createdOn: new Date(2024, 7, index + 1), // Example date (varying days in August 2023)
-  }));

@@ -118,6 +118,9 @@ const NewEnterpriseData = () => {
 
   const handleRowClick = (item) => {
     setSelectedRow(item);
+    if (item?.allocated_account_manager) {
+        fetchAccountManager(item?.allocated_account_manager);
+    }
     setOpen(true);
   };
 
@@ -129,7 +132,6 @@ const NewEnterpriseData = () => {
 
   useEffect(() => {
     fetchEnterprise();
-    fetchAccountManager();
   }, []);
 
   const fetchEnterprise = async () => {
@@ -145,12 +147,17 @@ const NewEnterpriseData = () => {
     }
   };
 
-  const fetchAccountManager = async () => {
+  const fetchAccountManager = async (ac_manager_id) => {
+    if (!ac_manager_id) {
+        console.error("Account Manager ID is undefined");
+        return; // Exit the function if the ID is not defined
+    }
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/accountmanager/madmin/${myValue.userData._id}`);
-      setAcManager(response.data);
-    } catch (err) {
-      showNotification('Error fetching account managers!', 'failure');
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/accountmanager/getmailandname/${ac_manager_id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error while fetching account manager details: ", error);
+        throw error;
     }
   };
 

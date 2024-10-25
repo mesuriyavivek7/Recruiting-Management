@@ -1,5 +1,3 @@
-
-
 import { Card } from '@mui/material';
 import {  Typography, Box, Grid } from '@mui/material';
 import React, { useEffect, useState } from 'react';
@@ -20,7 +18,7 @@ const AdminRecruitingDetails = () => {
     const fetchData = async () => {
       if (RecuritingAgenciesDetails.alloted_account_manager) {
         try {
-          const managerData = await fetchAccountManager(RecuritingAgenciesDetails.alloted_account_manager);
+          const managerData = await fetchAccountManager(RecuritingAgenciesDetails?.alloted_account_manager);
           setAccountManager(managerData);
         } catch (error) {
           console.error('Error fetching account manager data:', error);
@@ -52,12 +50,6 @@ const AdminRecruitingDetails = () => {
     }
     return value ?? 'N/A'; // Handle undefined/null with 'N/A'
   };
-
-
-
-
-
-
   
   return (
     <Card className="mt-4 font-sans py-6" sx={{ borderRadius: '8px', boxShadow: 3, backgroundColor: '#f0f0f0', padding: 3 }}>

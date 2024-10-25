@@ -25,7 +25,7 @@ export const fetchEnterpriseById = async(enterprise_id) => {
 
 export const fetchEnterpriseTeam = async (enterprise_id) => {
     try {
-        const response = await axios.get(`${app_be_uri}/enterprise/${enterprise_id}`)
+        const response = await axios.get(`${app_be_uri}/enterpriseteam/findteam/${enterprise_id}`)
         return response.data;
     } catch (error) {
         console.error("Error fetching enterprise team : ", error);
@@ -49,6 +49,28 @@ export const fetchJobBasicDetailsByJobId = async (job_id) => {
         return response.data;
     } catch (error) {
         console.error("Error while fetching the job basic details by job id : ", error);
+        throw error;
+    }
+}
+
+//get the job basic details to show futher details in enterprise table
+export const fetchJobBasicDetailsByEnId = async(enterprise_id) => {
+    try {
+        const response = await axios.get(`${app_be_uri}/job/getjobdetails/${enterprise_id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error while getting the job details by enterprise id : ", error);
+        throw error;
+    }
+}
+
+//get the job status by job id
+export const fetchJobStatusByJobId = async(job_id) =>{
+    try {
+        const response = await axios.get(`${app_be_uri}/job/getjobstatusforpreview/${job_id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error while getting the job status by job id : ", error);
         throw error;
     }
 }
@@ -84,6 +106,17 @@ export const fetchRecruiterByEId = async (enterprise_id) => {
     }
 }
 
+// get recuriting team by r_agency_id
+export const fetchRecuritingTeam = async(r_agency_id)=>{
+    try {
+        const response = axios.get(`${app_be_uri}/recruitingteam/getrecuritingteam/${r_agency_id}`);
+        return (await response).data;
+    } catch (error) {
+        console.error("Error while fetching the recuriting team details by r_agency_id :", error);
+        throw error;
+    }
+}
+
 export const fetchAllCandidateDetails = async () => {
     try {
         const response = await axios.get(`${app_be_uri}/candidate/details`)
@@ -114,11 +147,21 @@ export const fetchCandidateStatusById = async (candidate_id) => {
     }
 }
 
+export const fetchCandidateDetailsByRecruiterId = async(recruiter_id) =>{
+    try {
+        const response = await axios.get(`${app_be_uri}/candidate/getbasicdetails/${recruiter_id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error whilte fetching all candidates basic details by recruiter_id: ", error);
+        throw error;
+    }
+}
+
 //get the account manager name and email
 export const fetchAccountManager = async(ac_manager_id) => {
-    if(!ac_manager_id){
+    if (!ac_manager_id) {
         console.error("Account Manager ID is undefined");
-        return;
+        return; // Exit the function if the ID is not defined
     }
     try {
         const response = await axios.get(`${admin_be_uri}/accountmanager/getmailandname/${ac_manager_id}`);
@@ -127,7 +170,7 @@ export const fetchAccountManager = async(ac_manager_id) => {
         console.error("Error while fetching account manager details : ", error);
         throw error;
     }
-}
+};
 
 //get the all account manager details
 export const fetchAccountManagerDetails = async() => {
@@ -154,6 +197,7 @@ export const SearchEnterprises = async (query = '') => {
         return [];
     }
 };
+
 
 
 

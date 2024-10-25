@@ -125,8 +125,7 @@ export const rows = await Promise.all(
     data
         .filter((enterprise) => enterprise.admin_verified === true)
         .map(async (enterprise, index) => {
-            const accountManager = await fetchAccountManager(enterprise.allocated_account_manager);
-
+            const accountManager = await fetchAccountManager(enterprise?.allocated_account_manager);
             return {
                 id: enterprise._id,
                 displayIndex: index + 1,

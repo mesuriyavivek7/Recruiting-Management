@@ -27,6 +27,9 @@ router.post('/addpendingjob',addJobsPendingList)
 //add job into verified list
 router.post('/addjobverifylist',addJobIntoVerifyList)
 
+//get account manager name and mail id
+router.get('/getmailandname/:acmanagerid',getAcmanagerMailandName)
+
 //for getting account manager email
 router.get('/acmanageremail/:id',getAcManagerEmail)
 
@@ -36,8 +39,6 @@ router.post('/addpendingcandidate/:acmanagerid',addCandidatePendingList)
 //add candidate profile into verified list
 router.post('/addcandidateintoverifiedlist/:acmanagerid',addCandidateVerifiedList)
 
-//get account manager name and mail id
-router.get('/getmailandname/:acmanagerid',getAcmanagerMailandName)
 
 
 
