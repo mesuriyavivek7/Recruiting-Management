@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url';
 
 
 import { cancelProcess, checkParseDetails, createAndParseResume, downloadResumeDocs, getResumeFileName, getResumeFilePath, marksAsCompleted, removeResumeFile} from '../controller/resumeController.js';
-import { addAcManager, changeCandidateStatus, changeMultipleCandidateStatus, createCandidate, downloadCandidateAttachments, getAcManagerName, getAllCandidates, getCandidate, getCandidateAllDetails, getCandidateForMultipleAction, getCandidateStatusById, getJobBasicDetails, getJobCandidateForPreview, getRecruiterMemberIds, updateCandidateRemarks, viewCandidateAttachments } from '../controller/candidateController.js';
+import { addAcManager, changeCandidateStatus, changeMultipleCandidateStatus, createCandidate, downloadCandidateAttachments, getAcManagerName, getAllCandidates, getCandidate, getCandidateAllDetails, getCandidateAttachmentFileType, getCandidateForMultipleAction, getCandidateStatusById, getJobBasicDetails, getJobCandidateForPreview, getRecruiterMemberIds, updateCandidateRemarks, viewCandidateAttachments } from '../controller/candidateController.js';
 import { checkEmailAndMobile, createCandidateBasicDetails, getAllCandidateBasicDetails } from '../controller/candidateBasicController.js'
 import { uploadCandidateAttachments } from '../controller/candidateAttachmentsController.js';
 import { uploadCandidateConsetProof } from '../controller/candidateConsetController.js';
@@ -157,6 +157,9 @@ router.get('/getcandidatejobpreview/:cid',getJobCandidateForPreview)
 
 //for get the one candidate by its id
 router.get('/:cid',getCandidate)
+
+//for get candidate attachment file type
+router.get('/getcandidateattachmentfiletype/:cid/:filetype',getCandidateAttachmentFileType)
 
 export default router
 
