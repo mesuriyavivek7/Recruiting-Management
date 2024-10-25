@@ -1,5 +1,7 @@
 import Button from '@mui/material/Button';
 import { fetchRecuritingAgencies } from '../../../services/api';
+import { format, formatDistanceToNowStrict } from 'date-fns';
+
 export const columns = [
   {
     field: 'displayIndex',
@@ -119,7 +121,7 @@ export const rowsr = data.map((agency, index) => {
 
 export const RcTeamCols = [
   {
-    field: 'id',
+    field: '_id',
     headerName: 'Sr No.',
     minWidth: 100,
     flex: 0.1,
@@ -186,32 +188,6 @@ export const RcTeamCols = [
  
 ];
 
-export const RcTeamrows = data.map((agency, index) => {
-  return {
-    id: index + 1,
-    full_name: agency.full_name || `User ${index + 1}`,
-    email: agency.email || `user${index + 1}@example.com`,
-    mobile_no: agency.mobile_no || "Not Provided",
-    isAdmin: agency.isAdmin || "Unknown",
-    
-    // Mapped jobs array, return "Unknown" if empty or undefined
-    mapped_jobs: Array.isArray(agency.mapped_jobs) && agency.mapped_jobs.length > 0
-      ? agency.mapped_jobs
-      : "Unknown",
-
-    // Accepted jobs array, return "Unknown" if empty or undefined
-    accepted_jobs: Array.isArray(agency.accepted_jobs) && agency.accepted_jobs.length > 0
-      ? agency.accepted_jobs
-      : "Unknown",
-
-    // Submitted candidate profiles, ensure it's an array, return "Unknown" if empty
-    submited_candidate_profile: Array.isArray(agency.submited_candidate_profile) && agency.submited_candidate_profile.length > 0
-      ? agency.submited_candidate_profile
-      : "Unknown",
-  };
-});
-;
-
 
 export const RcCandidatecols = [
   {
@@ -226,46 +202,90 @@ export const RcCandidatecols = [
     field: 'candidate_name',
     headerName: 'Candidate Name',
     flex: 2,
-    minWidth: 200,
+    minWidth: 230,
     headerAlign: 'left',
     align: 'left',
+    renderCell: (params) => {
+      const first_name = params.row?.candidate_name?.first_name || 'No First Name';
+      const last_name = params.row?.candidate_name?.last_name || 'No Last Name';
+      return (
+        <div>
+          {first_name} {last_name}
+        </div>
+      );
+    },
   },
   {
-    field: 'uphire_job_id',
-    headerName: 'UpHire Job ID/Title',
+    field: 'job_title',
+    headerName: 'Job Title',
     flex: 2,
-    minWidth: 250,
-    headerAlign: 'left',
+    minWidth: 200,
     align: 'left',
-    renderCell: (params) => (
-      <div>
-        {params.row.uphire_job_id} - {params.row.job_title}
-      </div>
-    ),
+    renderCell: (params) => {
+      const jobTitle = params.row?.job_title || 'No Title Available';
+      const jobId = params.row?.job_id || 'No ID Available';
+
+      return (
+        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%', padding: '8px 0' }}>
+          <p style={{ margin: 0, lineHeight: 1.5 }}>
+            <span>{jobTitle}</span>
+          </p>
+          <p style={{ margin: 0, color: 'gray', lineHeight: 1.5 }}>{jobId}</p>
+        </div>
+      );
+    },
   },
   {
     field: 'candidate_status',
     headerName: 'Candidate Status',
     flex: 1,
-    minWidth: 150,
+    minWidth: 200,
     headerAlign: 'left',
     align: 'left',
   },
   {
     field: 'submitted',
-    headerName: 'Submitted',
+    headerName: 'Created On',
     flex: 1,
     minWidth: 150,
     headerAlign: 'left',
     align: 'left',
+    renderCell: (params) => {
+      const SubmittedDate = new Date(params.row.submitted); // Parse ISO date string
+      const formattedDate = format(SubmittedDate, 'dd-MMM-yy'); // Format the date as 13-Sep-23
+      const timeAgo = formatDistanceToNowStrict(SubmittedDate, { addSuffix: true }); // Get "X days ago"
+
+      return (
+        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%', padding: '8px 0' }}>
+          <p style={{ margin: 0, lineHeight: 1.5 }}>
+            <span>{formattedDate}</span>
+          </p>
+          <p style={{ margin: 0, color: 'gray', lineHeight: 1.5 }}>{timeAgo}</p>
+        </div>
+      );
+    },
   },
   {
-    field: 'last_update',
-    headerName: 'Last Update',
+    field: 'lastUpdated',
+    headerName: 'Last Updated',
     flex: 1,
     minWidth: 150,
     headerAlign: 'left',
     align: 'left',
+    renderCell: (params) => {
+      const updatedDate = new Date(params.row.lastUpdated); // Parse ISO date string
+      const formattedDate = format(updatedDate, 'dd-MMM-yy'); // Format the date as 13-Sep-23
+      const timeAgo = formatDistanceToNowStrict(updatedDate, { addSuffix: true }); // Get "X days ago"
+
+      return (
+        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%', padding: '8px 0' }}>
+          <p style={{ margin: 0, lineHeight: 1.5 }}>
+            <span>{formattedDate}</span>
+          </p>
+          <p style={{ margin: 0, color: 'gray', lineHeight: 1.5 }}>{timeAgo}</p>
+        </div>
+      );
+    },
   },
   {
     field: 'notice_period',
@@ -274,32 +294,38 @@ export const RcCandidatecols = [
     minWidth: 150,
     headerAlign: 'left',
     align: 'left',
+    renderCell: (params) => (
+      <div>
+        {params.row.notice_period} Days
+      </div>
+    ),
   },
   {
-    field: 'emai',
-    headerName: 'Email/Mobile',
+    field: 'email',
+    headerName: 'Email',
     flex: 2,
-    minWidth: 250,
+    minWidth: 200,
     headerAlign: 'left',
     align: 'left',
     renderCell: (params) => (
       <div>
-        {params.row.emai} - {params.row.mobile}
+        {params.row.email.length > 15 
+          ? `${params.row.email.slice(0, 15)}...` 
+          : params.row.email}
+      </div>
+    ),
+  },  
+  {
+    field: 'mobile',
+    headerName: 'Contact',
+    flex: 2,
+    minWidth: 200,
+    headerAlign: 'left',
+    align: 'left',
+    renderCell: (params) => (
+      <div>
+        {params.row.mobile}
       </div>
     ),
   },
 ];
-
-export const RcCandidaterow = Array(10).fill(null).map((_, index) => ({
-  _id: String(index + 1),
-  candidate_name: "Joravar Sinha",
-  cid: '77854',
-  uphire_job_id: "267",
-  job_title: 'Software Developer',
-  candidate_status: 'Test in process',
-  submitted: '22-10-2022',
-  last_update: '19-05-2024',
-  notice_period: '100 days',
-  emai: 'j@gmail.com',
-  mobile: '76574574564'
-}));

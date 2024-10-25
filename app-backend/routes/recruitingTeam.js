@@ -1,5 +1,5 @@
 import express from 'express'
-import { addJobIntoAcceptList, addNewCandidate, changeAccountStatus, changeCommissionFlag, checkCreadentials, checkEmailAddress, checkIsAdmin, checkMobileNo, createteammember, getDashBoardCount, getEnterpriseTeamMember, getRecruiterCandidateDetails, getRecruiterProfilePageDetails, rejectJob, updateJobMappedList, updateRecruiterTeamDetails } from '../controller/recrutingTeamController.js'
+import { addJobIntoAcceptList, addNewCandidate, changeAccountStatus, changeCommissionFlag, checkCreadentials, checkEmailAddress, checkIsAdmin, checkMobileNo, createteammember, getDashBoardCount, getEnterpriseTeamMember, getRecruiterCandidateDetails, getRecruiterProfilePageDetails, getRecuritingTeamDetails, rejectJob, updateJobMappedList, updateRecruiterTeamDetails } from '../controller/recrutingTeamController.js'
 
 
 
@@ -25,6 +25,9 @@ router.put('/addintocandidatelist/:rememberid',addNewCandidate)
 
 //for getting all enterprise team id which are connecting with recruiter agency
 router.get('/getenterpriseteam/:rememberid',getEnterpriseTeamMember)
+
+//for getting all recuriting team details by r_agency_id
+router.get('/getrecuritingteam/:r_agency_id', getRecuritingTeamDetails)
 
 //for check current user is admin or not
 router.get('/checkadmin/:reid',checkIsAdmin)
