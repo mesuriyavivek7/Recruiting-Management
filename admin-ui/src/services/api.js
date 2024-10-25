@@ -116,6 +116,10 @@ export const fetchCandidateStatusById = async (candidate_id) => {
 
 //get the account manager name and email
 export const fetchAccountManager = async(ac_manager_id) => {
+    if(!ac_manager_id){
+        console.error("Account Manager ID is undefined");
+        return;
+    }
     try {
         const response = await axios.get(`${admin_be_uri}/accountmanager/getmailandname/${ac_manager_id}`);
         return response.data;
