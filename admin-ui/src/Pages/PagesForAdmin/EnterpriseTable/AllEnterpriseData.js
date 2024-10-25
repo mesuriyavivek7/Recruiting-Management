@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import { useState } from 'react';
+
 import { DataGrid } from '@mui/x-data-grid';
 import TablePagination from '@mui/material/TablePagination';
 import { rows, columns } from './RowColData';
@@ -73,7 +73,7 @@ export default function AllEnterPriseData() {
 
   return (
     <>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} gap={2}>
         {/* Left-side Search Bar */}
         <TextField
           label="Search..."
@@ -108,72 +108,68 @@ export default function AllEnterPriseData() {
         />
 
         {/* Right-side Filter Buttons */}
-        <Box display="flex" gap={1}>
+        <Box display="flex"   justifyContent="center" alignItems="center" gap={0}>
+        <Button
+            variant={filterStatus === 'All' ? 'contained' : 'outlined'}
+            onClick={() => handleFilterClick('All')}
+            sx={{
+              backgroundColor: filterStatus === 'All' ? '#315370' : '#e0e0e0',
+              color: filterStatus === 'All' ? 'white' : 'gray',
+              fontSize: '16px',
+              height: '45px',
+              textTransform: 'none',
+              borderRadius: '20px 0 0 20px', // Rounded left side
+              width: '120px',
+              marginRight: '-1px', // To connect buttons
+              border: 'none', // Remove border color
+              '&:hover': {
+                backgroundColor: filterStatus === 'All' ? '#315380' : '#e0e0e0',
+              },
+            }}
+          >
+            All
+          </Button>
+
           <Button
-              variant={filterStatus === 'All' ? 'contained' : 'outlined'}
-              onClick={() => handleFilterClick('All')}
-              sx={{
-                backgroundColor: filterStatus === 'All' ? '#315370' : '#e0e0e0',
-                color: filterStatus === 'All' ? 'white' : 'gray',
-                borderColor: 'gray',
-                fontSize: '16px',
-                height:'50px',
-                textTransform: 'none',
-                border: '2px solid ', 
-                borderRadius: '10px',  // Rounded left side
-                width: '120px',
-                marginLeft: '10px',
-                '&:hover': {
-                  backgroundColor: filterStatus === 'All' ? '#315380' : '#e0e0e0',
-                },
-              }}
-            >
-              All
-            </Button>
+            variant={filterStatus === 'Active' ? 'contained' : 'outlined'}
+            onClick={() => handleFilterClick('Active')}
+            sx={{
+              backgroundColor: filterStatus === 'Active' ? '#315370' : '#e0e0e0',
+              color: filterStatus === 'Active' ? 'white' : 'gray',
+              fontSize: '16px',
+              height: '45px',
+              textTransform: 'none',
+              width: '120px',
+              marginRight: '-1px', // To connect buttons
+              borderRadius: '0',
+              border: 'none', // Remove border color
+              '&:hover': {
+                backgroundColor: filterStatus === 'Active' ? '#315380' : '#e0e0e0',
+              },
+            }}
+          >
+            Active
+          </Button>
 
-            <Button
-              variant={filterStatus === 'Active' ? 'contained' : 'outlined'}
-              onClick={() => handleFilterClick('Active')}
-              sx={{
-                backgroundColor: filterStatus === 'Active' ? '#315370' : '#e0e0e0',
-                color: filterStatus === 'Active' ? 'white' : 'gray',
-                borderColor: 'gray',
-                fontSize: '16px',
-                height:'50px',
-                textTransform: 'none',
-                border: '2px solid ', 
-                borderRadius: '10px',  // Rounded left side
-                width: '120px',
-                marginLeft: '10px',
-                '&:hover': {
-                  backgroundColor: filterStatus === 'Active' ? '#315380' : '#e0e0e0',
-                },
-              }}
-            >
-              Active
-            </Button>
-
-            <Button
-              variant={filterStatus === 'Pending' ? 'contained' : ''}
-              onClick={() => handleFilterClick('Pending')}
-              sx={{
-                backgroundColor: filterStatus === 'Pending' ? '#315370' : '#e0e0e0',
-                color: filterStatus === 'Pending' ? 'white' : 'gray',
-                borderColor: 'gray',
-                fontSize: '16px',
-                height:'50px',
-                textTransform: 'none',
-                border: '2px solid ', 
-                borderRadius: '10px',  // Rounded left side
-                width: '120px',
-                marginLeft: '10px',
-                '&:hover': {
-                  backgroundColor: filterStatus === 'Pending' ? '#315380' : '#e0e0e0',
-                },
-              }}
-            >
-              Pending
-            </Button>
+          <Button
+            variant={filterStatus === 'Pending' ? 'contained' : 'outlined'}
+            onClick={() => handleFilterClick('Pending')}
+            sx={{
+              backgroundColor: filterStatus === 'Pending' ? '#315370' : '#e0e0e0',
+              color: filterStatus === 'Pending' ? 'white' : 'gray',
+              fontSize: '16px',
+              height: '45px',
+              textTransform: 'none',
+              width: '120px',
+              borderRadius: '0 20px 20px 0', // Rounded right side
+              border: 'none', // Remove border color
+              '&:hover': {
+                backgroundColor: filterStatus === 'Pending' ? '#315380' : '#e0e0e0',
+              },
+            }}
+          >
+            Pending
+          </Button>
         </Box>
       </Box>
       <p className='text-lg xl:text-2xl pt-12'>All Enterprise</p>
