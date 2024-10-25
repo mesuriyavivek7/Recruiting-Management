@@ -52,19 +52,6 @@ const getDate=(date)=>{
     return days
   }
 
-  // const candiadteStatusChange=async (e,id)=>{
-  //     try{
-  //       setCandidateStatusLoader(true)
-  //       await axios.post(`${process.env.REACT_APP_API_BASE_URL}/candidate/changecandidatestatus/${id}`,{status:e.target.value})
-  //       await refetchCandidateData()
-  //     }catch(err){
-  //       setCandidateStatusLoader(false)
-  //       showNotification("Something wrong while changeing candidate status.","failure")
-  //       console.log(err)
-  //     }
-  //     setCandidateStatusLoader(false)
-  // }
-
 
   const viewCandidateResume = async (cid) => {
     try {
@@ -267,7 +254,7 @@ const [acManagerName,setAcManagerName]=useState(null)
 const [jobBasicDetails,setJobBasicDetails]=useState(null)
 
 //For Job
-const [jobUpdates,setJobUpdates]=useState(null)
+const [jobUpdates,setJobUpdates]=useState([])
 const [jobDetails,setJobDetails]=useState(null)
 const [jobDescription,setJobDescription]=useState(null)
 const [clientDescription,setClientDescription]=useState(null)
@@ -325,34 +312,17 @@ const viewCandidateAttachments=async (cid,fileName)=>{
 }
 
 
-const downloadCandidateAttachments=async (cid,filePath,fileName)=>{
+const downloadCandidateAttachments=async (cid,filePath,fileName,filetype)=>{
   try{
     //Fetch which type of resume file get
-    const fileExtension=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/candidate/resumefilepath/${cid}`)
+    const fileExtension=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/candidate/getcandidateattachmentfiletype/${cid}/${filetype}`)
     const res=await axios.post(`${process.env.REACT_APP_API_BASE_URL}/candidate/downloadcandidateattachments`,{filePath,fileName},{
        responseType:'blob'
     })
 
-    // Set the MIME type based on the file extension
-    let mimeType;
-    switch (fileExtension.data) {
-        case '.pdf':
-            mimeType = 'application/pdf';
-            break;
-        case '.doc':
-            mimeType = 'application/msword';
-            break;
-        case '.docx':
-            mimeType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-            break;
-        default:
-            showNotification("File is not supported for download.","failure")
-            console.error('Unsupported file type');
-            return;
-    }
-
-    if(res.status===200){
-        const blob = new Blob([res.data], { type: mimeType });
+    let fileType=[ 'application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']
+    if(res.status===200 && fileType.includes(fileExtension.data)){
+        const blob = new Blob([res.data], { type: fileExtension.data });
         const url=window.URL.createObjectURL(blob)
         const link=document.createElement('a')
         link.href=url
@@ -649,7 +619,7 @@ const handleClosePopUpBox=async ()=>{
                              </div>
                              <div className='flex gap-2 items-center'>
                                <span onClick={()=>viewCandidateAttachments(candidateAttachments.folder_name,candidateAttachments.evaluation_form.filename)} className='text-blue-400 cursor-pointer'><DescriptionIcon></DescriptionIcon></span>
-                               <span onClick={()=>downloadCandidateAttachments(candidateAttachments.folder_name,candidateAttachments.evaluation_form.filepath,candidateAttachments.evaluation_form.filename)} className='text-blue-400 cursor-pointer'><ArrowCircleDownOutlinedIcon></ArrowCircleDownOutlinedIcon></span>  
+                               <span onClick={()=>downloadCandidateAttachments(candidateAttachments.folder_name,candidateAttachments.evaluation_form.filepath,candidateAttachments.evaluation_form.filename,'evaluation_form')} className='text-blue-400 cursor-pointer'><ArrowCircleDownOutlinedIcon></ArrowCircleDownOutlinedIcon></span>  
                              </div>
                            </div>                        
                            }
@@ -662,7 +632,7 @@ const handleClosePopUpBox=async ()=>{
                              </div>
                              <div className='flex gap-2 items-center'>
                                <span onClick={()=>viewCandidateAttachments(candidateAttachments.folder_name,candidateAttachments.audio_brief.filename)} className='text-blue-400 cursor-pointer'><DescriptionIcon></DescriptionIcon></span>
-                               <span onClick={()=>downloadCandidateAttachments(candidateAttachments.folder_name,candidateAttachments.audio_brief.filepath,candidateAttachments.audio_brief.filename)} className='text-blue-400 cursor-pointer'><ArrowCircleDownOutlinedIcon></ArrowCircleDownOutlinedIcon></span>  
+                               <span onClick={()=>downloadCandidateAttachments(candidateAttachments.folder_name,candidateAttachments.audio_brief.filepath,candidateAttachments.audio_brief.filename,'audio_brief')} className='text-blue-400 cursor-pointer'><ArrowCircleDownOutlinedIcon></ArrowCircleDownOutlinedIcon></span>  
                              </div>  
                            </div>  
                            }
@@ -675,7 +645,7 @@ const handleClosePopUpBox=async ()=>{
                              </div>
                              <div className='flex gap-2 items-center'>
                                <span onClick={()=>viewCandidateAttachments(candidateAttachments.folder_name,candidateAttachments.other_docs.filename)} className='text-blue-400 cursor-pointer'><DescriptionIcon></DescriptionIcon></span>
-                               <span onClick={()=>downloadCandidateAttachments(candidateAttachments.folder_name,candidateAttachments.other_docs.filepath,candidateAttachments.other_docs.filename)} className='text-blue-400 cursor-pointer'><ArrowCircleDownOutlinedIcon></ArrowCircleDownOutlinedIcon></span>  
+                               <span onClick={()=>downloadCandidateAttachments(candidateAttachments.folder_name,candidateAttachments.other_docs.filepath,candidateAttachments.other_docs.filename,'other_docs')} className='text-blue-400 cursor-pointer'><ArrowCircleDownOutlinedIcon></ArrowCircleDownOutlinedIcon></span>  
                              </div>  
                            </div>  
                            }
@@ -733,13 +703,19 @@ const handleClosePopUpBox=async ()=>{
                           <span className='text-blue-400'>Job Updates</span>
                         </div>
                        
-                        <div className='bg-white-600 py-4 px-2 w-full h-[558px] overflow-scroll'>
+                        <div className='bg-white-600 flex flex-col gap-3 py-4 px-2 w-full h-[558px] overflow-scroll'>
                         {
-                          jobUpdates.map((text,index)=>(
+                          jobUpdates.length===0?(
+                             <span className='w-full p-2 bg-slate-100 border'>There is no Job Updates</span>
+                          ):(
+
+                            jobUpdates.map((obj,index)=>(
                             <div key={index} className='bg-white w-[70%] border-gray-300 border p-2 rounded-md'>
-                                <HtmlContent htmlString={text}></HtmlContent>
+                                <HtmlContent htmlString={obj.text}></HtmlContent>
                              </div>
                           ))
+                             
+                          )
                         }
                         </div>
                      </div>

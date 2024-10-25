@@ -54,6 +54,15 @@ export const getJobBasicDetails=async (req,res,next)=>{
       }
 }
 
+export const getJobDetailsByEnId = async (req, res, next) => {
+  try {
+    const jobDetails = await JOBBASICDETAILS.find({enterprise_id : req.params.e_id});
+    res.status(200).json(jobDetails);
+  } catch (error) {
+    next(error);
+  }
+}
+
 
 
 

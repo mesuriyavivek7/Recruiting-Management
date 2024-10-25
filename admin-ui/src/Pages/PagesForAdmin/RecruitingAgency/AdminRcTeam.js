@@ -1,37 +1,60 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Card, TablePagination, Button, Box, Typography, Dialog, DialogTitle, DialogContent, DialogActions, CircularProgress } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import { RcTeamCols,RcTeamrows } from './RowColData'; // Import columns configuration
+import { Card, TablePagination, Box, Dialog, DialogTitle, DialogContent, DialogActions, CircularProgress } from '@mui/material';
+import { RcTeamCols } from './RowColData'; // Import columns configuration
+import { FaPhone } from 'react-icons/fa'; // Import React Icons
+import { fetchRecuritingTeam } from '../../../services/api';
 
-import { FaPhone, FaEnvelope, FaUserCheck, FaBriefcase, FaCalendarAlt, FaUsers } from 'react-icons/fa'; // Import React Icons
-const calculateRowHeight = (params) => {
-  return Math.max(80);
-};
-
-const AdminRcTeam = () => {
+const AdminRcTeam = ({ recuritingAgenciesDetails }) => {
+  const [RcTeamrows, setRcTeamrows] = useState([]); // Holds the resolved data
   const [selectedRow, setSelectedRow] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const navigate = useNavigate();
-  const [loading, setLoading] = React.useState(false); // Loader state
-
-  const handleRowClick = (row) => {
-    setSelectedRow(row); 
-    setDialogOpen(true); 
-  };
-
- 
+  const [loading, setLoading] = useState(false); // Loader state
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  React.useEffect(() => {
-    // Simulate data fetching with a loader
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false); // Stop loading after data is "fetched"
-    }, 1000); // Simulate 1 second loading time
-  }, [RcTeamrows, page, rowsPerPage]);
+  // Function to map enterpriseDetails to rows
+  const generateRowsFromDetails = async (details) => {
+    const data = await fetchRecuritingTeam(details._id);
+    return data.map((agency, index) => ({
+      _id: index + 1,
+      full_name: agency.full_name || `User ${index + 1}`,
+      email: agency.email || `user${index + 1}@example.com`,
+      mobile_no: agency.mobileno || "Not Provided",
+      isAdmin: agency.isAdmin ? "Yes" : "No",
+
+      // Mapped jobs array, return "Unknown" if empty or undefined
+      mapped_jobs: Array.isArray(agency.mapped_jobs) && agency.mapped_jobs.length > 0
+        ? agency.mapped_jobs?.length
+        : 0,
+
+      // Accepted jobs array, return "Unknown" if empty or undefined
+      accepted_jobs: Array.isArray(agency.accepted_jobs) && agency.accepted_jobs.length > 0
+        ? agency.accepted_jobs?.length
+        : 0,
+
+      // Submitted candidate profiles, ensure it's an array, return "Unknown" if empty
+      submited_candidate_profile: Array.isArray(agency.submited_candidate_profile) && agency.submited_candidate_profile.length > 0
+        ? agency.submited_candidate_profile?.length
+        : 0,
+    }));
+  };
+
+  // Fetch rows when component mounts or enterpriseDetails changes
+  useEffect(() => {
+    if (recuritingAgenciesDetails) {
+      setLoading(true);
+      generateRowsFromDetails(recuritingAgenciesDetails).then((fetchedRows) => {
+        setRcTeamrows(fetchedRows);
+        setLoading(false);
+      });
+    }
+  }, [recuritingAgenciesDetails]);
+
+  const handleRowClick = (row) => {
+    setSelectedRow(row);
+    setDialogOpen(true);
+  };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -42,27 +65,22 @@ const AdminRcTeam = () => {
     setPage(0);
   };
 
-  
   const paginatedRows = RcTeamrows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
-
 
   const handleClose = () => {
     setDialogOpen(false);
     setSelectedRow(null);
   };
 
-  return (
-    <Card className='mt-4 font-sans shadow-md'  sx={{
-      
-      borderRadius: '8px', 
-      boxShadow: 3, 
-    }}>
-    <div>
-    
-  
+  const calculateRowHeight = () => 80;
 
-      {/* Card with DataGrid */}
+  return (
+    <Card className='mt-4 font-sans shadow-md' sx={{
+      borderRadius: '8px',
+      boxShadow: 3,
+    }}>
       <div className="py-5 px-6">
+
       {loading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 400 ,color:'#315370'}}>
           <CircularProgress />
@@ -231,57 +249,22 @@ const AdminRcTeam = () => {
                   ))
                 : "Unknown"}
             </span>
-          </div>
-        </div>
 
-        {/* Submitted Candidate Profiles */}
-        <div className="flex items-center text-gray-700">
-      
-        <FaUsers className="mr-2 text-black text-xl xl:text-2xl" />
-          <div className="flex gap-2 text-xl">
-            <span className="block font-medium">Submitted Candidate Profiles:</span>
-            <span>
-              {selectedRow.submited_candidate_profile !== "Unknown"
-                ? selectedRow.submited_candidate_profile.map((profile, idx) => (
-                    <span key={idx} className="block">{profile.name || "Profile name not available"}</span>
-                  ))
-                : "Unknown"}
-            </span>
           </div>
-        </div>
-
-        {/* Account Status */}
-        <div className="flex items-center text-gray-700 text-xl">
-          <span className="font-medium text-gray-600">Is Admin:</span>
-          <span
-            className={`ml-2 font-semibold ${
-              selectedRow.status === 'yes' ? 'text-green-600' : 'text-red-600'
-            }`}
-          >
-            {selectedRow.status || ' Not Available'}
-          </span>
-        </div>
+        )}
+        
+      </DialogContent>
+          <DialogActions className="bg-gray-100 px-6 py-6">
+            <button
+              onClick={handleClose}
+              className="bg-gray-600 hover:bg-blue-230 text-white px-4 py-2 text-xl rounded-md transition-all duration-200"
+            >
+              Close
+            </button>
+          </DialogActions>
+        </Dialog>
       </div>
-    </div>
-  )}
-</DialogContent>
-
-
-      {/* Dialog Actions */}
-      <DialogActions className="bg-gray-100 px-6 py-6">
-        <button
-          onClick={handleClose}
-          className="bg-gray-600 hover:bg-blue-230 text-white px-4 py-2 text-xl rounded-md transition-all duration-200"
-        >
-          Close
-        </button>
-      </DialogActions>
-    </Dialog>
-
-
-    </div>
     </Card>
-
   );
 };
 
