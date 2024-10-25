@@ -255,3 +255,12 @@ export const getDashBoardCount=async (req,res,next)=>{
          next(err)
       }
 }
+
+export const getRecuritingTeamDetails= async(req, res, next)=>{
+    try {
+        const RecruitingTeams= await RECRUITINGTEAM.find({recruiting_agency_id : req.params.r_agency_id});
+        res.status(200).json(RecruitingTeams);
+    } catch (error) {
+        next(error);
+    }
+}

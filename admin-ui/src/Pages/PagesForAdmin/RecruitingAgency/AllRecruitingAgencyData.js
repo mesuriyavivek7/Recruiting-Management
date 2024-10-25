@@ -26,7 +26,7 @@ export default function AllRecruitingAgencyData() {
     try {
       const response = await fetchRecuritingAgencyById(id);
       // Pass the entire response as state
-      navigate(`/master_admin/recruiting-agency/${displayIndex}`, { state: { RecuritingAgenciesDetails: response } });
+      navigate(`/master_admin/recruiting-agency/${displayIndex}`, { state: { recuritingAgenciesDetails: response } });
     } catch (error) {
       console.error('Error fetching enterprise data:', error);
     }
