@@ -6,6 +6,8 @@ import { rows, columns } from './RowColData';
 import { styled } from '@mui/system';
 import { useNavigate } from 'react-router-dom';
 import { fetchRecuritingAgencyById } from '../../../services/api';
+import { Button, IconButton, InputAdornment, TextField } from '@mui/material';
+import { FaSearch } from 'react-icons/fa';
 
 
 const calculateRowHeight = (params) => {
@@ -18,6 +20,9 @@ export default function AllRecruitingAgencyData() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [selectedRowId, setSelectedRowId] = React.useState(null);
+  const [searchTerm, setSearchTerm] = React.useState(''); // State for search
+  const [filterStatus, setFilterStatus] = React.useState('All'); // Filter status state
+  const [filteredRows, setFilteredRows] = React.useState(rows);
   const navigate = useNavigate();
 
   const handleRowClick = async (params) => {
@@ -40,14 +45,186 @@ export default function AllRecruitingAgencyData() {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0); // Reset page to 0 when rows per page changes
   };
-
+  const handleSearch = () => {
+    const newFilteredRows = rows.filter((row) => {
+      const matchesSearch = row.full_name.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesStatus = filterStatus === 'All' || row.status === filterStatus;
+      return matchesSearch && matchesStatus;
+    });
+    setFilteredRows(newFilteredRows);
+  };
+  
+  const handleFilterClick = (status) => {
+    setFilterStatus(status);
+    const newFilteredRows = rows.filter((row) => {
+      const matchesSearch = row.full_name.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesStatus = status === 'All' || row.status === status;
+      return matchesSearch && matchesStatus;
+    });
+    setFilteredRows(newFilteredRows);
+  };
   return (
     <>
-      <p className='text-lg xl:text-2xl'>All Recruiting Agency </p>
+    <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} gap={2}>
+        {/* Left-side Search Bar */}
+        <TextField
+          label="Search..."
+          variant="outlined"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          sx={{
+            width: '600px',
+            borderRadius: '12px',
+            
+            '& .MuiOutlinedInput-root': {
+              padding: '0', 
+              '& input': {
+                height: '30px', 
+                padding: '8px', 
+              },
+              '& fieldset': {
+                borderColor: 'gray', 
+              },
+              '&:hover fieldset': {
+                borderColor: '#315370', 
+              },
+              '&.Mui-focused fieldset': {
+                borderColor: '#315370', 
+              },
+            },
+          }} // Adjust width as necessary
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton onClick={handleSearch}>
+                  <FaSearch />
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+          
+        />
+
+<Box display="flex" justifyContent="center" alignItems="center" gap={0}>
+    <Button
+      variant={filterStatus === 'All' ? 'contained' : ''}
+      onClick={() => handleFilterClick('All')}
+      disableElevation
+      sx={{
+        backgroundColor: filterStatus === 'All' ? '#315370' : '#e0e0e0',
+        color: filterStatus === 'All' ? 'white' : 'gray',
+        fontSize: '16px',
+        height: '45px',
+        textTransform: 'none',
+        borderRadius: '20px 0 0 20px', // Rounded left side
+        width: '120px',
+        border: '1px solid gray', // Add border
+        borderRight: 'none', // Remove right border to connect buttons
+        outline: 'none', // Remove outline
+        boxShadow: 'none', // Remove box shadow
+        '&:hover': {
+          backgroundColor: filterStatus === 'All' ? '#315380' : '#e0e0e0',
+          outline: 'none', // Remove outline on hover
+          boxShadow: 'none', // Remove box shadow on hover
+        },
+        '&:focus': {
+          outline: 'none', // Remove focus outline
+          boxShadow: 'none', // Remove focus box shadow
+        },
+        '&:focus-visible': {
+          outline: 'none', // Remove browser-specific focus outline
+          boxShadow: 'none',
+        },
+        '&:active': {
+          outline: 'none', // Remove outline when button is active
+          boxShadow: 'none', // Remove box-shadow when active
+        },
+      }}
+    >
+      All
+    </Button>
+
+    <Button
+      variant={filterStatus === 'Active' ? 'contained' : ''}
+      onClick={() => handleFilterClick('Active')}
+      disableElevation
+      sx={{
+        backgroundColor: filterStatus === 'Active' ? '#315370' : '#e0e0e0',
+        color: filterStatus === 'Active' ? 'white' : 'gray',
+        fontSize: '16px',
+        height: '45px',
+        textTransform: 'none',
+        width: '120px',
+        border: '1px solid gray', // Add border
+        borderRadius: '0', // No rounded corners
+        outline: 'none', // Remove outline
+      boxShadow: 'none', // Remove box shadow
+        borderRight: 'none', // Remove right border to connect buttons
+        '&:hover': {
+          backgroundColor: filterStatus === 'Active' ? '#315380' : '#e0e0e0',
+          outline: 'none', // Remove outline on hover
+          boxShadow: 'none', // Remove box shadow on hover
+        },
+        '&:focus': {
+          outline: 'none', // Remove focus outline
+          boxShadow: 'none', // Remove focus box shadow
+        },
+        '&:focus-visible': {
+          outline: 'none', // Remove browser-specific focus outline
+          boxShadow: 'none',
+        },
+        '&:active': {
+          outline: 'none', // Remove outline when button is active
+          boxShadow: 'none', // Remove box-shadow when active
+        },
+      }}
+    >
+      Active
+    </Button>
+
+    <Button
+      variant={filterStatus === 'Pending' ? 'contained' : ''}
+      onClick={() => handleFilterClick('Pending')}
+      disableElevation
+      sx={{
+        backgroundColor: filterStatus === 'Pending' ? '#315370' : '#e0e0e0',
+        color: filterStatus === 'Pending' ? 'white' : 'gray',
+        fontSize: '16px',
+        height: '45px',
+        textTransform: 'none',
+        width: '120px',
+        border: '1px solid gray', // Add border
+        borderRadius: '0 20px 20px 0', // Rounded right side
+        outline: 'none', // Remove outline
+        boxShadow: 'none', // Remove box shadow
+        '&:hover': {
+          backgroundColor: filterStatus === 'Pending' ? '#315380' : '#e0e0e0',
+          outline: 'none', // Remove outline on hover
+          boxShadow: 'none', // Remove box shadow on hover
+        },
+        '&:focus': {
+          outline: 'none', // Remove focus outline
+          boxShadow: 'none', // Remove focus box shadow
+        },
+        '&:focus-visible': {
+          outline: 'none', // Remove browser-specific focus outline
+          boxShadow: 'none',
+        },
+        '&:active': {
+          outline: 'none', // Remove outline when button is active
+          boxShadow: 'none', // Remove box-shadow when active
+        },
+      }}
+    >
+      Pending
+    </Button>
+  </Box>
+      </Box>
+      <p className='text-lg xl:text-2xl pt-9'>All Recruiting Agency </p>
       <Box sx={{ height: 600, width: '100%', paddingTop: '19px' }}>
         <DataGrid
           getRowId={(rows) => rows.id} // Specify the custom ID field
-          rows={rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
+          rows={filteredRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
           columns={columns}
           rowHeight={80}
           getRowHeight={calculateRowHeight}
@@ -113,12 +290,12 @@ export default function AllRecruitingAgencyData() {
       </Box>
       <TablePagination
         component="div"
-        count={rows.length} // Total number of rows
-        page={page} // Current page number
-        onPageChange={handleChangePage} // Handler for changing page
-        rowsPerPage={rowsPerPage} // Rows per page number
-        onRowsPerPageChange={handleChangeRowsPerPage} // Handler for changing rows per page
-        rowsPerPageOptions={[5, 10, 25]} // Rows per page options
+        count={filteredRows.length}
+        page={page} 
+        onPageChange={handleChangePage} 
+        rowsPerPage={rowsPerPage} 
+        onRowsPerPageChange={handleChangeRowsPerPage} 
+        rowsPerPageOptions={[5, 10, 25]} 
         labelRowsPerPage="Rows per page" // Label
       />
     </>

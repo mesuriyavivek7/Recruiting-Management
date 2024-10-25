@@ -165,9 +165,6 @@ const AdminRecruitingDetails = ({ recuritingAgenciesDetails }) => {
 
         </Grid>
       </Box>
-
-
-
     </Card>
   );
 };

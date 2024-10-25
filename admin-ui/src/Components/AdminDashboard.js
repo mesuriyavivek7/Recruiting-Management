@@ -24,10 +24,7 @@ const AdminDashboard = () => {
         
         
 
-        {/* Resumes Component */}
-        {/* <div className="shadow-lg md:col-span-3">
-          <Resumes/>
-        </div> */}
+      
         </div>
       </div>
     </div>

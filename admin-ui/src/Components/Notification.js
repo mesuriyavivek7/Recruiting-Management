@@ -4,7 +4,7 @@ export default function Notification({ message, type, onClose }) {
     const [visible, setVisible] = useState(false);
     useEffect(() => {
         setVisible(true)
-        // Automatically close the notification after 3 seconds
+       
         const timer = setTimeout(() => {
             setVisible(false);
             setTimeout(onClose, 600); // Wait for fade-out to complete
