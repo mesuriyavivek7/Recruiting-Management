@@ -13,6 +13,26 @@ export const fetchEnterpriseData = async () => {
     }
 };
 
+export const fetchEnterpriseVerifiedData = async(admin_id)=> {
+    try {
+        const response = await axios.get(`${admin_be_uri}/masteradmin/getverifiedennterprise/${admin_id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error while fetching all verified enterprise data : ", error);
+        throw error;
+    }
+}
+
+export const fetchPendingEnterpriseData = async(admin_id)=> {
+    try {
+        const response = await axios.get(`${admin_be_uri}/masteradmin/getpendingenterprises/${admin_id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error while fetching all verified enterprise data : ", error);
+        throw error;
+    }
+}
+
 export const fetchEnterpriseById = async(enterprise_id) => {
     try {
         const response = await axios.get(`${app_be_uri}/enterprise/find/${enterprise_id}`);
