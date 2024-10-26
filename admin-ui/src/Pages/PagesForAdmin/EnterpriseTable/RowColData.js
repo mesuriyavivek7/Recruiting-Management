@@ -1,5 +1,7 @@
 import Button from '@mui/material/Button';
-import { fetchEnterpriseData, fetchAccountManager } from '../../../services/api';
+import { fetchAccountManager, fetchEnterpriseById, fetchEnterpriseVerifiedData } from '../../../services/api';
+import { useSelector } from 'react-redux';
+import { useMemo } from 'react';
 
 // Column configuration for the DataGrid
 export const columns = [
@@ -119,26 +121,43 @@ export const columns = [
     },
 ];
 
-const data = await fetchEnterpriseData();
+export const useRows = () => {
+    const userData = useSelector((state) => state.admin.userData);
+    const admin_id = userData._id;
 
-export const rows = await Promise.all(
-    data
-        .filter((enterprise) => enterprise.admin_verified === true)
-        .map(async (enterprise, index) => {
-            const accountManager = await fetchAccountManager(enterprise?.allocated_account_manager);
-            return {
-                id: enterprise._id,
-                displayIndex: index + 1,
-                full_name: enterprise.full_name || `User ${index + 1}`,
-                email: enterprise.email || `user${index + 1}@example.com`,
-                designation: enterprise.designation || "Not Provided",
-                company_name: enterprise.company_name || "Unknown",
-                country: enterprise.country || "Unknown",
-                city: enterprise.city || "Unknown",
-                email_verification: enterprise.email_verified ? "yes" : "no",
-                account_status: enterprise.account_status || { status: 'Inactive', remark: '', admin_id: '' }, // Default to 'Inactive' if no status
-                admin_verified: enterprise.admin_verified || false, // Default to false if not present
-                account_manager: accountManager ? `${accountManager.full_name} ` : null, // Fetch account manager's name
-            };
-        })
-);
+    const getRows = useMemo(() => {
+        return async () => {
+            const data = await fetchEnterpriseVerifiedData(admin_id);
+
+            const rows = await Promise.all(
+                data.map(async (enterprise, index) => {
+                    // Fetch complete enterprise details
+                    const enterpriseData = await fetchEnterpriseById(enterprise);
+
+                    // Fetch account manager details
+                    const accountManager = await fetchAccountManager(enterpriseData?.allocated_account_manager);
+
+                    // Combine the fetched data
+                    return {
+                        id: enterpriseData._id || `enterprise-${index}`, // Ensure a unique id
+                        displayIndex: index + 1,
+                        full_name: enterpriseData.full_name || `User ${index + 1}`,
+                        email: enterpriseData.email || `user${index + 1}@example.com`,
+                        designation: enterpriseData.designation || "Not Provided",
+                        company_name: enterpriseData.company_name || "Unknown",
+                        country: enterpriseData.country || "Unknown",
+                        city: enterpriseData.city || "Unknown",
+                        email_verification: enterpriseData.email_verified ? "yes" : "no",
+                        account_status: enterpriseData.account_status || { status: 'Inactive', remark: '', admin_id: '' },
+                        admin_verified: enterpriseData.admin_verified || false,
+                        account_manager: accountManager ? `${accountManager.full_name}` : null,
+                    };
+                })
+            );
+
+            return rows; // Return the rows array
+        };
+    }, [userData]); // Add dependencies if necessary
+
+    return getRows;
+};

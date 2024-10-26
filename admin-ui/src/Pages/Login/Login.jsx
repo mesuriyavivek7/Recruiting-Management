@@ -10,6 +10,7 @@ import { setUserData } from '../../State/Admin/Action';
 export default function Login() {
 
   const myValue=useSelector((state) => state.admin);
+  console.log(myValue);
 
   const navigate=useNavigate();
   useEffect(()=>{
