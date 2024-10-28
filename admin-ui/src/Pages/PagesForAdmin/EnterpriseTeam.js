@@ -1,20 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
+
+
+import { useNavigate } from 'react-router-dom';
+import { columns, rows } from './RowColOfEnterpriseTeam'; // Import columns configuration
+
+
+const calculateRowHeight = (params) => {
+  return Math.max(80);
+};
 import {
   Card, TablePagination, Button, Box, Typography, Dialog, DialogTitle,
   DialogContent, DialogActions, CircularProgress
 } from '@mui/material';
 import { FaPhone, FaEnvelope, FaUserCheck, FaBriefcase, FaCalendarAlt } from 'react-icons/fa';
-import { columns } from './RowColOfEnterpriseTeam';
+
 import { fetchEnterpriseTeam } from '../../services/api';
 
 const EnterpriseTeam = ({ enterpriseDetails }) => {
   const [rows, setRows] = useState([]); // Holds the resolved data
+
   const [selectedRow, setSelectedRow] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [loading, setLoading] = useState(false); // Loader state
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  
 
   // Function to map enterpriseDetails to rows
   const generateRowsFromDetails = async (details) => {
@@ -62,52 +72,110 @@ const EnterpriseTeam = ({ enterpriseDetails }) => {
     setSelectedRow(null);
   };
 
-  const calculateRowHeight = () => 80;
 
   return (
-    <Card className='mt-4 font-sans shadow-md' sx={{ borderRadius: '8px', boxShadow: 3 }}>
-      <div>
-        <div className="py-5 px-6">
-          {loading ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 400, color: '#315370' }}>
-              <CircularProgress />
-            </Box>
-          ) : (
-            <div style={{ height: 600, width: '100%' }} className="pt-4">
-              <DataGrid
-                rows={paginatedRows}
-                columns={columns}
-                rowHeight={80}
-                onRowClick={(params) => handleRowClick(params.row)}
-                getRowId={(row) => row._id}
-                getRowHeight={calculateRowHeight}
-                pagination={false}
-                disableSelectionOnClick
-                sx={{
-                  '& .MuiDataGrid-root': { fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.09rem' } },
-                  ' [class^=MuiDataGrid]': { border: 'none' },
-                  '& .MuiDataGrid-columnHeader': { fontWeight: 'bold', backgroundColor: '#e3e6ea !important' },
-                  '& .MuiDataGrid-columnSeparator': { visibility: 'visible' },
-                  '& .MuiDataGrid-cell': { fontSize: { xs: '0.75rem', sm: '0.875rem', lg: '1.1rem' }, minHeight: '2.5rem' },
-                  '& .MuiDataGrid-row': { borderBottom: 'none' },
-                }}
-              />
-            </div>
-          )}
-        </div>
+    <Card className='mt-4 font-sans shadow-md'  sx={{
+      
+      borderRadius: '8px', 
+      boxShadow: 3, 
+    }}>
+    <div>
+    
+   
 
-        {!loading && (
-          <TablePagination
-            component="div"
-            count={rows.length}
-            page={page}
-            onPageChange={handleChangePage}
-            rowsPerPage={rowsPerPage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-            rowsPerPageOptions={[5, 10, 25]}
-            labelRowsPerPage="Rows per page"
+      {/* Card with DataGrid */}
+      <div className="py-5 px-6">
+      {loading ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 400 ,color:'#315370'}}>
+          <CircularProgress />
+        </Box>
+      ) : (
+        <div style={{ height: 600, width: '100%' }} className="pt-4">
+          <DataGrid
+            rows={paginatedRows}
+            columns={columns}
+            rowHeight={80}
+            onRowClick={(params) => handleRowClick(params.row)} // Pass the whole row object
+            getRowId={(row) => row._id} // Specify the custom ID field
+            getRowHeight={calculateRowHeight}
+           // pagination={false}
+            pageSize={rowsPerPage}
+            initialState={{
+              pagination: {
+                paginationModel: { page: 0, pageSize: 10 },
+              },
+            }}
+            pageSizeOptions={[5, 10]}
+           // hideFooterPagination={true}
+            disableSelectionOnClick
+           
+            sx={{
+              '& .MuiDataGrid-root': {
+                fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.09rem' }, 
+              },
+           
+              ' [class^=MuiDataGrid]': { border: 'none' },
+              '& .MuiDataGrid-columnHeader': {
+                fontWeight: 'bold !impotant', 
+                fontSize: { xs: '0.875rem', sm: '1rem', md: '0.7rem', lg: '1.1rem' }, 
+                color: 'black', 
+               
+                 '&:focus': {
+                outline: 'none', 
+                border: 'none',  
+              },
+                backgroundColor: '#e3e6ea !important', 
+                minHeight: '60px', 
+              },
+               '& .MuiDataGrid-columnHeader:focus-within': {
+          outline: 'none', 
+        },
+       
+             
+           
+              
+        
+        '& .MuiDataGrid-columnSeparator': {
+          color: 'blue',
+          visibility: 'visible', 
+        },
+        
+      
+        '& .MuiDataGrid-cell': {
+          fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem' }, 
+          
+        },
+        
+        '& .MuiDataGrid-cellContent': {
+          display: 'flex',
+          alignItems: 'center', 
+        },
+        '& .MuiDataGrid-cell': {
+          minHeight: '2.5rem', 
+        },
+              '& .MuiDataGrid-cell': {
+                fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem'}, 
+                
+                
+              },
+              '& .MuiDataGrid-row': {
+                borderBottom: 'none', 
+              },
+              '& .MuiDataGrid-cell:focus': {
+                outline: 'none', 
+              },
+             
+            }}
           />
-        )}
+        </div>)}
+      </div>
+
+     
+     
+      
+
+   
+       
 
         <Dialog
           open={dialogOpen}

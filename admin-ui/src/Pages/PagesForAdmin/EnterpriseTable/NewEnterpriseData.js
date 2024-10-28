@@ -185,7 +185,13 @@ const NewEnterpriseData = () => {
             rowHeight={80}
             onRowClick={(params) => handleRowClick(params?.row)}
             pageSize={rowsPerPage}
-            pagination={false}
+           // pagination={false}
+           initialState={{
+            pagination: {
+              paginationModel: { page: 0, pageSize: 10 },
+            },
+          }}
+          pageSizeOptions={[5, 10]}
             sx={{
               '& .MuiDataGrid-root': {
                 fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.09rem' },
@@ -398,18 +404,7 @@ const NewEnterpriseData = () => {
       {notification && (
         <Notification message={notification.message} type={notification.type} />
       )}
-      {!loading && (
-        <TablePagination
-          component="div"
-          count={newEnterprise.length}
-          page={page} // Current page number
-          onPageChange={handleChangePage} // Handler for changing page
-          rowsPerPage={rowsPerPage} // Rows per page number
-          onRowsPerPageChange={handleChangeRowsPerPage} // Handler for changing rows per page
-          rowsPerPageOptions={[5, 10, 25]} // Rows per page options
-          labelRowsPerPage="Rows per page" // Label
-        />
-      )}
+      
     </>
   );
 };

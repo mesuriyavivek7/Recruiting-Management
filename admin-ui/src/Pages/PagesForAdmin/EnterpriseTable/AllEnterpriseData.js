@@ -2,8 +2,13 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import { useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
+
+
+import { rows } from './RowColData';
+
 import TablePagination from '@mui/material/TablePagination';
 import { useRows, columns } from './RowColData';
+
 import { useNavigate } from 'react-router-dom';
 import { fetchEnterpriseById } from '../../../services/api';
 import { Button, CircularProgress, IconButton, InputAdornment, TextField } from '@mui/material';
@@ -202,9 +207,15 @@ export default function AllEnterPriseData() {
             onRowClick={handleRowClick} // Pass the params directly
             getRowId={(row) => row.id} // Specify the custom ID field
             getRowHeight={calculateRowHeight}
-            pagination={false}
+           // pagination={false}
             pageSize={rowsPerPage}
-            hideFooterPagination={true}
+            initialState={{
+              pagination: {
+                paginationModel: { page: 0, pageSize: 10 },
+              },
+            }}
+            pageSizeOptions={[5, 10]}
+           // hideFooterPagination={true}
             disableSelectionOnClick
             sx={{
               '& .MuiDataGrid-root': {
@@ -247,18 +258,7 @@ export default function AllEnterPriseData() {
           />
         </Box>
       )}
-      {!loading && (
-        <TablePagination
-          component="div"
-          count={filteredRows.length}
-          page={page} // Current page number
-          onPageChange={handleChangePage} // Handler for changing page
-          rowsPerPage={rowsPerPage} // Rows per page number
-          onRowsPerPageChange={handleChangeRowsPerPage} // Handler for changing rows per page
-          rowsPerPageOptions={[5, 10, 25]} // Rows per page options
-          labelRowsPerPage="Rows per page" // Label
-        />
-      )}
+     
     </>
   );
 }

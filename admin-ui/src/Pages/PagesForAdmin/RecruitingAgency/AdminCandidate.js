@@ -89,79 +89,89 @@ const AdminCandidate = ({ recuritingAgenciesDetails }) => {
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 400, color: '#315370' }}>
           <CircularProgress />
         </Box>
-      ) : (
-        <Card className='mt-9 font-sans px-4'>
-          <div style={{ height: 600, width: '100%' }} className='pt-4'>
-            <DataGrid
-              rows={paginatedRows}
-              columns={RcCandidatecols}
-              rowHeight={80}
-              onRowClick={(params) => handleRowClick(params.id)}
-              getRowId={(row) => row._id} // Specify the custom ID field
-              getRowHeight={calculateRowHeight}
-              pagination={false}
-              pageSize={rowsPerPage}
-              hideFooterPagination={true}
-              disableSelectionOnClick
-              sx={{
-                '& .MuiDataGrid-root': {
-                  fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.09rem' },
-                },
-                ' [class^=MuiDataGrid]': { border: 'none' },
-                '& .MuiDataGrid-columnHeader': {
-                  fontWeight: 'bold !impotant',
-                  fontSize: { xs: '0.875rem', sm: '1rem', md: '0.7rem', lg: '1.1rem' },
-                  color: 'black',
-                  '&:focus': {
-                    outline: 'none',
-                    border: 'none',
-                  },
-                  backgroundColor: '#e3e6ea !important',
-                  minHeight: '60px',
-                },
-                '& .MuiDataGrid-columnHeader:focus-within': {
-                  outline: 'none',
-                },
-                '& .MuiDataGrid-columnSeparator': {
-                  color: 'blue',
-                  visibility: 'visible',
-                },
-                '& .MuiDataGrid-cell': {
-                  fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem' },
-                },
-                '& .MuiDataGrid-cellContent': {
-                  display: 'flex',
-                  alignItems: 'center',
-                },
-                '& .MuiDataGrid-cell': {
-                  minHeight: '2.5rem',
-                },
-                '& .MuiDataGrid-cell': {
-                  fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem' },
-                },
-                '& .MuiDataGrid-row': {
-                  borderBottom: 'none',
-                },
-                '& .MuiDataGrid-cell:focus': {
-                  outline: 'none',
-                },
-              }}
-            />
-          </div>
-        </Card>
-      )}
-      {!loading && (
-        <TablePagination
-          component="div"
-          count={RcCandidaterow.length}
-          page={page}
-          onPageChange={handleChangePage}
-          rowsPerPage={rowsPerPage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-          rowsPerPageOptions={[5, 10, 25]}
-          labelRowsPerPage="Rows per page"
+    
+      <Card className='mt-9 font-sans px-4'>
+ 
+        <div style={{ height: 600, width: '100%' }} className='pt-4'>
+         
+          <DataGrid 
+          rows={paginatedRows}
+          columns={RcCandidatecols}
+          rowHeight={80} 
+          onRowClick={(params) => handleRowClick(params.id)}
+          getRowId={(row) => row._id} // Specify the custom ID field
+          getRowHeight={calculateRowHeight} 
+         // pagination={false} 
+          pageSize={rowsPerPage} 
+          initialState={{
+            pagination: {
+              paginationModel: { page: 0, pageSize: 10 },
+            },
+          }}
+          pageSizeOptions={[5, 10]}
+         // hideFooterPagination={true} 
+          disableSelectionOnClick 
+           sx={{
+            '& .MuiDataGrid-root': {
+              fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.09rem' }, 
+            },
+         
+            ' [class^=MuiDataGrid]': { border: 'none' },
+            '& .MuiDataGrid-columnHeader': {
+              fontWeight: 'bold !impotant', 
+              fontSize: { xs: '0.875rem', sm: '1rem', md: '0.7rem', lg: '1.1rem' }, 
+              color: 'black', 
+             
+               '&:focus': {
+              outline: 'none', 
+              border: 'none',  
+            },
+              backgroundColor: '#e3e6ea !important', 
+              minHeight: '60px', 
+            },
+             '& .MuiDataGrid-columnHeader:focus-within': {
+        outline: 'none', 
+      },
+     
+           
+         
+            
+      
+      '& .MuiDataGrid-columnSeparator': {
+        color: 'blue',
+        visibility: 'visible', 
+      },
+      
+    
+      '& .MuiDataGrid-cell': {
+        fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem' }, 
+        
+      },
+      
+      '& .MuiDataGrid-cellContent': {
+        display: 'flex',
+        alignItems: 'center', 
+      },
+      '& .MuiDataGrid-cell': {
+        minHeight: '2.5rem', 
+      },
+            '& .MuiDataGrid-cell': {
+              fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem'}, 
+              
+              
+            },
+            '& .MuiDataGrid-row': {
+              borderBottom: 'none', 
+            },
+            '& .MuiDataGrid-cell:focus': {
+              outline: 'none', 
+            },
+           
+          }}
         />
-      )}
+        </div>
+      </Card>)}
+ 
     </div>
   );
 };

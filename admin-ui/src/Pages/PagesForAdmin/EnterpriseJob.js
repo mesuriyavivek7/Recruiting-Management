@@ -1,9 +1,16 @@
 import React, { useState, useEffect} from 'react';
 import { DataGrid } from '@mui/x-data-grid';
+
+
+import { useNavigate } from 'react-router-dom';
+
+
+
 import { Card, TablePagination, Tabs, Tab, Button, TextField, Divider, IconButton, Typography, Box, Dialog, DialogTitle, DialogContent, DialogActions, CircularProgress } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FaCaretDown } from 'react-icons/fa';
 import { FaBusinessTime, FaBullseye, FaThumbsUp, FaBan, FaStar, FaQuestionCircle, FaFilePdf, FaFileAlt, FaFileAudio, FaMapMarkerAlt, FaBriefcase, FaInfoCircle, FaPaperclip, FaUsers, FaShareAlt, FaExternalLinkAlt, FaDollarSign, FaClock, FaCalendarAlt } from 'react-icons/fa';
+
 
 import { columns } from './RowColOfEnterpriseJob';
 import { fetchJobBasicDetailsByEnId, fetchJobStatusByJobId } from '../../services/api';
@@ -112,83 +119,75 @@ const EnterpriseJob = ({ enterpriseDetails }) => {
         borderRadius: '8px',
         boxShadow: 3,
       }}>
-        {loading ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 400, color: '#315370' }}>
-            <CircularProgress />
-          </Box>
-        ) : (
-          <div className='px-6 py-5'>
 
+         {loading ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 400 ,color:'#315370'}}>
+          <CircularProgress />
+        </Box>
+      ) : (
+        <div className='px-6 py-5'>
+          
 
+         
 
+          {/* Search Field */}
+          <TextField 
+            variant='outlined' 
+            placeholder='Search Job...' 
+            fullWidth 
+            className='my-4 pt-9' 
+          />
 
-            {/* Search Field */}
-            <TextField
-              variant='outlined'
-              placeholder='Search Job...'
-              fullWidth
-              className='my-4 pt-9'
-            />
-
-            {/* DataGrid Section */}
-            <div style={{ height: 600, width: '100%' }} className='pt-4'>
-              <DataGrid
-                rows={paginatedRows}
-                columns={columns}
-                rowHeight={80}
-                onRowClick={(params) => handleRowClick(params.id)}
-                getRowId={(row) => row._id}
-                pagination={false}
-                pageSize={rowsPerPage}
-                hideFooterPagination={true}
-                disableSelectionOnClick
-                sx={{
-                  '& .MuiDataGrid-root': {
-                    fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.09rem' },
-                  },
-                  '[class^=MuiDataGrid]': { border: 'none' },
-                  '& .MuiDataGrid-columnHeader': {
-                    fontWeight: 'bold',
-                    fontSize: { xs: '0.875rem', sm: '1rem', md: '0.7rem', lg: '1.1rem' },
-                    color: 'black',
-                    backgroundColor: '#e3e6ea !important',
-                    minHeight: '60px',
-                  },
-                  '& .MuiDataGrid-cell': {
-                    fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem' },
-                    minHeight: '2.5rem',
-                  },
-                  '& .MuiDataGrid-cellContent': {
-                    display: 'flex',
-                    alignItems: 'center',
-                  },
-                  '& .MuiDataGrid-row': {
-                    borderBottom: 'none',
-                  },
-                  '& .MuiDataGrid-cell:focus': {
-                    outline: 'none',
-                  },
-                }}
-              />
+          {/* DataGrid Section */}
+          <div style={{ height: 600, width: '100%' }} className='pt-4'>
+            <DataGrid 
+              rows={paginatedRows}
+              columns={columns}
+              rowHeight={80}
+              onRowClick={(params) => handleRowClick(params.id)}
+              getRowId={(row) => row._id}
+              //pagination={false} 
+              pageSize={rowsPerPage} 
+              initialState={{
+                pagination: {
+                  paginationModel: { page: 0, pageSize: 10 },
+                },
+              }}
+              pageSizeOptions={[5, 10]}
+             // hideFooterPagination={true} 
+              disableSelectionOnClick 
+              sx={{
+                '& .MuiDataGrid-root': {
+                  fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.09rem' }, 
+                },
+                '[class^=MuiDataGrid]': { border: 'none' },
+                '& .MuiDataGrid-columnHeader': {
+                  fontWeight: 'bold', 
+                  fontSize: { xs: '0.875rem', sm: '1rem', md: '0.7rem', lg: '1.1rem' }, 
+                  color: 'black', 
+                  backgroundColor: '#e3e6ea !important', 
+                  minHeight: '60px', 
+                },
+                '& .MuiDataGrid-cell': {
+                  fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem' }, 
+                  minHeight: '2.5rem', 
+                },
+                '& .MuiDataGrid-cellContent': {
+                  display: 'flex',
+                  alignItems: 'center', 
+                },
+                '& .MuiDataGrid-row': {
+                  borderBottom: 'none', 
+                },
+                '& .MuiDataGrid-cell:focus': {
+                  outline: 'none', 
+                },
+              }}
+      />
             </div>
           </div>)}
       </Card>
 
-      {/* Pagination Component */}
-      {!loading && (
-
-
-        <TablePagination
-          component="div"
-          count={rows.length}
-          page={page}
-          onPageChange={handleChangePage}
-          rowsPerPage={rowsPerPage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-          rowsPerPageOptions={[5, 10, 25]}
-          labelRowsPerPage="Rows per page"
-        />
-      )}
 
       <Dialog open={dialogOpen} onClose={handleCloseDialog} maxWidth="xl" fullWidth PaperProps={{
         sx: {
