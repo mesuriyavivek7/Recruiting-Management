@@ -1,17 +1,9 @@
 import React, { useState, useEffect} from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-
-
-import { useNavigate } from 'react-router-dom';
-
-
-
 import { Card, TablePagination, Tabs, Tab, Button, TextField, Divider, IconButton, Typography, Box, Dialog, DialogTitle, DialogContent, DialogActions, CircularProgress } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FaCaretDown } from 'react-icons/fa';
 import { FaBusinessTime, FaBullseye, FaThumbsUp, FaBan, FaStar, FaQuestionCircle, FaFilePdf, FaFileAlt, FaFileAudio, FaMapMarkerAlt, FaBriefcase, FaInfoCircle, FaPaperclip, FaUsers, FaShareAlt, FaExternalLinkAlt, FaDollarSign, FaClock, FaCalendarAlt } from 'react-icons/fa';
-
-
 import { columns } from './RowColOfEnterpriseJob';
 import { fetchJobBasicDetailsByEnId, fetchJobStatusByJobId } from '../../services/api';
 
