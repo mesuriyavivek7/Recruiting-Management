@@ -100,7 +100,7 @@ export const sendMail = async (req, res) => {
                          <span>${password}</span>
                        </div>
                     </div>
-                    
+
                     <p>The Uphire Team</p>
                 </div>
                 <div class="footer">

@@ -2,13 +2,7 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import { useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-
-
-import { rows } from './RowColData';
-
-import TablePagination from '@mui/material/TablePagination';
 import { useRows, columns } from './RowColData';
-
 import { useNavigate } from 'react-router-dom';
 import { fetchEnterpriseById } from '../../../services/api';
 import { Button, CircularProgress, IconButton, InputAdornment, TextField } from '@mui/material';
@@ -43,21 +37,29 @@ export default function AllEnterPriseData() {
   const [loading, setLoading] = React.useState(false); // Loader state
 
   React.useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true); // Start loading
+  const fetchData = async () => {
+    setLoading(true); // Start loading
 
-      try {
-        const rowsData = await getRows();
-        setRows(rowsData);
-      } catch (error) {
-        console.error("Error fetching rows:", error);
-      } finally {
-        setLoading(false); // Stop loading after data is fetched
-      }
-    };
+    try {
+      const rowsData = await getRows();
+      setRows(rowsData);
 
-    fetchData();
-  }, [getRows, page, rowsPerPage]);
+      // Set default filtered rows to include "All" filter
+      const newFilteredRows = rowsData.filter((row) => {
+        const matchesSearch = row.full_name.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesStatus = filterStatus === 'All' || row.status === filterStatus;
+        return matchesSearch && matchesStatus;
+      });
+      setFilteredRows(newFilteredRows);
+    } catch (error) {
+      console.error("Error fetching rows:", error);
+    } finally {
+      setLoading(false); // Stop loading after data is fetched
+    }
+  };
+
+  fetchData();
+}, [getRows, page, rowsPerPage, searchTerm, filterStatus]); // Add searchTerm and filterStatus to the dependency array
 
   const handleSearch = () => {
     const newFilteredRows = rows.filter((row) => {
@@ -258,7 +260,6 @@ export default function AllEnterPriseData() {
           />
         </Box>
       )}
-     
     </>
   );
 }
