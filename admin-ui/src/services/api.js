@@ -218,6 +218,22 @@ export const SearchEnterprises = async (query = '') => {
     }
 };
 
+//search jobs by its title
+export const SearchJobs = async (query = '') => {
+    try {
+        const response = await axios.get(`${app_be_uri}/api/job/search/`, {
+            params: {
+                q: query
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching enterprises by job title:', error);
+        return [];
+    }
+};
+
+
 // create a account manager using master admin id
 export const CreateAccountManager = async (m_admin_id, formData) => {
     try {
