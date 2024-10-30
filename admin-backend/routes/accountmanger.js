@@ -1,5 +1,5 @@
 import express from 'express'
-import { addCandidatePendingList, addCandidateVerifiedList, addEnterprise, addJobIntoVerifyList, addJobsPendingList, addRecruiting, addVerifiedRecruitng, getAcByMadminId, getAcManagerEmail, getAcmanagerMailandName, getAllAccountManagers} from '../controller/accountmanagerController.js'
+import { addCandidatePendingList, addCandidateVerifiedList, addEnterprise, addJobIntoVerifyList, addJobsPendingList, AddNewAccountManager, addRecruiting, addVerifiedRecruitng, getAcByMadminId, getAcManagerEmail, getAcmanagerMailandName, getAllAccountManagers} from '../controller/accountmanagerController.js'
 
 const router=express.Router()
 
@@ -39,7 +39,8 @@ router.post('/addpendingcandidate/:acmanagerid',addCandidatePendingList)
 //add candidate profile into verified list
 router.post('/addcandidateintoverifiedlist/:acmanagerid',addCandidateVerifiedList)
 
-
+// add new account manager
+router.post('/create/:master_admin_id', AddNewAccountManager);
 
 
 export default router

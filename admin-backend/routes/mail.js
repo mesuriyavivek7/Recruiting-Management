@@ -8,6 +8,4 @@ const router=express.Router()
 
 router.post('/send-mail',sendMail);
 
-
-
 export default router;

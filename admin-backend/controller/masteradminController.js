@@ -57,8 +57,6 @@ export const addRecruitingAgency = async (req, res, next) => {
     }
 }
 
-
-
 export const rmvRecruitingPendingList = async (req, res, next) => {
     try {
         await MASTERADMIN.findByIdAndUpdate(req.body.m_id, { $pull: { pending_verify_recruiting_agency: req.body.ra_id } })

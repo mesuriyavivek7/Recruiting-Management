@@ -6,14 +6,14 @@ export const fetchEnterpriseData = async () => {
     try {
         const response = await axios.get(`${app_be_uri}/enterprise/findall`)
         return response.data;
-        
+
     } catch (error) {
         console.error("Error fetching enterprise details: ", error);
         throw error;
     }
 };
 
-export const fetchEnterpriseVerifiedData = async(admin_id)=> {
+export const fetchEnterpriseVerifiedData = async (admin_id) => {
     try {
         const response = await axios.get(`${admin_be_uri}/masteradmin/getverifiedennterprise/${admin_id}`);
         return response.data;
@@ -23,7 +23,7 @@ export const fetchEnterpriseVerifiedData = async(admin_id)=> {
     }
 }
 
-export const fetchPendingEnterpriseData = async(admin_id)=> {
+export const fetchPendingEnterpriseData = async (admin_id) => {
     try {
         const response = await axios.get(`${admin_be_uri}/masteradmin/getpendingenterprises/${admin_id}`);
         return response.data;
@@ -33,7 +33,7 @@ export const fetchPendingEnterpriseData = async(admin_id)=> {
     }
 }
 
-export const fetchEnterpriseById = async(enterprise_id) => {
+export const fetchEnterpriseById = async (enterprise_id) => {
     try {
         const response = await axios.get(`${app_be_uri}/enterprise/find/${enterprise_id}`);
         return response.data;
@@ -74,7 +74,7 @@ export const fetchJobBasicDetailsByJobId = async (job_id) => {
 }
 
 //get the job basic details to show futher details in enterprise table
-export const fetchJobBasicDetailsByEnId = async(enterprise_id) => {
+export const fetchJobBasicDetailsByEnId = async (enterprise_id) => {
     try {
         const response = await axios.get(`${app_be_uri}/job/getjobdetails/${enterprise_id}`);
         return response.data;
@@ -85,7 +85,7 @@ export const fetchJobBasicDetailsByEnId = async(enterprise_id) => {
 }
 
 //get the job status by job id
-export const fetchJobStatusByJobId = async(job_id) =>{
+export const fetchJobStatusByJobId = async (job_id) => {
     try {
         const response = await axios.get(`${app_be_uri}/job/getjobstatusforpreview/${job_id}`);
         return response.data;
@@ -127,7 +127,7 @@ export const fetchRecruiterByEId = async (enterprise_id) => {
 }
 
 // get recuriting team by r_agency_id
-export const fetchRecuritingTeam = async(r_agency_id)=>{
+export const fetchRecuritingTeam = async (r_agency_id) => {
     try {
         const response = axios.get(`${app_be_uri}/recruitingteam/getrecuritingteam/${r_agency_id}`);
         return (await response).data;
@@ -167,7 +167,7 @@ export const fetchCandidateStatusById = async (candidate_id) => {
     }
 }
 
-export const fetchCandidateDetailsByRecruiterId = async(recruiter_id) =>{
+export const fetchCandidateDetailsByRecruiterId = async (recruiter_id) => {
     try {
         const response = await axios.get(`${app_be_uri}/candidate/getbasicdetails/${recruiter_id}`);
         return response.data;
@@ -178,7 +178,7 @@ export const fetchCandidateDetailsByRecruiterId = async(recruiter_id) =>{
 }
 
 //get the account manager name and email
-export const fetchAccountManager = async(ac_manager_id) => {
+export const fetchAccountManager = async (ac_manager_id) => {
     if (!ac_manager_id) {
         console.error("Account Manager ID is undefined");
         return; // Exit the function if the ID is not defined
@@ -193,7 +193,7 @@ export const fetchAccountManager = async(ac_manager_id) => {
 };
 
 //get the all account manager details
-export const fetchAccountManagerDetails = async() => {
+export const fetchAccountManagerDetails = async () => {
     try {
         const response = await axios.get(`${admin_be_uri}/accountmanager/findall`);
         return response.data;
@@ -218,6 +218,24 @@ export const SearchEnterprises = async (query = '') => {
     }
 };
 
+// create a account manager using master admin id
+export const CreateAccountManager = async (m_admin_id, formData) => {
+    try {
+        const response = await axios.post(
+            `${admin_be_uri}/accountmanager/create/${m_admin_id}`,
+            formData,
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            }
+        );
+        return response;
+    } catch (error) {
+        console.error("Error while creating account manager : ", error);
+        throw error;
+    }
+}
 
 
 
