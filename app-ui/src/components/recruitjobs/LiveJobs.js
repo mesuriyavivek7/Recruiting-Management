@@ -1,9 +1,35 @@
-import React from 'react'
-import axios from 'axios'
+import React, {useContext} from 'react'
+import {AuthContext} from '../../context/AuthContext'
 
-export default function LiveJobs() {
-  
+//importing components
+import LiveJobsItem from './LiveJobsItem'
+
+import Loader from '../../assets/blueLoader.svg'
+
+export default function LiveJobs({jobs,loader,showNotification,setLoader,fetchLiveJobs}) {
+
+  const {user}=useContext(AuthContext)
+
+
   return (
-    <div>LiveJobs</div>
+    <div className='flex flex-col gap-2'>
+      {
+        loader?(
+          <div className='flex h-full justify-center items-center pt-14'>
+            <img className='h-12 w-12' src={Loader}></img>
+          </div>
+        ):(
+           jobs.map((job,index)=>(
+              <LiveJobsItem 
+              setLoader={setLoader}
+              fetchLiveJobs={fetchLiveJobs}
+              key={index} 
+              showNotification={showNotification} 
+              jobObj={job}></LiveJobsItem>
+           ))
+        )
+      }
+      
+    </div>
   )
 }

@@ -1,5 +1,5 @@
 import express from 'express'
-import { addNewCandidate, changeAccountStatus, checkCreadentials, checkIsAdmin, createEnterpriseTeam, getCandidateDetails, getEnterpriseTeam, getOneEnterpriseMember, getRecruiterTeamMember, getSubmitedCandidateMailId } from '../controller/enterpriseTeamController.js'
+import { addNewCandidate, changeAccountStatus, checkCreadentials, checkIsAdmin, createEnterpriseTeam, getCandidateDetails, getDashboardCount, getEnterpriseTeam, getOneEnterpriseMember, getRecruiterTeamMember, getSubmitedCandidateMailId } from '../controller/enterpriseTeamController.js'
 
 
 
@@ -34,5 +34,8 @@ router.put('/changeaccoutstatus/:eid',changeAccountStatus)
 
 //get the submited candidate mail id
 router.get('/getthecandidatemails/:ememberid',getSubmitedCandidateMailId)
+
+//get dashboard count
+router.get('/getdashboardcount/:enmemberid',getDashboardCount)
 
 export default router;

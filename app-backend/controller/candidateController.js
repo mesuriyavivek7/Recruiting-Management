@@ -287,3 +287,15 @@ export const getCandidateAttachmentFileType=async (req,res,next)=>{
      next(err)
    }
 }
+
+
+export const getJobResumeSubmitCount=async (req,res,next)=>{
+   try{
+      const {jobid,rememberid}=req.params
+
+      const count=await CANDIDATE.countDocuments({job_id:jobid,recruiter_member_id:rememberid})
+      res.status(200).json(count)
+   }catch(err){
+     next(err)
+   }
+}

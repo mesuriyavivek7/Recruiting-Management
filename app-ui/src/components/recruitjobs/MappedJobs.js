@@ -1,30 +1,13 @@
-import React, { useContext, useEffect, useState } from 'react'
-import axios from 'axios'
+import React, { useContext} from 'react'
 import { AuthContext } from '../../context/AuthContext'
 import MappedJobsItem from './MappedJobsItem'
 import Loader from '../../assets/blueLoader.svg'
 
-export default function MappedJobs() {
+export default function MappedJobs({jobs,loader,showNotification,fetchAcceptedJobs,fetchMappedJobs,setLoader}) {
   const {user}=useContext(AuthContext)
-  const [jobs,setJobs]=useState([])
-  const [loader,setLoader]=useState(false)
-  const fetchMappedJobsData=async ()=>{
-     try{
-        setLoader(true)
-        const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/job/frontmappedjobs/${user._id}`)
-        console.log(res.data)
-        setJobs(res.data)
-     }catch(err){
-        console.log(err)
-     }
-     setLoader(false)
-  }
 
-  useEffect(()=>{
-    fetchMappedJobsData()
-  },[])
   return (
-    <div className='flex flex-gap-2 flex-col'>
+    <div className='flex gap-2 flex-col'>
       {
          loader?(
           <div className='flex h-full justify-center items-center pt-14'>
@@ -32,7 +15,13 @@ export default function MappedJobs() {
           </div>
          ):(
           jobs.map((item,index)=>(
-            <MappedJobsItem key={index} jobObj={item}></MappedJobsItem>
+            <MappedJobsItem 
+            fetchAcceptedJobs={fetchAcceptedJobs} 
+            fetchMappedJobs={fetchMappedJobs} 
+            showNotification={showNotification}
+            key={index}
+            setLoader={setLoader} 
+            jobObj={item}></MappedJobsItem>
           ))
          ) 
       }

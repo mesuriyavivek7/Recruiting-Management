@@ -41,6 +41,7 @@ const recruitingteamSchema=new mongoose.Schema({
         type:Boolean,
         default:false
     },
+    favourite_jobs:[String],
     mapped_jobs:[String],
     accepted_jobs:[String],
     requested_jobs:[String],
