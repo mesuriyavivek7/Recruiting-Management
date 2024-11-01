@@ -19,19 +19,19 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 
-export const createJobs=async (req,res,next)=>{
-    try{
-       //check job is already exist or not
-       let job=await JOBS.findOne({job_id:req.body.job_id})
-       if(!job){
-        const newjob=new JOBS(req.body)
-        await newjob.save()
-        job=newjob
-       }
-       res.status(200).json(job)
-    }catch(err){
-        next(err)
+export const createJobs = async (req, res, next) => {
+  try {
+    //check job is already exist or not
+    let job = await JOBS.findOne({ job_id: req.body.job_id })
+    if (!job) {
+      const newjob = new JOBS(req.body)
+      await newjob.save()
+      job = newjob
     }
+    res.status(200).json(job)
+  } catch (err) {
+    next(err)
+  }
 }
 
 
@@ -40,7 +40,7 @@ export const getAllJobs = async (req, res) => {
   try {
     const jobs = await JOBS.find().populate('job_basic_details').exec();
     // const jobBasicDetail = await JOBBASICDETAILS.find();
-   
+
 
     return res.status(200).json(jobs);
   } catch (error) {
@@ -49,97 +49,99 @@ export const getAllJobs = async (req, res) => {
 };
 
 
-export const allotedJobToAcManager=async (req,res,next)=>{
-    try{
-      await JOBS.findByIdAndUpdate(req.params.orgid,{$set:{isDraft:false,job_status:"Pending",alloted_account_manager:req.body.ac_id}})
-      res.status(200).json("Sucessfully allocated to account manager")
-    }catch(err){
-        next(err)
-    }
+export const allotedJobToAcManager = async (req, res, next) => {
+  try {
+    await JOBS.findByIdAndUpdate(req.params.orgid, { $set: { isDraft: false, job_status: "Pending", alloted_account_manager: req.body.ac_id } })
+    res.status(200).json("Sucessfully allocated to account manager")
+  } catch (err) {
+    next(err)
+  }
 }
 
-export const activateJob=async (req,res,next)=>{
-    try{
-      await JOBS.findByIdAndUpdate(req.params.orgid,{$set:{job_status:"Active"}})
-      res.status(200).json("Successfully activated job")
-    }catch(err){
-       next(err)
-    }
+export const activateJob = async (req, res, next) => {
+  try {
+    await JOBS.findByIdAndUpdate(req.params.orgid, { $set: { job_status: "Active" } })
+    res.status(200).json("Successfully activated job")
+  } catch (err) {
+    next(err)
+  }
 }
 
-export const getAllJobDetails=async (req,res,next)=>{
-    try{
-       const jobs=await JOBS.find({enterprise_member_id:req.params.ememberid,isDraft:false})
-       const mydata=await Promise.all(jobs.map(async (item)=>{
-          const {job_id,job_status,job_basic_details,createdAt}=item
-          const basicDetails=await JOBBASICDETAILS.findById(job_basic_details)
-          const {job_title,country,city}=basicDetails
-          return (
-            {   orgjobid:item._id,
-                job_id,
-                job_title,
-                createdAt,
-                job_status,
-                country,
-                city
-            }
-          )
-       }))
-       res.status(200).json(mydata)
-    }catch(err){
-        next(err)
-    }
+export const getAllJobDetails = async (req, res, next) => {
+  try {
+    const jobs = await JOBS.find({ enterprise_member_id: req.params.ememberid, isDraft: false })
+    const mydata = await Promise.all(jobs.map(async (item) => {
+      const { job_id, job_status, job_basic_details, createdAt } = item
+      const basicDetails = await JOBBASICDETAILS.findById(job_basic_details)
+      const { job_title, country, city } = basicDetails
+      return (
+        {
+          orgjobid: item._id,
+          job_id,
+          job_title,
+          createdAt,
+          job_status,
+          country,
+          city
+        }
+      )
+    }))
+    res.status(200).json(mydata)
+  } catch (err) {
+    next(err)
+  }
 }
 
-export const getAllJobDraftDetails=async (req,res,next)=>{
-     try{
-        const draftjobs=await JOBS.find({enterprise_member_id:req.params.ememberid,isDraft:true})
-        const mydata=await Promise.all(draftjobs.map(async (item)=>{
-            const {job_id,job_basic_details,createdAt}=item
-            const basicDetails=await JOBBASICDETAILS.findById(job_basic_details)
-            const {job_title,country,city}=basicDetails
-            return (
-               { orgjobid:item._id,
-                 job_id,
-                 createdAt,
-                 job_title,
-                 country,
-                 city
-               }
-            )
-        }))
-        res.status(200).json(mydata)
-     }catch(err){ 
-        next(err)
-     }
-}
-
-
-export const deleteJobDraftWithOtherDetails=async (req,res,next)=>{
-    try{
-          await JOBBASICDETAILS.deleteOne({job_id:req.params.jobid})
-          await JOBCOMMISSION.deleteOne({job_id:req.params.jobid})
-          await JOBSOURCINGDETAILS.deleteOne({job_id:req.params.job_id})
-          //removing folder of job docs 
-          if (fs.existsSync(`uploads/jobdocs/${req.params.jobid}`)) fs.rmSync(`uploads/jobdocs/${req.params.jobid}`,{recursive:true,force:true})
-          await JOBATTACHEMENT.deleteOne({folder_name:req.params.jobid})
-          await JOBDRAFTS.deleteOne({job_id:req.params.jobid})
-          await JOBSQ.deleteOne({job_id:req.params.jobid})
-          await JOBCOMPANYINFO.deleteOne({job_id:req.params.jobid})
-          await JOBS.deleteOne({job_id:req.params.jobid})
-          res.status(200).json("Deleted Drat and other job details")
-    }catch(err){
-        next(err)
-    }
+export const getAllJobDraftDetails = async (req, res, next) => {
+  try {
+    const draftjobs = await JOBS.find({ enterprise_member_id: req.params.ememberid, isDraft: true })
+    const mydata = await Promise.all(draftjobs.map(async (item) => {
+      const { job_id, job_basic_details, createdAt } = item
+      const basicDetails = await JOBBASICDETAILS.findById(job_basic_details)
+      const { job_title, country, city } = basicDetails
+      return (
+        {
+          orgjobid: item._id,
+          job_id,
+          createdAt,
+          job_title,
+          country,
+          city
+        }
+      )
+    }))
+    res.status(200).json(mydata)
+  } catch (err) {
+    next(err)
+  }
 }
 
 
-export const getFronLiveJobDetails=async (req,res,next)=>{
-      try{
-        
-      }catch(err){
-        next(err)
-      }
+export const deleteJobDraftWithOtherDetails = async (req, res, next) => {
+  try {
+    await JOBBASICDETAILS.deleteOne({ job_id: req.params.jobid })
+    await JOBCOMMISSION.deleteOne({ job_id: req.params.jobid })
+    await JOBSOURCINGDETAILS.deleteOne({ job_id: req.params.job_id })
+    //removing folder of job docs 
+    if (fs.existsSync(`uploads/jobdocs/${req.params.jobid}`)) fs.rmSync(`uploads/jobdocs/${req.params.jobid}`, { recursive: true, force: true })
+    await JOBATTACHEMENT.deleteOne({ folder_name: req.params.jobid })
+    await JOBDRAFTS.deleteOne({ job_id: req.params.jobid })
+    await JOBSQ.deleteOne({ job_id: req.params.jobid })
+    await JOBCOMPANYINFO.deleteOne({ job_id: req.params.jobid })
+    await JOBS.deleteOne({ job_id: req.params.jobid })
+    res.status(200).json("Deleted Drat and other job details")
+  } catch (err) {
+    next(err)
+  }
+}
+
+
+export const getFronLiveJobDetails = async (req, res, next) => {
+  try {
+
+  } catch (err) {
+    next(err)
+  }
 }
 
 export const getFrontMappedJobDetails=async (req,res,next)=>{
@@ -354,6 +356,7 @@ export const getFrontAcceptedJobDetails=async (req,res,next)=>{
      }
 }
 
+
 export const getFrontFavouriteJobs=async (req,res,next)=>{
    try{
        //Getting favourite jobs for particluar recruiting member
@@ -463,6 +466,7 @@ export const getFrontFavouriteJobs=async (req,res,next)=>{
    }
 }
 
+
 export const getJobAttachmentsDetailsForCandidate=async (req,res,next)=>{
   try{
    const jobattachments=await JOBATTACHEMENT.findOne({folder_name:req.params.jobid},{evaluation_form:1,audio_brief:1,other_docs:1,_id:0})
@@ -473,240 +477,241 @@ export const getJobAttachmentsDetailsForCandidate=async (req,res,next)=>{
 }
 
 
-export const downloadEvaluationForm=async (req,res,next)=>{
-    try{
-      const doc=await JOBATTACHEMENT.findOne({folder_name:req.params.jobid},{evaluation_form:1,_id:0})
-      if(!doc) res.status(404).json("File not found..!")
-      const filepath=doc.evaluation_form.filepath
-      res.download(filepath,doc.evaluation_form.filename)
-    }catch(err){
-      next(err)
-    }
-}
-
-export const getCandidateScreeningQue=async (req,res,next)=>{
-    try{
-
-      const sq=await JOBSQ.findOne({job_id:req.params.jobid},{screening_questions:1,_id:0})
-      res.status(200).json(sq.screening_questions)
-
-    }catch(err){
-      next(err)
-    }
-}
-
-export const addCandidateProfileList=async (req,res,next)=>{
-    try{
-     await JOBS.findOneAndUpdate({job_id:req.params.jobid},{$push:{posted_candidate_profiles:req.body.orgcid}})
-     res.status(200).json("Added candidate into job candidate profile list")
-    }catch(err){
-       next(err)
-    }
-}
-
-export const getJobBasicDetailsForPreview=async (req,res,next)=>{
-    try{
-        const job=await JOBS.findOne({job_id:req.params.jobid})
-
-        const jobBasicDetails=await JOBBASICDETAILS.findById(job.job_basic_details)
-        res.status(200).json(jobBasicDetails)
-    }catch(err){
-        next(err)
-    }
-}
-
-export const getJobCompanyDetailsForPreview=async (req,res,next)=>{
-     try{
-        const job=await JOBS.findOne({job_id:req.params.jobid})
-
-        const jobCompanyDetails=await JOBCOMPANYINFO.findById(job.job_company_details)
-        res.status(200).json(jobCompanyDetails)
-     }catch(err){
-       next(err)
-     }
-}
-
-export const getJobSourcingGuidelinesForPreview=async (req,res,next)=>{
-     try{
-        const job=await JOBS.findOne({job_id:req.params.jobid})
-
-        const jobSourcingGuidelines=await JOBSOURCINGDETAILS.findById(job.job_sourcing_guidelines)
-        res.status(200).json(jobSourcingGuidelines)
-     }catch(err){
-        next(err)
-     }
-}
-
-export const getJobStatusForPreview=async (req,res,next)=>{
-   try{
-      const job=await JOBS.findOne({job_id:req.params.jobid},{job_status:1,_id:0})
-      res.status(200).json(job.job_status)
-   }catch(err){
-      next(err)
-   }
-}
-
-export const getJobCommissionDetailsForPreview=async (req,res,next)=>{
-  try{
-    const job=await JOBS.findOne({job_id:req.params.jobid})
-    const jobcommissiondetails=await JOBCOMMISSION.findById(job.job_commission_details)
-    res.status(200).json(jobcommissiondetails)
-  }catch(err){
+export const downloadEvaluationForm = async (req, res, next) => {
+  try {
+    const doc = await JOBATTACHEMENT.findOne({ folder_name: req.params.jobid }, { evaluation_form: 1, _id: 0 })
+    if (!doc) res.status(404).json("File not found..!")
+    const filepath = doc.evaluation_form.filepath
+    res.download(filepath, doc.evaluation_form.filename)
+  } catch (err) {
     next(err)
   }
 }
 
-export const createJobUpdates=async (req,res,next)=>{
-   try{
-     await JOBS.findOneAndUpdate({job_id:req.params.jobid},{$push:{job_updates:{text:req.body.text}}})
-     res.status(200).json("Created new job update")
-   }catch(err){
-     next(err)
-   }
+export const getCandidateScreeningQue = async (req, res, next) => {
+  try {
+
+    const sq = await JOBSQ.findOne({ job_id: req.params.jobid }, { screening_questions: 1, _id: 0 })
+    res.status(200).json(sq.screening_questions)
+
+  } catch (err) {
+    next(err)
+  }
+}
+
+export const addCandidateProfileList = async (req, res, next) => {
+  try {
+    await JOBS.findOneAndUpdate({ job_id: req.params.jobid }, { $push: { posted_candidate_profiles: req.body.orgcid } })
+    res.status(200).json("Added candidate into job candidate profile list")
+  } catch (err) {
+    next(err)
+  }
+}
+
+export const getJobBasicDetailsForPreview = async (req, res, next) => {
+  try {
+    const job = await JOBS.findOne({ job_id: req.params.jobid })
+
+    const jobBasicDetails = await JOBBASICDETAILS.findById(job.job_basic_details)
+    res.status(200).json(jobBasicDetails)
+  } catch (err) {
+    next(err)
+  }
+}
+
+export const getJobCompanyDetailsForPreview = async (req, res, next) => {
+  try {
+    const job = await JOBS.findOne({ job_id: req.params.jobid })
+
+    const jobCompanyDetails = await JOBCOMPANYINFO.findById(job.job_company_details)
+    res.status(200).json(jobCompanyDetails)
+  } catch (err) {
+    next(err)
+  }
+}
+
+export const getJobSourcingGuidelinesForPreview = async (req, res, next) => {
+  try {
+    const job = await JOBS.findOne({ job_id: req.params.jobid })
+
+    const jobSourcingGuidelines = await JOBSOURCINGDETAILS.findById(job.job_sourcing_guidelines)
+    res.status(200).json(jobSourcingGuidelines)
+  } catch (err) {
+    next(err)
+  }
+}
+
+export const getJobStatusForPreview = async (req, res, next) => {
+  try {
+    const job = await JOBS.findOne({ job_id: req.params.jobid }, { job_status: 1, _id: 0 })
+    res.status(200).json(job.job_status)
+  } catch (err) {
+    next(err)
+  }
+}
+
+export const getJobCommissionDetailsForPreview = async (req, res, next) => {
+  try {
+    const job = await JOBS.findOne({ job_id: req.params.jobid })
+    const jobcommissiondetails = await JOBCOMMISSION.findById(job.job_commission_details)
+    res.status(200).json(jobcommissiondetails)
+  } catch (err) {
+    next(err)
+  }
+}
+
+export const createJobUpdates = async (req, res, next) => {
+  try {
+    await JOBS.findOneAndUpdate({ job_id: req.params.jobid }, { $push: { job_updates: { text: req.body.text } } })
+    res.status(200).json("Created new job update")
+  } catch (err) {
+    next(err)
+  }
 }
 
 
-export const getJobUpdates=async (req,res,next)=>{
-    try{
-       const job=await JOBS.findOne({job_id:req.params.jobid},{job_updates:1,_id:0})
-       res.status(200).json(job.job_updates)
-    }catch(err){
-       next(err)
+export const getJobUpdates = async (req, res, next) => {
+  try {
+    const job = await JOBS.findOne({ job_id: req.params.jobid }, { job_updates: 1, _id: 0 })
+    res.status(200).json(job.job_updates)
+  } catch (err) {
+    next(err)
+  }
+}
+
+export const getJobAttachmentsDetailsForPreview = async (req, res, next) => {
+  try {
+    const job = await JOBS.findOne({ job_id: req.params.jobid })
+
+    const jobAttachments = await JOBATTACHEMENT.findById(job.job_attachments)
+    res.status(200).json(jobAttachments)
+  } catch (err) {
+    next(err)
+  }
+}
+
+export const getAcManagerNameAndMail = async (req, res, next) => {
+  try {
+    const job = await JOBS.findOne({ job_id: req.params.jobid })
+
+    if (job.alloted_account_manager) {
+      const acdetails = await axios.get(`${process.env.ADMIN_SERVER_URL}/accountmanager/getmailandname/${job.alloted_account_manager}`)
+      res.status(200).json(acdetails.data)
+    } else {
+      res.status(200).json(null)
     }
+
+  } catch (err) {
+    next(err)
+  }
 }
 
-export const getJobAttachmentsDetailsForPreview=async (req,res,next)=>{
-    try{
-      const job=await JOBS.findOne({job_id:req.params.jobid})
 
-      const jobAttachments=await JOBATTACHEMENT.findById(job.job_attachments)
-      res.status(200).json(jobAttachments)
-    }catch(err){
-       next(err)
-    }
-}
-
-export const getAcManagerNameAndMail=async (req,res,next)=>{
-   try{
-      const job=await JOBS.findOne({job_id:req.params.jobid})
-      
-      if(job.alloted_account_manager){
-         const acdetails=await axios.get(`${process.env.ADMIN_SERVER_URL}/accountmanager/getmailandname/${job.alloted_account_manager}`)
-         res.status(200).json(acdetails.data)
-      }else{
-        res.status(200).json(null)
+export const viewJobAttachments = async (req, res, next) => {
+  try {
+    const { jobid, filename } = req.params
+    const filepath = path.join(__dirname, '..', 'uploads', 'jobdocs', jobid, filename)
+    fs.access(filepath, fs.constants.F_OK, (err) => {
+      if (err) {
+        return res.status(404).json("File not found")
+      } else {
+        res.sendFile(filepath)
       }
-
-   }catch(err){
-     next(err)
-   }
+    })
+  } catch (err) {
+    next(err)
+  }
 }
 
+export const downloadJobAttachments = async (req, res, next) => {
 
-export const viewJobAttachments=async (req,res,next)=>{
-    try{
-      const {jobid,filename}=req.params
-      const filepath=path.join(__dirname,'..','uploads','jobdocs',jobid,filename)
-      fs.access(filepath,fs.constants.F_OK,(err)=>{
-        if(err){
-          return res.status(404).json("File not found")
-        }else{
-          res.sendFile(filepath)
-        }
-      })
-    }catch(err){
-      next(err)
+  try {
+    const { filePath, fileName } = req.body
+    const fileExist = fs.existsSync(filePath)
+
+    if (fileExist) {
+      res.download(filePath, fileName)
+    } else {
+      res.status(404).json("File path not found.!")
     }
+  } catch (err) {
+    next(err)
+  }
 }
 
-export const downloadJobAttachments=async (req,res,next)=>{
-    
-    try{
-      const {filePath,fileName}=req.body
-      const fileExist=fs.existsSync(filePath)
+export const getJobAttachmentFileType = async (req, res, next) => {
+  try {
+    const file = await JOBATTACHEMENT.findOne({ folder_name: req.params.jobid })
+    let jobAttachFileType = null
+    switch (req.params.filetype) {
+      case "evaluation_form":
+        jobAttachFileType = file.evaluation_form.filetype
+        break;
 
-      if(fileExist){
-        res.download(filePath,fileName)
-      }else{
-        res.status(404).json("File path not found.!")
-      }
-    }catch(err){
-       next(err)
+      case "sample_cv":
+        jobAttachFileType = file.sample_cv.filetype
+        break;
+
+      case "other_docs":
+        jobAttachFileType = file.other_docs.filetype
+        break;
+
+      case "audio_brief":
+        jobAttachFileType = file.audio_brief.filetype
+        break;
     }
+    res.status(200).json(jobAttachFileType)
+  } catch (err) {
+    next(err)
+  }
 }
 
-export const getJobAttachmentFileType=async (req,res,next)=>{
-    try{
-      const file=await JOBATTACHEMENT.findOne({folder_name:req.params.jobid})
-      let jobAttachFileType=null
-      switch(req.params.filetype){
-           case "evaluation_form":
-            jobAttachFileType=file.evaluation_form.filetype
-            break;
-           
-           case "sample_cv":
-            jobAttachFileType=file.sample_cv.filetype
-            break;
 
-           case "other_docs":
-            jobAttachFileType=file.other_docs.filetype
-            break;
-
-          case "audio_brief":
-            jobAttachFileType=file.audio_brief.filetype
-            break;
-      }
-      res.status(200).json(jobAttachFileType)
-    }catch(err){
-       next(err)
+export const getJobHotMark = async (req, res, next) => {
+  try {
+    const job = await JOBS.findOne({ job_id: req.params.jobid })
+    if (job.mark_hot_job) {
+      res.status(200).json(job.mark_hot_job)
+    } else {
+      res.status(200).json(false)
     }
+  } catch (err) {
+    next(err)
+  }
 }
 
-
-export const getJobHotMark=async (req,res,next)=>{
-    try{
-      const job=await JOBS.findOne({job_id:req.params.jobid})
-      if(job.mark_hot_job){
-        res.status(200).json(job.mark_hot_job)
-      }else{
-        res.status(200).json(false)
-      }
-    }catch(err){
-       next(err)
-    }
+export const changeJobHotMark = async (req, res, next) => {
+  try {
+    await JOBS.findOneAndUpdate({ job_id: req.params.jobid }, { $set: { mark_hot_job: !req.body.mark } })
+    res.status(200).json('Job Mark updated')
+  } catch (err) {
+    next(err)
+  }
 }
 
-export const changeJobHotMark=async (req,res,next)=>{
-   try{
-      await JOBS.findOneAndUpdate({job_id:req.params.jobid},{$set:{mark_hot_job:!req.body.mark}})
-      res.status(200).json('Job Mark updated')
-   }catch(err){
-     next(err)
-   }
-}
+export const getJobCandidatesForPreview = async (req, res, next) => {
 
-export const getJobCandidatesForPreview=async (req,res,next)=>{
-  
-   try{
-      let candidate=await JOBS.findOne({job_id:req.params.jobid},{posted_candidate_profiles:1,_id:0})
-      
-      if(candidate.posted_candidate_profiles){
+  try {
+    let candidate = await JOBS.findOne({ job_id: req.params.jobid }, { posted_candidate_profiles: 1, _id: 0 })
 
-      const candidateIds=candidate.posted_candidate_profiles
-      let candidateDetails=await Promise.all(candidateIds.map(async (id)=>{
-          const cdetails=await axios.get(`${process.env.APP_SERVER_URL}/candidate/getcandidatejobpreview/${id}`)
-          return cdetails.data
+    if (candidate.posted_candidate_profiles) {
+
+      const candidateIds = candidate.posted_candidate_profiles
+      let candidateDetails = await Promise.all(candidateIds.map(async (id) => {
+        const cdetails = await axios.get(`${process.env.APP_SERVER_URL}/candidate/getcandidatejobpreview/${id}`)
+        return cdetails.data
       }))
-       
-      res.status(200).json(candidateDetails)
-      }else{
-        res.status(200).json([])
-      }
 
-   }catch(err){
-     next(err)
-   }
+      res.status(200).json(candidateDetails)
+    } else {
+      res.status(200).json([])
+    }
+
+  } catch (err) {
+    next(err)
+  }
 }
+
 
 export const getLiveJobs=async (req,res,next)=>{
   try{
@@ -758,3 +763,15 @@ export const addJobMapRequest=async (req,res,next)=>{
      next(err)
    }
 }
+
+export const SearchJobByTitle = async (req, res, next) => {
+  const searchQuery = req.query.q;
+  try {
+    console.log(`Searching for job title: ${searchQuery}`);
+    const jobs = await JOBBASICDETAILS.find({ job_title: { $regex: searchQuery, $options: 'i' } });
+    res.json(jobs);
+  } catch (error) {
+    next(error);
+  }
+};
+

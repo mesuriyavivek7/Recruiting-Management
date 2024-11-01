@@ -9,6 +9,7 @@ import Notification from '../../../Components/Notification';
 import { DataGrid } from '@mui/x-data-grid';
 import { columns } from './NewRowColData ';
 import { FaEnvelope, FaPhone, FaBriefcase, FaBuilding, FaUsers, FaGlobe, FaMapMarkerAlt, FaCity } from 'react-icons/fa';
+import { fetchEnterpriseById, fetchEnterpriseVerifiedData, fetchPendingEnterpriseData } from '../../../services/api';
 
 
 const NewEnterpriseData = () => {
@@ -119,7 +120,7 @@ const NewEnterpriseData = () => {
   const handleRowClick = (item) => {
     setSelectedRow(item);
     if (item?.allocated_account_manager) {
-        fetchAccountManager(item?.allocated_account_manager);
+      fetchAccountManager(item?.allocated_account_manager);
     }
     setOpen(true);
   };
@@ -136,12 +137,19 @@ const NewEnterpriseData = () => {
 
   const fetchEnterprise = async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_APP_URL}/enterprise/adminpending`);
-      const rowsWithIds = response.data.map((item, index) => ({
-        ...item,
-        id: index + 1
-      }));
-      setNewEnterprise(rowsWithIds);
+      const enterpriseIdArray = await fetchPendingEnterpriseData(myValue.userData._id);
+
+      if (Array.isArray(enterpriseIdArray) && enterpriseIdArray.length > 0) {
+        const enterpriseDetails = await Promise.all(
+          enterpriseIdArray.map(async (en_id, index) => {
+            const data = await fetchEnterpriseById(en_id);
+            return { ...data, id: index + 1 };
+          })
+        );
+        setNewEnterprise(enterpriseDetails);
+      } else {
+        console.error("Expected an array of pending enterprises, but received:", enterpriseIdArray);
+      }
     } catch (err) {
       showNotification('Error fetching enterprises!', 'failure');
     }
@@ -149,15 +157,15 @@ const NewEnterpriseData = () => {
 
   const fetchAccountManager = async (ac_manager_id) => {
     if (!ac_manager_id) {
-        console.error("Account Manager ID is undefined");
-        return; // Exit the function if the ID is not defined
+      console.error("Account Manager ID is undefined");
+      return; // Exit the function if the ID is not defined
     }
     try {
-        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/accountmanager/getmailandname/${ac_manager_id}`);
-        return response.data;
+      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/accountmanager/getmailandname/${ac_manager_id}`);
+      return response.data;
     } catch (error) {
-        console.error("Error while fetching account manager details: ", error);
-        throw error;
+      console.error("Error while fetching account manager details: ", error);
+      throw error;
     }
   };
 
@@ -177,15 +185,49 @@ const NewEnterpriseData = () => {
             rowHeight={80}
             onRowClick={(params) => handleRowClick(params?.row)}
             pageSize={rowsPerPage}
-            pagination={false}
+           // pagination={false}
+           initialState={{
+            pagination: {
+              paginationModel: { page: 0, pageSize: 10 },
+            },
+          }}
+          pageSizeOptions={[5, 10]}
             sx={{
               '& .MuiDataGrid-root': {
                 fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.09rem' },
               },
+              ' [class^=MuiDataGrid]': { border: 'none' },
               '& .MuiDataGrid-columnHeader': {
                 fontWeight: 'bold !important',
                 fontSize: { xs: '0.875rem', sm: '1rem', md: '0.7rem', lg: '1.1rem' },
-                backgroundColor: '#e3e6ea',
+                color: 'black',
+                '&:focus': {
+                  outline: 'none',
+                  border: 'none',
+                },
+                backgroundColor: '#e3e6ea !important',
+                minHeight: '60px',
+              },
+              '& .MuiDataGrid-columnHeader:focus-within': {
+                outline: 'none',
+              },
+              '& .MuiDataGrid-columnSeparator': {
+                color: 'blue',
+                visibility: 'visible',
+              },
+              '& .MuiDataGrid-cellContent': {
+                display: 'flex',
+                alignItems: 'center',
+              },
+              '& .MuiDataGrid-cell': {
+                minHeight: '2.5rem',
+                fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem' },
+              },
+              '& .MuiDataGrid-row': {
+                borderBottom: 'none',
+              },
+              '& .MuiDataGrid-cell:focus': {
+                outline: 'none',
               },
             }}
           />
@@ -362,18 +404,7 @@ const NewEnterpriseData = () => {
       {notification && (
         <Notification message={notification.message} type={notification.type} />
       )}
-      {!loading && (
-        <TablePagination
-          component="div"
-          count={newEnterprise.length}
-          page={page} // Current page number
-          onPageChange={handleChangePage} // Handler for changing page
-          rowsPerPage={rowsPerPage} // Rows per page number
-          onRowsPerPageChange={handleChangeRowsPerPage} // Handler for changing rows per page
-          rowsPerPageOptions={[5, 10, 25]} // Rows per page options
-          labelRowsPerPage="Rows per page" // Label
-        />
-      )}
+      
     </>
   );
 };

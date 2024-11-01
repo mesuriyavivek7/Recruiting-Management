@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { Box, Card, CircularProgress, TablePagination } from '@mui/material';
-import { RcCandidatecols } from './RowColData'; 
+import { RcCandidatecols } from './RowColData';
 import { fetchCandidateDetailsByRecruiterId, fetchCandidateStatusById, fetchJobBasicDetailsByJobId } from '../../../services/api';
 import { cstatus } from '../../../constants/jobStatusMapping';
 
@@ -13,26 +13,22 @@ const calculateRowHeight = (params) => {
 const AdminCandidate = ({ recuritingAgenciesDetails }) => {
   const [RcCandidaterow, setRcCandidaterow] = useState([]);
   const [selectedRowId, setSelectedRowId] = useState(null);
-  const [loading, setLoading] = useState(false); // Loader state
+  const [loading, setLoading] = useState(false);
 
-  // State for pagination
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const generateRowsFromDetails = async (details) => {
     const data = await fetchCandidateDetailsByRecruiterId(details._id);
 
-    // Generate rows in the desired format
     const rows = await Promise.all(
       data.map(async (candidateDetails, index) => {
         const c_id = candidateDetails.candidate_id;
-
         const candidate = await fetchCandidateStatusById(c_id);
         const job_basic_details = await fetchJobBasicDetailsByJobId(candidate.job_id);
 
-        // Get candidate status, defaulting to "Status Unavailable" if not found
         const candidateStatusKey = candidate.candidate_status || "Status Unavailable";
-        const candidateStatus = cstatus.get(candidateStatusKey) || candidateStatusKey; // Map status or use original
+        const candidateStatus = cstatus.get(candidateStatusKey) || candidateStatusKey;
 
         return {
           _id: String(index + 1),
@@ -52,7 +48,7 @@ const AdminCandidate = ({ recuritingAgenciesDetails }) => {
       })
     );
 
-    return rows; 
+    return rows;
   };
 
   useEffect(() => {
@@ -67,10 +63,8 @@ const AdminCandidate = ({ recuritingAgenciesDetails }) => {
 
   const handleRowClick = (id) => {
     setSelectedRowId(id);
-    // navigate(`/master_admin/candidate/${id}`);
   };
 
-  // Handle pagination change
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -80,7 +74,6 @@ const AdminCandidate = ({ recuritingAgenciesDetails }) => {
     setPage(0);
   };
 
-  // Calculate the rows to display
   const paginatedRows = RcCandidaterow.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   return (
@@ -97,70 +90,46 @@ const AdminCandidate = ({ recuritingAgenciesDetails }) => {
               columns={RcCandidatecols}
               rowHeight={80}
               onRowClick={(params) => handleRowClick(params.id)}
-              getRowId={(row) => row._id} // Specify the custom ID field
+              getRowId={(row) => row._id}
               getRowHeight={calculateRowHeight}
-              pagination={false}
               pageSize={rowsPerPage}
-              hideFooterPagination={true}
+              initialState={{
+                pagination: {
+                  paginationModel: { page: 0, pageSize: 10 },
+                },
+              }}
+              pageSizeOptions={[5, 10]}
               disableSelectionOnClick
               sx={{
-                '& .MuiDataGrid-root': {
-                  fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.09rem' },
-                },
+                '& .MuiDataGrid-root': { fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.09rem' } },
                 ' [class^=MuiDataGrid]': { border: 'none' },
                 '& .MuiDataGrid-columnHeader': {
-                  fontWeight: 'bold !impotant',
+                  fontWeight: 'bold',
                   fontSize: { xs: '0.875rem', sm: '1rem', md: '0.7rem', lg: '1.1rem' },
                   color: 'black',
-                  '&:focus': {
-                    outline: 'none',
-                    border: 'none',
-                  },
-                  backgroundColor: '#e3e6ea !important',
+                  backgroundColor: '#e3e6ea',
                   minHeight: '60px',
                 },
-                '& .MuiDataGrid-columnHeader:focus-within': {
-                  outline: 'none',
-                },
-                '& .MuiDataGrid-columnSeparator': {
-                  color: 'blue',
-                  visibility: 'visible',
-                },
+                '& .MuiDataGrid-columnHeader:focus-within, & .MuiDataGrid-cell:focus': { outline: 'none' },
+                '& .MuiDataGrid-columnSeparator': { color: 'blue', visibility: 'visible' },
                 '& .MuiDataGrid-cell': {
                   fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem' },
-                },
-                '& .MuiDataGrid-cellContent': {
-                  display: 'flex',
-                  alignItems: 'center',
-                },
-                '& .MuiDataGrid-cell': {
                   minHeight: '2.5rem',
                 },
-                '& .MuiDataGrid-cell': {
-                  fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem' },
-                },
-                '& .MuiDataGrid-row': {
-                  borderBottom: 'none',
-                },
-                '& .MuiDataGrid-cell:focus': {
-                  outline: 'none',
-                },
+                '& .MuiDataGrid-cellContent': { display: 'flex', alignItems: 'center' },
+                '& .MuiDataGrid-row': { borderBottom: 'none' },
               }}
             />
           </div>
+          <TablePagination
+            component="div"
+            count={RcCandidaterow.length}
+            page={page}
+            onPageChange={handleChangePage}
+            rowsPerPage={rowsPerPage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
         </Card>
-      )}
-      {!loading && (
-        <TablePagination
-          component="div"
-          count={RcCandidaterow.length}
-          page={page}
-          onPageChange={handleChangePage}
-          rowsPerPage={rowsPerPage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-          rowsPerPageOptions={[5, 10, 25]}
-          labelRowsPerPage="Rows per page"
-        />
       )}
     </div>
   );

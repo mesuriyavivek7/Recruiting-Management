@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 import {
   Card, Button, Dialog, DialogTitle, TextField,
   DialogContentText, DialogContent, DialogActions,
-  TablePagination,
+  
   FormControl,
   InputLabel,
   Select,
@@ -184,9 +184,15 @@ const NewRecruitingAgencyData = () => {
           rowHeight={80} 
  
           onRowClick={handleRowClick}
-          pagination={false} 
+          //pagination={false} 
           pageSize={rowsPerPage} 
-          hideFooterPagination={true} 
+          //hideFooterPagination={true} 
+          initialState={{
+            pagination: {
+              paginationModel: { page: 0, pageSize: 10 },
+            },
+          }}
+          pageSizeOptions={[5, 10]}
         
            sx={{
             '& .MuiDataGrid-root': {
@@ -424,17 +430,7 @@ const NewRecruitingAgencyData = () => {
         )}
       </Card>)}
 
-      {!loading && (
-      <TablePagination
-        component="div"
-        count={paginatedRows.length} // Total number of rows
-        page={page} // Current page number
-        onPageChange={handleChangePage} // Handler for changing page
-        rowsPerPage={rowsPerPage} // Rows per page number
-        onRowsPerPageChange={handleChangeRowsPerPage} // Handler for changing rows per page
-        rowsPerPageOptions={[5, 10, 25]} // Rows per page options
-        labelRowsPerPage="Rows per page" // Label
-      />)}
+      
     </div>
     </div>
   );

@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Box, Card, CircularProgress, TablePagination } from '@mui/material';
+import { Box, Card, CircularProgress } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { columns, rows } from './RowColDataOfAll'; // Import columns configuration
 
@@ -62,9 +62,15 @@ const AdminMappedCandidateData = () => {
             onRowClick={(params) => handleRowClick(params.id)}
             getRowId={(row) => row._id} // Specify the custom ID field
             getRowHeight={calculateRowHeight}
-            pagination={false}
+           // pagination={false}
             pageSize={rowsPerPage}
-            hideFooterPagination={true}
+            initialState={{
+              pagination: {
+                paginationModel: { page: 0, pageSize: 10 },
+              },
+            }}
+            pageSizeOptions={[5, 10]}
+           // hideFooterPagination={true}
             disableSelectionOnClick
             sx={{
               '& .MuiDataGrid-root': {
@@ -126,16 +132,7 @@ const AdminMappedCandidateData = () => {
           />
         </div>
       </Card>)}
-      <TablePagination
-        component="div"
-        count={rows.length}
-        page={page}
-        onPageChange={handleChangePage}
-        rowsPerPage={rowsPerPage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-        rowsPerPageOptions={[5, 10, 25]}
-        labelRowsPerPage="Rows per page"
-      />
+      
     </div>
   );
 };

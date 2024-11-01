@@ -1,36 +1,30 @@
-
 import nodemailer from 'nodemailer'
 import dotenv from 'dotenv'
-import jwt from 'jsonwebtoken'
-
 
 dotenv.config()
 
-let transpoter=nodemailer.createTransport({
-    service:'gmail',
-    host:'smtp.gmail.com',
-    port:587,
-    auth:{
-        user:process.env.USER_MAIL,
-        pass:process.env.USER_APP_PASS
-       
+let transpoter = nodemailer.createTransport({
+    service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 587,
+    auth: {
+        user: process.env.USER_MAIL,
+        pass: process.env.USER_APP_PASS
+
     }
 })
 
+export const sendMail = async (req, res) => {
+    const { fullName, email, password } = req.body
 
-
-export const sendMail=async (req,res)=>{
-
-    const {fullName,email,password}=req.body
-
-    let mailOption={
-        from:{
-            name:"UpHire",
-            address:'vivekmesuriya110@gmail.com'
+    let mailOption = {
+        from: {
+            name: "UpHire",
+            address: 'vivekmesuriya110@gmail.com'
         },
-        to:email,
-        subject:"For account manager access",
-        html:`<!DOCTYPE html>
+        to: email,
+        subject: "For account manager access",
+        html: `<!DOCTYPE html>
         <html lang="en">
         <head>
             <meta charset="UTF-8">
@@ -103,10 +97,10 @@ export const sendMail=async (req,res)=>{
                        </div>
                        <div class="cred-data">
                          <span>Password:</span>
-                         <span>uphire</span>
+                         <span>${password}</span>
                        </div>
                     </div>
-                    
+
                     <p>The Uphire Team</p>
                 </div>
                 <div class="footer">
@@ -117,18 +111,12 @@ export const sendMail=async (req,res)=>{
         </html>
         `
     }
-   
 
-    transpoter.sendMail(mailOption,(error,info)=>{
-        if(error){
+    transpoter.sendMail(mailOption, (error, info) => {
+        if (error) {
             console.log(error)
             res.status(402).send('there is something wrong')
         }
-   
-
         res.status(200).send(`mail sended successfully `)
     })
-    
-
-    
 }
