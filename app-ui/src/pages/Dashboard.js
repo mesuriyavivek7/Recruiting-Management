@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
@@ -6,9 +6,6 @@ import { useNavigate } from 'react-router-dom';
 // import MyResponsivePie from './Charts/pie';
 import Polar from './Charts/Polar'; 
 import MyResponsiveRadialBar from './Charts/Radial'; 
-
-
-
 
 
 import PhoneInput from "react-phone-input-2";
@@ -24,6 +21,11 @@ import Notification from '../components/Notification';
 
 const Dashboard = () => {
   const {user}=useContext(AuthContext)
+  const [dashboardCounts,setDashboardCounts]=useState({
+    all_jobs_count:0,
+    active_jobs:0,
+    pending_jobs:0
+  })
   const [teamFormData,setTeamFormData]=useState({
     full_name:'',
     email:'',
@@ -35,14 +37,20 @@ const Dashboard = () => {
   const [teamLoad,setTeamLoad]=useState(false)
   const [notification,setNotification]=useState(null)
 
-// 
+  const fetchDashboardCount=async ()=>{
+     try{
+       const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/enterpriseteam/getdashboardcount/${user._id}`)
+       if(res.data) setDashboardCounts(res.data)
+     }catch(err){
+       showNotification("Something went wrong....",'failure')
+       console.log(err)
+     }
+  }
 
-// const pieData = [
-//   { id: 'JavaScript', value: 55 },
-//   { id: 'Python', value: 25 },
-//   { id: 'Java', value: 20 },
-// ];
-
+  useEffect(()=>{
+     fetchDashboardCount()
+  },[])
+  
 const polarData = [
   { id: 'React', value: 40 },
   { id: 'Angular', value: 30 },
@@ -67,24 +75,6 @@ const radialData = [
       ]
   }
 ];
-
-
-// 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 // for add new job(chaange by fenee)
@@ -298,13 +288,13 @@ const radialData = [
            </div>
          
            <div className='custom-div flex-1 flex flex-col gap-2'>
-              <h1 className='text-2xl'>0</h1>
-              <p className='text-gray-600'>Total Open Jobs</p>
+              <h1 className='text-2xl'>{dashboardCounts.all_jobs_count}</h1>
+              <p className='text-gray-600'>Total Posted Jobs</p>
            </div>
            <div className='custom-div flex-1 flex flex-col gap-2'>
               <div className='flex gap-2 items-center'>
                 <div className='h-2 w-2 bg-green-500 rounded-full'></div>
-                <h1 className='text-2xl'>0</h1>
+                <h1 className='text-2xl'>{dashboardCounts.active_jobs}</h1>
               </div>
               <p className='text-gray-600'>Active Jobs</p>
            </div>
@@ -318,7 +308,7 @@ const radialData = [
            <div className='custom-div flex-1 flex flex-col gap-2'>
               <div className='flex gap-2 items-center'>
                 <div className='h-2 w-2 bg-purple-500 rounded-full'></div>
-                <h1 className='text-2xl'>0</h1>
+                <h1 className='text-2xl'>{dashboardCounts.pending_jobs}</h1>
               </div>
               <p className='text-gray-600'>Pending Jobs</p>
            </div>

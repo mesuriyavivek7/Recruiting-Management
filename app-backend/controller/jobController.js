@@ -7,7 +7,7 @@ import JOBDRAFTS from "../models/JOBDRAFTS.js";
 import JOBSOURCINGDETAILS from "../models/JOBSOURCINGDETAILS.js";
 import JOBSQ from "../models/JOBSQ.js";
 import RECRUITINGTEAM from "../models/RECRUITINGTEAM.js";
-
+import { filterOutLiveJobs } from "../helper/filterJobs.js";
 import path from 'path'
 import { fileURLToPath } from 'url';
 import fs from 'fs'
@@ -144,211 +144,334 @@ export const getFronLiveJobDetails = async (req, res, next) => {
   }
 }
 
-export const getFrontMappedJobDetails = async (req, res, next) => {
+export const getFrontMappedJobDetails=async (req,res,next)=>{
 
-  try {
-    // getting mapped job list data for a particular recruiting team member
-    const joblist = await RECRUITINGTEAM.findById(req.params.rteamid, { _id: 0, mapped_jobs: 1 });
-
-    if (!joblist) {
-      return res.status(404).json({ error: "Recruiting team not found" });
-    }
-
-    const mappedjobs = await Promise.all(
-      joblist.mapped_jobs.map(async (item) => {
-        try {
-          // get job id and allotted account manager id for the original job id
-          const jobObj = await JOBS.findById(item, { job_id: 1, alloted_account_manager: 1, _id: 1 });
-          if (!jobObj) {
-            throw new Error("Job not found");
-          }
-
-          const basicdetails = await JOBBASICDETAILS.findOne({ job_id: jobObj.job_id });
-          const commision = await JOBCOMMISSION.findOne({ job_id: jobObj.job_id });
-          const company = await JOBCOMPANYINFO.findOne({ job_id: jobObj.job_id });
-
-          if (!basicdetails || !commision || !company) {
-            throw new Error("Job details missing");
-          }
-
-          // request to admin server for account manager email
-          const acmanagerResponse = await axios.get(`${process.env.ADMIN_SERVER_URL}/accountmanager/acmanageremail/${jobObj.alloted_account_manager}`);
-          const acmanageremail = acmanagerResponse.data.email;
-
-          // build response object
-          const result = {
-            orgjobid: jobObj._id,
-            job_id: jobObj.job_id,
-            job_title: basicdetails.job_title,
-            country: basicdetails.country,
-            city: basicdetails.city,
-            positions: basicdetails.positions,
-            experience: basicdetails.experience,
-            domain: basicdetails.job_domain,
-            cp_name: company.client_name,
-            ac_manager: acmanageremail,
-            work_type: commision.work_type,
-            // additional logic based on work_type (full_time or contract)
-            ...(commision.work_type === "full_time"
-              ? commision.work_details.full_time.full_time_salary_type === "Fixed"
-                ? {
-                  full_time_salary_type: "Fixed",
-                  full_time_salary_currency: commision.work_details.full_time.full_time_salary_currency,
-                  fixed_salary: commision.work_details.full_time.fixed_salary,
-                }
-                : {
-                  full_time_salary_type: "Range",
-                  full_time_salary_currency: commision.work_details.full_time.full_time_salary_currency,
-                  min_salary: commision.work_details.full_time.min_salary,
-                  max_salary: commision.work_details.full_time.max_salary,
-                }
-              : commision.work_details.contract.contract_pay_rate_type === "Fixed"
-                ? {
-                  contract_pay_rate_type: "Fixed",
-                  contract_pay_currency: commision.work_details.contract.contract_pay_currency,
-                  contract_pay_cycle: commision.work_details.contract.contract_pay_cycle,
-                  fix_contract_pay: commision.work_details.contract.fix_contract_pay,
-                }
-                : {
-                  contract_pay_rate_type: "Range",
-                  contract_pay_currency: commision.work_details.contract.contract_pay_currency,
-                  contract_pay_cycle: commision.work_details.contract.contract_pay_cycle,
-                  min_contract_pay: commision.work_details.contract.min_contract_pay,
-                  max_contract_pay: commision.work_details.contract.max_contract_pay,
-                }),
-            commission_type: commision.commission_details.commission_type,
-            commission_pay_out:
-              commision.commission_details.commission_type === "Percentage"
-                ? commision.commission_details.commission_percentage_pay
-                : commision.commission_details.commission_fix_pay,
-          };
-
-          return result;
-        } catch (err) {
-          // Handle the error for this specific job
-          console.error(`Error processing job ${item}:`, err.message);
-          return null; // Skip this job if there's an error
+    try {
+        // getting mapped job list data for a particular recruiting team member
+        const joblist = await RECRUITINGTEAM.findById(req.params.rteamid, {_id:0, mapped_jobs: 1 });
+  
+        if (!joblist) {
+          return res.status(404).json({ error: "Recruiting team not found" });
         }
-      })
-    );
-
-    // Filter out any null responses (failed jobs)
-    const filteredJobs = mappedjobs.filter((job) => job !== null);
-
-    res.status(200).json(filteredJobs);
-  } catch (err) {
-    // Handle any general errors
-    next(err);
-  }
-
+    
+        const mappedjobs = await Promise.all(
+          joblist.mapped_jobs.map(async (item) => {
+            try {
+              // get job id and allotted account manager id for the original job id
+              const jobObj = await JOBS.findById(item, { job_id: 1, alloted_account_manager: 1,mark_hot_job:1, _id: 1 });
+              if (!jobObj) {
+                throw new Error("Job not found");
+              }
+    
+              const basicdetails = await JOBBASICDETAILS.findOne({ job_id: jobObj.job_id });
+              const commision = await JOBCOMMISSION.findOne({ job_id: jobObj.job_id });
+              const company = await JOBCOMPANYINFO.findOne({ job_id: jobObj.job_id });
+    
+              if (!basicdetails || !commision || !company) {
+                throw new Error("Job details missing");
+              }
+    
+              // request to admin server for account manager email
+              const acmanagerResponse = await axios.get(`${process.env.ADMIN_SERVER_URL}/accountmanager/acmanageremail/${jobObj.alloted_account_manager}`);
+              const acmanageremail = acmanagerResponse.data.email;
+    
+              // build response object
+              const result = {
+                orgjobid:jobObj._id,
+                job_id: jobObj.job_id,
+                job_title: basicdetails.job_title,
+                isRemoteWork: basicdetails.permanent_remote_work,
+                country: basicdetails.country,
+                city: basicdetails.city,
+                positions: basicdetails.positions,
+                experience: basicdetails.experience,
+                domain: basicdetails.job_domain,
+                cp_name: company.client_name,
+                ac_manager: acmanageremail,
+                work_type: commision.work_type,
+                isHotJob:jobObj.mark_hot_job,
+                // additional logic based on work_type (full_time or contract)
+                ...(commision.work_type === "full_time"
+                  ? commision.work_details.full_time.full_time_salary_type === "Fixed"
+                    ? {
+                        full_time_salary_type: "Fixed",
+                        full_time_salary_currency: commision.work_details.full_time.full_time_salary_currency,
+                        fixed_salary: commision.work_details.full_time.fixed_salary,
+                      }
+                    : {
+                        full_time_salary_type: "Range",
+                        full_time_salary_currency: commision.work_details.full_time.full_time_salary_currency,
+                        min_salary: commision.work_details.full_time.min_salary,
+                        max_salary: commision.work_details.full_time.max_salary,
+                      }
+                  : commision.work_details.contract.contract_pay_rate_type === "Fixed"
+                  ? {
+                      contract_pay_rate_type: "Fixed",
+                      contract_pay_currency: commision.work_details.contract.contract_pay_currency,
+                      contract_pay_cycle: commision.work_details.contract.contract_pay_cycle,
+                      fix_contract_pay: commision.work_details.contract.fix_contract_pay,
+                    }
+                  : {
+                      contract_pay_rate_type: "Range",
+                      contract_pay_currency: commision.work_details.contract.contract_pay_currency,
+                      contract_pay_cycle: commision.work_details.contract.contract_pay_cycle,
+                      min_contract_pay: commision.work_details.contract.min_contract_pay,
+                      max_contract_pay: commision.work_details.contract.max_contract_pay,
+                    }),
+                commission_type: commision.commission_details.commission_type,
+                commission_pay_out:
+                  commision.commission_details.commission_type === "Percentage"
+                    ? commision.commission_details.commission_percentage_pay
+                    : commision.commission_details.commission_fix_pay,
+              };
+    
+              return result;
+            } catch (err) {
+              // Handle the error for this specific job
+              console.error(`Error processing job ${item}:`, err.message);
+              return null; // Skip this job if there's an error
+            }
+          })
+        );
+    
+        // Filter out any null responses (failed jobs)
+        const filteredJobs = mappedjobs.filter((job) => job !== null);
+    
+        res.status(200).json(filteredJobs);
+      } catch (err) {
+        // Handle any general errors
+        next(err);
+      }
+  
 }
 
 
 
-export const getFrontAcceptedJobDetails = async (req, res, next) => {
-  try {
+export const getFrontAcceptedJobDetails=async (req,res,next)=>{
+     try{
 
 
-    // getting mapped job list data for a particular recruiting team member
-    const joblist = await RECRUITINGTEAM.findById(req.params.rteamid, { _id: 0, accepted_jobs: 1 });
+      // getting accepted job list data for a particular recruiting team member
+      const joblist = await RECRUITINGTEAM.findById(req.params.rteamid, {_id:0, accepted_jobs:1 });
+  
+      if (!joblist) {
+        return res.status(404).json({ error: "Accepted jobs not found" });
+      }
+  
+      const acceptedjobs = await Promise.all(
+        joblist.accepted_jobs.map(async (item) => {
+          try {
+            // get job id and allotted account manager id for the original job id
+            const jobObj = await JOBS.findById(item, { job_id: 1, job_updates:1, alloted_account_manager: 1, _id: 1 });
+            if (!jobObj) {
+              throw new Error("Job not found");
+            }
+  
+            const basicdetails = await JOBBASICDETAILS.findOne({ job_id: jobObj.job_id });
+            const commision = await JOBCOMMISSION.findOne({ job_id: jobObj.job_id });
+            const company = await JOBCOMPANYINFO.findOne({ job_id: jobObj.job_id });
+  
+            if (!basicdetails || !commision || !company) {
+              throw new Error("Job details missing");
+            }
+            // for resume submit count
+            const resumeSubmitCount=await axios.get(`${process.env.APP_SERVER_URL}/candidate/jobresumesubmitcount/${jobObj.job_id}/${req.params.rteamid}`)
 
-    if (!joblist) {
-      return res.status(404).json({ error: "Recruiting team not found" });
-    }
-
-    const acceptedjobs = await Promise.all(
-      joblist.accepted_jobs.map(async (item) => {
-        try {
-          // get job id and allotted account manager id for the original job id
-          const jobObj = await JOBS.findById(item, { job_id: 1, alloted_account_manager: 1, _id: 1 });
-          if (!jobObj) {
-            throw new Error("Job not found");
-          }
-
-          const basicdetails = await JOBBASICDETAILS.findOne({ job_id: jobObj.job_id });
-          const commision = await JOBCOMMISSION.findOne({ job_id: jobObj.job_id });
-          const company = await JOBCOMPANYINFO.findOne({ job_id: jobObj.job_id });
-
-          if (!basicdetails || !commision || !company) {
-            throw new Error("Job details missing");
-          }
-
-          // request to admin server for account manager email
-          const acmanagerResponse = await axios.get(`${process.env.ADMIN_SERVER_URL}/accountmanager/acmanageremail/${jobObj.alloted_account_manager}`);
-          const acmanageremail = acmanagerResponse.data.email;
-
-          // build response object
-          const result = {
-            orgjobid: jobObj._id,
-            job_id: jobObj.job_id,
-            job_title: basicdetails.job_title,
-            country: basicdetails.country,
-            city: basicdetails.city,
-            positions: basicdetails.positions,
-            experience: basicdetails.experience,
-            domain: basicdetails.job_domain,
-            cp_name: company.client_name,
-            ac_manager: acmanageremail,
-            work_type: commision.work_type,
-            // additional logic based on work_type (full_time or contract)
-            ...(commision.work_type === "full_time"
-              ? commision.work_details.full_time.full_time_salary_type === "Fixed"
+            // check for current job is favourite for rmember
+            const isFavouriteJob=await axios.get(`${process.env.APP_SERVER_URL}/recruitingteam/isfavouritejob/${item}/${req.params.rteamid}`)
+  
+            // request to admin server for account manager email
+            const acmanagerResponse = await axios.get(`${process.env.ADMIN_SERVER_URL}/accountmanager/acmanageremail/${jobObj.alloted_account_manager}`);
+            const acmanageremail = acmanagerResponse.data.email;
+  
+            // build response object
+            const result = {
+              orgjobid:jobObj._id,
+              job_id: jobObj.job_id,
+              job_title: basicdetails.job_title,
+              country: basicdetails.country,
+              city: basicdetails.city,
+              isRemoteWork: basicdetails.permanent_remote_work,
+              isHotJob:jobObj.mark_hot_job,
+              resumeSubmitCount:resumeSubmitCount.data,
+              jobUpdates:jobObj.job_updates,
+              isFavouriteJob:isFavouriteJob.data,
+              positions: basicdetails.positions,
+              experience: basicdetails.experience,
+              domain: basicdetails.job_domain,
+              cp_name: company.client_name,
+              ac_manager: acmanageremail,
+              work_type: commision.work_type,
+              // additional logic based on work_type (full_time or contract)
+              ...(commision.work_type === "full_time"
+                ? commision.work_details.full_time.full_time_salary_type === "Fixed"
+                  ? {
+                      full_time_salary_type: "Fixed",
+                      full_time_salary_currency: commision.work_details.full_time.full_time_salary_currency,
+                      fixed_salary: commision.work_details.full_time.fixed_salary,
+                    }
+                  : {
+                      full_time_salary_type: "Range",
+                      full_time_salary_currency: commision.work_details.full_time.full_time_salary_currency,
+                      min_salary: commision.work_details.full_time.min_salary,
+                      max_salary: commision.work_details.full_time.max_salary,
+                    }
+                : commision.work_details.contract.contract_pay_rate_type === "Fixed"
                 ? {
-                  full_time_salary_type: "Fixed",
-                  full_time_salary_currency: commision.work_details.full_time.full_time_salary_currency,
-                  fixed_salary: commision.work_details.full_time.fixed_salary,
-                }
+                    contract_pay_rate_type: "Fixed",
+                    contract_pay_currency: commision.work_details.contract.contract_pay_currency,
+                    contract_pay_cycle: commision.work_details.contract.contract_pay_cycle,
+                    fix_contract_pay: commision.work_details.contract.fix_contract_pay,
+                  }
                 : {
-                  full_time_salary_type: "Range",
-                  full_time_salary_currency: commision.work_details.full_time.full_time_salary_currency,
-                  min_salary: commision.work_details.full_time.min_salary,
-                  max_salary: commision.work_details.full_time.max_salary,
-                }
-              : commision.work_details.contract.contract_pay_rate_type === "Fixed"
-                ? {
-                  contract_pay_rate_type: "Fixed",
-                  contract_pay_currency: commision.work_details.contract.contract_pay_currency,
-                  contract_pay_cycle: commision.work_details.contract.contract_pay_cycle,
-                  fix_contract_pay: commision.work_details.contract.fix_contract_pay,
-                }
-                : {
-                  contract_pay_rate_type: "Range",
-                  contract_pay_currency: commision.work_details.contract.contract_pay_currency,
-                  contract_pay_cycle: commision.work_details.contract.contract_pay_cycle,
-                  min_contract_pay: commision.work_details.contract.min_contract_pay,
-                  max_contract_pay: commision.work_details.contract.max_contract_pay,
-                }),
-            commission_type: commision.commission_details.commission_type,
-            commission_pay_out:
-              commision.commission_details.commission_type === "Percentage"
-                ? commision.commission_details.commission_percentage_pay
-                : commision.commission_details.commission_fix_pay,
-          };
+                    contract_pay_rate_type: "Range",
+                    contract_pay_currency: commision.work_details.contract.contract_pay_currency,
+                    contract_pay_cycle: commision.work_details.contract.contract_pay_cycle,
+                    min_contract_pay: commision.work_details.contract.min_contract_pay,
+                    max_contract_pay: commision.work_details.contract.max_contract_pay,
+                  }),
+              commission_type: commision.commission_details.commission_type,
+              commission_pay_out:
+                commision.commission_details.commission_type === "Percentage"
+                  ? commision.commission_details.commission_percentage_pay
+                  : commision.commission_details.commission_fix_pay,
+            };
+  
+            return result;
+          } catch (err) {
+            // Handle the error for this specific job
+            console.error(`Error processing job ${item}:`, err.message);
+            return null; // Skip this job if there's an error
+          }
+        })
+      );
+  
+      // Filter out any null responses (failed jobs)
+      const filteredJobs = acceptedjobs.filter((job) => job !== null);
+  
+      res.status(200).json(filteredJobs);
 
-          return result;
-        } catch (err) {
-          // Handle the error for this specific job
-          console.error(`Error processing job ${item}:`, err.message);
-          return null; // Skip this job if there's an error
-        }
-      })
-    );
-
-    // Filter out any null responses (failed jobs)
-    const filteredJobs = acceptedjobs.filter((job) => job !== null);
-
-    res.status(200).json(filteredJobs);
-
-  } catch (err) {
-    next(err)
-  }
+     }catch(err){
+        next(err)
+     }
 }
 
-export const getJobAttachmentsDetailsForCandidate = async (req, res, next) => {
-  try {
-    const jobattachments = await JOBATTACHEMENT.findOne({ folder_name: req.params.jobid }, { evaluation_form: 1, audio_brief: 1, other_docs: 1, _id: 0 })
-    res.status(200).json(jobattachments)
-  } catch (err) {
+
+export const getFrontFavouriteJobs=async (req,res,next)=>{
+   try{
+       //Getting favourite jobs for particluar recruiting member
+        const joblist=await axios.get(`${process.env.APP_SERVER_URL}/recruitingteam/getfavouritejobids/${req.params.rteamid}`)
+
+        if(!joblist.data){
+          return res.status(404).json({ error: "Favourite jobs not found" });
+        }
+
+
+        const favouritejobs = await Promise.all(
+          joblist.data.map(async (item) => {
+            try {
+              // get job id and allotted account manager id for the original job id
+              const jobObj = await JOBS.findById(item, { job_id: 1, job_updates:1, alloted_account_manager: 1, _id: 1 });
+              if (!jobObj) {
+                throw new Error("Job not found");
+              }
+    
+              const basicdetails = await JOBBASICDETAILS.findOne({ job_id: jobObj.job_id });
+              const commision = await JOBCOMMISSION.findOne({ job_id: jobObj.job_id });
+              const company = await JOBCOMPANYINFO.findOne({ job_id: jobObj.job_id });
+    
+              if (!basicdetails || !commision || !company) {
+                throw new Error("Job details missing");
+              }
+              // for resume submit count
+              const resumeSubmitCount=await axios.get(`${process.env.APP_SERVER_URL}/candidate/jobresumesubmitcount/${jobObj.job_id}/${req.params.rteamid}`)
+  
+              // check for current job is favourite for rmember
+              const isFavouriteJob=await axios.get(`${process.env.APP_SERVER_URL}/recruitingteam/isfavouritejob/${item}/${req.params.rteamid}`)
+    
+              // request to admin server for account manager email
+              const acmanagerResponse = await axios.get(`${process.env.ADMIN_SERVER_URL}/accountmanager/acmanageremail/${jobObj.alloted_account_manager}`);
+              const acmanageremail = acmanagerResponse.data.email;
+    
+              // build response object
+              const result = {
+                orgjobid:jobObj._id,
+                job_id: jobObj.job_id,
+                job_title: basicdetails.job_title,
+                country: basicdetails.country,
+                city: basicdetails.city,
+                isRemoteWork: basicdetails.permanent_remote_work,
+                isHotJob:jobObj.mark_hot_job,
+                resumeSubmitCount:resumeSubmitCount.data,
+                jobUpdates:jobObj.job_updates,
+                isFavouriteJob:isFavouriteJob.data,
+                positions: basicdetails.positions,
+                experience: basicdetails.experience,
+                domain: basicdetails.job_domain,
+                cp_name: company.client_name,
+                ac_manager: acmanageremail,
+                work_type: commision.work_type,
+                // additional logic based on work_type (full_time or contract)
+                ...(commision.work_type === "full_time"
+                  ? commision.work_details.full_time.full_time_salary_type === "Fixed"
+                    ? {
+                        full_time_salary_type: "Fixed",
+                        full_time_salary_currency: commision.work_details.full_time.full_time_salary_currency,
+                        fixed_salary: commision.work_details.full_time.fixed_salary,
+                      }
+                    : {
+                        full_time_salary_type: "Range",
+                        full_time_salary_currency: commision.work_details.full_time.full_time_salary_currency,
+                        min_salary: commision.work_details.full_time.min_salary,
+                        max_salary: commision.work_details.full_time.max_salary,
+                      }
+                  : commision.work_details.contract.contract_pay_rate_type === "Fixed"
+                  ? {
+                      contract_pay_rate_type: "Fixed",
+                      contract_pay_currency: commision.work_details.contract.contract_pay_currency,
+                      contract_pay_cycle: commision.work_details.contract.contract_pay_cycle,
+                      fix_contract_pay: commision.work_details.contract.fix_contract_pay,
+                    }
+                  : {
+                      contract_pay_rate_type: "Range",
+                      contract_pay_currency: commision.work_details.contract.contract_pay_currency,
+                      contract_pay_cycle: commision.work_details.contract.contract_pay_cycle,
+                      min_contract_pay: commision.work_details.contract.min_contract_pay,
+                      max_contract_pay: commision.work_details.contract.max_contract_pay,
+                    }),
+                commission_type: commision.commission_details.commission_type,
+                commission_pay_out:
+                  commision.commission_details.commission_type === "Percentage"
+                    ? commision.commission_details.commission_percentage_pay
+                    : commision.commission_details.commission_fix_pay,
+              };
+    
+              return result;
+            } catch (err) {
+              // Handle the error for this specific job
+              console.error(`Error processing job ${item}:`, err.message);
+              return null; // Skip this job if there's an error
+            }
+          })
+        );
+    
+        // Filter out any null responses (failed jobs)
+        const filteredJobs = favouritejobs.filter((job) => job !== null);
+    
+        res.status(200).json(filteredJobs);
+
+
+   }catch(err){
+      next(err)
+   }
+}
+
+
+export const getJobAttachmentsDetailsForCandidate=async (req,res,next)=>{
+  try{
+   const jobattachments=await JOBATTACHEMENT.findOne({folder_name:req.params.jobid},{evaluation_form:1,audio_brief:1,other_docs:1,_id:0})
+   res.status(200).json(jobattachments)
+  }catch(err){
     next(err)
   }
 }
@@ -589,6 +712,58 @@ export const getJobCandidatesForPreview = async (req, res, next) => {
   }
 }
 
+
+export const getLiveJobs=async (req,res,next)=>{
+  try{
+     const jobs=await JOBS.find({job_status:'Active'})
+
+     //Filter out live jobs
+     const filterJobs=filterOutLiveJobs(jobs,req.params.rememberid)
+
+     const jobsAllDetails=await Promise.all(filterJobs.map(async (job)=>{
+          const jobBasicDetails=await JOBBASICDETAILS.findById(job.job_basic_details)
+          const jobCommissionDetails=await JOBCOMMISSION.findById(job.job_commission_details)
+          
+          const isRequestJob=await axios.get(`${process.env.APP_SERVER_URL}/recruitingteam/checkforrequestjob/${req.params.rememberid}/${job._id}`)
+          const accountmanager=await axios.get(`${process.env.ADMIN_SERVER_URL}/accountmanager/getmailandname/${job.alloted_account_manager}`)
+          return {
+            job,
+            isRequestJob:isRequestJob.data,
+            jobBasicDetails,
+            jobCommissionDetails,
+            acemail:accountmanager.data.email
+          }
+     }))
+
+     res.status(200).json(jobsAllDetails)
+
+  }catch(err){
+     next(err)
+  }
+}
+
+export const unMapJob=async (req,res,next)=>{
+   try{
+      const {orgjobid,rememberid}=req.body
+
+      await JOBS.findByIdAndUpdate(orgjobid,{$pull:{accepted_recruiting_agency:rememberid},$push:{mapped_recruiting_agency_member:rememberid}})
+      res.status(200).json("Successfully Job Unmaped.")
+   }catch(err){
+     next(err)
+   }
+}
+
+export const addJobMapRequest=async (req,res,next)=>{
+   try{
+     const {orgjobid,rememberid}=req.body
+
+     await JOBS.findByIdAndUpdate(orgjobid,{$push:{job_request:rememberid}})
+     res.status(200).json("Successfull job map requeste added.")
+   }catch(err){
+     next(err)
+   }
+}
+
 export const SearchJobByTitle = async (req, res, next) => {
   const searchQuery = req.query.q;
   try {
@@ -599,3 +774,4 @@ export const SearchJobByTitle = async (req, res, next) => {
     next(error);
   }
 };
+

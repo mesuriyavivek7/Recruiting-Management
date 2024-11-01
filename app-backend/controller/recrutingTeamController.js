@@ -6,6 +6,7 @@ import ENTERPRISETEAM from '../models/ENTERPRISETEAM.js';
 import CANDIDATEBASICDETAILS from '../models/CANDIDATEBASICDETAILS.js';
 import JOBBASICDETAILS from '../models/JOBBASICDETAILS.js';
 import CANDIDATE from '../models/CANDIDATE.js';
+import axios from 'axios';
 
 
 //creating team member
@@ -50,8 +51,6 @@ export const updateJobMappedList=async (req,res,next)=>{
 
 export const addJobIntoAcceptList=async (req,res,next)=>{
     try{
-    console.log("Original Job ID--->",req.body.orgjobid)
-    console.log("Recruiting team id---->",req.params.rteamid)
     //for the recruiting team
         //Pull and push the job 
         await RECRUITINGTEAM.findByIdAndUpdate(req.params.rteamid,{$pull:{mapped_jobs:req.body.orgjobid},$push:{accepted_jobs:req.body.orgjobid}})
@@ -262,5 +261,92 @@ export const getRecuritingTeamDetails= async(req, res, next)=>{
         res.status(200).json(RecruitingTeams);
     } catch (error) {
         next(error);
+    }
+}
+
+export const addJobIntoFavoutiteList=async (req,res,next)=>{
+     try{
+        const {orgjobid,rememberid}=req.body
+        await RECRUITINGTEAM.findByIdAndUpdate(rememberid,{$push:{favourite_jobs:orgjobid}})
+        res.status(200).json("Job added into favourite list")
+     }catch(err){
+        next(err)
+     }
+}
+
+export const removeJobFromFavouriteList=async (req,res,next)=>{
+     try{
+       const {orgjobid,rememberid}=req.body
+       await RECRUITINGTEAM.findByIdAndUpdate(rememberid,{$pull:{favourite_jobs:orgjobid}})
+       res.status(200).json("Job Removing from favourite list")
+     }catch(err){
+         next(err)
+     }
+}
+
+export const isFavouriteJob=async (req,res,next)=>{
+     try{
+        const {orgjobid,rememberid}=req.params
+        const favJobList=await RECRUITINGTEAM.findById(rememberid,{favourite_jobs:1,_id:0})
+        if(favJobList.favourite_jobs && favJobList.favourite_jobs.includes(orgjobid)){
+            res.status(200).json(true)
+        }else{
+            res.status(200).json(false)
+        }
+     }catch(err){
+         next(err)
+     }
+}
+
+export const getFavouriteJobIds=async (req,res,next)=>{
+    try{
+       const favjobids=await RECRUITINGTEAM.findById(req.params.rememberid,{favourite_jobs:1,_id:0})
+       res.status(200).json(favjobids.favourite_jobs)
+    }catch(err){
+        next(err)
+    }
+}
+
+//unmaping job in both collection job and recruiting team
+export const unmapJob=async (req,res,next)=>{
+     try{
+         const {orgjobid,rememberid}=req.body
+         //pull and push work done
+         await RECRUITINGTEAM.findByIdAndUpdate(rememberid,{$pull:{accepted_jobs:orgjobid},$push:{mapped_jobs:orgjobid}})
+
+         await axios.post(`${process.env.APP_SERVER_URL}/job/unmapjob`,{orgjobid,rememberid})
+
+         res.status(200).json("Job unmaped from the both collection")
+     }catch(err){ 
+         next(err)
+     }
+}
+
+export const requestMapJob=async (req,res,next)=>{
+      try{
+        const {orgjobid,rememberid}=req.body
+
+        //Push the requested job id
+        await RECRUITINGTEAM.findByIdAndUpdate(rememberid,{$push:{requested_jobs:orgjobid}})
+
+        await axios.post(`${process.env.APP_SERVER_URL}/job/addJobMapRequest`,{orgjobid,rememberid})
+
+        res.status(200).json("Request added into both collections (Recruitingteam & Job)")
+      }catch(err){
+        next(err)
+      }
+}
+
+export const checkForRequestJob=async (req,res,next)=>{
+    try{
+        const requestJobList=await RECRUITINGTEAM.findById(req.params.rememberid,{requested_jobs:1,_id:0})
+
+        if(requestJobList.requested_jobs && requestJobList.requested_jobs.includes(req.params.orgjobid)){
+            res.status(200).json(true)
+        }else{
+            res.status(200).json(false)
+        }
+    }catch(err){
+        next(err)
     }
 }

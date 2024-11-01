@@ -204,3 +204,20 @@ export const getOneEnterpriseMember=async (req,res,next)=>{
     next(err)
   }
 }
+
+export const getDashboardCount=async (req,res,next)=>{
+  try{
+    const all_jobs_count=await JOBS.countDocuments({enterprise_member_id:req.params.enmemberid,isDraft:false})
+    const active_jobs=await JOBS.countDocuments({enterprise_member_id:req.params.enmemberid,job_status:"Active"})
+    const pending_jobs=await JOBS.countDocuments({enterprise_member_id:req.params.enmemberid,job_status:"Pending"})
+
+    res.status(200).json({
+      all_jobs_count,
+      active_jobs,
+      pending_jobs
+    })
+
+  }catch(err){
+    next(err)
+  }
+}

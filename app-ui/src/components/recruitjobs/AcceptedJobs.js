@@ -1,30 +1,12 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext} from 'react'
 import AcceptedJobItem from './AcceptedJobItem'
-import axios from "axios"
 import { AuthContext } from '../../context/AuthContext'
 import Loader from '../../assets/blueLoader.svg'
 
-export default function AcceptedJobs() {
-  const [jobs,setJobs]=useState([])
-  const [loader,setLoader]=useState(false)
+export default function AcceptedJobs({jobs,loader,showNotification,fetchAcceptedJobs,fetchFavouriteJobs,fetchMappedJobs}) {
   const {user}=useContext(AuthContext)
 
-  const fetchAcceptedJobsData=async ()=>{
-    try{
-      setLoader(true)
-      const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/job/frontacceptedjobs/${user._id}`)
-      console.log(res.data)
-      setJobs(res.data)
-    }catch(err){
-      console.log(err)
-    }
-    setLoader(false)
-  }
-
-
-  useEffect(()=>{
-     fetchAcceptedJobsData()
-  },[])
+  
   return (
     <div className='flex flex-col gap-2'>
       {
@@ -34,7 +16,14 @@ export default function AcceptedJobs() {
           </div>
          ):(
           jobs.map((item,index)=>(
-            <AcceptedJobItem key={index} jobObj={item}></AcceptedJobItem>
+            <AcceptedJobItem 
+             fetchAcceptedJobs={fetchAcceptedJobs}
+             fetchMappedJobs={fetchMappedJobs}
+             fetchFavouriteJobs={fetchFavouriteJobs} 
+             showNotification={showNotification} 
+             key={index} 
+             jobObj={item}>
+             </AcceptedJobItem>
           ))
          ) 
       }

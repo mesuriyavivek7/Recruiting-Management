@@ -5,25 +5,62 @@ import { AuthContext } from '../../context/AuthContext'
 //importing images
 import USAFLAG from '../../assets/asset38.png'
 import FIRE from '../../assets/asset39.png'
+import INDIAFLAG from '../../assets/asset40.png'
+import CANADAFLAG from '../../assets/asset44.png'
+import AUSTRALIAFLAG from '../../assets/asset43.png'
+import WORLD from '../../assets/asset41.png'
+import STATE from '../../assets/asset42.png'
 
 //importing icons
 import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import WarningIcon from '@mui/icons-material/Warning';
 
-export default function MappedJobsItem({jobObj}) {
+export default function MappedJobsItem({jobObj,fetchAcceptedJobs,showNotification,fetchMappedJobs,setLoader}) {
   const {user}=useContext(AuthContext)
   const [confirmPopUp,setConfirmPopUp]=useState(false)
   const [rejectPopUp,setRejectPopUp]=useState(false)
   const [errors,setErrors]=useState({})
   const [selectedReason,setSelectedReason]=useState(null)
 
+  //Job Details
+  const workType=jobObj.work_type
+  const currency=jobObj.work_type==="full_time"?(jobObj.full_time_salary_currency):(jobObj.contract_pay_currency)
+
+
+    //Creating country mapping
+    const country=new Map([
+      ['India',INDIAFLAG],
+      ['Canada',CANADAFLAG],
+      ['Australia',AUSTRALIAFLAG],
+      ['United States',USAFLAG]
+    ])
+  
+    //Get job flag
+    const getCountryFlag=(jobObj)=>{
+        if(jobObj.isRemoteWork){
+          return WORLD
+        }else{
+          if(country.get(jobObj.country)){
+            return country.get(jobObj.country)
+          }else{
+            return STATE
+          }
+        }
+    }
+
+
   const handleAcceptRequest=async ()=>{
     try{
+       setLoader(true)
        await axios.post(`${process.env.REACT_APP_API_BASE_URL}/recruitingteam/addacceptlist/${user._id}`,{orgjobid:jobObj.orgjobid})
        console.log("Accept request gone")
        setConfirmPopUp(false)
+       await fetchAcceptedJobs()
+       await fetchMappedJobs()
+       showNotification("Successfully job accepted.",'success')
     }catch(err){
+      showNotification("Something went wrong while accept the job.",'failure')
       console.log(err)
     }
   }
@@ -165,35 +202,60 @@ export default function MappedJobsItem({jobObj}) {
     <div className='custom-div cursor-pointer hover:scale-[.99] transition-all'>
         <div className='flex justify-between items-start w-full'>
           <div className='flex items-start gap-12'>
-          <div className='flex items-start gap-4 mr-8'>
-              <div>
-                <img className='w-5 h-5' src={FIRE}></img>
+          <div className='flex w-[22rem] items-start gap-4 mr-2'>
+              <div className='w-5'>
+                {
+                  jobObj.isHotJob && <img className='w-5 h-5' src={FIRE}></img>
+                }
               </div>
               <div className='flex flex-col gap-2'>
                 <div className='flex gap-2'>
-                    <img className='w-6 h-5 rounded-md' src={USAFLAG}></img>
+                    <img className='w-6 h-6 rounded-md' src={getCountryFlag(jobObj)}></img>
                     <span className='text-gray-500 text-[16px] font-semibold'>{jobObj.job_id} - {jobObj.job_title}</span>
                 </div>
                 <span className='text-light w-52 leading-5 text-[13px] text-gray-400'>CP - {jobObj.cp_name}</span>
                 {
-                  jobObj.country==="USA" && 
-                    <div className='p-1 rounded-md w-32 h-6 flex justify-center items-center bg-orange-700 text-orange-800'>
-                        <span className='text-sm text-orange-800'>USA Hiring Guide</span>
-                     </div>
+                  jobObj.isRemoteWork && <span className='text-sm'>Permenant Remote Work</span>
                 }
                 <span className='text-[13px] text-gray-500'>{jobObj.city.map((item,index)=>`${item}${(index!==jobObj.city.length-1)?(", "):("")}`)}, {jobObj.country}</span>
               </div>
            </div>
-           <div className='flex gap-4 place-items-center'>
-              <div className='flex text-[13px] text-gray-500 flex-col gap-4 place-content-start'>
+           <div className='flex w-72 place-items-start'>
+              <div className='flex w-[50%] text-[13px] text-gray-500 flex-col gap-4 place-content-start'>
                   <span>Position</span>
-                  <span>Sp Payout</span>
-                  <span>Salary</span>
+                  {
+                    workType==="full_time"
+                    ?(<span>Sp Payout</span>)
+                    :(<span>Sourcing Fee</span>)
+                  }
+                  {
+                    workType==='full_time'
+                    ?(<span>Salary</span>)
+                    :(<span>Contractor Pay Rate</span>)
+                  }
               </div>
-              <div className='flex text-[13px] font-semibold flex-col gap-4 text-gray-700 place-content-start'>
-                <span>{jobObj.positions} Full Time</span>
-                <span>{jobObj.commission_type==="Fixed" && jobObj.full_time_salary_currency} {jobObj.commission_pay_out}{jobObj.commission_type==="Percentage" && "%"}</span>
-                <span>{`${jobObj.full_time_salary_currency} ${(jobObj.full_time_salary_type==="Fixed")?(jobObj.fixed_salary):(`${jobObj.min_salary}-${jobObj.max_salary}`)}`}</span>
+              <div className='flex w-[50%] text-[13px] font-semibold flex-col gap-4 text-gray-700 place-content-start'>
+                <span>{jobObj.positions} {workType==="full_time"?("Full Time"):("Contract")}</span>
+                <span>{currency} {jobObj.commission_pay_out}{jobObj.commission_type==="Percentage" && "%"}</span>
+                {
+                  workType==="contract"
+                  ?(
+                  <span>
+                  {`${currency} ${jobObj.contract_pay_rate_type==="Range"
+                  ?(`${jobObj.min_contract_pay}-${jobObj.max_contract_pay}`)
+                  :(jobObj.fix_contract_pay)
+                  } ${jobObj.contract_pay_cycle}`}
+                  </span>
+                  )
+                  :(
+                    <span>
+                   {`${currency} ${jobObj.full_time_salary_type==="Range"
+                   ?(`${jobObj.min_salary}-${jobObj.max_salary}`)
+                   :(jobObj.fixed_salary)
+                   }`}      
+                    </span>
+                  )
+                }
               </div>
            </div>
            <div className='flex gap-4 place-items-center'>

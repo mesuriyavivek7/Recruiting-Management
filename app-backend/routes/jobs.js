@@ -5,7 +5,7 @@ import multer from 'multer'
 import { fileURLToPath } from 'url';
 
 
-import { activateJob,getAllJobs, addCandidateProfileList, allotedJobToAcManager, createJobs, deleteJobDraftWithOtherDetails, downloadEvaluationForm, getAllJobDetails, getAllJobDraftDetails, getCandidateScreeningQue, getFronLiveJobDetails, getFrontAcceptedJobDetails, getFrontMappedJobDetails, getJobAttachmentsDetailsForCandidate, getJobBasicDetailsForPreview, getJobCompanyDetailsForPreview, getJobSourcingGuidelinesForPreview, getJobStatusForPreview, getJobCommissionDetailsForPreview, createJobUpdates, getJobUpdates, getJobAttachmentsDetailsForPreview, getAcManagerNameAndMail, viewJobAttachments, downloadJobAttachments, getJobAttachmentFileType, getJobHotMark, changeJobHotMark, getJobCandidatesForPreview, SearchJobByTitle } from '../controller/jobController.js'
+import { activateJob, getAllJobs, addCandidateProfileList, allotedJobToAcManager, createJobs, deleteJobDraftWithOtherDetails, downloadEvaluationForm, getAllJobDetails, getAllJobDraftDetails, getCandidateScreeningQue, getFronLiveJobDetails, getFrontAcceptedJobDetails, getFrontMappedJobDetails, getJobAttachmentsDetailsForCandidate, getJobBasicDetailsForPreview, getJobCompanyDetailsForPreview, getJobSourcingGuidelinesForPreview, getJobStatusForPreview, getJobCommissionDetailsForPreview, createJobUpdates, getJobUpdates, getJobAttachmentsDetailsForPreview, getAcManagerNameAndMail, viewJobAttachments, downloadJobAttachments, getJobAttachmentFileType, getJobHotMark, changeJobHotMark, getJobCandidatesForPreview, getLiveJobs, getFrontFavouriteJobs, unMapJob, addJobMapRequest, SearchJobByTitle } from '../controller/jobController.js';
 import { craeteJobBasicDeatils,showJobDetail, getJobBasicDetails, getJobDetailsByEnId } from '../controller/jobBasicController.js'
 import { createJobDraft, deleteJobDraft } from '../controller/jobDraftController.js'
 import { createJobCommission,showJobCommission, getJobCommissionDetails } from '../controller/jobCommissionController.js'
@@ -160,6 +160,9 @@ router.get('/frontmappedjobs/:rteamid',getFrontMappedJobDetails)
 //for getting job details for showing front page of accepted job
 router.get('/frontacceptedjobs/:rteamid',getFrontAcceptedJobDetails)
 
+//for getting job details for showing front page of favourite jobs
+router.get('/frontfavouritejobs/:rteamid',getFrontFavouriteJobs)
+
 //for getting job details for showing to candidate form filling page
 
 //for gettign job details for job attachments
@@ -220,6 +223,16 @@ router.get('/getjobattachmentfiletype/:jobid/:filetype',getJobAttachmentFileType
 //for getting jobs accepted candidate details for preview
 router.get('/getjobcandidatesforpreview/:jobid',getJobCandidatesForPreview)
 
+//for getting live jobs for particular recruiting member
+router.get('/getlivejobs/:rememberid',getLiveJobs)
+
+//unmap current job
+router.post('/unmapjob',unMapJob)
+
+//For adding recruiting agency member job accept request
+router.post('/addJobMapRequest',addJobMapRequest)
+
 //search job by its title
 router.get('/search', SearchJobByTitle)
+
 export default router

@@ -1,5 +1,5 @@
 import express from 'express'
-import { addJobIntoAcceptList, addNewCandidate, changeAccountStatus, changeCommissionFlag, checkCreadentials, checkEmailAddress, checkIsAdmin, checkMobileNo, createteammember, getDashBoardCount, getEnterpriseTeamMember, getRecruiterCandidateDetails, getRecruiterProfilePageDetails, getRecuritingTeamDetails, rejectJob, updateJobMappedList, updateRecruiterTeamDetails } from '../controller/recrutingTeamController.js'
+import { addJobIntoAcceptList, addJobIntoFavoutiteList, addNewCandidate, changeAccountStatus, changeCommissionFlag, checkCreadentials, checkEmailAddress, checkForRequestJob, checkIsAdmin, checkMobileNo, createteammember, getDashBoardCount, getEnterpriseTeamMember, getFavouriteJobIds, getRecruiterCandidateDetails, getRecruiterProfilePageDetails, getRecuritingTeamDetails, isFavouriteJob, rejectJob, removeJobFromFavouriteList, requestMapJob, unmapJob, updateJobMappedList, updateRecruiterTeamDetails } from '../controller/recrutingTeamController.js'
 
 
 
@@ -55,5 +55,27 @@ router.post('/checkmobileno/:rememberid',checkMobileNo)
 
 //For getting dashboard counts
 router.get('/getdashboardcount/:rememberid',getDashBoardCount)
+
+//Adding jobs into favoutite job list
+router.post('/addjobintofavouritelist',addJobIntoFavoutiteList)
+
+//Removing jon into favourite job list
+router.post('/removejobintofavouritelist',removeJobFromFavouriteList)
+
+//Check for current job is favourite or not
+router.get('/isfavouritejob/:orgjobid/:rememberid',isFavouriteJob)
+
+//Get favourite job list ids
+router.get('/getfavouritejobids/:rememberid',getFavouriteJobIds)
+
+//Unmap current accepted job in both collections(job & recruitingteam)
+router.post('/unmapjob',unmapJob)
+
+//Added request of job in both collections (recruiting team & job)
+router.post('/requestmapjob',requestMapJob)
+
+//For check particular jon is requested job or not
+router.get('/checkforrequestjob/:rememberid/:orgjobid',checkForRequestJob)
+
 
 export default router
