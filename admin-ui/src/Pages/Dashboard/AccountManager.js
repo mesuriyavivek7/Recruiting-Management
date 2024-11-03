@@ -1,9 +1,10 @@
 import React, { useEffect } from "react";
 import SideNavbar from "../../Components/SideNavbar";
-import Navbar from "../../Components/Navbar";
+
 
 import { useSelector } from "react-redux";
 import { useNavigate,Outlet } from "react-router-dom";
+import AcNavbar from "../../Components/AcNavbar";
 
 
 const AccountManager = () => {
@@ -17,7 +18,7 @@ const AccountManager = () => {
   },[myValue])
   return ( 
     <div className="flex flex-col w-screen max-w-[100vw] h-[100vh] max-h-screen relative overflow-hidden ">
-      <Navbar/>
+      <AcNavbar/>
       <div className="flex w-full h-full relative gap-9 ">
         <SideNavbar/>
         

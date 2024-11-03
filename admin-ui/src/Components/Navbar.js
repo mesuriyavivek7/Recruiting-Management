@@ -6,7 +6,8 @@ import asset29 from "../assets/asset29.svg";
 import logo from "../assets/logo.jpeg"
 import asset15 from "../assets/asset15.svg";
 import { Link } from "react-router-dom";
-import { Dialog, DialogContent, Button, TextField, Box, DialogActions } from "@mui/material";
+import { Dialog, DialogContent, Button, TextField, IconButton, Box, DialogActions } from "@mui/material";
+import { MdPerson, MdEmail, MdVerifiedUser, MdBusinessCenter, MdBusiness, MdWork } from 'react-icons/md';
 
 const Navbar = ({ enterpriseData, recruiterData }) => {
   const [showProfilePopup, setShowProfilePopup] = useState(false);
@@ -127,7 +128,7 @@ const Navbar = ({ enterpriseData, recruiterData }) => {
             <TextField
               fullWidth
               id="popupSearch"
-              placeholder="Search in popup"
+              placeholder="Search Here"
               variant="outlined"
               value={popupSearchTerm}
               onChange={(e) => setPopupSearchTerm(e.target.value)}
@@ -138,32 +139,47 @@ const Navbar = ({ enterpriseData, recruiterData }) => {
             />
           </div>
 
+          {/* Buttons to toggle data */}
+          <div className="flex gap-0 mb-4">
+          <Button
+          variant="contained"
+          size="small"
          
-          <div className="flex gap-4 mb-4">
-            <Button
-              variant="contained"
-              sx={{
-                backgroundColor: showEnterpriseData ? "#0073e6" : "#ccc", 
-                color: showEnterpriseData ? "#fff" : "#000",
-                padding: "10px 20px", 
-                fontSize: "16px",
-              }}
-              onClick={() => setShowEnterpriseData(true)}
-            >
-              Enterprise
-            </Button>
-            <Button
-              variant="contained"
-              sx={{
-                backgroundColor: !showEnterpriseData ? "#0073e6" : "#ccc",
-                color: !showEnterpriseData ? "#fff" : "#000",
-                padding: "10px 20px",
-                fontSize: "16px",
-              }}
-              onClick={() => setShowEnterpriseData(false)}
-            >
-              Recruiter
-            </Button>
+
+          style={{
+            backgroundColor:showEnterpriseData? '#315370' : '#e0e0e0',
+            color: showEnterpriseData ? 'white' : '#000',
+            fontSize: '20px',
+            textTransform: 'none',
+             height:'50px',
+             border: '2px solid white', 
+            borderRadius: '20px 0 0 20px',  // Rounded right side
+            width: 'auto',
+          }}
+          onClick={() => setShowEnterpriseData(true)}
+        >
+          Enterprise
+        </Button>
+        <Button
+          variant="contained"
+          size="small"
+         
+          style={{
+            backgroundColor:  !showEnterpriseData  ? '#315370' : '#e0e0e0',
+            color:  !showEnterpriseData  ? 'white' : '#000',
+            fontSize: '20px',
+            height:'50px',
+            textTransform: 'none',
+            border: '2px solid white', 
+            borderRadius: '0 20px 20px 0',  // Rounded left side
+            width: 'auto',
+            marginRight: '-1px',
+            whiteSpace:'nowrap'
+          }}
+          onClick={() => setShowEnterpriseData(false)}
+        >
+          Recruiter
+        </Button>
           </div>
 
           
@@ -175,15 +191,37 @@ const Navbar = ({ enterpriseData, recruiterData }) => {
                     <h4 className="font-semibold text-xl">Enterprise Results:</h4>
                      {filteredEnterpriseData.length > 0 ? (
                       filteredEnterpriseData.map((item, index) => (
+                       
                         <Box
-                          key={index}
-                          className="p-4 my-2 bg-gray-100 hover:bg-gray-200 rounded-lg shadow-md transition duration-300"
-                        >
-                          <p className="font-medium text-md">Full Name: {item.full_name}</p>
-                          <p className="text-md">Email: {item.email}</p>
-                          <p className="text-md">Account Status: {item.account_status.status}</p>
-                          <p className="text-md">Account Manager: {item.account_manager}</p>
-                        </Box>
+  key={index}
+  className="p-6 my-4 bg-white border border-gray-200 hover:shadow-lg rounded-lg shadow-sm transition duration-300"
+>
+  <div className="mb-3 flex items-center space-x-3">
+    <MdPerson className="text-black text-xl" />
+    <p className="font-semibold text-lg text-gray-800">Full Name:</p>
+    <p className="text-gray-700 text-lg">{item.full_name}</p>
+  </div>
+
+  <div className="mb-3 flex items-center space-x-3">
+    <MdEmail className="text-black text-xl" />
+    <p className="font-semibold text-lg text-gray-800">Email:</p>
+    <p className="text-gray-700 text-lg">{item.email}</p>
+  </div>
+
+  <div className="mb-3 flex items-center space-x-3">
+    <MdVerifiedUser className="text-black text-xl" />
+    <p className="font-semibold text-lg text-gray-800">Account Status:</p>
+    <p className={`text-lg ${item.account_status.status === 'Active' ? 'text-green-600' : 'text-red-600'}`}>
+      {item.account_status.status}
+    </p>
+  </div>
+
+  <div className="flex items-center space-x-3">
+    <MdBusinessCenter className="text-black text-xl" />
+    <p className="font-semibold text-lg text-gray-800">Account Manager:</p>
+    <p className="text-gray-700 text-lg">{item.account_manager}</p>
+  </div>
+</Box>
                       ))
                     ) : (
                       <p>No enterprise results found.</p>
@@ -195,14 +233,33 @@ const Navbar = ({ enterpriseData, recruiterData }) => {
                     {filteredRecruiterData.length > 0 ? (
   filteredRecruiterData.map((item, index) => (
     <Box
-      key={index}
-      className="p-4 my-2 bg-gray-100 hover:bg-gray-200 rounded-lg shadow-md transition duration-300"
-    >
-      <p className="font-medium text-md">Full Name: {item.full_name}</p>
-      <p className="text-md">Email: {item.email}</p>
-      <p className="text-md">Designation: {item.designation}</p>
-      <p className="text-md">Company Name: {item.company_name}</p>
-    </Box>
+  key={index}
+  className="p-6 my-4 bg-white border border-gray-200 hover:shadow-lg rounded-lg shadow-sm transition duration-300"
+>
+  <div className="mb-3 flex items-center space-x-3">
+    <MdPerson className="text-black text-xl" />
+    <p className="font-semibold text-lg text-gray-800">Full Name:</p>
+    <p className="text-gray-700 text-lg">{item.full_name}</p>
+  </div>
+
+  <div className="mb-3 flex items-center space-x-3">
+    <MdEmail className="text-black text-xl" />
+    <p className="font-semibold text-lg text-gray-800">Email:</p>
+    <p className="text-gray-700 text-lg">{item.email}</p>
+  </div>
+
+  <div className="mb-3 flex items-center space-x-3">
+    <MdWork className="text-black text-xl" />
+    <p className="font-semibold text-lg text-gray-800">Designation:</p>
+    <p className="text-gray-700 text-lg">{item.designation}</p>
+  </div>
+
+  <div className="flex items-center space-x-3">
+    <MdBusiness className="text-black text-xl" />
+    <p className="font-semibold text-lg text-gray-800">Company Name:</p>
+    <p className="text-gray-700 text-lg">{item.company_name}</p>
+  </div>
+</Box>
   ))
 ) : (
   <p>No recruiter results found.</p>
