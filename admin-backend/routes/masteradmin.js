@@ -1,5 +1,5 @@
 import express from 'express'
-import { addEnterprise, addRecruitingAgency, getPendingVerifiedEnterpriseByMAdmin, getVerifiedEnterprisesByMAdmin, rmvEnterprisePendingList, rmvRecruitingPendingList } from '../controller/masteradminController.js'
+import { addEnterprise, addRecruitingAgency, getMasterAdminDetails, getPendingVerifiedEnterpriseByMAdmin, getVerifiedEnterprisesByMAdmin, rmvEnterprisePendingList, rmvRecruitingPendingList } from '../controller/masteradminController.js'
 
 
 const router=express.Router()
@@ -22,5 +22,8 @@ router.get('/getverifiedennterprise/:m_admin_id', getVerifiedEnterprisesByMAdmin
 
 //get the pending verified enterprises data
 router.get('/getpendingenterprises/:m_admin_id', getPendingVerifiedEnterpriseByMAdmin)
+
+//get the master admin details by master admin id
+router.get('/getdetails/:m_admin_id', getMasterAdminDetails)
 
 export default router;

@@ -83,3 +83,12 @@ export const getPendingVerifiedEnterpriseByMAdmin = async  (req, res, next) => {
         next(error);
     }
 }
+
+export const getMasterAdminDetails = async(req, res, next) => {
+    try {
+        const masterAdmin = await MASTERADMIN.findById(req.params.m_admin_id);
+        res.status(200).json(masterAdmin);
+    } catch (error) {
+        next(error)
+    }
+}

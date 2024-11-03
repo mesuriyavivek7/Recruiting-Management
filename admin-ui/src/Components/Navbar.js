@@ -1,22 +1,23 @@
-
-
 import React, { useEffect, useRef, useState } from "react";
-
+import { useSelector } from 'react-redux';
 import asset29 from "../assets/asset29.svg";
 import logo from "../assets/logo.jpeg"
 import asset15 from "../assets/asset15.svg";
 import { Link } from "react-router-dom";
 import { Dialog, DialogContent, Button, TextField, Box, DialogActions } from "@mui/material";
+import { fetchMasterAdminDetailsById } from '../services/api';
 
 const Navbar = ({ enterpriseData, recruiterData }) => {
+  const userData = useSelector((state) => state.admin?.userData);
   const [showProfilePopup, setShowProfilePopup] = useState(false);
   const [popupSearchTerm, setPopupSearchTerm] = useState("");
   const [openSearchDialog, setOpenSearchDialog] = useState(false);
+  const [adminEmail, setAdminEmail] = useState('example@gmail.com');
+  const [adminType, setAdminType] = useState('Domestic');
   const [dialogOpen, setDialogOpen] = useState(false);
-  
   const [showEnterpriseData, setShowEnterpriseData] = useState(true); // State to toggle between enterprise and recruiter data
   const profileRef = useRef(null);
-  const searchRef = useRef(null); // reference for main search input
+  const searchRef = useRef(null);
 
   // Handle profile click
   const handleProfileClick = () => {
@@ -24,12 +25,11 @@ const Navbar = ({ enterpriseData, recruiterData }) => {
   };
   const handleClose = () => {
     setOpenSearchDialog(false)
-    
-   
   };
 
-  // Handle clicks outside profile to close popup
+
   useEffect(() => {
+    // Handle clicks outside profile to close popup
     const handleClickOutside = (event) => {
       if (profileRef.current && !profileRef.current.contains(event.target)) {
         setShowProfilePopup(false);
@@ -37,18 +37,26 @@ const Navbar = ({ enterpriseData, recruiterData }) => {
     };
     document.addEventListener("mousedown", handleClickOutside);
 
+    // Cleanup event listener on component unmount
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [profileRef]);
 
-  
+  useEffect(() => {
+    const fetchDetails = async () => {
+      const adminDetails = await fetchMasterAdminDetailsById(userData?._id);
+      setAdminEmail(adminDetails?.email);
+      setAdminType(adminDetails?.master_admin_type);
+    };
+
+    fetchDetails();
+  }, []);
+
   const handleSearchFocus = () => {
-   
     if (!dialogOpen) setDialogOpen(true);
   };
 
- 
   const handleCloseDialog = () => {
     setDialogOpen(false);
     setPopupSearchTerm("");
@@ -98,7 +106,9 @@ const Navbar = ({ enterpriseData, recruiterData }) => {
           className="w-[30px] h-[30px] rounded-full bg-white flex place-items-center cursor-pointer"
           onClick={handleProfileClick}
         >
-          <p className="text-black text-sm mx-auto">AD</p>
+          <p className="text-black text-sm mx-auto">
+            {adminType === "domestic" ? "D" : adminType === "international" ? "I" : "AD"}
+          </p>
         </div>
       </div>
 
@@ -107,22 +117,18 @@ const Navbar = ({ enterpriseData, recruiterData }) => {
           className="absolute right-0 mt-9 w-48 bg-white shadow-lg rounded-lg p-4 z-10"
           ref={profileRef}
         >
-          <p className="text-sm font-semibold">admin@example.com</p>
-          <p className="text-sm">Type: Domestic</p>
+          <p className="text-sm font-semibold">{adminEmail}</p>
+          <p className="text-sm">Type: {adminType?.toUpperCase()}</p>
         </div>
       )}
-
-      
       <Dialog
-        
-
         open={dialogOpen}
         onClose={handleCloseDialog}
         fullWidth
         maxWidth="lg"
       >
         <DialogContent className="relative bg-white p-6">
-         
+
           <div className="flex place-items-center gap-2 mb-4">
             <TextField
               fullWidth
@@ -138,14 +144,14 @@ const Navbar = ({ enterpriseData, recruiterData }) => {
             />
           </div>
 
-         
+
           <div className="flex gap-4 mb-4">
             <Button
               variant="contained"
               sx={{
-                backgroundColor: showEnterpriseData ? "#0073e6" : "#ccc", 
+                backgroundColor: showEnterpriseData ? "#0073e6" : "#ccc",
                 color: showEnterpriseData ? "#fff" : "#000",
-                padding: "10px 20px", 
+                padding: "10px 20px",
                 fontSize: "16px",
               }}
               onClick={() => setShowEnterpriseData(true)}
@@ -166,14 +172,14 @@ const Navbar = ({ enterpriseData, recruiterData }) => {
             </Button>
           </div>
 
-          
+
           <div className="border-t pt-4 max-h-[400px] overflow-y-auto">
             {popupSearchTerm && (
               <>
                 {showEnterpriseData ? (
                   <>
                     <h4 className="font-semibold text-xl">Enterprise Results:</h4>
-                     {filteredEnterpriseData.length > 0 ? (
+                    {filteredEnterpriseData.length > 0 ? (
                       filteredEnterpriseData.map((item, index) => (
                         <Box
                           key={index}
@@ -193,38 +199,38 @@ const Navbar = ({ enterpriseData, recruiterData }) => {
                   <>
                     <h4 className="font-semibold text-xl">Recruiter Results:</h4>
                     {filteredRecruiterData.length > 0 ? (
-  filteredRecruiterData.map((item, index) => (
-    <Box
-      key={index}
-      className="p-4 my-2 bg-gray-100 hover:bg-gray-200 rounded-lg shadow-md transition duration-300"
-    >
-      <p className="font-medium text-md">Full Name: {item.full_name}</p>
-      <p className="text-md">Email: {item.email}</p>
-      <p className="text-md">Designation: {item.designation}</p>
-      <p className="text-md">Company Name: {item.company_name}</p>
-    </Box>
-  ))
-) : (
-  <p>No recruiter results found.</p>
-)}
-                  </> 
+                      filteredRecruiterData.map((item, index) => (
+                        <Box
+                          key={index}
+                          className="p-4 my-2 bg-gray-100 hover:bg-gray-200 rounded-lg shadow-md transition duration-300"
+                        >
+                          <p className="font-medium text-md">Full Name: {item.full_name}</p>
+                          <p className="text-md">Email: {item.email}</p>
+                          <p className="text-md">Designation: {item.designation}</p>
+                          <p className="text-md">Company Name: {item.company_name}</p>
+                        </Box>
+                      ))
+                    ) : (
+                      <p>No recruiter results found.</p>
+                    )}
+                  </>
                 )}
               </>
             )}
           </div>
 
 
-          
+
         </DialogContent>
 
         <DialogActions className="bg-gray-100 px-6 py-6">
-        <button
-          onClick={handleCloseDialog}
-          className="bg-gray-600 hover:bg-blue-230 text-white px-4 py-2 text-xl rounded-md transition-all duration-200"
-        >
-          Close
-        </button>
-      </DialogActions>
+          <button
+            onClick={handleCloseDialog}
+            className="bg-gray-600 hover:bg-blue-230 text-white px-4 py-2 text-xl rounded-md transition-all duration-200"
+          >
+            Close
+          </button>
+        </DialogActions>
       </Dialog>
     </div>
   );
