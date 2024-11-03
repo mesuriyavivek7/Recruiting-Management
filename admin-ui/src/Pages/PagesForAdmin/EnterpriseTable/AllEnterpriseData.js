@@ -79,45 +79,33 @@ export default function AllEnterPriseData() {
     });
     setFilteredRows(newFilteredRows);
   };
-  // Pagination handlers
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
+ 
   return (
     <>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-        {/* Left-side Search Bar */}
+       <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} gap={2} pt={4}>
         <TextField
           label="Search..."
           variant="outlined"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           sx={{
-            width: '500px',
+            width: '600px',
             borderRadius: '12px',
-            height: '20px',
             '& .MuiOutlinedInput-root': {
-              '& fieldset': {
-                borderColor: 'gray', // Default border color
+              padding: '0',
+              '& input': {
+                height: '30px',
+                padding: '8px',
               },
-              '&:hover fieldset': {
-                borderColor: '#315370', // Border color on hover
-              },
-              '&.Mui-focused fieldset': {
-                borderColor: '#315370', // Border color when focused (typing)
-              },
+              '& fieldset': { borderColor: 'gray' },
+              '&:hover fieldset': { borderColor: '#315370' },
+              '&.Mui-focused fieldset': { borderColor: '#315370' },
             },
-          }} // Adjust width as necessary
+          }}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
-                <IconButton onClick={handleSearch}>
+                <IconButton onClick={() => setSearchTerm(searchTerm)}>
                   <FaSearch />
                 </IconButton>
               </InputAdornment>
@@ -125,83 +113,44 @@ export default function AllEnterPriseData() {
           }}
         />
 
-        {/* Right-side Filter Buttons */}
-        <Box display="flex" gap={1}>
-          <Button
-            variant={filterStatus === 'All' ? 'contained' : 'outlined'}
-            onClick={() => handleFilterClick('All')}
-            sx={{
-              backgroundColor: filterStatus === 'All' ? '#315370' : '#e0e0e0',
-              color: filterStatus === 'All' ? 'white' : 'gray',
-              borderColor: 'gray',
-              fontSize: '16px',
-              height: '50px',
-              textTransform: 'none',
-              border: '2px solid ',
-              borderRadius: '10px',  // Rounded left side
-              width: '120px',
-              marginLeft: '10px',
-              '&:hover': {
-                backgroundColor: filterStatus === 'All' ? '#315380' : '#e0e0e0',
-              },
-            }}
-          >
-            All
-          </Button>
-
-          <Button
-            variant={filterStatus === 'Active' ? 'contained' : 'outlined'}
-            onClick={() => handleFilterClick('Active')}
-            sx={{
-              backgroundColor: filterStatus === 'Active' ? '#315370' : '#e0e0e0',
-              color: filterStatus === 'Active' ? 'white' : 'gray',
-              borderColor: 'gray',
-              fontSize: '16px',
-              height: '50px',
-              textTransform: 'none',
-              border: '2px solid ',
-              borderRadius: '10px',  // Rounded left side
-              width: '120px',
-              marginLeft: '10px',
-              '&:hover': {
-                backgroundColor: filterStatus === 'Active' ? '#315380' : '#e0e0e0',
-              },
-            }}
-          >
-            Active
-          </Button>
-
-          <Button
-            variant={filterStatus === 'Pending' ? 'contained' : ''}
-            onClick={() => handleFilterClick('Pending')}
-            sx={{
-              backgroundColor: filterStatus === 'Pending' ? '#315370' : '#e0e0e0',
-              color: filterStatus === 'Pending' ? 'white' : 'gray',
-              borderColor: 'gray',
-              fontSize: '16px',
-              height: '50px',
-              textTransform: 'none',
-              border: '2px solid ',
-              borderRadius: '10px',  // Rounded left side
-              width: '120px',
-              marginLeft: '10px',
-              '&:hover': {
-                backgroundColor: filterStatus === 'Pending' ? '#315380' : '#e0e0e0',
-              },
-            }}
-          >
-            Pending
-          </Button>
+        <Box display="flex" gap={0}>
+          {['All', 'Active', 'Pending'].map((status) => (
+            <Button
+              key={status}
+              variant={filterStatus === status ? 'contained' : 'outlined'}
+              onClick={() => handleFilterClick('All')}
+              sx={{
+                backgroundColor: filterStatus === status ? '#315370' : '#e0e0e0',
+                color: filterStatus === status ? 'white' : 'gray',
+                fontSize: '16px',
+                height: '45px',
+                textTransform: 'none',
+                width: '120px',
+                border: '1px solid gray',
+                borderRadius:
+                  status === 'All' ? '20px 0 0 20px' :
+                    status === 'Pending' ? '0 20px 20px 0' : '0',
+                '&:hover': {
+                  backgroundColor: filterStatus === status ? '#315380' : '#e0e0e0',
+                },
+              }}
+            >
+              {status}
+            </Button>
+          ))}
         </Box>
+
       </Box>
-      <p className='text-lg xl:text-2xl pt-12'>All Enterprise</p>
+      
 
       {loading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 400, color: '#315370' }}>
           <CircularProgress />
         </Box>
       ) : (
+        <div><p className='text-lg xl:text-2xl pt-12'>All Enterprise</p>
         <Box sx={{ height: 600, width: '100%', paddingTop: '19px' }}>
+          
           <DataGrid
             rows={filteredRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
             columns={columns}
@@ -259,6 +208,7 @@ export default function AllEnterPriseData() {
             }}
           />
         </Box>
+        </div>
       )}
     </>
   );

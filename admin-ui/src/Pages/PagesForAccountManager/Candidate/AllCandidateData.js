@@ -1,10 +1,11 @@
 
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Button, Card, Dialog, DialogActions, DialogTitle, TablePagination, TextField } from '@mui/material';
+import { Box, Button, Card, CircularProgress, Dialog, DialogActions, DialogTitle, IconButton, InputAdornment, TablePagination, TextField } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { columns ,rows} from './RowColDataOfAll'; // Import columns configuration
+import { FaSearch } from 'react-icons/fa';
 
 
 const calculateRowHeight = (params) => {
@@ -16,11 +17,16 @@ const AllCandidateData = () => {
   const [selectedRowId, setSelectedRowId] = useState(null);
   const navigate = useNavigate();
 
+  const [loading, setLoading] = useState(false);
+;
   const [selectedCandidate, setSelectedCandidate] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [reasonDialogOpen, setReasonDialogOpen] = useState(false);
   const [rejectionReason, setRejectionReason] = useState('');
 
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterStatus, setFilterStatus] = useState('All');
+  const [filteredRows, setFilteredRows] = useState(rows);
   // Function to handle candidate click
   const handleCandidateClick = (params) => {
     setSelectedCandidate(params.row);
@@ -71,7 +77,7 @@ const AllCandidateData = () => {
  
 
   // Get the columns with the handleCandidateClick function passed as an argument
-  const getcolumns = columns(handleCandidateClick);
+  //const getcolumns = columns(handleCandidateClick);
 
 
 
@@ -84,36 +90,112 @@ const AllCandidateData = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  // Handle pagination change
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
+  
+  useEffect(() => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+  }, [page, rowsPerPage]);
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
+  useEffect(() => {
+    const newFilteredRows = rows.filter((row) => {
+      const fullName = `${row.candidate_name.first_name} ${row.candidate_name.last_name}`.toLowerCase();
+      const matchesSearch = fullName.includes(searchTerm.toLowerCase());
+      const matchesStatus = filterStatus === 'All' || row.status === filterStatus;
+      return matchesSearch && matchesStatus;
+    });
+    setFilteredRows(newFilteredRows);
+  }, [searchTerm, filterStatus]);
   // Calculate the rows to display
-  const paginatedRows = rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+  const paginatedRows = filteredRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   return (
     <div>
+
+<Box display="flex" justifyContent="space-between" alignItems="center" mb={2} gap={2} pt={4}>
+        <TextField
+          label="Search..."
+          variant="outlined"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          sx={{
+            width: '600px',
+            borderRadius: '12px',
+            '& .MuiOutlinedInput-root': {
+              padding: '0',
+              '& input': {
+                height: '30px',
+                padding: '8px',
+              },
+              '& fieldset': { borderColor: 'gray' },
+              '&:hover fieldset': { borderColor: '#315370' },
+              '&.Mui-focused fieldset': { borderColor: '#315370' },
+            },
+          }}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton onClick={() => setSearchTerm(searchTerm)}>
+                  <FaSearch />
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+        />
+
+        <Box display="flex" gap={0}>
+          {['All', 'Active', 'Pending'].map((status) => (
+            <Button
+              key={status}
+              variant={filterStatus === status ? 'contained' : 'outlined'}
+              onClick={() => setFilterStatus(status)}
+              sx={{
+                backgroundColor: filterStatus === status ? '#315370' : '#e0e0e0',
+                color: filterStatus === status ? 'white' : 'gray',
+                fontSize: '16px',
+                height: '45px',
+                textTransform: 'none',
+                width: '120px',
+                border: '1px solid gray',
+                borderRadius:
+                  status === 'All' ? '20px 0 0 20px' :
+                    status === 'Pending' ? '0 20px 20px 0' : '0',
+                '&:hover': {
+                  backgroundColor: filterStatus === status ? '#315380' : '#e0e0e0',
+                },
+              }}
+            >
+              {status}
+            </Button>
+          ))}
+        </Box>
+
+      </Box>
+      {loading ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 400, color: '#315370' }}>
+          <CircularProgress />
+        </Box>
+      ) : (
       <Card className='mt-9 font-sans'>
         <p className='text-lg xl:text-2xl'>All Candidates</p>
         <div style={{ height: 600, width: '100%' }} className='pt-4'>
          
           <DataGrid 
           rows={paginatedRows}
-          columns={getcolumns}
+          columns={columns}
           rowHeight={80} 
           onRowClick={(params) => handleRowClick(params.id)}
           getRowId={(row) => row._id} // Specify the custom ID field
           getRowHeight={calculateRowHeight} 
-          pagination={false} 
+         
           pageSize={rowsPerPage} 
           onCellClick={handleCellClick} // Handle cell click events
-          hideFooterPagination={true} 
+          
+          pageSizeOptions={[5, 10]}
+          initialState={{
+            pagination: { paginationModel: { page: 0, pageSize: 10} },
+          }} 
           disableSelectionOnClick 
            sx={{
             '& .MuiDataGrid-root': {
@@ -174,17 +256,8 @@ const AllCandidateData = () => {
           }}
         />
         </div>
-      </Card>
-      <TablePagination
-        component="div"
-        count={rows.length}
-        page={page}
-        onPageChange={handleChangePage}
-        rowsPerPage={rowsPerPage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-        rowsPerPageOptions={[5, 10, 25]}
-        labelRowsPerPage="Rows per page"
-      />
+      </Card>)}
+      
         {/* Initial Dialog for Candidate Action */}
       <Dialog open={dialogOpen} onClose={handleDialogClose}>
         <DialogTitle>Candidate Action</DialogTitle>

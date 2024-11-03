@@ -6,6 +6,8 @@ import { DataGrid } from '@mui/x-data-grid';
 import TablePagination from '@mui/material/TablePagination';
 import { rows, columns } from './RowColData';
 import { styled } from '@mui/system';
+import { Button, CircularProgress, IconButton, InputAdornment, TextField } from '@mui/material';
+import { FaSearch } from 'react-icons/fa';
 
 
 const calculateRowHeight = (params) => {
@@ -17,31 +19,113 @@ const calculateRowHeight = (params) => {
 export default function AllRecruitingAgencyData() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [searchTerm, setSearchTerm] = React.useState('');
+  const [filterStatus, setFilterStatus] = React.useState('All');
+  const [filteredRows, setFilteredRows] = React.useState(rows);
+  const [loading, setLoading] = React.useState(false);
 
-  // Pagination handlers
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
+  React.useEffect(() => {
+    const newFilteredRows = rows.filter((row) => {
+      const matchesSearch = row.full_name.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesStatus = filterStatus === 'All' || row.status === filterStatus;
+      return matchesSearch && matchesStatus;
+    });
+    setFilteredRows(newFilteredRows);
+  }, [searchTerm, filterStatus]); // Re-run filter logic whenever searchTerm or filterStatus changes
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0); // Reset page to 0 when rows per page changes
-  };
+ 
+  React.useEffect(() => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+  }, [page, rowsPerPage]);
+ 
 
   return (
-    <>
+    <> <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} gap={2}>
+    {/* Search Bar */}
+    <TextField
+      label="Search..."
+      variant="outlined"
+      value={searchTerm}
+      onChange={(e) => setSearchTerm(e.target.value)}
+      sx={{
+        width: '600px',
+        borderRadius: '12px',
+        '& .MuiOutlinedInput-root': {
+          padding: '0',
+          '& input': {
+            height: '30px',
+            padding: '8px',
+          },
+          '& fieldset': {
+            borderColor: 'gray',
+          },
+          '&:hover fieldset': {
+            borderColor: '#315370',
+          },
+          '&.Mui-focused fieldset': {
+            borderColor: '#315370',
+          },
+        },
+      }}
+      InputProps={{
+        endAdornment: (
+          <InputAdornment position="end">
+            <IconButton onClick={() => setSearchTerm(searchTerm)}>
+              <FaSearch />
+            </IconButton>
+          </InputAdornment>
+        ),
+      }}
+    />
 
+    {/* Filter Buttons */}
+    <Box display="flex" gap={0}>
+      {['All', 'Active', 'Pending'].map((status) => (
+        <Button
+          key={status}
+          variant={filterStatus === status ? 'contained' : 'outlined'}
+          onClick={() => setFilterStatus(status)}
+          sx={{
+            backgroundColor: filterStatus === status ? '#315370' : '#e0e0e0',
+            color: filterStatus === status ? 'white' : 'gray',
+            fontSize: '16px',
+            height: '45px',
+            textTransform: 'none',
+            width: '120px',
+            border: '1px solid gray',
+            borderRadius:
+              status === 'All' ? '20px 0 0 20px' : status === 'Pending' ? '0 20px 20px 0' : '0',
+            '&:hover': {
+              backgroundColor: filterStatus === status ? '#315380' : '#e0e0e0',
+            },
+          }}
+        >
+          {status}
+        </Button>
+      ))}
+    </Box>
+  </Box>
+  {loading ? (
+          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 400, color: '#315370' }}>
+            <CircularProgress />
+          </Box>
+        ) : (
+          <div>
       <p className='text-lg xl:text-2xl'>All Recruiting Agency </p>
       <Box sx={{ height: 600, width: '100%', paddingTop: '19px' }}>
         <DataGrid
           getRowId={(rows) => rows.id} // Specify the custom ID field
-          rows={rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
+          rows={filteredRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
           columns={columns}
           rowHeight={80}
           getRowHeight={calculateRowHeight}
-          pagination={false}
+       
           pageSize={rowsPerPage}
-          hideFooterPagination={true}
+          initialState={{ pagination: { paginationModel: { page: 0, pageSize: 10 } } }}
+          pageSizeOptions={[5, 10]}
           disableSelectionOnClick
           sx={{
             '& .MuiDataGrid-root': {
@@ -103,22 +187,13 @@ export default function AllRecruitingAgencyData() {
         />
       </Box>
 
+      </div>)}
 
 
 
 
 
-
-      <TablePagination
-        component="div"
-        count={rows.length} // Total number of rows
-        page={page} // Current page number
-        onPageChange={handleChangePage} // Handler for changing page
-        rowsPerPage={rowsPerPage} // Rows per page number
-        onRowsPerPageChange={handleChangeRowsPerPage} // Handler for changing rows per page
-        rowsPerPageOptions={[5, 10, 25]} // Rows per page options
-        labelRowsPerPage="Rows per page" // Label
-      />
+     
     </>
   );
 }
