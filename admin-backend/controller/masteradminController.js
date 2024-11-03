@@ -84,15 +84,6 @@ export const getPendingVerifiedEnterpriseByMAdmin = async  (req, res, next) => {
     }
 }
 
-export const getMasterAdminDetails = async(req, res, next) => {
-    try {
-        const masterAdmin = await MASTERADMIN.findById(req.params.m_admin_id);
-        res.status(200).json(masterAdmin);
-    } catch (error) {
-        next(error)
-    }
-}
-
 export const getAccountManagerDetailsByMId=async (req,res,next)=>{
     try{
         const accountManagerIds=await MASTERADMIN.findById(req.params.m_admin_id)
@@ -132,3 +123,13 @@ export const handleAssignEnterpriseToAc=async (req,res,next)=>{
         next(err)
      }
 }
+
+export const getMasterAdminDetails = async(req, res, next) => {
+    try {
+        const masterAdmin = await MASTERADMIN.findById(req.params.m_admin_id);
+        res.status(200).json(masterAdmin);
+    } catch (error) {
+        next(error)
+    }
+}
+

@@ -1,5 +1,5 @@
 import express from 'express'
-import { addEnterprise, addRecruitingAgency, getAccountManagerDetailsByMId, getPendingVerifiedEnterpriseByMAdmin, getVerifiedEnterprisesByMAdmin, handleAssignEnterpriseToAc, rmvEnterprisePendingList, rmvRecruitingPendingList } from '../controller/masteradminController.js'
+import { addEnterprise, addRecruitingAgency, getAccountManagerDetailsByMId, getMasterAdminDetails, getPendingVerifiedEnterpriseByMAdmin, getVerifiedEnterprisesByMAdmin, handleAssignEnterpriseToAc, rmvEnterprisePendingList, rmvRecruitingPendingList } from '../controller/masteradminController.js'
 
 
 const router=express.Router()
@@ -17,6 +17,9 @@ router.post('/addragency',addRecruitingAgency)
 //remove recruiting agency from pending verification lost
 router.post('/rmvrecruitingpendinglist',rmvRecruitingPendingList)
 
+//get the master admin details by admin id
+router.get('/getdetails/:m_admin_id', getMasterAdminDetails)
+
 //get the all verified enterprises data
 router.get('/getverifiedennterprise/:m_admin_id', getVerifiedEnterprisesByMAdmin)
 
@@ -28,5 +31,6 @@ router.get('/getaccountmanagerdetails/:m_admin_id',getAccountManagerDetailsByMId
 
 //handle assign enterprise to any account manager
 router.post('/assignenterprisetoac',handleAssignEnterpriseToAc)
+
 
 export default router;
