@@ -11,7 +11,7 @@ export const getAcByMadminId = async (req, res, next) => {
   }
 }
 
-
+//for adding enterprise into pending list
 export const addEnterprise = async (req, res, next) => {
   try {
     await ACCOUNTMANAGER.findByIdAndUpdate(req.body.ac_id, { $push: { pending_verify_enterprise: req.body.en_id } })

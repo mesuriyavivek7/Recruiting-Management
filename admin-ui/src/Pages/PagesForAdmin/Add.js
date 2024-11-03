@@ -11,6 +11,7 @@ const admin_be_uri = process.env.REACT_APP_API_BASE_URL;
 const Add = () => {
   const adminData = useSelector((state) => state.admin.userData)
   const [open, setOpen] = useState(false);
+  
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -89,8 +90,8 @@ const Add = () => {
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <IoIosArrowBack style={{ marginRight: '8px', fontSize: '24px' }} />
-            <Typography sx={{ fontWeight: 'bold', fontSize: '20px' }}>
+            <IoIosArrowBack style={{ marginRight: '8px', fontSize: '24px',cursor:'pointer'  }}  onClick={handleClose} />
+            <Typography sx={{ fontWeight: 'bold', fontSize: '20px'}} >
               Add Account Manager
             </Typography>
           </Box>
@@ -116,6 +117,7 @@ const Add = () => {
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 sx={{
+                  mb: 2,
                   '& .MuiOutlinedInput-root': {
                     borderRadius: '10px',
                     '& fieldset': {
@@ -143,6 +145,7 @@ const Add = () => {
                 fullWidth
                 value={email}
                 sx={{
+                  mb: 2,
                   '& .MuiOutlinedInput-root': {
                     borderRadius: '10px',
                     '& fieldset': {
@@ -172,6 +175,7 @@ const Add = () => {
                 fullWidth
                 value={password}
                 sx={{
+                  mb: 2,
                   '& .MuiOutlinedInput-root': {
                     borderRadius: '10px',
                     '& fieldset': {

@@ -202,6 +202,21 @@ export const fetchAccountManager = async (ac_manager_id) => {
     }
 };
 
+//get the account manager on master admin
+export const fetchAccountManagerMasterAdmin= async (m_admin_id)=>{
+    if (!m_admin_id) {
+        console.error("Master admin id is undefined");
+        return; 
+    }
+    try{
+        const response = await axios.get(`${admin_be_uri}/masteradmin/getaccountmanagerdetails/${m_admin_id}`)
+        return response.data
+    }catch(err){
+        console.error("Error while fetching account manager details by master admin id : ",err)
+        throw err
+    }
+}
+
 //get the all account manager details
 export const fetchAccountManagerDetails = async () => {
     try {

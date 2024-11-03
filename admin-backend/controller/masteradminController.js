@@ -1,5 +1,5 @@
 import MASTERADMIN from "../models/MASTERADMIN.js";
-
+import axios from 'axios'
 
 export const addEnterprise = async (req, res, next) => {
     try {
@@ -91,4 +91,44 @@ export const getMasterAdminDetails = async(req, res, next) => {
     } catch (error) {
         next(error)
     }
+}
+
+export const getAccountManagerDetailsByMId=async (req,res,next)=>{
+    try{
+        const accountManagerIds=await MASTERADMIN.findById(req.params.m_admin_id)
+
+        const accountManagerDetails=await Promise.all(accountManagerIds.account_manager.map(async (ac_id)=>{
+             const acemailname=await axios.get(`${process.env.ADMIN_SERVER_URL}/accountmanager/getmailandname/${ac_id}`)
+
+             return ({
+                ac_id,
+                name:acemailname.data.full_name,
+                email:acemailname.data.email
+             })
+        }))
+        
+        res.status(200).json(accountManagerDetails)
+    }catch(err){
+        next(err)
+    }
+}
+
+export const handleAssignEnterpriseToAc=async (req,res,next)=>{
+     try{
+        //4 step process for assigning to any acmanager
+        const {ac_id,en_id,m_admin_id}=req.body
+        //step 1 (master admin)
+        await MASTERADMIN.findByIdAndUpdate(m_admin_id,{$pull:{pending_verify_enterprise:en_id},$push:{verified_enterprise:en_id}})
+
+        //step 2 (enterprise)
+        await axios.post(`${process.env.APP_SERVER_URL}/enterprise/allocatedacmanager`,{en_id,ac_id})
+
+        //step 3 (account manager)
+        await axios.post(`${process.env.ADMIN_SERVER_URL}/accountmanager/addenterprise`,{en_id,ac_id})
+
+        res.status(200).json("Successfully enterprise allocated to account manager")
+
+     }catch(err){
+        next(err)
+     }
 }
