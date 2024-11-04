@@ -6,8 +6,9 @@ import asset29 from "../assets/asset29.svg";
 import logo from "../assets/logo.jpeg"
 import asset15 from "../assets/asset15.svg";
 import { Link } from "react-router-dom";
-import { Dialog, DialogContent, Button, TextField, IconButton, Box, DialogActions } from "@mui/material";
+import { Dialog, DialogContent, Button, TextField, IconButton, Box, DialogActions, InputAdornment } from "@mui/material";
 import { MdPerson, MdEmail, MdVerifiedUser, MdBusinessCenter, MdBusiness, MdWork } from 'react-icons/md';
+import { BiSearch } from "react-icons/bi";
 
 const Navbar = ({ enterpriseData, recruiterData }) => {
   const [showProfilePopup, setShowProfilePopup] = useState(false);
@@ -86,7 +87,7 @@ const Navbar = ({ enterpriseData, recruiterData }) => {
             placeholder="Search"
             onClick={handleSearchFocus}
             ref={searchRef}
-            className="bg-white w-full pl-10 pr-4 py-2 border border-gray-300 focus:border-blue-500 focus:outline-none focus:w-full focus:scale-110 focus:shadow-lg transition duration-300"
+            className="bg-white w-full pl-10 pr-4 py-2 border border-gray-300  focus:outline-none "
           />
         </div>
       </div>
@@ -122,19 +123,24 @@ const Navbar = ({ enterpriseData, recruiterData }) => {
         fullWidth
         maxWidth="lg"
       >
-        <DialogContent className="relative bg-white p-6">
-         
+        <DialogContent className="relative bg-white p-6" style={{ maxHeight: "600px", overflowY: "auto" }}>
+        <h2 className="text-xl font-bold mb-4">Search Users</h2>
           <div className="flex place-items-center gap-2 mb-4">
-            <TextField
+          <TextField
               fullWidth
               id="popupSearch"
               placeholder="Search Here"
               variant="outlined"
               value={popupSearchTerm}
               onChange={(e) => setPopupSearchTerm(e.target.value)}
-              className="text-lg" // Increased font size
+              className="text-lg"
               InputProps={{
-                style: { borderRadius: "8px", borderColor: "blue" }, // Rounded input field
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <BiSearch size={24} style={{ color: "gray" }}/>
+                  </InputAdornment>
+                ),
+                style: { borderRadius: "8px", borderColor: "blue" },
               }}
             />
           </div>
@@ -147,13 +153,13 @@ const Navbar = ({ enterpriseData, recruiterData }) => {
          
 
           style={{
-            backgroundColor:showEnterpriseData? '#315370' : '#e0e0e0',
+            backgroundColor: showEnterpriseData ? '#315370' : '#e0e0e0',
             color: showEnterpriseData ? 'white' : '#000',
-            fontSize: '20px',
+            fontSize: '16px',
             textTransform: 'none',
-             height:'50px',
-             border: '2px solid white', 
-            borderRadius: '20px 0 0 20px',  // Rounded right side
+            height: '40px',
+            border: '2px solid white',
+            borderRadius: '20px 0 0 20px',
             width: 'auto',
           }}
           onClick={() => setShowEnterpriseData(true)}
@@ -165,16 +171,16 @@ const Navbar = ({ enterpriseData, recruiterData }) => {
           size="small"
          
           style={{
-            backgroundColor:  !showEnterpriseData  ? '#315370' : '#e0e0e0',
-            color:  !showEnterpriseData  ? 'white' : '#000',
-            fontSize: '20px',
-            height:'50px',
+            backgroundColor: !showEnterpriseData ? '#315370' : '#e0e0e0',
+            color: !showEnterpriseData ? 'white' : '#000',
+            fontSize: '16px',
+            height: '40px',
             textTransform: 'none',
-            border: '2px solid white', 
-            borderRadius: '0 20px 20px 0',  // Rounded left side
+            border: '2px solid white',
+            borderRadius: '0 20px 20px 0',
             width: 'auto',
             marginRight: '-1px',
-            whiteSpace:'nowrap'
+            whiteSpace: 'nowrap'
           }}
           onClick={() => setShowEnterpriseData(false)}
         >
@@ -183,7 +189,7 @@ const Navbar = ({ enterpriseData, recruiterData }) => {
           </div>
 
           
-          <div className="border-t pt-4 max-h-[400px] overflow-y-auto">
+          <div className="border-t pt-4 max-h-[400px] ">
             {popupSearchTerm && (
               <>
                 {showEnterpriseData ? (
