@@ -23,6 +23,7 @@ export const fetchEnterpriseVerifiedData = async (admin_id) => {
     }
 }
 
+
 export const fetchPendingEnterpriseData = async (admin_id) => {
     try {
         const response = await axios.get(`${admin_be_uri}/masteradmin/getpendingenterprises/${admin_id}`);
@@ -33,6 +34,15 @@ export const fetchPendingEnterpriseData = async (admin_id) => {
     }
 }
 
+export const fetchMasterAdminDetailsById = async(admin_id) => {
+    try {
+        const response = axios.get(`${admin_be_uri}/masteradmin/getdetails/${admin_id}`);
+        return (await response).data;
+    } catch (error) {
+        console.error("Error while fetching the master admin details :", error);
+        throw error;
+    }
+}
 export const fetchEnterpriseById = async (enterprise_id) => {
     try {
         const response = await axios.get(`${app_be_uri}/enterprise/find/${enterprise_id}`);

@@ -22,6 +22,7 @@ const AdminReducer = (state = initialState, action) => {
     case 'SET_USER_DATA':
 
       const adminCookie = Cookies.get('admin_user');
+      console.log(adminCookie)
       if (adminCookie) {
         localStorage.setItem('userData', JSON.stringify(action.payload));
         return {
