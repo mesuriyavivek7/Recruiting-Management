@@ -5,6 +5,8 @@ import Login from "./pages/Login/Login";
 import RecruitSignUp from "./pages/Signup/RecruitSignUp";
 import EnterpriseSignup from "./pages/Signup/EnterpriseSignup";
 import KYC from "./components/KYC";
+import ChangePassword from "./pages/Login/ChangePassword";
+import ResetPassword from "./pages/Login/ResetPassword";
 //import components for enterprise dashboard
 import Enterprisedashboard from "./pages/Dashboard/Enterprisedashboard";
 import Settings from "./pages/Settings";
@@ -45,6 +47,14 @@ const App = () => {
     {
       path: "/signup/supplier/kyc",
       element: <KYC />,
+    },
+    {
+      path: "/resetpassword",
+      element: <ResetPassword/>
+    },
+    {
+      path: "/reset-password/:token",
+      element: <ChangePassword></ChangePassword>
     },
     {
       path: "/employer",

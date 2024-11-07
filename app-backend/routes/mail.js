@@ -1,5 +1,5 @@
 import express from 'express'
-import { sendMail,sendVerificationMailRecruiting,sendVerificationMailEnterprise,verifyemailEnterprise,verifyemailRecruiting, sendTeamMemberNotifyMail, sendEmailUpdateVerificationEnterprise, verifyemailEnterpriseTeam, sendVerificationMailEnterpriseTeam, verifyemailRecruitingTeam, sendVerificationMailRecruitingTeam, sendBulkMail, shareResumeWithHiringManager } from '../controller/mailController.js'
+import { sendMail,sendVerificationMailRecruiting,sendVerificationMailEnterprise,verifyemailEnterprise,verifyemailRecruiting, sendTeamMemberNotifyMail, sendEmailUpdateVerificationEnterprise, verifyemailEnterpriseTeam, sendVerificationMailEnterpriseTeam, verifyemailRecruitingTeam, sendVerificationMailRecruitingTeam, sendBulkMail, shareResumeWithHiringManager, requestResetPassword, verifyResetPassword } from '../controller/mailController.js'
 import multer from 'multer'
 import fs from 'fs'
 import path from 'path'
@@ -67,6 +67,9 @@ router.get('/enterpriseverifymail/:token',verifyemailEnterprise)
 //verify mail for enterprise team member
 router.get('/enterpriseteamverifymail/:token',verifyemailEnterpriseTeam)
 
+//send mail for reset password
+router.post('/request-reset-password',requestResetPassword)
 
-
+//For verify person for reset password
+router.post('/verify-reset-password/:token',verifyResetPassword)
 export default router

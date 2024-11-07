@@ -164,7 +164,7 @@ const Login = () => {
                 </div>
                 <p className="text-end my-3">
                   <Link
-                    to="/forgot-password "
+                    to="/resetpassword"
                     className="text-sm text-blue-400"
                   >
                     Forgot your password?

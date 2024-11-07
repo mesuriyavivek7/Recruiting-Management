@@ -237,6 +237,16 @@ const getTextLength=(htmlContent)=>{
   return text.length
 }
 
+const getFirstLetterCapital=(val)=>{
+  return String(val).charAt(0).toUpperCase() + String(val).slice(1)
+}
+
+//mapping of duration
+const duration=new Map([
+  ['weekly','Week'],
+  ['monthly','Month']
+])
+
 
 const [openJobDetails,setOpenJobDetails]=useState(true)
 const [openJobDescription,setOpenJobDescription]=useState(false)
@@ -577,15 +587,15 @@ const formats = [
                                <span className={`${jobStatus==='Active'?("bg-green-200 text-green-500"):("bg-yellow-100 text-yellow-400")} text-[14px] flex justify-center items-center p-1 px-4 rounded-md font-semibold`}>{jobStatus}</span>
                              </div>
                              <div className='flex items-center gap-2'>
-                               <span className='text-sm w-32'>Salary</span>
+                               <span className='text-sm w-32'>{jobCommissionDetails && jobCommissionDetails.work_type==="full_time"?("Salary"):("Contract Pay Rate")}</span>
                                <span className='text-[14px] w-52 font-semibold'>        
                                  {jobCommissionDetails &&  (jobCommissionDetails.work_type==="full_time"?
                                  (jobCommissionDetails.work_details.full_time.full_time_salary_type==="Fixed"
                                    ?(`${jobCommissionDetails.work_details.full_time.full_time_salary_currency} ${jobCommissionDetails.work_details.full_time.fixed_salary}`)
                                    :(`${jobCommissionDetails.work_details.full_time.full_time_salary_currency} ${jobCommissionDetails.work_details.full_time.min_salary} - ${jobCommissionDetails.work_details.full_time.max_salary}`))
                                    :(jobCommissionDetails.work_details.contract.contract_pay_rate_type==="Fixed"
-                                   ?(`${jobCommissionDetails.work_details.contract.contract_pay_currency} ${jobCommissionDetails.work_details.contract.fix_contract_pay}`)
-                                   :(`${jobCommissionDetails.work_details.contract.contract_pay_currency} ${jobCommissionDetails.work_details.contract.min_contract_pay} - ${jobCommissionDetails.work_details.contract.max_contract_pay}`)))}
+                                   ?(`${jobCommissionDetails.work_details.contract.contract_pay_currency} ${jobCommissionDetails.work_details.contract.fix_contract_pay} ${getFirstLetterCapital(jobCommissionDetails.work_details.contract.contract_pay_cycle)}`)
+                                   :(`${jobCommissionDetails.work_details.contract.contract_pay_currency} ${jobCommissionDetails.work_details.contract.min_contract_pay} - ${jobCommissionDetails.work_details.contract.max_contract_pay} ${getFirstLetterCapital(jobCommissionDetails.work_details.contract.contract_pay_cycle)}`)))}
                                 </span>
                              </div>
                              <div className='flex items-center gap-2'>
@@ -596,12 +606,36 @@ const formats = [
                                <span className='text-sm w-32'>Job Positions</span>
                                <span className='text-[14px] w-52 font-semibold'>{jobBasicDetails.positions}</span>
                              </div>
+                             {
+                              (jobCommissionDetails && jobCommissionDetails.work_type==="contract") 
+                              &&
+                              <div className='flex items-center gap-2'>
+                               <span className='text-sm w-32'>Working Hour Per Day</span>
+                               <span className='text-[14px] w-52 font-semibold'>{jobCommissionDetails && jobCommissionDetails.work_details.contract.daily_hour_cnt}</span>
+                              </div>
+                             }
+                             {
+                              (jobCommissionDetails && jobCommissionDetails.work_type==="contract")
+                              &&
+                              <div className='flex items-center gap-2'>
+                               <span className='text-sm w-32'>Working Hour Per Week</span>
+                               <span className='text-[14px] w-52 font-semibold'>{jobCommissionDetails && jobCommissionDetails.work_details.contract.weekly_hour_cnt}</span>
+                              </div>
+                             }
                           </div>
                           <div className='flex flex-col gap-2'>
                              <div className='flex items-center gap-2'>
                                <span className='text-sm w-32'>Client Name</span>
                                <span className='text-[14px] w-32 font-semibold'>{clientDescription && clientDescription.client_name}</span>
                              </div>
+                             {
+                              jobCommissionDetails.work_type==="contract" && 
+                              <div className='flex items-center gap-2'>
+                               <span className='text-sm w-32'>Contract Duration</span>
+                               <span className='text-[14px] w-32 font-semibold'>{jobCommissionDetails && `${jobCommissionDetails.work_details.contract.contract_duration_count} ${duration.get(jobCommissionDetails.work_details.contract.contract_duration_type)}`}</span>
+                             </div>
+                             }
+                            
                             <div className='flex items-center gap-2'>
                                <span className='text-sm w-32'>Experience</span>
                                <span className='text-[14px] w-32 font-semibold'>{`${jobBasicDetails.experience.minexp} - ${jobBasicDetails.experience.maxexp} Years`}</span>
@@ -679,11 +713,15 @@ const formats = [
                                  <div className='p-2 border-b flex flex-col gap-1'>
                                       <div>
                                         <span className='text-sm font-semibold'>Must Haves:</span>
-                                        <p className='text-sm leading-4'>{sourcingGuidelines.must_haves}</p>
+                                        <div className='p-2 border rounded-md bg-white-600'>
+                                         <p className='text-sm leading-4'>{sourcingGuidelines.must_haves}</p>
+                                        </div>
                                       </div>
                                       <div>
                                         <span className='text-sm font-semibold'>Poach Clients:</span>
-                                        <p className='text-sm leading-4'>{sourcingGuidelines.poach_clients}</p>
+                                        <div className='p-2 border rounded-md bg-white-600'>
+                                          <p className='text-sm leading-4'>{sourcingGuidelines.poach_clients}</p>
+                                        </div> 
                                       </div>
                                  </div>
                               )

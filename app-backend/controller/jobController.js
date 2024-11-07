@@ -511,9 +511,12 @@ export const addCandidateProfileList = async (req, res, next) => {
 export const getJobBasicDetailsForPreview = async (req, res, next) => {
   try {
     const job = await JOBS.findOne({ job_id: req.params.jobid })
-
-    const jobBasicDetails = await JOBBASICDETAILS.findById(job.job_basic_details)
-    res.status(200).json(jobBasicDetails)
+    if(!job){
+      res.status(200).json(null)
+    }else{
+      const jobBasicDetails = await JOBBASICDETAILS.findById(job.job_basic_details)
+      res.status(200).json(jobBasicDetails)
+    }
   } catch (err) {
     next(err)
   }
@@ -522,9 +525,12 @@ export const getJobBasicDetailsForPreview = async (req, res, next) => {
 export const getJobCompanyDetailsForPreview = async (req, res, next) => {
   try {
     const job = await JOBS.findOne({ job_id: req.params.jobid })
-
-    const jobCompanyDetails = await JOBCOMPANYINFO.findById(job.job_company_details)
-    res.status(200).json(jobCompanyDetails)
+    if(!job){
+      res.status(200).json(null)
+    }else{
+      const jobCompanyDetails = await JOBCOMPANYINFO.findById(job.job_company_details)
+      res.status(200).json(jobCompanyDetails)
+    }
   } catch (err) {
     next(err)
   }
@@ -533,9 +539,12 @@ export const getJobCompanyDetailsForPreview = async (req, res, next) => {
 export const getJobSourcingGuidelinesForPreview = async (req, res, next) => {
   try {
     const job = await JOBS.findOne({ job_id: req.params.jobid })
-
-    const jobSourcingGuidelines = await JOBSOURCINGDETAILS.findById(job.job_sourcing_guidelines)
-    res.status(200).json(jobSourcingGuidelines)
+    if(!job){
+      res.status(200).json(null)
+    }else{
+      const jobSourcingGuidelines = await JOBSOURCINGDETAILS.findById(job.job_sourcing_guidelines)
+      res.status(200).json(jobSourcingGuidelines)
+    }
   } catch (err) {
     next(err)
   }
@@ -544,7 +553,11 @@ export const getJobSourcingGuidelinesForPreview = async (req, res, next) => {
 export const getJobStatusForPreview = async (req, res, next) => {
   try {
     const job = await JOBS.findOne({ job_id: req.params.jobid }, { job_status: 1, _id: 0 })
-    res.status(200).json(job.job_status)
+    if(!job){
+       res.status(200).json(job)
+    }else{
+       res.status(200).json(job.job_status)
+    }
   } catch (err) {
     next(err)
   }
@@ -553,11 +566,34 @@ export const getJobStatusForPreview = async (req, res, next) => {
 export const getJobCommissionDetailsForPreview = async (req, res, next) => {
   try {
     const job = await JOBS.findOne({ job_id: req.params.jobid })
-    const jobcommissiondetails = await JOBCOMMISSION.findById(job.job_commission_details)
-    res.status(200).json(jobcommissiondetails)
+    if(!job){
+       res.status(200).json(null)
+    }else{
+      const jobcommissiondetails = await JOBCOMMISSION.findById(job.job_commission_details)
+      res.status(200).json(jobcommissiondetails)
+    }
   } catch (err) {
     next(err)
   }
+}
+
+export const getJobScreeningQuestionsForPreview= async (req,res,next)=>{
+   try{
+     const job = await JOBS.findOne({job_id: req.params.jobid})
+     if(!job){
+      res.status(200).json(null)
+     }else{
+      const jobsq= await JOBSQ.findById(job.job_screening_questionsa)
+      if(jobsq){
+        res.status(200).json(jobsq)
+      }else{
+        res.status(200).json(null)
+      }
+
+     }
+   }catch(err){
+     next(err)
+   }
 }
 
 export const createJobUpdates = async (req, res, next) => {
@@ -573,7 +609,11 @@ export const createJobUpdates = async (req, res, next) => {
 export const getJobUpdates = async (req, res, next) => {
   try {
     const job = await JOBS.findOne({ job_id: req.params.jobid }, { job_updates: 1, _id: 0 })
-    res.status(200).json(job.job_updates)
+    if(!job){
+      res.status(200).json(job)
+    }else{
+      res.status(200).json(job.job_updates)
+    }
   } catch (err) {
     next(err)
   }
@@ -582,9 +622,12 @@ export const getJobUpdates = async (req, res, next) => {
 export const getJobAttachmentsDetailsForPreview = async (req, res, next) => {
   try {
     const job = await JOBS.findOne({ job_id: req.params.jobid })
-
-    const jobAttachments = await JOBATTACHEMENT.findById(job.job_attachments)
-    res.status(200).json(jobAttachments)
+    if(!job){
+      res.status(200).json(null)
+    }else{
+      const jobAttachments = await JOBATTACHEMENT.findById(job.job_attachments)
+      res.status(200).json(jobAttachments)
+    }
   } catch (err) {
     next(err)
   }
@@ -594,7 +637,7 @@ export const getAcManagerNameAndMail = async (req, res, next) => {
   try {
     const job = await JOBS.findOne({ job_id: req.params.jobid })
 
-    if (job.alloted_account_manager) {
+    if (job && job.alloted_account_manager) {
       const acdetails = await axios.get(`${process.env.ADMIN_SERVER_URL}/accountmanager/getmailandname/${job.alloted_account_manager}`)
       res.status(200).json(acdetails.data)
     } else {
@@ -670,7 +713,7 @@ export const getJobAttachmentFileType = async (req, res, next) => {
 export const getJobHotMark = async (req, res, next) => {
   try {
     const job = await JOBS.findOne({ job_id: req.params.jobid })
-    if (job.mark_hot_job) {
+    if (job && job.mark_hot_job) {
       res.status(200).json(job.mark_hot_job)
     } else {
       res.status(200).json(false)

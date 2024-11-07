@@ -8,9 +8,9 @@ import CANDIDATEBASICDETAILS from '../models/CANDIDATEBASICDETAILS.js'
 import nodemailer from 'nodemailer'
 import dotenv from 'dotenv'
 import jwt from 'jsonwebtoken'
-import fs from 'fs'
+import fs, { stat } from 'fs'
 import JOBBASICDETAILS from '../models/JOBBASICDETAILS.js'
-
+import bcrypt from 'bcryptjs'
 
 
 // Function to generate the HTML template
@@ -1304,4 +1304,181 @@ export const verifyemailEnterpriseTeam=async (req,res,next)=>{
             
         }
     })
+}
+
+//For sending mail of reset password
+export const requestResetPassword=async (req,res,next)=>{
+    const {email}=req.body
+   try{
+     let user=null
+     user=await ENTERPRISETEAM.findOne({email})
+     if(!user){
+        user=await RECRUITINGTEAM.findOne({email})
+     }
+     
+     if(!user) return res.status(404).json({message:"User not found by this email address",type:"failure"})
+
+     //Create token with userid and expiration
+     const token= jwt.sign({id:user._id},process.env.JWT,{expiresIn:'24h'})
+     const resetLink=`http://localhost:3000/reset-password/${token}`
+
+
+     //Send email with reset link
+     const mailConfigurations={
+        from:{
+         name:"Uphire",
+         address:'vivekmesuriya110@gmail.com'
+        },
+        to:email,
+        subject:"Uphire, Reset Password",
+        html:`<!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <meta http-equiv="X-UA-Compatible" content="ie=edge">
+          <title>Reset Your Password</title>
+          <style>
+            /* General reset for mobile */
+            body, table, td, a {
+              text-size-adjust: 100%;
+              font-family: Arial, sans-serif;
+            }
+            table {
+              border-collapse: collapse;
+              width: 100%;
+            }
+            /* Layout */
+            .container {
+              max-width: 600px;
+              margin: 0 auto;
+              background-color: #ffffff;
+              padding: 20px;
+              border-radius: 5px;
+              box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+            .header {
+              text-align: center;
+              padding: 10px;
+              background-color: #4CAF50;
+              color: #ffffff;
+              border-top-left-radius: 5px;
+              border-top-right-radius: 5px;
+            }
+            .content {
+              padding: 20px;
+              text-align: center;
+            }
+            .button {
+              display: inline-block;
+              padding: 10px 20px;
+              margin-top: 20px;
+              background-color: #4CAF50;
+              color: #ffffff !important;
+              text-decoration: none;
+              border-radius: 5px;
+              font-weight: bold;
+            }
+            .footer {
+              text-align: center;
+              font-size: 12px;
+              color: #777;
+              padding: 10px;
+              margin-top: 20px;
+            }
+        
+            /* Responsive adjustments */
+            @media only screen and (max-width: 600px) {
+              .container {
+                width: 100% !important;
+                padding: 10px !important;
+              }
+              .content {
+                padding: 10px !important;
+              }
+              .button {
+                padding: 15px 25px !important;
+                font-size: 16px !important;
+              }
+              .footer {
+                font-size: 12px !important;
+              }
+            }
+          </style>
+        </head>
+        <body style="background-color: #f7f7f7; margin: 0; padding: 0;">
+        
+          <table role="presentation" class="container" cellpadding="0" cellspacing="0">
+            <tr>
+              <td class="header">
+                <h2>Password Reset Request</h2>
+              </td>
+            </tr>
+            <tr>
+              <td class="content">
+                <p>Hello,</p>
+                <p>We received a request to reset your password. Click the button below to set a new password.</p>
+                <a href="${resetLink}" class="button">Reset Password</a>
+                <p>If you didn't request this, you can safely ignore this email.</p>
+                <p>Best regards, Uphire Team</p>
+              </td>
+            </tr>
+            <tr>
+              <td class="footer">
+                <p>&copy; 2024 Uphire. All rights reserved.</p>
+              </td>
+            </tr>
+          </table>
+        
+        </body>
+        </html>`
+     }
+
+     transpoter.sendMail(mailConfigurations)
+
+     res.status(200).json({message:"Successfully reset password mail sended",type:'success'})
+
+   }catch(err){
+     next(err)
+   }
+}
+
+//Route for verify token of reset password
+export const verifyResetPassword=async (req,res,next)=>{
+     try{
+        let userType="enterprise"
+        const {token}=req.params
+        const {newPassword}=req.body
+
+        let userId=null
+        jwt.verify(token,process.env.JWT,async (err,decoded)=>{
+            if(err) return res.status(404).json({message:"Invalid token"})
+            else userId=decoded.id
+        })
+
+        let user=null
+        user=await ENTERPRISETEAM.findById(userId)
+        if(!user){
+            userType='recruiting'
+            user=await RECRUITINGTEAM.findById(userId)
+        }
+        
+        if(!user) return res.status(404).json({message:"Invalid token or User not found",type:"failure"})
+
+        //Hash the new password and update
+        const salt = bcrypt.genSaltSync(10);
+        const hashedPassword=await bcrypt.hash(newPassword,salt)
+
+        //Update the password
+        if(userType==="enterprise"){
+          await ENTERPRISETEAM.findByIdAndUpdate(user._id,{password:hashedPassword})
+        }else{
+          await RECRUITINGTEAM.findByIdAndUpdate(user._id,{password:hashedPassword})
+        }
+       
+        res.status(200).json({message:"Successfully user password changed",type:"success"})
+
+     }catch(err){ 
+        next(err)
+     }
 }

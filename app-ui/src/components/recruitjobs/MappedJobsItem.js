@@ -16,7 +16,7 @@ import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutli
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import WarningIcon from '@mui/icons-material/Warning';
 
-export default function MappedJobsItem({jobObj,fetchAcceptedJobs,showNotification,fetchMappedJobs,setLoader}) {
+export default function MappedJobsItem({jobObj,handleOpenPreviewBox,fetchAcceptedJobs,showNotification,fetchMappedJobs,setLoader}) {
   const {user}=useContext(AuthContext)
   const [confirmPopUp,setConfirmPopUp]=useState(false)
   const [rejectPopUp,setRejectPopUp]=useState(false)
@@ -199,7 +199,7 @@ export default function MappedJobsItem({jobObj,fetchAcceptedJobs,showNotificatio
        </div>
     </div>
     }
-    <div className='custom-div cursor-pointer hover:scale-[.99] transition-all'>
+    <div onClick={()=>handleOpenPreviewBox(jobObj)} className='custom-div cursor-pointer hover:scale-[.99] transition-all'>
         <div className='flex justify-between items-start w-full'>
           <div className='flex items-start gap-12'>
           <div className='flex w-[22rem] items-start gap-4 mr-2'>
