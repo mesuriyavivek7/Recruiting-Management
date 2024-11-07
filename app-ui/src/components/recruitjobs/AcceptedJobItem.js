@@ -23,7 +23,7 @@ import ChatOutlinedIcon from '@mui/icons-material/ChatOutlined';
 import PersonRemoveAlt1OutlinedIcon from '@mui/icons-material/PersonRemoveAlt1Outlined';
 import WarningIcon from '@mui/icons-material/Warning';
 
-export default function AcceptedJobItem({jobObj,showNotification,fetchFavouriteJobs,fetchAcceptedJobs,fetchMappedJobs}) {
+export default function AcceptedJobItem({jobObj,showNotification,handleOpenPreviewBox,fetchFavouriteJobs,fetchAcceptedJobs,fetchMappedJobs}) {
   const navigate=useNavigate()
   const {user}=useContext(AuthContext)
   const getText=(txt)=>{
@@ -128,7 +128,7 @@ export default function AcceptedJobItem({jobObj,showNotification,fetchFavouriteJ
 
        }
        
-        <div className='custom-div cursor-pointer hover:scale-[.99] transition-all'>
+        <div onClick={()=>handleOpenPreviewBox(jobObj)} className='custom-div cursor-pointer hover:scale-[.99] transition-all'>
             
               <div className='flex items-start gap-10'>
               <div className='flex items-start gap-4 mr-4'>

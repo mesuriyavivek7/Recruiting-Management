@@ -16,7 +16,7 @@ import axios from 'axios'
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
 
 
-export default function LiveJobsItem({jobObj,showNotification,setLoader,fetchLiveJobs}) {
+export default function LiveJobsItem({jobObj,handleOpenPreviewBox,showNotification,setLoader,fetchLiveJobs}) {
 
   const {user}=useContext(AuthContext)
 
@@ -92,7 +92,7 @@ export default function LiveJobsItem({jobObj,showNotification,setLoader,fetchLiv
 
     }
    
-    <div className='custom-div pb-4 cursor-pointer hover:scale-[.99] transition-all'>
+    <div onClick={()=>handleOpenPreviewBox(jobObj.jobBasicDetails.job_id)} className='custom-div pb-4 cursor-pointer hover:scale-[.99] transition-all'>
        <div className='flex w-full justify-between'>
          <div className='flex gap-10 items-start'>
            <div className='flex w-[22rem] items-start gap-4 mr-2'>

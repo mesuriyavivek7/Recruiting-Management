@@ -130,7 +130,10 @@ const RecruitSignUp = () => {
   };
 
   const handleChange = (e) => {
-    const { name, value, type,checked, options } = e.target;
+    let { name, value, type,checked, options } = e.target;
+    if(name==="email"){
+       value=value.toLowerCase()
+    }
     if (type === "checkbox") {
       setFormData((prevData) => ({
         ...prevData,
