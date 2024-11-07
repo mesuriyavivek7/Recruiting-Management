@@ -28,6 +28,21 @@ const Navbar = () => {
      setNotification({message,type})
   }
 
+  const getShortName=(str)=>{
+     let ans=""
+     let arr=str.split(" ")
+
+     if(arr.length>=2){
+      ans+=arr[0][0].toUpperCase()        
+      ans+=arr[1][0].toUpperCase()
+     }else{
+       ans+=arr[0][0].toUpperCase()
+     }
+
+     return ans;
+   
+  }
+
   const handleLogout=async ()=>{
       setLogoutLoader(true)
       try{
@@ -92,7 +107,7 @@ const Navbar = () => {
         
         <div className="relative">
           <div onClick={()=>setOpenProfile((prev)=>(!prev))} className="w-[30px] h-[30px] rounded-full cursor-pointer bg-blue-400 flex place-items-center ">
-            <p className="text-white text-sm mx-auto">VM</p>
+            <p className="text-white text-sm mx-auto">{user && getShortName(user.full_name)}</p>
           </div>
           {
             openProfile && <div className="absolute z-50 top-16 right-4 pb-2 custom-div">
