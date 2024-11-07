@@ -23,6 +23,7 @@ export const fetchEnterpriseVerifiedData = async (admin_id) => {
     }
 }
 
+
 export const fetchPendingEnterpriseData = async (admin_id) => {
     try {
         const response = await axios.get(`${admin_be_uri}/masteradmin/getpendingenterprises/${admin_id}`);
@@ -33,6 +34,15 @@ export const fetchPendingEnterpriseData = async (admin_id) => {
     }
 }
 
+export const fetchMasterAdminDetailsById = async(admin_id) => {
+    try {
+        const response = axios.get(`${admin_be_uri}/masteradmin/getdetails/${admin_id}`);
+        return (await response).data;
+    } catch (error) {
+        console.error("Error while fetching the master admin details :", error);
+        throw error;
+    }
+}
 export const fetchEnterpriseById = async (enterprise_id) => {
     try {
         const response = await axios.get(`${app_be_uri}/enterprise/find/${enterprise_id}`);
@@ -191,6 +201,21 @@ export const fetchAccountManager = async (ac_manager_id) => {
         throw error;
     }
 };
+
+//get the account manager on master admin
+export const fetchAccountManagerMasterAdmin= async (m_admin_id)=>{
+    if (!m_admin_id) {
+        console.error("Master admin id is undefined");
+        return; 
+    }
+    try{
+        const response = await axios.get(`${admin_be_uri}/masteradmin/getaccountmanagerdetails/${m_admin_id}`)
+        return response.data
+    }catch(err){
+        console.error("Error while fetching account manager details by master admin id : ",err)
+        throw err
+    }
+}
 
 //get the all account manager details
 export const fetchAccountManagerDetails = async () => {

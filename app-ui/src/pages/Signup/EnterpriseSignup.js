@@ -183,7 +183,6 @@ const EnterpriseSignup = () => {
        }
   }
 
-  console.log(formData)
 
   const validateForm=()=>{
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -205,7 +204,10 @@ const EnterpriseSignup = () => {
   }
 
   const handleChange=(e)=>{
-    const { name, value } = e.target;
+    let { name, value } = e.target;
+    if(name==="email"){
+       value=value.toLowerCase()
+    }
     setFormData((prevData)=>({...prevData,[name]:value}))
   }
   

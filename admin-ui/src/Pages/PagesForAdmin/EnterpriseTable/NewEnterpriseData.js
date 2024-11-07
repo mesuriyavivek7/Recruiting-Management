@@ -3,13 +3,13 @@ import { useSelector } from 'react-redux';
 import axios from 'axios';
 import {
   Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions,
-  TextField, TablePagination, Select, MenuItem, FormControl, InputLabel, Card, CircularProgress, Box
+  TextField, Select, MenuItem, FormControl, InputLabel, CircularProgress, Box
 } from '@mui/material';
 import Notification from '../../../Components/Notification';
 import { DataGrid } from '@mui/x-data-grid';
 import { columns } from './NewRowColData ';
 import { FaEnvelope, FaPhone, FaBriefcase, FaBuilding, FaUsers, FaGlobe, FaMapMarkerAlt, FaCity } from 'react-icons/fa';
-import { fetchEnterpriseById, fetchEnterpriseVerifiedData, fetchPendingEnterpriseData } from '../../../services/api';
+import { fetchEnterpriseById,fetchAccountManagerMasterAdmin, fetchPendingEnterpriseData } from '../../../services/api';
 
 
 const NewEnterpriseData = () => {
@@ -31,9 +31,6 @@ const NewEnterpriseData = () => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
 
-  // Pagination handlers
-  const handleChangePage = (event, newPage) => setPage(newPage);
-
 
   React.useEffect(() => {
     // Simulate data fetching with a loader
@@ -43,10 +40,6 @@ const NewEnterpriseData = () => {
     }, 1000); // Simulate 1 second loading time
   }, [newEnterprise, page, rowsPerPage]);
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
 
   const showNotification = (message, type) => {
     setNotification({ message, type });
@@ -104,14 +97,17 @@ const NewEnterpriseData = () => {
   const handleAssignAcManager = async () => {
     try {
       setAssignLoad(true);
-      await axios.post(`${process.env.REACT_APP_API_APP_URL}/enterprise/allocatedacmanager`, {
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/masteradmin/assignenterprisetoac`, {
         en_id: selectedRow._id,
         ac_id: selectedManager,
+        m_admin_id: myValue.userData._id
       });
-      fetchEnterprise();
+      await fetchEnterprise();
       handleClose();
       showNotification('Assigned to account manager successfully', 'success');
     } catch (err) {
+      handleClose()
+      console.error(err)
       showNotification('Error assigning enterprise to account manager!', 'failure');
     }
     setAssignLoad(false);
@@ -119,9 +115,6 @@ const NewEnterpriseData = () => {
 
   const handleRowClick = (item) => {
     setSelectedRow(item);
-    if (item?.allocated_account_manager) {
-      fetchAccountManager(item?.allocated_account_manager);
-    }
     setOpen(true);
   };
 
@@ -131,9 +124,17 @@ const NewEnterpriseData = () => {
     setSelectedRow(null);
   };
 
-  useEffect(() => {
-    fetchEnterprise();
-  }, []);
+  const fetchAcManager = async ()=>{
+     try{
+        const acmanagerdata=await fetchAccountManagerMasterAdmin(myValue.userData._id)
+        console.log(acmanagerdata)
+        setAcManager(acmanagerdata)
+     }catch(err){
+        showNotification("Something went wrong while fetching account manager.",'failure')
+     }
+
+  }
+
 
   const fetchEnterprise = async () => {
     try {
@@ -155,19 +156,12 @@ const NewEnterpriseData = () => {
     }
   };
 
-  const fetchAccountManager = async (ac_manager_id) => {
-    if (!ac_manager_id) {
-      console.error("Account Manager ID is undefined");
-      return; // Exit the function if the ID is not defined
-    }
-    try {
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/accountmanager/getmailandname/${ac_manager_id}`);
-      return response.data;
-    } catch (error) {
-      console.error("Error while fetching account manager details: ", error);
-      throw error;
-    }
-  };
+  useEffect(() => {
+    fetchEnterprise();
+    fetchAcManager();
+  }, []);
+
+  
 
   return (
     <>
@@ -372,7 +366,7 @@ const NewEnterpriseData = () => {
                     label="Select Account Manager"
                   >
                     {acManager?.map((manager) => (
-                      <MenuItem key={manager._id} value={manager._id}>
+                      <MenuItem key={manager.ac_id} value={manager.ac_id}>
                         {manager.name}
                       </MenuItem>
                     ))}
@@ -391,8 +385,9 @@ const NewEnterpriseData = () => {
               Cancel
             </Button>
             <Button
+              disabled={selectedManager===''}
               onClick={handleAssignAcManager}
-              className="bg-gray-600 hover:bg-blue-230 text-white px-4 py-2 text-xl rounded-md"
+              className="bg-gray-600 disabled:bg-slate-200 disabled:cursor-not-allowed hover:bg-blue-230 text-white px-4 py-2 text-xl rounded-md"
             >
               {assignLoad && <span>Loading...</span>}
               {!assignLoad && <span>Assign</span>}
