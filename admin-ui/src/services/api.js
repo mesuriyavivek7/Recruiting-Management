@@ -248,9 +248,9 @@ export const fetchAccountManagerMasterAdmin= async (m_admin_id)=>{
 }
 
 //get the all account manager details
-export const fetchAccountManagerDetails = async () => {
+export const fetchAccountManagerDetailsById = async (ac_manager_id) => {
     try {
-        const response = await axios.get(`${admin_be_uri}/accountmanager/findall`);
+        const response = await axios.get(`${admin_be_uri}/accountmanager/${ac_manager_id}`);
         return response.data;
     } catch (error) {
         console.error("Error while fetching all account manager details : ", error);

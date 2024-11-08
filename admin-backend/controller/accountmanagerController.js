@@ -111,14 +111,9 @@ export const getAcmanagerMailandName = async (req, res, next) => {
 }
 
 
-export const getAllAccountManagers = async (req, res, next) => {
+export const getAccountManager = async (req, res, next) => {
   try {
-    const accountManagers = await ACCOUNTMANAGER.find();
-
-    if (!accountManagers.length) {
-      return res.status(404).json({ message: 'No account managers found.' });
-    }
-
+    const accountManagers = await ACCOUNTMANAGER.findById(req.params.ac_manager_id);
     res.status(200).json(accountManagers);
   } catch (error) {
     next(error);

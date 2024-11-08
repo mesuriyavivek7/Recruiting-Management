@@ -1,5 +1,5 @@
 import express from 'express'
-import { addCandidatePendingList, addCandidateVerifiedList, addEnterprise, addJobIntoVerifyList, addJobsPendingList, AddNewAccountManager, addRecruiting, addVerifiedRecruitng, getAcByMadminId, getAcManagerEmail, getAcmanagerMailandName, getAllAccountManagers} from '../controller/accountmanagerController.js'
+import { addCandidatePendingList, addCandidateVerifiedList, addEnterprise, addJobIntoVerifyList, addJobsPendingList, AddNewAccountManager, addRecruiting, addVerifiedRecruitng, getAcByMadminId, getAccountManager, getAcManagerEmail, getAcmanagerMailandName} from '../controller/accountmanagerController.js'
 
 const router=express.Router()
 
@@ -7,7 +7,7 @@ const router=express.Router()
 router.get('/madmin/:id',getAcByMadminId)
 
 //get all account manager details
-router.get('/findall', getAllAccountManagers);
+router.get('/:ac_manager_id', getAccountManager);
 
 //add enterprise into pending list
 router.post('/addenterprise',addEnterprise)
