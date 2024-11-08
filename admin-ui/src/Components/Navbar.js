@@ -134,7 +134,7 @@ const Navbar = ({ enterpriseData, recruiterData }) => {
         maxWidth="lg"
       >
 
-        <DialogContent className="relative bg-white p-6" style={{ maxHeight: "600px", overflowY: "auto" }}>
+        <DialogContent className=" bg-white p-6 h-[600px]">
         <h2 className="text-xl font-bold mb-4">Search Users</h2>
 
           <div className="flex place-items-center gap-2 mb-4">
@@ -157,8 +157,11 @@ const Navbar = ({ enterpriseData, recruiterData }) => {
             />
           </div>
 
-
-
+        <div className="my-4">
+        <Button
+          variant="contained"
+          size="small"
+         
           style={{
             backgroundColor: showEnterpriseData ? '#315370' : '#e0e0e0',
             color: showEnterpriseData ? 'white' : '#000',
@@ -173,6 +176,7 @@ const Navbar = ({ enterpriseData, recruiterData }) => {
         >
           Enterprise
         </Button>
+
         <Button
           variant="contained"
           size="small"
@@ -193,50 +197,80 @@ const Navbar = ({ enterpriseData, recruiterData }) => {
         >
           Recruiter
         </Button>
-          </div>
+        </div>
 
           
-          <div className="border-t pt-4 max-h-[400px] ">
+          <div className="border-t pt-2">
 
             {popupSearchTerm && (
               <>
                 {showEnterpriseData ? (
                   <>
                     <h4 className="font-semibold text-xl">Enterprise Results:</h4>
+                    <div className="h-[360px] mt-2 overflow-auto">
                     {filteredEnterpriseData.length > 0 ? (
                       filteredEnterpriseData.map((item, index) => (
                         <Box
                           key={index}
-                          className="p-4 my-2 bg-gray-100 hover:bg-gray-200 rounded-lg shadow-md transition duration-300"
+                          className="p-4 my-2 mb-3 bg-gray-100 flex flex-col gap-1 hover:bg-gray-200 rounded-lg shadow-md transition duration-300"
                         >
-                          <p className="font-medium text-md">Full Name: {item.full_name}</p>
-                          <p className="text-md">Email: {item.email}</p>
-                          <p className="text-md">Account Status: {item.account_status.status}</p>
-                          <p className="text-md">Account Manager: {item.account_manager}</p>
+                          <div className="flex gap-1 items-center">
+                            <span className="text-[15px] font-semibold w-36">Full Name:</span>
+                            <span className="">{item.full_name}</span>
+                          </div>
+                          <div className="flex gap-1 items-center">
+                            <span className="text-[15px] font-semibold w-36">Email:</span>
+                            <span className="">{item.email}</span>
+                          </div>
+                          <div className="flex gap-1 items-center">
+                            <span className="text-[15px] font-semibold w-36">Account Status:</span>
+                            <span className="">{item.account_status.status}</span>
+                          </div>
+                          <div className="flex gap-1 items-center">
+                            <span className="text-[15px] font-semibold w-36">Account Manager:</span>
+                            <span className="">{item.account_manager}</span>
+                          </div>
+                          
                         </Box>
                       ))
                     ) : (
                       <p>No enterprise results found.</p>
                     )}
-                  </>
+
+                  </div>
+                </>
                 ) : (
                   <>
                     <h4 className="font-semibold text-xl">Recruiter Results:</h4>
+                    <div className="h-[360px] mt-2 overflow-auto">
                     {filteredRecruiterData.length > 0 ? (
                       filteredRecruiterData.map((item, index) => (
                         <Box
                           key={index}
                           className="p-4 my-2 bg-gray-100 hover:bg-gray-200 rounded-lg shadow-md transition duration-300"
                         >
-                          <p className="font-medium text-md">Full Name: {item.full_name}</p>
-                          <p className="text-md">Email: {item.email}</p>
-                          <p className="text-md">Designation: {item.designation}</p>
-                          <p className="text-md">Company Name: {item.company_name}</p>
+                          <div className="flex gap-1 items-center">
+                            <span className="text-[15px] font-semibold w-36">Full Name:</span>
+                            <span className="">{item.full_name}</span>
+                          </div>
+                          <div className="flex gap-1 items-center">
+                            <span className="text-[15px] font-semibold w-36">Email:</span>
+                            <span className="">{item.email}</span>
+                          </div>
+                          <div className="flex gap-1 items-center">
+                            <span className="text-[15px] font-semibold w-36">Designation:</span>
+                            <span className="">{item.designation}</span>
+                          </div>
+                          <div className="flex gap-1 items-center">
+                            <span className="text-[15px] font-semibold w-36">Company Name:</span>
+                            <span className="">{item.company_name}</span>
+                          </div>
                         </Box>
                       ))
                     ) : (
                       <p>No recruiter results found.</p>
                     )}
+                    </div>
                   </>
                 )}
               </>
@@ -257,6 +291,7 @@ const Navbar = ({ enterpriseData, recruiterData }) => {
         </DialogActions>
       </Dialog>
     </div>
+    
   );
 };
 
