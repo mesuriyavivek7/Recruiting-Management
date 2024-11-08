@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import  { useContext, useEffect } from 'react'
 
 import {useNavigate } from 'react-router-dom'
 import { AuthContext } from '../../context/AuthContext'
@@ -7,8 +7,10 @@ export default function AdminRoute({children}) {
    const navigate=useNavigate()
    const {user,isAdmin}=useContext(AuthContext)
 
-   if(!user) navigate('/')
-   if(!isAdmin) navigate('/')
-
+   useEffect(()=>{
+     if(!user || !isAdmin) navigate('/')
+   },[])
+   
    return children
+   
 }

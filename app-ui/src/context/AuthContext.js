@@ -67,9 +67,9 @@ export const AuthContextProvider=({children})=>{
             let res=null;
             if(state.user.userType==='enterprise') res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/enterpriseteam/checkadmin/${state.user._id}`)
             else res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/recruitingteam/checkadmin/${state.user._id}`)
-            
             if(res.data) setIsAdmin(true)
             else setIsAdmin(false)
+            
          }catch(err){
             console.log(err)
          }
