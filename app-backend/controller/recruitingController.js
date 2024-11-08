@@ -168,6 +168,7 @@ export const getAgencyDetailsForProfilePage = async (req, res, next) => {
 
 export const getRecruitingAgencies = async (req, res, next) => {
     try {
+        const m_admin_id = req.params.m_admin_id;
         const agencies = await RECRUITING.find()
         if (agencies.length === 0) {
             return res.status(404).json({ message: 'No recruiting agencies found.' });

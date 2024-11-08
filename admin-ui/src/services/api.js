@@ -105,6 +105,36 @@ export const fetchJobStatusByJobId = async (job_id) => {
     }
 }
 
+export const fetchVerifiedRAgenciesByAdminId = async(m_admin_id) =>{
+    try {
+        const response = await axios.get(`${admin_be_uri}/masteradmin/getagencies/${m_admin_id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching verified recruiting agencies: ", error);
+        throw error;
+    }
+}
+
+export const fetchPendingRAgenciesByAdminId = async(m_admin_id) =>{
+    try {
+        const response = await axios.get(`${admin_be_uri}/masteradmin/getpendingagencies/${m_admin_id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching verified recruiting agencies: ", error);
+        throw error;
+    }
+}
+
+export const fetchRecuritingAgenciesbyId = async (r_agency_id) => {
+    try {
+        const response = await axios.get(`${app_be_uri}/recruiting/${r_agency_id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching recruiting agencies: ", error);
+        throw error;
+    }
+}
+
 export const fetchRecuritingAgencies = async () => {
     try {
         const response = await axios.get(`${app_be_uri}/recruiting/getagencies`);
