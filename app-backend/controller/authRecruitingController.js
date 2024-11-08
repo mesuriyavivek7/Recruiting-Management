@@ -33,7 +33,7 @@ export const register=async (req,res,next)=>{
 //for check mail is already presant or not
 export const checkMail=async (req,res,next)=>{
     try{
-      const mailaddress=await RECRUITING.findOne({email:req.body.email})
+      const mailaddress=await RECRUITINGTEAM.findOne({email:req.body.email})
       if(mailaddress){
         res.status(200).json(true)
       }else{
@@ -49,7 +49,7 @@ export const checkMail=async (req,res,next)=>{
 //for check mobile no is already exist or not
 export const checkMobileNo=async (req,res,next)=>{
     try{
-      const mobileno=await RECRUITING.findOne({mobileno:req.body.mobileno})
+      const mobileno=await RECRUITINGTEAM.findOne({mobileno:req.body.mobileno})
       if(mobileno) res.status(200).json(true)
       else res.status(200).json(false)
     }catch(err){

@@ -77,7 +77,7 @@ const radialData = [
 ];
 
 
-// for add new job(chaange by fenee)
+ // for add new job(chaange by fenee)
 
   const navigate = useNavigate();
 

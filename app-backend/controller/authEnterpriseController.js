@@ -60,7 +60,7 @@ export const login=async (req,res,next)=>{
 //for check email is presant or not
 export const checkMail=async (req,res,next)=>{
     try{
-      const mailaddress=await ENTERPRISE.findOne({email:req.body.email})
+      const mailaddress=await ENTERPRISETEAM.findOne({email:req.body.email})
       if(mailaddress){
         res.status(200).json(true)
       }else{
@@ -75,7 +75,7 @@ export const checkMail=async (req,res,next)=>{
 //check for mobile no
 export const checkMobileNo=async (req,res,next)=>{
   try{
-     const mobileno=await ENTERPRISE.findOne({mobileno:req.body.mobileno})
+     const mobileno=await ENTERPRISETEAM.findOne({mobileno:req.body.mobileno})
      if(mobileno){
       res.status(200).json(true)
      }else{
