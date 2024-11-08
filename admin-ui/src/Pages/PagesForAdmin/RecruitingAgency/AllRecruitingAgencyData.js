@@ -4,7 +4,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import { rows, columns } from './RowColData';
 import { useNavigate } from 'react-router-dom';
 import { fetchRecuritingAgencyById } from '../../../services/api';
-import { Button, IconButton, InputAdornment, TextField } from '@mui/material';
+import { Button, CircularProgress, IconButton, InputAdornment, TextField } from '@mui/material';
 import { FaSearch } from 'react-icons/fa';
 
 const calculateRowHeight = (params) => {
@@ -19,7 +19,7 @@ export default function AllRecruitingAgencyData() {
   const [filterStatus, setFilterStatus] = React.useState('All');
   const [filteredRows, setFilteredRows] = React.useState(rows);
   const navigate = useNavigate();
-
+  const [loading, setLoading] = React.useState(false);
   // Filter rows based on search term and filter status
   React.useEffect(() => {
     const newFilteredRows = rows.filter((row) => {
@@ -40,16 +40,13 @@ export default function AllRecruitingAgencyData() {
       console.error('Error fetching enterprise data:', error);
     }
   };
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
+  React.useEffect(() => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+  }, [page, rowsPerPage]);
+ 
   return (
     <>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} gap={2}>
@@ -117,7 +114,12 @@ export default function AllRecruitingAgencyData() {
           ))}
         </Box>
       </Box>
-
+      {loading ? (
+          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 400, color: '#315370' }}>
+            <CircularProgress />
+          </Box>
+        ) : (
+          <div>
       <p className='text-lg xl:text-2xl pt-9'>All Recruiting Agency</p>
       <Box sx={{ height: 600, width: '100%', paddingTop: '19px' }}>
         <DataGrid
@@ -127,6 +129,7 @@ export default function AllRecruitingAgencyData() {
           rowHeight={80}
           getRowHeight={calculateRowHeight}
           pageSize={rowsPerPage}
+          initialState={{ pagination: { paginationModel: { page: 0, pageSize: 10 } } }}
           pageSizeOptions={[5, 10]}
           onRowClick={(params) => handleRowClick(params)}
           disableSelectionOnClick
@@ -185,6 +188,7 @@ export default function AllRecruitingAgencyData() {
           }}
         />
       </Box>
+      </div>)}
     </>
   );
 }

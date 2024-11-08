@@ -51,7 +51,7 @@ const User = () => {
           <div className="flex justify-between items-center space-x-10 pt-8">
           {/* <Link to="/admin/account-manager" className="inline-block  bg-blue-230 text-white py-2 px-4 rounded hover:bg-gray-400 text-xs xl:text-lg">see all</Link> */}
          
-          {/* <a href="#" className="inline-block  bg-blue-230 text-white py-2 px-4 rounded hover:bg-gray-400 text-xs xl:text-lg">See all </a> */}
+          <a href="#" className="inline-block  bg-blue-230 text-white py-2 px-4 rounded hover:bg-gray-400 text-xs xl:text-lg">See all </a>
            
             <img  height="50" src="https://img.icons8.com/ios-filled/50/manager.png" alt="manager" className="w-10"/>
           </div>

@@ -44,11 +44,7 @@ const AdminAllJobData = () => {
     }, 1000);
   }, [page, rowsPerPage]);
 
-  const handleChangePage = (event, newPage) => setPage(newPage);
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
+  
 
   return (
     <div>
@@ -105,13 +101,13 @@ const AdminAllJobData = () => {
           ))}
         </Box>
       </Box>
-
-      <Card className='mt-9 font-sans'>
-        {loading ? (
+      {loading ? (
           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 400, color: '#315370' }}>
             <CircularProgress />
           </Box>
         ) : (
+      <Card className='mt-9 font-sans'>
+     
           <div style={{ height: 600, width: '100%' }} className='pt-4'>
             <DataGrid
               rows={filteredRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
@@ -140,8 +136,8 @@ const AdminAllJobData = () => {
               }}
             />
           </div>
-        )}
-      </Card>
+       
+      </Card> )}
     </div>
   );
 };

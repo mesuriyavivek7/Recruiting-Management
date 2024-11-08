@@ -13,6 +13,7 @@ const calculateRowHeight = (params) => {
 const MappedCandidateData = () => {
   const [selectedRowId, setSelectedRowId] = useState(null);
   const navigate = useNavigate();
+  
 
   const handleRowClick = (id) => {
     setSelectedRowId(id);
