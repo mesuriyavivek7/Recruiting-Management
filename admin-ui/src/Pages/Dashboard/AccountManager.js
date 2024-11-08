@@ -24,7 +24,7 @@ const AccountManager = () => {
         
 
         <div className="w-full h-full flex  flex-col pb-20 gap-2 relative bg-white-200 sm:pt-4 lg:pt-6  overflow-y-scroll font-sans pr-8">
-       
+       a
           <Outlet/>
         </div>
       

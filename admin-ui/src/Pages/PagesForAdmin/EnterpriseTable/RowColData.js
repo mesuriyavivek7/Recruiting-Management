@@ -92,8 +92,8 @@ export const columns = [
         ),
     },
     {
-        field: 'admin_verified',
-        headerName: 'Admin Verified',
+        field: 'account_manager_verified',
+        headerName: 'Accoutn Manager Verified',
         flex: 1, // Flexible width
         minWidth: 150, // Minimum width
         renderCell: (params) => (
@@ -149,7 +149,7 @@ export const useRows = () => {
                         city: enterpriseData.city || "Unknown",
                         email_verification: enterpriseData.email_verified ? "yes" : "no",
                         account_status: enterpriseData.account_status || { status: 'Inactive', remark: '', admin_id: '' },
-                        admin_verified: enterpriseData.admin_verified || false,
+                        account_manager_verified: enterpriseData.account_manager_verified || false,
                         account_manager: accountManager ? `${accountManager.full_name}` : null,
                     };
                 })

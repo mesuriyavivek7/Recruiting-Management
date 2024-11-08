@@ -1,4 +1,5 @@
-import { fetchAccountManagerDetails } from "../../../services/api";
+import { fetchAccountManagerDetails, fetchAccountManagerDetailsById, fetchAccountManagerMasterAdmin } from "../../../services/api";
+import { store } from "../../../State/Store";
 
 // columns.js
 export const columns = [
@@ -84,18 +85,23 @@ export const columns = [
   }
 ];
 
-// Fetching data
-export const data = await fetchAccountManagerDetails();
 
+const selectUserData = (state) => state.admin.userData;
+const userData = selectUserData(store.getState());
 
-// Transform data into rows dynamically
-export const rows = data.map((item, index) => ({
-  _id: index + 1,  // Assuming item has an _id
-  full_name: item.full_name,
-  total_enterprise: (item.pending_verify_enterprise?.length || 0) + (item.verified_enterprise?.length || 0), // Calculate total enterprise
-  pending_enterprise: item.pending_enterprise?.length || 0, // Assuming pending_enterprise is an array
-  total_jobs: (item.pending_verify_enterprise || 0) + (item.verified_enterprise || 0), // Calculate total jobs
-  pending_jobs: item.pending_jobs?.length || 0, // Assuming pending_jobs is an array
-  total_recruiter_agency: (item.verified_recruiting_agency?.length || 0) + (item.pending_verify_recruiting_agency?.length || 0), // Assuming total_recruiter_agency is an array
-  pending_recruiter_agency: item.pending_recruiter_agency?.length || 0, // Assuming pending_recruiter_agency is an array
+const response = await fetchAccountManagerMasterAdmin(userData._id)
+
+export const rows = await Promise.all(response.map(async (item, index) => {
+  const acManagerDetails = await fetchAccountManagerDetailsById(item.ac_id);
+
+  return {
+    _id: index + 1,
+    full_name: acManagerDetails.full_name,
+    total_enterprise: (acManagerDetails.pending_verify_enterprise?.length || 0) + (acManagerDetails.verified_enterprise?.length || 0),
+    pending_enterprise: acManagerDetails.pending_enterprise?.length || 0,
+    total_jobs: (acManagerDetails.pending_verify_enterprise || 0) + (acManagerDetails.verified_enterprise || 0),
+    pending_jobs: acManagerDetails.pending_jobs?.length || 0,
+    total_recruiter_agency: (acManagerDetails.verified_recruiting_agency?.length || 0) + (acManagerDetails.pending_verify_recruiting_agency?.length || 0),
+    pending_recruiter_agency: acManagerDetails.pending_recruiter_agency?.length || 0,
+  };
 }));
