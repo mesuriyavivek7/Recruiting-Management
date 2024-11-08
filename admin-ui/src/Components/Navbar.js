@@ -105,9 +105,7 @@ const Navbar = ({ enterpriseData, recruiterData }) => {
       </div>
 
       <div className="flex place-items-center gap-4">
-        <Link to="/">
-          <img src={asset29} alt="notification" width={26} />
-        </Link>
+        
         <div
           className="w-[30px] h-[30px] rounded-full bg-white flex place-items-center cursor-pointer"
           onClick={handleProfileClick}
@@ -134,7 +132,7 @@ const Navbar = ({ enterpriseData, recruiterData }) => {
         maxWidth="lg"
       >
 
-        <DialogContent className=" bg-white p-6 h-[600px]">
+        <DialogContent className=" bg-white p-6 ">
         <h2 className="text-xl font-bold mb-4">Search Users</h2>
 
           <div className="flex place-items-center gap-2 mb-4">
