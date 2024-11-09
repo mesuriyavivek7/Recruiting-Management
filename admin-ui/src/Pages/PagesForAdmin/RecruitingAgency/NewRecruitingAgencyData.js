@@ -15,7 +15,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import Notification from '../../../Components/Notification';
 import { rows, cols } from './NewRowColData';
 import { FaEnvelope, FaBuilding, FaUsers, FaBriefcase, FaFlag, FaMapMarkerAlt, FaCity, FaCheckCircle, FaIdCard, FaLinkedin, FaGlobe } from 'react-icons/fa';
-import { fetchPendingRAgenciesByAdminId, fetchRecuritingAgenciesbyId } from '../../../services/api';
+import { fetchPendingRAgenciesByAdminId, fetchRecuritingAgencybyId } from '../../../services/api';
 import { store } from '../../../State/Store';
 
 const selectUserData = (state) => state.admin.userData;
@@ -63,7 +63,7 @@ const NewRecruitingAgencyData = () => {
       const pendingAgencies = await Promise.all(
         agencyIds.map(async (agencyId) => {
           try {
-            const agencyArray = await fetchRecuritingAgenciesbyId(agencyId);
+            const agencyArray = await fetchRecuritingAgencybyId(agencyId);
             return agencyArray;
           } catch (fetchError) {
             console.error("Error fetching agency data for ID:", agencyId, fetchError);

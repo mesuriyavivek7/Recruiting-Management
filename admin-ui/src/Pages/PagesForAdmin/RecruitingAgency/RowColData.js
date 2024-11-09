@@ -1,5 +1,5 @@
 import Button from '@mui/material/Button';
-import { fetchRecuritingAgenciesbyId, fetchVerifiedRAgenciesByAdminId } from '../../../services/api';
+import { fetchRecuritingAgencybyId, fetchVerifiedRAgenciesByAdminId } from '../../../services/api';
 import { format, formatDistanceToNowStrict } from 'date-fns';
 import { store } from '../../../State/Store';
 
@@ -95,7 +95,7 @@ if (userData?.admin_type === 'master_admin') {
   rows = data
     ? await Promise.all(
       data.map(async (agency_id, index) => {
-        const agency = await fetchRecuritingAgenciesbyId(agency_id);
+        const agency = await fetchRecuritingAgencybyId(agency_id);
         return {
           _id: agency._id,
           displayIndex: index + 1,

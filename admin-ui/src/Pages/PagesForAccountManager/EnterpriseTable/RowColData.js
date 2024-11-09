@@ -1,5 +1,5 @@
 import Button from '@mui/material/Button';
-import { fetchEnterpriseById, fetchEnterpriseData, fetchVerifedEntepreiseByACId } from '../../../services/api';
+import { fetchEnterpriseById, fetchVerifedEntepreiseByACId } from '../../../services/api';
 import { store } from '../../../State/Store';
 
 // Column configuration for the DataGrid
@@ -74,26 +74,32 @@ export const columns = [
 const selectUserData = (state) => state?.admin?.userData;
 const userData = selectUserData(store?.getState());
 
-console.log(userData);
+let rows = [];
 
-// Fetch verified enterprise IDs by account manager ID
-const verifiedEnterprisesId = await fetchVerifedEntepreiseByACId(userData?._id);
-console.log(verifiedEnterprisesId);
+// Proceed only if userData.admin_type is 'account_manager'
+if (userData?.admin_type === "account_manager") {
+  // Fetch verified enterprise IDs by account manager ID
+  const verifiedEnterprisesId = await fetchVerifedEntepreiseByACId(userData?._id);
 
-// Fetch enterprise details for each ID
-export const rows = await Promise.all(
-  verifiedEnterprisesId.map(async (enterpriseId, index) => {
-    const enterprise = await fetchEnterpriseById(enterpriseId);
+  // Fetch enterprise details for each ID
+  rows = await Promise.all(
+    verifiedEnterprisesId.map(async (enterpriseId, index) => {
+      const enterprise = await fetchEnterpriseById(enterpriseId);
 
-    return {
-      id: index + 1,
-      full_name: enterprise.full_name || `User ${index + 1}`,
-      email: enterprise.email || `user${index + 1}@example.com`,
-      designation: enterprise.designation || "Not Provided",
-      company_name: enterprise.company_name || "Unknown",
-      country: enterprise.country || "Unknown",
-      city: enterprise.city || "Unknown",
-      email_verification: enterprise.isEmailVerified ? "yes" : "no",
-    };
-  })
-);
+      return {
+        id: index + 1,
+        full_name: enterprise.full_name || `User ${index + 1}`,
+        email: enterprise.email || `user${index + 1}@example.com`,
+        designation: enterprise.designation || "Not Provided",
+        company_name: enterprise.company_name || "Unknown",
+        country: enterprise.country || "Unknown",
+        city: enterprise.city || "Unknown",
+        email_verification: enterprise.isEmailVerified ? "yes" : "no",
+      };
+    })
+  );
+} else {
+  console.log("User is not an account manager, skipping enterprise data fetch.");
+}
+
+export { rows };
