@@ -3,9 +3,9 @@ import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
 import { rows, columns } from './RowColData';
 import { useNavigate } from 'react-router-dom';
-import { fetchRecuritingAgencyById } from '../../../services/api';
 import { Button, CircularProgress, IconButton, InputAdornment, TextField } from '@mui/material';
 import { FaSearch } from 'react-icons/fa';
+import { fetchRecuritingAgencybyId } from '../../../services/api';
 
 const calculateRowHeight = (params) => {
   const contentHeight = params.row ? params.row.content.length / 10 : 50;
@@ -34,7 +34,7 @@ export default function AllRecruitingAgencyData() {
     const id = params.id;
     const displayIndex = params?.row?.displayIndex;
     try {
-      const response = await fetchRecuritingAgencyById(id);
+      const response = await fetchRecuritingAgencybyId(id);
       navigate(`/master_admin/recruiting-agency/${displayIndex}`, { state: { recuritingAgenciesDetails: response } });
     } catch (error) {
       console.error('Error fetching enterprise data:', error);
