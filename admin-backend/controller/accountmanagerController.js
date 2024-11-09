@@ -73,6 +73,26 @@ export const getAllPendingEnterprises = async (req, res, next) => {
 }
 
 
+export const getAllVerifiedRecuritingAgencies = async (req, res, next) => {
+  try {
+      const RecruitingAgencies = await ACCOUNTMANAGER.findById(req.params.ac_manager_id);
+      res.status(200).json(RecruitingAgencies.verified_recruiting_agency);
+  } catch (error) {
+      next(error);
+  }
+}
+
+export const getAllPendingRecuritingAgencies = async (req, res, next) => {
+  try {
+      const RecruitingAgencies = await ACCOUNTMANAGER.findById(req.params.ac_manager_id);
+      res.status(200).json(RecruitingAgencies.pending_verify_recruiting_agency);
+  } catch (error) {
+      next(error);
+  }
+}
+
+
+
 
 
 export const addJobsPendingList = async (req, res, next) => {
