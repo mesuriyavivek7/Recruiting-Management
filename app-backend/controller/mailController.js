@@ -22,7 +22,7 @@ const generateEmailHTML = (resumedetails) => {
         <div class="candidate">
           <h2>Candidate Name: ${resume.candidate_name}</h2>
           <p>Applied Position: ${resume.job_title}</p>
-          <p><a href="http://localhost:8080/resumedocs/${resume.filename}" class="btn">View Resume</a></p>
+          <p><a href="${process.env.APP_URL}/resumedocs/${resume.filename}" class="btn">View Resume</a></p>
         </div>
       `;
     });
@@ -584,7 +584,7 @@ export const sendVerificationMailEnterprise=async (req,res,next)=>{
                    <h1>Email Verification</h1>
                    <p>Hi ${req.body.name},</p>
                    <p>Thank you for registering with us. Please click the button below to verify your email address:</p>
-                   <a href="http://localhost:8080/api/mail/enterpriseverifymail/${token}" class="verify-button">Verify Your Email</a>
+                   <a href="${process.env.APP_SERVER_URL}/mail/enterpriseverifymail/${token}" class="verify-button">Verify Your Email</a>
                </div>
                <div class="footer">
                    <p>If you did not create an account, please ignore this email.</p>
@@ -691,7 +691,7 @@ export const sendEmailUpdateVerificationEnterprise=async (req,res,next)=>{
                    <h1>Email Verification</h1>
                    <p>Hi ${req.body.name},</p>
                    <p>Your email address changed successfully. Please click the button below to verify your email address:</p>
-                   <a href="http://localhost:8080/api/mail/enterpriseverifymail/${token}" class="verify-button">Verify Your Email</a>
+                   <a href="${process.env.APP_SERVER_URL}/mail/enterpriseverifymail/${token}" class="verify-button">Verify Your Email</a>
                </div>
                <div class="footer">
                    <p>If you did not update your account, please ignore this email.</p>
@@ -797,7 +797,7 @@ export const sendVerificationMailEnterpriseTeam=async (req,res,next)=>{
                    <h1>Email Verification</h1>
                    <p>Hi ${req.body.name},</p>
                    <p>You are invited to uphire platform. Please click the button below to verify your email address:</p>
-                   <a href="http://localhost:8080/api/mail/enterpriseteamverifymail/${token}" class="verify-button">Verify Your Email</a>
+                   <a href="${process.env.APP_SERVER_URL}/mail/enterpriseteamverifymail/${token}" class="verify-button">Verify Your Email</a>
                </div>
                <div class="footer">
                    <p>If you did not create an account, please ignore this email.</p>
@@ -902,7 +902,7 @@ export const sendVerificationMailRecruiting=async (req,res,next)=>{
                    <h1>Email Verification</h1>
                    <p>Hi ${req.body.name},</p>
                    <p>Thank you for registering with us. Please click the button below to verify your email address:</p>
-                   <a href="http://localhost:8080/api/mail/recruitingverifymail/${token}" class="verify-button">Verify Your Email</a>
+                   <a href="${process.env.APP_SERVER_URL}/mail/recruitingverifymail/${token}" class="verify-button">Verify Your Email</a>
                </div>
                <div class="footer">
                    <p>If you did not create an account, please ignore this email.</p>
@@ -1005,7 +1005,7 @@ export const sendVerificationMailRecruitingTeam=async (req,res,next)=>{
                    <h1>Email Verification</h1>
                    <p>Hi ${req.body.name},</p>
                    <p>You are invited to uphire platform. Please click the button below to verify your email address:</p>
-                   <a href="http://localhost:8080/api/mail/recruitingteamverifymail/${token}" class="verify-button">Verify Your Email</a>
+                   <a href="${process.env.APP_SERVER_URL}/mail/recruitingteamverifymail/${token}" class="verify-button">Verify Your Email</a>
                </div>
                <div class="footer">
                    <p>If you did not create an account, please ignore this email.</p>
@@ -1115,7 +1115,7 @@ export const sendEmailUpdateVerificationRecruiting=async (req,res,next)=>{
                    <h1>Email Verification</h1>
                    <p>Hi ${req.body.name},</p>
                    <p>Your email address changed successfully. Please click the button below to verify your email address:</p>
-                   <a href="http://localhost:8080/api/mail/enterpriseverifymail/${token}" class="verify-button">Verify Your Email</a>
+                   <a href="${process.env.APP_SERVER_URL}/mail/enterpriseverifymail/${token}" class="verify-button">Verify Your Email</a>
                </div>
                <div class="footer">
                    <p>If you did not update your account, please ignore this email.</p>
@@ -1171,7 +1171,7 @@ export const verifyemailRecruiting=async (req,res,next)=>{
                   <h1>Welcome to <span style="color:green;">Uphire</span></h1>
                   <br></br>
                   <p style="text-align:center;">Email verification done successfully</p>
-                  <a style="text-align:center;" href='http://localhost:3000/'>Go To Login</a>
+                  <a style="text-align:center;" href='${process.env.CLIENT_URL}'>Go To Login</a>
                   </div>
                 </body>
                 </html>`)
@@ -1212,7 +1212,7 @@ export const verifyemailEnterprise=async (req,res,next)=>{
                   <h1>Welcome to <span style="color:green;">Uphire</span></h1>
                   <br></br>
                   <p style="text-align:center;">Email verification done successfully</p>
-                  <a style:"text-align:center;" href='http://localhost:3000/'>Go To Login</a>
+                  <a style:"text-align:center;" href='${process.env.CLIENT_URL}'>Go To Login</a>
                   </div>
                 </body>
                 </html>`)
@@ -1253,7 +1253,7 @@ export const verifyemailRecruitingTeam=async (req,res,next)=>{
                   <h1>Welcome to <span style="color:green;">Uphire</span></h1>
                   <br></br>
                   <p style="text-align:center;">Email verification done successfully</p>
-                  <a style:"text-align:center;" href='http://localhost:3000/'>Go To Login</a>
+                  <a style:"text-align:center;" href='${process.env.CLIENT_URL}'>Go To Login</a>
                   </div>
                 </body>
                 </html>`)
@@ -1294,7 +1294,7 @@ export const verifyemailEnterpriseTeam=async (req,res,next)=>{
                   <h1>Welcome to <span style="color:green;">Uphire</span></h1>
                   <br></br>
                   <p style="text-align:center;">Email verification done successfully</p>
-                  <a style:"text-align:center;" href='http://localhost:3000/'>Go To Login</a>
+                  <a style:"text-align:center;" href='${process.env.CLIENT_URL}'>Go To Login</a>
                   </div>
                 </body>
                 </html>`)
@@ -1320,7 +1320,7 @@ export const requestResetPassword=async (req,res,next)=>{
 
      //Create token with userid and expiration
      const token= jwt.sign({id:user._id},process.env.JWT,{expiresIn:'24h'})
-     const resetLink=`http://localhost:3000/reset-password/${token}`
+     const resetLink=`${process.env.CLIENT_URL}/reset-password/${token}`
 
 
      //Send email with reset link

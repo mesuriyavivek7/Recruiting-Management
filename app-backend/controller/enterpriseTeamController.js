@@ -220,3 +220,16 @@ export const getDashboardCount=async (req,res,next)=>{
     next(err)
   }
 }
+
+export const isEnterpriseMemberEmailVerified=async (req,res,next)=>{
+   try{
+     const enmember=await ENTERPRISETEAM.findById(req.params.enmemberid)
+     if(!enmember) return res.status(404).json({message:"User not found!",type:"failure"})
+     
+     if(enmember.email_verified) res.status(200).json(true)
+     else res.status(200).json(false)
+     
+   }catch(err){
+     next(err)
+   }
+}

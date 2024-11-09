@@ -1,5 +1,7 @@
 import ENTERPRISETEAM from "../models/ENTERPRISETEAM.js"
 import RECRUITINGTEAM from "../models/RECRUITINGTEAM.js"
+import ENTERPRISE from "../models/ENTERPRISE.js";
+import RECRUITING from "../models/RECRUITING.js";
 
 import { error } from "../utils/error.js";
 import bcrypt from 'bcryptjs'
@@ -41,6 +43,51 @@ export const login=async (req,res,next)=>{
     }catch(err){
         next(err)
     }
+}
+
+export const enterpriseLogin=async (req,res,next)=>{
+     try{
+        const user=await ENTERPRISETEAM.findOne({email:req.body.email})
+        if(!user) return res.status(404).json({message:"User not found by this email address...!",type:"failure"})
+
+        const enterprise=await ENTERPRISE.findById(user.enterprise_id)
+
+        if(user.account_status!=="Active") return res.status(404).json({message:"Your account is inactivated by team leader,",type:"failure"})
+        if(enterprise.account_status.status!=="Active") return res.status(404).json({message:"Your enterprise is inactivated by admin",type:"failure"})
+
+        const isPasswordCorrect=await bcrypt.compare(req.body.password,user.password)
+
+        if(!isPasswordCorrect) return res.status(404).json({message:"Password is incorrect",type:'failure'})
+
+        const token=jwt.sign({id:user._id,isAdmin:user.isAdmin},process.env.JWT)
+        const {password,email_verified,isAdmin,hide_commision,...otherDetails}=user._doc
+        res.cookie("t_user",token,{expires:new Date(Date.now()+2592000000),httpOnly:false,secure:true,sameSite:'none'}).status(200).json({details:{...otherDetails,userType:"enterprise"}})
+
+     }catch(err){
+        next(err)
+     }
+}
+
+export const recruiterLogin=async (req,res,next)=>{
+   try{
+     const user=await RECRUITINGTEAM.findOne({email:req.body.email})
+     if(!user) return res.status(404).json({message:"User not found by this email address....!",type:"failure"})
+     
+     const recruiter=await RECRUITING.findById(user.recruiting_agency_id)
+     if(user.account_status!=="Active") return res.status(404).json({message:"Your account is inactivated.",type:"failure"})
+     if(recruiter.account_status.status!=="Active") return res.status(404).json({message:"Your enterprise is inactivated by admin.",type:"failure"})
+
+     const isPasswordCorrect=await bcrypt.compare(req.body.password,user.password)
+
+     if(!isPasswordCorrect) return res.status(404).json({message:"Password is incorrect",type:'failure'})
+
+     const token=jwt.sign({id:user._id,isAdmin:user.isAdmin},process.env.JWT)
+     const {password,email_verified,isAdmin,hide_commision,...otherDetails}=user._doc
+     res.cookie("t_user",token,{expires:new Date(Date.now()+2592000000),httpOnly:false,secure:true,sameSite:'none'}).status(200).json({details:{...otherDetails,userType:"recruiting"}})
+
+   }catch(err){
+     next(err)
+   }
 }
 
 

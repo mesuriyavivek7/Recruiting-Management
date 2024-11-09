@@ -169,7 +169,6 @@ const EnterpriseSignup = () => {
        if(validateForm()){
          try{
              const res=await axios.post(`${process.env.REACT_APP_API_BASE_URL}/authenterprise/checkmobileno`,{mobileno:formData.mobileno})
-             console.log("Mobie Response",res)
              if(res.data===false) setMobilenoCheck(true)
              else{
               showNotification("Mobile no is already exist...!",'failure')

@@ -1,5 +1,5 @@
 import express from 'express'
-import { SearchEnterpriseByName, acVerified, allocatedAcManager, changeAccountStatus, changeMail, changepassword, checkPassword, getAcManagerId, getAcPendingEnterprise, getAcmanagerMailandName, getAllEnterprise, getAllPendingMadminVerifyEnterprise, getCompnayName, getEnterprise, getEnterpriseMember, getMobileNo, getRecruiterForJob } from '../controller/enterpriseController.js'
+import { SearchEnterpriseByName, acVerified, allocatedAcManager, changeAccountStatus, changeMail, changepassword, checkPassword, getAcManagerId, getAcPendingEnterprise, getAcmanagerMailandName, getAllEnterprise, getAllPendingMadminVerifyEnterprise, getCompnayName, getEnterprise, getEnterpriseMember, getMobileNo, getRecruiterForJob, isVerifiedEnterprise } from '../controller/enterpriseController.js'
 import { getRecruiterMemberIds } from '../controller/candidateController.js'
 
 const router=express.Router()
@@ -55,6 +55,9 @@ router.get('/getacmanagermailandname/:eid',getAcmanagerMailandName)
 
 //for searching the enterprise by full name
 router.get('/search', SearchEnterpriseByName);
+
+//for check is it verified account or nor
+router.get('/isverifiedaccount/:eid',isVerifiedEnterprise)
 
 
 export default router

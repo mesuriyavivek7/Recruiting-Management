@@ -1,19 +1,21 @@
 import React, { useContext, useEffect, useState } from "react";
 import PastJobs from "../../components/jobs/PastJobs";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import DraftJobs from "../../components/jobs/DraftJobs";
 import Notification from "../../components/Notification";
 import axios from "axios";
 import { AuthContext } from "../../context/AuthContext";
 
 const JobPostings = () => {
-  const {user}=useContext(AuthContext)
+  const {user,isVerified}=useContext(AuthContext)
   const [activeState, setActiveState] = useState(1);
   const [draftLoad,setDraftLoad]=useState(false)
   const [draftRows,setDraftRows]=useState([])
   const [pastLoad,setPastLoad]=useState(false)
   const [pastRows,setPastRows]=useState([])
   const [notification,setNotification]=useState(null)
+
+  const navigate=useNavigate()
 
   //for showing notification
   const showNotification=(message,type)=>{
@@ -46,6 +48,11 @@ const fetchingPastData=async ()=>{
   setPastLoad(false)
 }
 
+const handleNavigate=()=>{
+    if(isVerified) navigate('/employer/jobposting/landing/postjob')
+    else showNotification("You have not access for post the jobs.",'warning')
+}
+
 
 useEffect(()=>{
     fetchingDraftData()
@@ -59,11 +66,9 @@ useEffect(()=>{
       <div className="w-full relative flex justify-between items-center p-4 border-b">
         <h2 className="text-xl font-semibold">Post a Job</h2>
 
-        <Link to="postjob">
-          <button className="bg-blue-600 text-white px-4 py-2 rounded">
+          <button onClick={handleNavigate} className="bg-blue-600 text-white px-4 py-2 rounded">
             Post a new Job
           </button>
-        </Link>
       </div>
 
       <div className="px-4 py-2 w-full relative">

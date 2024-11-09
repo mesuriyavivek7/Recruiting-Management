@@ -5,6 +5,7 @@ import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
 //import icons
 import AddIcon from '@mui/icons-material/Add';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
@@ -18,9 +19,6 @@ import { AuthContext } from '../context/AuthContext';
 
 import Polar from './Charts/Polar'; 
 import MyResponsiveRadialBar from './Charts/Radial'; 
-
-
-
 
 
 // Charts Data
@@ -51,9 +49,9 @@ const polarData = [
 
 
 export default function RecruiterDashboard() {
+  
 
-
-  const {user}=useContext(AuthContext)
+  const {user,isVerified}=useContext(AuthContext)
   const [teamFormData,setTeamFormData]=useState({
     full_name:'',
     email:'',
@@ -71,7 +69,18 @@ export default function RecruiterDashboard() {
     submited_candidate_profile_count:0,
     pending_candidate_count:0
   })
-
+  
+  const [isEmailVerified,setIsEmailVerified]=useState(true)
+  
+  const handleCheckIsMailVerified=async ()=>{
+     try{
+       const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/recruitingteam/checkisverifiedmail/${user._id}`)
+       setIsEmailVerified(res.data)
+     }catch(err){
+       console.error(err)
+       showNotification("Something went wrong.",'failure')
+     }
+  }
 
   //for showing notification
   const showNotification=(message,type)=>{
@@ -154,8 +163,19 @@ export default function RecruiterDashboard() {
       }
   }
 
+ const handleResendVerificationMail=async ()=>{
+     try{
+        await axios.post(`${process.env.REACT_APP_API_BASE_URL}/mail/sendverificaitionrecruiting`,{name:user.full_name,email:user.email})
+        showNotification("Successfull verification mail sended.",'success')
+     }catch(err){ 
+       console.error(err)
+       showNotification("Something went wrong.",'failure')
+     }
+ }
+
   useEffect(()=>{
     fetchDashBoardCount()
+    handleCheckIsMailVerified()
   },[])
 
 
@@ -261,6 +281,19 @@ export default function RecruiterDashboard() {
             </div>
           </div>
         )
+       }
+       {
+        !isVerified &&
+        <div className='custom-div py-3'>
+          <p className='text-[15px] tracking-wide text-gray-500 flex items-center'><span className='text-yellow-500 mr-2'><InfoOutlinedIcon></InfoOutlinedIcon></span>Your account is now active with limited access to the dashboard. Full access will be granted after an admin verifies your profile details, which usually takes 2-3 business days.</p>
+       </div>
+       }
+       {
+        !isEmailVerified &&
+        <div className='custom-div py-3'>
+           <p className='text-[15px] tracking-wide text-gray-500 flex items-center'><span className='text-yellow-500 mr-2'><InfoOutlinedIcon></InfoOutlinedIcon></span>Your account is not verified. Please check your email and click the verification link to verified your email id. If you haven't received the email, click here to <span onClick={handleResendVerificationMail} className='underline underline-offset-1 cursor-pointer hover:text-blue-400 ml-1'>resend it</span>.</p>
+        </div>
+
        }
       <div className='custom-div py-4 flex flex-row items-center justify-between'>
          <div className='flex gap-4 text-gray-600 items-center'>
