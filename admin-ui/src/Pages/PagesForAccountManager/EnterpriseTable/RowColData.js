@@ -1,5 +1,6 @@
 import Button from '@mui/material/Button';
-import { fetchEnterpriseData } from '../../../services/api';
+import { fetchEnterpriseById, fetchEnterpriseData, fetchVerifedEntepreiseByACId } from '../../../services/api';
+import { store } from '../../../State/Store';
 
 // Column configuration for the DataGrid
 export const columns = [
@@ -70,17 +71,29 @@ export const columns = [
 
 ];
 
-const data = await fetchEnterpriseData();
+const selectUserData = (state) => state?.admin?.userData;
+const userData = selectUserData(store?.getState());
 
-export const rows = data.map((enterprise, index) => ({
-    id: index + 1,
-    full_name: enterprise.full_name || `User ${index + 1}`,
-    email: enterprise.email || `user${index + 1}@example.com`,
-    designation: enterprise.designation || "Not Provided",
-    company_name: enterprise.company_name || "Unknown",
-    country: enterprise.country || "Unknown",
-    city: enterprise.city || "Unknown",
-    email_verification: enterprise.isEmailVerified ? "yes" : "no",
-}));
+console.log(userData);
 
+// Fetch verified enterprise IDs by account manager ID
+const verifiedEnterprisesId = await fetchVerifedEntepreiseByACId(userData?._id);
+console.log(verifiedEnterprisesId);
 
+// Fetch enterprise details for each ID
+export const rows = await Promise.all(
+  verifiedEnterprisesId.map(async (enterpriseId, index) => {
+    const enterprise = await fetchEnterpriseById(enterpriseId);
+
+    return {
+      id: index + 1,
+      full_name: enterprise.full_name || `User ${index + 1}`,
+      email: enterprise.email || `user${index + 1}@example.com`,
+      designation: enterprise.designation || "Not Provided",
+      company_name: enterprise.company_name || "Unknown",
+      country: enterprise.country || "Unknown",
+      city: enterprise.city || "Unknown",
+      email_verification: enterprise.isEmailVerified ? "yes" : "no",
+    };
+  })
+);

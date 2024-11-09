@@ -51,6 +51,30 @@ export const addVerifiedEnterprise = async (req, res, next) => {
   }
 }
 
+export const getAllverifiedEnterprises = async (req, res, next) => {
+  try {
+    const acmanager = await ACCOUNTMANAGER.findById(req.params.ac_manager_id);
+    res.status(200).json(acmanager.verified_enterprise);
+
+  } catch (error) {
+    next(error);
+  }
+}
+
+
+export const getAllPendingEnterprises = async (req, res, next) => {
+  try {
+    const acmanager = await ACCOUNTMANAGER.findById(req.params.ac_manager_id);
+    res.status(200).json(acmanager.pending_verify_enterprise);
+
+  } catch (error) {
+    next(error);
+  }
+}
+
+
+
+
 export const addJobsPendingList = async (req, res, next) => {
   try {
     await ACCOUNTMANAGER.findByIdAndUpdate(req.body.ac_id, { $push: { pending_verify_jobs: req.body.orgjobid } })
@@ -123,7 +147,7 @@ export const getAccountManager = async (req, res, next) => {
 export const AddNewAccountManager = async (req, res, next) => {
   try {
     const { full_name, mobileno, email, password, admin_type } = req.body;
-    const { master_admin_id } = req.params; 
+    const { master_admin_id } = req.params;
 
     // Check if email already exists
     const existingManager = await ACCOUNTMANAGER.findOne({ email });
@@ -140,9 +164,9 @@ export const AddNewAccountManager = async (req, res, next) => {
       full_name,
       mobileno: mobileno || undefined,
       email,
-      password : hashedPassword,
-      master_admin: master_admin_id, 
-      admin_type : "account_manager",                    // Set admin type (required field)
+      password: hashedPassword,
+      master_admin: master_admin_id,
+      admin_type: "account_manager",                    // Set admin type (required field)
       pending_verify_enterprise: [],
       pending_verify_recruiting_agency: [],
       verified_enterprise: [],
