@@ -63,6 +63,27 @@ export const fetchEnterpriseTeam = async (enterprise_id) => {
     }
 }
 
+//get all the verified enterprises by ac manager id
+export const fetchVerifedEntepreiseByACId = async(ac_manager_id) => {
+    try {
+        const response = await axios.get(`${admin_be_uri}/accountmanager/verifiedenterprises/${ac_manager_id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error while fetching verified enterprises by ac manager id : ", error);
+        throw error;
+    }
+}
+
+//get all pending verify enterprises by ac manager id
+export const fetchPendingEntepreiseByACId = async(ac_manager_id) => {
+    try {
+        const response = await axios.get(`${admin_be_uri}/accountmanager/pendingenterprises/${ac_manager_id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error while fetching pending verify enterprises by ac manager id : ", error);
+        throw error;
+    }
+}
 export const fetchAllJobDetails = async () => {
     try {
         const response = await axios.get(`${app_be_uri}/job`);
