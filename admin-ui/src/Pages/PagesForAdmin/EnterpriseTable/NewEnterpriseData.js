@@ -9,7 +9,7 @@ import Notification from '../../../Components/Notification';
 import { DataGrid } from '@mui/x-data-grid';
 import { columns } from './NewRowColData ';
 import { FaEnvelope, FaPhone, FaBriefcase, FaBuilding, FaUsers, FaGlobe, FaMapMarkerAlt, FaCity } from 'react-icons/fa';
-import { fetchEnterpriseById,fetchAccountManagerMasterAdmin, fetchPendingEnterpriseData } from '../../../services/api';
+import { fetchEnterpriseById, fetchAccountManagerMasterAdmin, fetchPendingEnterpriseData } from '../../../services/api';
 
 
 const NewEnterpriseData = () => {
@@ -124,16 +124,20 @@ const NewEnterpriseData = () => {
     setSelectedRow(null);
   };
 
-  const fetchAcManager = async ()=>{
-     try{
-        const acmanagerdata=await fetchAccountManagerMasterAdmin(myValue.userData._id)
-        console.log(acmanagerdata)
-        setAcManager(acmanagerdata)
-     }catch(err){
-        showNotification("Something went wrong while fetching account manager.",'failure')
-     }
+  const fetchAcManager = async () => {
+    try {
+      if (myValue.userData?.admin_type === 'master_admin') {
+        const acmanagerdata = await fetchAccountManagerMasterAdmin(myValue.userData._id);
+        console.log(acmanagerdata);
+        setAcManager(acmanagerdata);
+      } else {
+        showNotification("Access denied: Only master admins can fetch this data.", 'failure');
+      }
+    } catch (err) {
+      showNotification("Something went wrong while fetching account manager.", 'failure');
+    }
+  };
 
-  }
 
 
   const fetchEnterprise = async () => {
@@ -161,7 +165,7 @@ const NewEnterpriseData = () => {
     fetchAcManager();
   }, []);
 
-  
+
 
   return (
     <>
@@ -179,13 +183,13 @@ const NewEnterpriseData = () => {
             rowHeight={80}
             onRowClick={(params) => handleRowClick(params?.row)}
             pageSize={rowsPerPage}
-           // pagination={false}
-           initialState={{
-            pagination: {
-              paginationModel: { page: 0, pageSize: 10 },
-            },
-          }}
-          pageSizeOptions={[5, 10]}
+            // pagination={false}
+            initialState={{
+              pagination: {
+                paginationModel: { page: 0, pageSize: 10 },
+              },
+            }}
+            pageSizeOptions={[5, 10]}
             sx={{
               '& .MuiDataGrid-root': {
                 fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.09rem' },
@@ -385,7 +389,7 @@ const NewEnterpriseData = () => {
               Cancel
             </Button>
             <Button
-              disabled={selectedManager===''}
+              disabled={selectedManager === ''}
               onClick={handleAssignAcManager}
               className="bg-gray-600 disabled:bg-slate-200 disabled:cursor-not-allowed hover:bg-blue-230 text-white px-4 py-2 text-xl rounded-md"
             >
@@ -399,7 +403,7 @@ const NewEnterpriseData = () => {
       {notification && (
         <Notification message={notification.message} type={notification.type} />
       )}
-      
+
     </>
   );
 };

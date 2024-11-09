@@ -1,5 +1,5 @@
 import Button from '@mui/material/Button';
-import { fetchRecuritingAgencies, fetchRecuritingAgenciesbyId, fetchVerifiedRAgenciesByAdminId } from '../../../services/api';
+import { fetchRecuritingAgenciesbyId, fetchVerifiedRAgenciesByAdminId } from '../../../services/api';
 import { format, formatDistanceToNowStrict } from 'date-fns';
 import { store } from '../../../State/Store';
 
@@ -84,19 +84,40 @@ export const columns = [
   },
 ];
 
-const selectUserData = (state) => state.admin.userData;
-const userData = selectUserData(store.getState());
-
+const selectUserData = (state) => state?.admin?.userData;
+const userData = selectUserData(store?.getState());
 // Fetch and map data
-const data = await fetchVerifiedRAgenciesByAdminId(userData._id);
+let rows = [];
+let rowsr = [];
+
+if (userData?.admin_type === 'master_admin') {
+  const data = await fetchVerifiedRAgenciesByAdminId(userData?._id);
+  rows = data
+    ? await Promise.all(
+      data.map(async (agency_id, index) => {
+        const agency = await fetchRecuritingAgenciesbyId(agency_id);
+        return {
+          _id: agency._id,
+          displayIndex: index + 1,
+          full_name: agency.full_name || `User ${index + 1}`,
+          email: agency.email || `user${index + 1}@example.com`,
+          designation: agency.designation || "Not Provided",
+          company_name: agency.company_name || "Unknown",
+          country: agency.country || "Unknown",
+          city: agency.city || "Unknown",
+          domains: Array.isArray(agency.domains) ? agency.domains : [], // Ensure it's an array
+          firm_type: Array.isArray(agency.firm_type) ? agency.firm_type : [], // Ensure it's an array
+          linkedin_url: agency.linkedin_url || "Not Provided", // Fallback if not provided
+          email_verified: agency.email_verified ? "Yes" : "No",
+        };
+      })
+    )
+    : [];
 
 
-export const rows = await Promise.all(
-  data.map(async (agency_id, index) => {
-    const agency = await fetchRecuritingAgenciesbyId(agency_id);
-    return {
-      id: agency._id,
-      displayIndex: index + 1,
+  const rowsr = Array.isArray(data)
+    ? data.map((agency, index) => ({
+      _id: index + 1,
       full_name: agency.full_name || `User ${index + 1}`,
       email: agency.email || `user${index + 1}@example.com`,
       designation: agency.designation || "Not Provided",
@@ -107,27 +128,14 @@ export const rows = await Promise.all(
       firm_type: Array.isArray(agency.firm_type) ? agency.firm_type : [], // Ensure it's an array
       linkedin_url: agency.linkedin_url || "Not Provided", // Fallback if not provided
       email_verified: agency.email_verified ? "Yes" : "No",
-    };
-  })
-);
+    }))
+    : [];
+}
 
 
+export { rows, rowsr };
 
-export const rowsr = data.map((agency, index) => {
-  return {
-    id: index + 1,
-    full_name: agency.full_name || `User ${index + 1}`,
-    email: agency.email || `user${index + 1}@example.com`,
-    designation: agency.designation || "Not Provided",
-    company_name: agency.company_name || "Unknown",
-    country: agency.country || "Unknown",
-    city: agency.city || "Unknown",
-    domains: Array.isArray(agency.domains) ? agency.domains : [], // Ensure it's an array
-    firm_type: Array.isArray(agency.firm_type) ? agency.firm_type : [], // Ensure it's an array
-    linkedin_url: agency.linkedin_url || "Not Provided", // Fallback if not provided
-    email_verified: agency.email_verified ? "Yes" : "No",
-  };
-});
+
 
 
 export const RcTeamCols = [
