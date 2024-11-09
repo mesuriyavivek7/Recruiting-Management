@@ -65,7 +65,7 @@ const candiadteStatusChange=async (e,id)=>{
 const viewCandidateResume=async (cid)=>{
     try{
        const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/candidate/getresumefilename/${cid}`)
-       const correctUrl = `http://localhost:8080/resumedocs/${res.data}`;
+       const correctUrl = `${process.env.REACT_APP_BASE_URL}/resumedocs/${res.data}`;
        if(res.data){
         window.open(correctUrl,'_blank')
        }
@@ -348,7 +348,7 @@ const handleFetchCandidateDetails=async (cid)=>{
 
 const viewCandidateAttachments=async (cid,fileName)=>{
   try{
-    const fileUrl=`http://localhost:8080/api/candidate/viewcandidateattachments/${cid}/${fileName}`
+    const fileUrl=`${process.env.REACT_APP_API_BASE_URL}/candidate/viewcandidateattachments/${cid}/${fileName}`
     window.open(fileUrl,'_blank')
   }catch(err){
     console.log(err)
@@ -576,7 +576,7 @@ const handleClosePopUpBox=async ()=>{
            <div className='bg-white w-full flex gap-3 p-2'>
               <div className='flex-1 custom-div p-2'>
                 {
-                  fileName &&  <iframe title='attachments' src={`http://localhost:8080/resumedocs/${fileName}`} className='rounded-md h-[600px] w-full'></iframe>
+                  fileName &&  <iframe title='attachments' src={`${process.env.REACT_APP_BASE_URL}/resumedocs/${fileName}`} className='rounded-md h-[600px] w-full'></iframe>
                 }
               </div>
               <div className='flex-1 custom-div p-0 overflow-hidden flex-col gap-2'>

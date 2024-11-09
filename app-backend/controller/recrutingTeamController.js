@@ -350,3 +350,15 @@ export const checkForRequestJob=async (req,res,next)=>{
         next(err)
     }
 }
+
+export const isVerifiedMail=async (req,res,next)=>{
+     try{
+        const remember=await RECRUITINGTEAM.findById(req.params.rememberid)
+        if(!remember) return res.status(404).json("User not found.",'failure')
+
+        if(remember.email_verified) res.status(200).json(true)
+        else res.status(200).json(false)
+     }catch(err){
+        next(err)
+     }
+}

@@ -235,3 +235,15 @@ export const checkAndRemoveCoiFile=async (req,res,next)=>{
         next(err)
      }
 }
+
+export const checkIsVerifiedRecruiter=async (req,res,next)=>{
+    try{
+        const recruiter=await RECRUITING.findById(req.params.ragencyid)
+        if(!recruiter) return res.status(404).json({message:"User not found!",type:"failure"})
+
+        if(recruiter.admin_verified) res.status(200).json(true)
+        else res.status(200).json(false)
+    }catch(err){
+        next(err)
+    }
+}

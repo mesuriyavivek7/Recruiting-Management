@@ -14,7 +14,7 @@ const Login = () => {
   const navigate=useNavigate()
   const location=useLocation()
   const {user,dispatch,loading}=useContext(AuthContext)
-  
+  const [loginUserType,setLoginUserType]=useState('enterprise')
 
   const [notification,setNotification]=useState(null)
 
@@ -45,8 +45,12 @@ const Login = () => {
     setFormData((prevData)=>({...prevData,[name]:value}))
   }
 
- //For the password
-  const [password, setPassword] = useState('');
+  const handleChangeUserType=(e)=>{
+     setLoginUserType(e.target.value)
+  }
+
+    //For the password
+
     const [showPassword, setShowPassword] = useState(false);
 
     const togglePasswordVisibility = () => {
@@ -69,8 +73,11 @@ const Login = () => {
     if(validateForm()){
       try{
        dispatch({type:"USER_FETCH_START"})
+
       //login user
-      const user=await axios.post(`${process.env.REACT_APP_API_BASE_URL}/auth/login`,formData,{withCredentials:true})
+      let user=null
+      if(loginUserType==="enterprise") user=await axios.post(`${process.env.REACT_APP_API_BASE_URL}/auth/enterprise-login`,formData,{withCredentials:true})
+      else user=await axios.post(`${process.env.REACT_APP_API_BASE_URL}/auth/recruiter-login`,formData,{withCredentials:true})
 
       dispatch({type:"USER_FETCH_SUCCESS",payload:user.data.details})
 
@@ -162,14 +169,39 @@ const Login = () => {
                     )
                   }
                 </div>
-                <p className="text-end my-3">
-                  <Link
-                    to="/resetpassword"
-                    className="text-sm text-blue-400"
-                  >
-                    Forgot your password?
-                  </Link>
-                </p>
+                <div className="flex mt-2 gap-4 items-center">
+                   <div className="flex gap-1 items-center">
+                      <input
+                      type="radio"
+                      id="enterprise"
+                      name="enterprise"
+                      value='enterprise'
+                      checked={loginUserType==="enterprise"}
+                      onChange={handleChangeUserType}
+                      ></input>
+                      <label className="input-label" htmlFor="enterprise">Enterprise</label>
+                   </div>
+                   <div className="flex gap-1 items-center">
+                      <input
+                       type="radio"
+                       id="recruiter"
+                       name="recruiter"
+                       value='recruiter'
+                       onChange={handleChangeUserType}
+                       checked={loginUserType==="recruiter"}
+                       ></input>
+                       <label className="input-label" htmlFor="recruiter">Recruiter Agency</label>
+                   </div>
+                    <p className="text-end my-3">
+                   <Link
+                     to="/resetpassword"
+                     className="text-sm text-blue-400"
+                   >
+                      Forgot your password?
+                   </Link>
+                   </p>
+                </div>
+               
                 <button disabled={loading} type="button" onClick={handleSubmit} className="w-full py-[6px] bg-green-600 text-white rounded-md disabled:bg-gray-400 disabled:cursor-not-allowed disabled:opacity-50" >
                                     <span className="flex items-center justify-center">
                                           {
@@ -183,7 +215,7 @@ const Login = () => {
                                      </span>
                 </button>
               </form>
-              <div className="text-sm mt-6">
+              <div className="text-sm mt-7">
                 <p className="text-gray-400">
                   Create Account as Employer? 
                   <Link to="/signup/employer" className="text-blue-400 pl-1">
