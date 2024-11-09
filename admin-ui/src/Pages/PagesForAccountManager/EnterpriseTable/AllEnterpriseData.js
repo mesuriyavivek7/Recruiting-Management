@@ -5,6 +5,8 @@ import TablePagination from '@mui/material/TablePagination';
 import { rows, columns } from './RowColData';
 import { Button, Card, CircularProgress, IconButton, InputAdornment, TextField } from '@mui/material';
 import { FaSearch } from 'react-icons/fa';
+import { fetchEnterpriseById } from '../../../services/api';
+import { useNavigate } from 'react-router-dom';
 
 const calculateRowHeight = (params) => {
   const contentHeight = params.row ? params.row.content.length / 10 : 50;
@@ -16,7 +18,7 @@ export default function AllEnterPriseData() {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [loading, setLoading] = React.useState(false);
 
- 
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = React.useState('');
   const [filterStatus, setFilterStatus] = React.useState('All');
 
@@ -45,7 +47,19 @@ export default function AllEnterPriseData() {
     });
     setFilteredRows(newFilteredRows);
   };
-
+ 
+  const handleRowClick = async (params) => {
+    const id = params.id;
+   
+  
+    try {
+    
+        navigate(`/account_manager/enterprise/${id}`)
+    } catch (error) {
+      console.error("Error fetching enterprise data:", error);
+    }
+  };
+  
   const handleFilterClick = (status) => {
     setFilterStatus(status);
     const newFilteredRows = rows.filter((row) => {
@@ -131,7 +145,7 @@ export default function AllEnterPriseData() {
           columns={columns}
           rowHeight={80}
           getRowHeight={calculateRowHeight}
-        
+          onRowClick={handleRowClick}
           pageSize={rowsPerPage}
           pageSizeOptions={[5, 10]}
           initialState={{

@@ -10,7 +10,7 @@ const calculateRowHeight = (params) => {
   return Math.max(80, contentHeight);
 };
 
-const AdminCandidate = ({ recuritingAgenciesDetails }) => {
+const AcCandidate = ({ recuritingAgenciesDetails }) => {
   const [RcCandidaterow, setRcCandidaterow] = useState([]);
   const [selectedRowId, setSelectedRowId] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -121,11 +121,11 @@ const AdminCandidate = ({ recuritingAgenciesDetails }) => {
               }}
             />
           </div>
-      
+         
         </Card>
       )}
     </div>
   );
 };
 
-export default AdminCandidate;
+export default AcCandidate;

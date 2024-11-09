@@ -8,6 +8,8 @@ import { rows, columns } from './RowColData';
 import { styled } from '@mui/system';
 import { Button, CircularProgress, IconButton, InputAdornment, TextField } from '@mui/material';
 import { FaSearch } from 'react-icons/fa';
+import { fetchRecuritingAgencyById } from '../../../services/api';
+import { useNavigate } from 'react-router-dom';
 
 
 const calculateRowHeight = (params) => {
@@ -23,7 +25,7 @@ export default function AllRecruitingAgencyData() {
   const [filterStatus, setFilterStatus] = React.useState('All');
   const [filteredRows, setFilteredRows] = React.useState(rows);
   const [loading, setLoading] = React.useState(false);
-
+const navigate=useNavigate();
   React.useEffect(() => {
     const newFilteredRows = rows.filter((row) => {
       const matchesSearch = row.full_name.toLowerCase().includes(searchTerm.toLowerCase());
@@ -41,6 +43,16 @@ export default function AllRecruitingAgencyData() {
     }, 1000);
   }, [page, rowsPerPage]);
  
+  const handleRowClick = async (params) => {
+    const id = params.id;
+    const displayIndex = params?.row?.displayIndex;
+    try {
+      //const response = await fetchRecuritingAgencyById(id);
+      navigate(`/account_manager/recruiting-agency/${id}`);
+    } catch (error) {
+      console.error('Error fetching enterprise data:', error);
+    }
+  };
 
   return (
     <> <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} gap={2}>
@@ -122,7 +134,7 @@ export default function AllRecruitingAgencyData() {
           columns={columns}
           rowHeight={80}
           getRowHeight={calculateRowHeight}
-       
+          onRowClick={(params) => handleRowClick(params)}
           pageSize={rowsPerPage}
           initialState={{ pagination: { paginationModel: { page: 0, pageSize: 10 } } }}
           pageSizeOptions={[5, 10]}
