@@ -22,6 +22,8 @@ const corsOptions={
     origin:(origin,callback)=>{
         const allowedOrigins=[
             "http://localhost:3000",
+            "http://195.35.45.93:3000",
+            "http://195.35.45.93"
         ];
         const isAllowed = allowedOrigins.includes(origin);
         callback(null, isAllowed ? origin : false);
