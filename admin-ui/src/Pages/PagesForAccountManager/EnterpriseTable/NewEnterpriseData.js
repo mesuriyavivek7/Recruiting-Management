@@ -118,32 +118,33 @@ const NewEnterpriseData = () => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_APP_URL}/enterprise/acpending/${myValue.userData._id}`);
       const data = response.data;
-  
+
       // Ensure each row has a unique `id`
-      const rowsWithIds = data.map((item) => ({
+      const rowsWithIds = data.map((item, index) => ({
         ...item,
-        id: item._id  // Assuming `_id` is unique
+        id: item._id, // Assuming `_id` is unique
+        displayIndex: index + 1
       }));
-  
+
       setNewEnterprise(rowsWithIds);
     } catch (err) {
       showNotification('There is something wrong..!', 'failure');
     }
   };
-  const handleApprove=async ()=>{
-    try{
+  const handleApprove = async () => {
+    try {
       //get verified enterprise to account manager
-      await axios.post(`${process.env.REACT_APP_API_APP_URL}/enterprise/acverified`,{id:selectedRow._id})
+      await axios.post(`${process.env.REACT_APP_API_APP_URL}/enterprise/acverified`, { id: selectedRow._id })
 
       //add enterprise into verified list
-      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/accountmanager/addverifiedenterprise`,{ac_id:myValue.userData._id,ra_id:selectedRow._id})
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/accountmanager/addverifiedenterprise`, { ac_id: myValue.userData._id, ra_id: selectedRow._id })
       fetchEnterprise()
       handleClose()
-      showNotification("Successfully enterprise account verified","success")
-    }catch(err){
-      showNotification("There is something wrong....!","failure")
+      showNotification("Successfully enterprise account verified", "success")
+    } catch (err) {
+      showNotification("There is something wrong....!", "failure")
     }
-}
+  }
 
 
   const fetchAccountManager = async () => {
@@ -220,7 +221,7 @@ const NewEnterpriseData = () => {
         />
       )}
 
-<Dialog open={openpopup} onClose={handleCloseInactivateButton}>
+      <Dialog open={openpopup} onClose={handleCloseInactivateButton}>
         <DialogTitle>Inactivate Enterprise</DialogTitle>
         <DialogContent>
           <DialogContentText>
@@ -238,126 +239,127 @@ const NewEnterpriseData = () => {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseInactivateButton}  sx={{
-                        fontSize: { xs: "12px", sm: "14px", xl: "17px" },
-                        width: { xl: "80px", sm: "40px" },
-                        color:'white',
-                        backgroundColor:
-                          "#315370",
-                        "&:hover": {
-                          backgroundColor:"gray"
-                        },
-                        textTransform: "none",
-                      }}>
+          <Button onClick={handleCloseInactivateButton} sx={{
+            fontSize: { xs: "12px", sm: "14px", xl: "17px" },
+            width: { xl: "80px", sm: "40px" },
+            color: 'white',
+            backgroundColor:
+              "#315370",
+            "&:hover": {
+              backgroundColor: "gray"
+            },
+            textTransform: "none",
+          }}>
             Cancel
           </Button>
-          <Button onClick={handleSubmitButton}  sx={{
-                        fontSize: { xs: "12px", sm: "14px", xl: "17px" },
-                        width: { xl: "100px", sm: "50px" },
-                        //height:"30px",
-                       color:'white',
-                        backgroundColor:
-                          "#315370",
-                        "&:hover": {
-                          backgroundColor:"gray"
-                        },
-                        textTransform: "none",
-                    
-                      }}>
-               {inactivateLoad &&
-                <span className="absolute inset-0 flex items-center justify-center">
-                                          <svg className="w-5 h-5 text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l5.6-3.2a10 10 0 00-10.4 0L4 12z"></path>
-                                          </svg>
-                                     </span>
-                                     }
-                                     
-                                     {!inactivateLoad && <span>Submit</span>}
+          <Button onClick={handleSubmitButton} sx={{
+            fontSize: { xs: "12px", sm: "14px", xl: "17px" },
+            width: { xl: "100px", sm: "50px" },
+            //height:"30px",
+            color: 'white',
+            backgroundColor:
+              "#315370",
+            "&:hover": {
+              backgroundColor: "gray"
+            },
+            textTransform: "none",
+
+          }}>
+            {inactivateLoad &&
+              <span className="absolute inset-0 flex items-center justify-center">
+                <svg className="w-5 h-5 text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l5.6-3.2a10 10 0 00-10.4 0L4 12z"></path>
+                </svg>
+              </span>
+            }
+
+            {!inactivateLoad && <span>Submit</span>}
           </Button>
         </DialogActions>
       </Dialog>
-        
-        {selectedRow && (
-          <Dialog
-            open={open}
-            onClose={handleClose}
-            fullWidth
-            maxWidth="sm"
-            sx={{ fontSize: { sm: "16px", xl: "20px" } }}
-          >
-            <DialogTitle
-              sx={{
-                fontSize: { sm: "20px", xl: "25px" },
-                borderBottom: "2px solid black", // Add this line for the border
-                paddingBottom: "8px",
-              }}
-            >
-              Details for {selectedRow?.full_name}
-            </DialogTitle>
-            <DialogContent>
-              <div className="space-y-6  space-x-2 pt-4 grid grid-cols-2">
-                <p className="pt-6 pl-3">
-                  <strong>Id:</strong> {selectedRow?._id}
-                </p>
-                <p>
-                  <strong>Email:</strong> {selectedRow?.email}
-                </p>
-                <p>
-                  <strong>Mobile No:</strong> {selectedRow?.mobile_no}
-                </p>
-                <p>
-                  <strong>Company:</strong> {selectedRow?.company_name}
-                </p>
-                <p>
-                  <strong>Designation:</strong> {selectedRow?.designation}
-                </p>
 
-                <p>
-                  <strong>Company Size:</strong> {selectedRow?.company_size}
-                </p>
-                <p>
-                  <strong>Country:</strong> {selectedRow?.country}
-                </p>
-                <p>
-                  <strong>State:</strong> {selectedRow?.state}
-                </p>
-                <p>
-                  <strong>City:</strong> {selectedRow?.city}
-                </p>
-                <p>
-                  <strong>Email verification:</strong>{" "}
-                  {selectedRow?.email_verified?("Yes"):("No")}
-                </p>
-           </div>
-           { 
-            (selectedRow?.account_status.status==="Inactive") && (
-               <div className='my-6'>
-                  <p className='text-red-500 text-xl text-center'>This Account is Inactivated</p>
-               </div>)
-          }
-            </DialogContent>
-            {
-              (selectedRow?.account_status.status==="Active") && (
-                <DialogActions>
-                <Button
-                 variant="contained"
-           
-                 onClick={handleApprove}
-                 sx={{ backgroundColor:  '#315370', color: 'white',
-                    '&:hover': {
-                     backgroundColor: 'gray',
-                  },
-             }}
+      {selectedRow && (
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          fullWidth
+          maxWidth="sm"
+          sx={{ fontSize: { sm: "16px", xl: "20px" } }}
+        >
+          <DialogTitle
+            sx={{
+              fontSize: { sm: "20px", xl: "25px" },
+              borderBottom: "2px solid black", // Add this line for the border
+              paddingBottom: "8px",
+            }}
           >
-            Approve
-          </Button>
-            </DialogActions>
-              )
+            Details for {selectedRow?.full_name}
+          </DialogTitle>
+          <DialogContent>
+            <div className="space-y-6  space-x-2 pt-4 grid grid-cols-2">
+              <p className="pt-6 pl-3">
+                <strong>Id:</strong> {selectedRow?._id}
+              </p>
+              <p>
+                <strong>Email:</strong> {selectedRow?.email}
+              </p>
+              <p>
+                <strong>Mobile No:</strong> {selectedRow?.mobile_no}
+              </p>
+              <p>
+                <strong>Company:</strong> {selectedRow?.company_name}
+              </p>
+              <p>
+                <strong>Designation:</strong> {selectedRow?.designation}
+              </p>
+
+              <p>
+                <strong>Company Size:</strong> {selectedRow?.company_size}
+              </p>
+              <p>
+                <strong>Country:</strong> {selectedRow?.country}
+              </p>
+              <p>
+                <strong>State:</strong> {selectedRow?.state}
+              </p>
+              <p>
+                <strong>City:</strong> {selectedRow?.city}
+              </p>
+              <p>
+                <strong>Email verification:</strong>{" "}
+                {selectedRow?.email_verified ? ("Yes") : ("No")}
+              </p>
+            </div>
+            {
+              (selectedRow?.account_status.status === "Inactive") && (
+                <div className='my-6'>
+                  <p className='text-red-500 text-xl text-center'>This Account is Inactivated</p>
+                </div>)
             }
-          </Dialog>
-        )}
-       <TablePagination
+          </DialogContent>
+          {
+            (selectedRow?.account_status.status === "Active") && (
+              <DialogActions>
+                <Button
+                  variant="contained"
+
+                  onClick={handleApprove}
+                  sx={{
+                    backgroundColor: '#315370', color: 'white',
+                    '&:hover': {
+                      backgroundColor: 'gray',
+                    },
+                  }}
+                >
+                  Approve
+                </Button>
+              </DialogActions>
+            )
+          }
+        </Dialog>
+      )}
+      <TablePagination
         component="div"
         count={paginatedRows.length} // Total number of rows
         page={page} // Current page number

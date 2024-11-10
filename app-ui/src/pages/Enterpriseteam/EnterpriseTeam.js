@@ -18,7 +18,7 @@ import AddIcon from '@mui/icons-material/Add';
 import WhiteLoader from '../../assets/whiteloader.svg'
 
 export default function EnterpriseTeam() {
- const {user}=useContext(AuthContext)
+ const {user,isVerified}=useContext(AuthContext)
  const [enterpriseMember,setEnterpriseMember]=useState([])
  const [loading,setLoading]=useState(false)
  const [openPopUp,setOpenPopUp]=useState(false)
@@ -61,6 +61,11 @@ export default function EnterpriseTeam() {
   const handleTeamFormData = (e) => {
     const { name, value } = e.target
     setTeamFormData((prevData) => ({ ...prevData, [name]: value }))
+  }
+
+  const handleOpenTeamPopUp=()=>{
+      if(isVerified) setOpenPopUp(true)
+      else showNotification("You have not access for adding new team member.",'warning')
   }
 
   const validateTeamFormData = () => {
@@ -272,7 +277,7 @@ export default function EnterpriseTeam() {
 
       {
         openPopUp && (
-          <div className='fixed inset-0 z-10 flex justify-center bg-opacity-50 backdrop-blur-md items-center'>
+          <div className='fixed inset-0 z-10 flex justify-center bg-black bg-opacity-50 backdrop-blur-md items-center'>
             <div className="rounded-md overflow-hidden border-gray-100 border-1 max-w-md w-full">
               <div className='relative w-full bg-white py-2'>
                 <span className='absolute cursor-pointer flex items-center text-green-600 text-sm left-2 top-4' onClick={() => setOpenPopUp(false)}><ArrowBackIosIcon style={{ fontSize: '1rem' }}></ArrowBackIosIcon>Back</span>
@@ -394,7 +399,7 @@ export default function EnterpriseTeam() {
         {notification && <Notification message={notification.message} type={notification.type} onClose={() => setNotification(null)}></Notification>}
         <div className='w-full flex justify-between'>
           <h2 className='text-gray-500 font-medium'>Team Page</h2>
-          <button onClick={() => setOpenPopUp(true)} className='text-gray-600 cursor-pointer flex gap-2 items-center'>
+          <button onClick={handleOpenTeamPopUp} className='text-gray-600 cursor-pointer flex gap-2 items-center'>
             <span><AddIcon></AddIcon></span>
             <span>Add Member</span>
           </button>

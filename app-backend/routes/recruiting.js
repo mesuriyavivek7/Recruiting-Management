@@ -3,8 +3,7 @@ import multer from "multer"
 import path from 'path'
 
 
-import { acVerified, allocatedAcManager, changeAccountStatus, checkAndRemoveCoiFile, getAcmanager, getAgencyDetailsForProfilePage, getAllPendingAcmanagerRecruiting, getAllPendingMadminVerifyRAgency, getRecruitingAgencies, getRecruitingAgencyById, getTeamMember, kycDetailsSubmission, kycDocsSubmission, updateAgencyDetails, uploadCoiCertificate } from "../controller/recruitingController.js";
-import { getRecruiterMemberIds } from "../controller/candidateController.js"
+import { acVerified, allocatedAcManager, changeAccountStatus, checkAndRemoveCoiFile, checkIsVerifiedRecruiter, getAcmanager, getAgencyDetailsForProfilePage, getAllPendingAcmanagerRecruiting, getAllPendingMadminVerifyRAgency, getRecruitingAgencies, getRecruitingAgencyById, getTeamMember, kycDetailsSubmission, kycDocsSubmission, updateAgencyDetails, uploadCoiCertificate } from "../controller/recruitingController.js";
 
 
 const router=express.Router()
@@ -81,4 +80,6 @@ router.get("/:r_agency_id", getRecruitingAgencyById)
 //For upload coi certificate
 router.post('/uploadcoi/:ragencyid',uploadcoi.single('file'),uploadCoiCertificate)
 
+//For chekck is it verified recruiter or not
+router.get('/isverified/:ragencyid',checkIsVerifiedRecruiter)
 export default router

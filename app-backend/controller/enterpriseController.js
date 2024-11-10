@@ -215,3 +215,19 @@ export const SearchEnterpriseByName = async (req, res, next) => {
     next(error);
   }
 }
+
+
+export const isVerifiedEnterprise=async (req,res,next)=>{
+   try{
+     const enterprise=await ENTERPRISE.findById(req.params.eid)
+     if(!enterprise) return res.status(404).status({message:"User not found...!",type:"failure"})
+
+     if(enterprise.admin_verified){
+      res.status(200).json(true)
+     }else{
+      res.status(200).json(false)
+     }
+   }catch(err){
+     next(err)
+   }
+}

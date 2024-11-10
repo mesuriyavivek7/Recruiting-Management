@@ -34,7 +34,7 @@ export const fetchPendingEnterpriseData = async (admin_id) => {
     }
 }
 
-export const fetchMasterAdminDetailsById = async(admin_id) => {
+export const fetchMasterAdminDetailsById = async (admin_id) => {
     try {
         const response = axios.get(`${admin_be_uri}/masteradmin/getdetails/${admin_id}`);
         return (await response).data;
@@ -63,6 +63,27 @@ export const fetchEnterpriseTeam = async (enterprise_id) => {
     }
 }
 
+//get all the verified enterprises by ac manager id
+export const fetchVerifedEntepreiseByACId = async(ac_manager_id) => {
+    try {
+        const response = await axios.get(`${admin_be_uri}/accountmanager/verifiedenterprises/${ac_manager_id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error while fetching verified enterprises by ac manager id : ", error);
+        throw error;
+    }
+}
+
+//get all pending verify enterprises by ac manager id
+export const fetchPendingEntepreiseByACId = async(ac_manager_id) => {
+    try {
+        const response = await axios.get(`${admin_be_uri}/accountmanager/pendingenterprises/${ac_manager_id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error while fetching pending verify enterprises by ac manager id : ", error);
+        throw error;
+    }
+}
 export const fetchAllJobDetails = async () => {
     try {
         const response = await axios.get(`${app_be_uri}/job`);
@@ -105,6 +126,56 @@ export const fetchJobStatusByJobId = async (job_id) => {
     }
 }
 
+export const fetchVerifiedRAgenciesByACmanagerId = async (ac_manager_id) => {
+    try {
+        const response = await axios.get(`${admin_be_uri}/accountmanager/getagencies/${ac_manager_id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching verified recruiting agencies: ", error);
+        throw error;
+    }
+}
+
+export const fetchPendingRAgenciesByACmanagerId = async (ac_manager_id) => {
+    try {
+        const response = await axios.get(`${admin_be_uri}/accountmanager/getpendingagencies/${ac_manager_id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching verified recruiting agencies: ", error);
+        throw error;
+    }
+}
+
+export const fetchVerifiedRAgenciesByAdminId = async (m_admin_id) => {
+    try {
+        const response = await axios.get(`${admin_be_uri}/masteradmin/getagencies/${m_admin_id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching verified recruiting agencies: ", error);
+        throw error;
+    }
+}
+
+export const fetchPendingRAgenciesByAdminId = async (m_admin_id) => {
+    try {
+        const response = await axios.get(`${admin_be_uri}/masteradmin/getpendingagencies/${m_admin_id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching verified recruiting agencies: ", error);
+        throw error;
+    }
+}
+
+export const fetchRecuritingAgencybyId = async (r_agency_id) => {
+    try {
+        const response = await axios.get(`${app_be_uri}/recruiting/${r_agency_id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching recruiting agencies: ", error);
+        throw error;
+    }
+}
+
 export const fetchRecuritingAgencies = async () => {
     try {
         const response = await axios.get(`${app_be_uri}/recruiting/getagencies`);
@@ -114,18 +185,6 @@ export const fetchRecuritingAgencies = async () => {
         throw error;
     }
 }
-
-export const fetchRecuritingAgencyById = async (r_agency_id) => {
-    try {
-        const response = await axios.get(`${app_be_uri}/recruiting/${r_agency_id}`)
-
-        return response.data;
-    } catch (error) {
-        console.error("Error while fetching thr recruiting agency : ", error);
-        throw error;
-    }
-}
-
 export const fetchRecruiterByEId = async (enterprise_id) => {
     try {
         const response = axios.get(`${app_be_uri}/enterprise/getrecruiter/${enterprise_id}`);
@@ -203,24 +262,20 @@ export const fetchAccountManager = async (ac_manager_id) => {
 };
 
 //get the account manager on master admin
-export const fetchAccountManagerMasterAdmin= async (m_admin_id)=>{
-    if (!m_admin_id) {
-        console.error("Master admin id is undefined");
-        return; 
-    }
-    try{
+export const fetchAccountManagerMasterAdmin = async (m_admin_id) => {
+    try {
         const response = await axios.get(`${admin_be_uri}/masteradmin/getaccountmanagerdetails/${m_admin_id}`)
         return response.data
-    }catch(err){
-        console.error("Error while fetching account manager details by master admin id : ",err)
+    } catch (err) {
+        console.error("Error while fetching account manager details by master admin id : ", err)
         throw err
     }
 }
 
 //get the all account manager details
-export const fetchAccountManagerDetails = async () => {
+export const fetchAccountManagerDetailsById = async (ac_manager_id) => {
     try {
-        const response = await axios.get(`${admin_be_uri}/accountmanager/findall`);
+        const response = await axios.get(`${admin_be_uri}/accountmanager/${ac_manager_id}`);
         return response.data;
     } catch (error) {
         console.error("Error while fetching all account manager details : ", error);
