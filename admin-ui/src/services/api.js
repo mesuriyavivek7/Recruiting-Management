@@ -84,6 +84,7 @@ export const fetchPendingEntepreiseByACId = async(ac_manager_id) => {
         throw error;
     }
 }
+
 export const fetchAllJobDetails = async () => {
     try {
         const response = await axios.get(`${app_be_uri}/job`);
@@ -100,6 +101,16 @@ export const fetchJobBasicDetailsByJobId = async (job_id) => {
         return response.data;
     } catch (error) {
         console.error("Error while fetching the job basic details by job id : ", error);
+        throw error;
+    }
+}
+
+export const fetchJobDetailsById = async (job_id) => {
+    try {
+        const response = await axios.get(`${app_be_uri}/job/details/${job_id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error while fetching the job details by its id : ", error);
         throw error;
     }
 }
@@ -162,6 +173,26 @@ export const fetchPendingRAgenciesByAdminId = async (m_admin_id) => {
         return response.data;
     } catch (error) {
         console.error("Error fetching verified recruiting agencies: ", error);
+        throw error;
+    }
+}
+
+export const fetchVerifiedJobsByAdminId = async(m_admin_id) => {
+    try {
+        const response = await axios.get(`${admin_be_uri}/masteradmin/getverifiedjobs/${m_admin_id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching verified jobs : ", error);
+        throw error;
+    }
+}
+
+export const fetchPendingJobsByAdminId = async(m_admin_id) => {
+    try {
+        const response = await axios.get(`${admin_be_uri}/masteradmin/getpendingjobs/${m_admin_id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching verified jobs : ", error);
         throw error;
     }
 }

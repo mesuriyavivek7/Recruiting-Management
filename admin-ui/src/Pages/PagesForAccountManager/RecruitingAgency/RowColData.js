@@ -84,13 +84,11 @@ export const columns = [
 
 const selectUserData = (state) => state?.admin?.userData;
 const userData = selectUserData(store?.getState());
-console.log(userData);
 
 // Proceed only if userData.admin_type is 'account_manager'
 let rows = [];
 if (userData?.admin_type === "account_manager") {
   const verifiedAgenciesIds = await fetchVerifiedRAgenciesByACmanagerId(userData?._id);
-  console.log(verifiedAgenciesIds);
 
   // Fetch enterprise details for each ID
   rows = await Promise.all(

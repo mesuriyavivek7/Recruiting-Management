@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url';
 
 
 import { activateJob, getAllJobs, addCandidateProfileList, allotedJobToAcManager, createJobs, deleteJobDraftWithOtherDetails, downloadEvaluationForm, getAllJobDetails, getAllJobDraftDetails, getCandidateScreeningQue, getFronLiveJobDetails, getFrontAcceptedJobDetails, getFrontMappedJobDetails, getJobAttachmentsDetailsForCandidate, getJobBasicDetailsForPreview, getJobCompanyDetailsForPreview, getJobSourcingGuidelinesForPreview, getJobStatusForPreview, getJobCommissionDetailsForPreview, createJobUpdates, getJobUpdates, getJobAttachmentsDetailsForPreview, getAcManagerNameAndMail, viewJobAttachments, downloadJobAttachments, getJobAttachmentFileType, getJobHotMark, changeJobHotMark, getJobCandidatesForPreview, getLiveJobs, getFrontFavouriteJobs, unMapJob, addJobMapRequest, SearchJobByTitle, getJobScreeningQuestionsForPreview } from '../controller/jobController.js';
-import { craeteJobBasicDeatils,showJobDetail, getJobBasicDetails, getJobDetailsByEnId } from '../controller/jobBasicController.js'
+import { craeteJobBasicDeatils,showJobDetail, getJobBasicDetails, getJobDetailsByEnId, getJobDetailsById } from '../controller/jobBasicController.js'
 import { createJobDraft, deleteJobDraft } from '../controller/jobDraftController.js'
 import { createJobCommission,showJobCommission, getJobCommissionDetails } from '../controller/jobCommissionController.js'
 import { createCompanyDetails,showJobCompanyInfo, getJobCompanyDetails } from '../controller/jobCompanyController.js'
@@ -126,10 +126,11 @@ router.get('/getalljobdraftdetails/:ememberid',getAllJobDraftDetails)
 //for deleting job draft with others details 
 router.delete('/deletedraftwithjobs/:jobid',deleteJobDraftWithOtherDetails)
 
-//for getting job data for to show in draft page
-
 //for getting basic job details
 router.get("/getbasicjobdetails/:jobid",getJobBasicDetails)
+
+//for getting main job details by id
+router.get('/details/:id', getJobDetailsById)
 
 //for getting basic job details by enterprise id
 router.get('/getjobdetails/:e_id', getJobDetailsByEnId)
