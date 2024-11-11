@@ -15,6 +15,8 @@ import "react-phone-input-2/lib/style.css";
 import AddIcon from '@mui/icons-material/Add';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { AuthContext } from '../context/AuthContext';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+
 
 
 import Notification from '../components/Notification';
@@ -26,6 +28,40 @@ const Dashboard = () => {
     active_jobs:0,
     pending_jobs:0
   })
+
+  const [isVerified,setIsVerified]=useState(true)
+  const [isEmailVerified,setIsEmailVerified]=useState(true)
+
+  const handleCheckisVerified=async ()=>{
+     try{
+        const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/enterprise/isverifiedaccount/${user.enterprise_id}`)
+        setIsVerified(res.data)
+     }catch(err){
+       console.log(err)
+       showNotification("Something went wrong!","failure")
+     }
+  }
+
+  const handleCheckisEmailVerified=async ()=>{
+    try{
+      const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/enterpriseteam/isemailverified/${user._id}`)
+      setIsEmailVerified(res.data)
+    }catch(err){
+       console.log(err)
+       showNotification("Something went wrong!",'failure')
+    }
+  }
+
+  const handleResendVerificationMail=async ()=>{
+    try{
+       await axios.post(`${process.env.REACT_APP_API_BASE_URL}/mail/sendverificationenterprise`,{name:user.full_name,email:user.email})
+       showNotification("Successfully verification mail sended.",'success')
+    }catch(err){
+       console.error(err)
+       showNotification("Something went wrong.",'failure')
+    }
+  }
+
   const [teamFormData,setTeamFormData]=useState({
     full_name:'',
     email:'',
@@ -49,6 +85,8 @@ const Dashboard = () => {
 
   useEffect(()=>{
      fetchDashboardCount()
+     handleCheckisVerified()
+     handleCheckisEmailVerified()
   },[])
   
 const polarData = [
@@ -94,6 +132,11 @@ const radialData = [
   const handleTeamFormData=(e)=>{
       const {name,value}=e.target
       setTeamFormData((prevData)=>({...prevData,[name]:value}))
+  }
+
+  const handleOpenTeamPopUp=()=>{
+    if(isVerified) setOpenPopUp(true)
+    else showNotification("You have not access for adding new team member.",'warning')
   }
 
   const validateTeamFormData=()=>{
@@ -247,12 +290,24 @@ const radialData = [
           </div>
         )
        }
+       {
+        !isVerified && 
+         <div className='custom-div py-3'>
+          <p className='text-[15px] tracking-wide text-gray-500 flex items-center'><span className='text-yellow-500 mr-2'><InfoOutlinedIcon></InfoOutlinedIcon></span>Your account is now active with limited access to the dashboard. Full access will be granted after an admin verifies your profile details, which usually takes 2-3 business days.</p>
+         </div>
+       }
+       {
+        !isEmailVerified && 
+          <div className='custom-div py-3'>
+           <p className='text-[15px] tracking-wide text-gray-500 flex items-center'><span className='text-yellow-500 mr-2'><InfoOutlinedIcon></InfoOutlinedIcon></span>Your account is not verified. Please check your email and click the verification link to verified your email id. If you haven't received the email, click here to <span onClick={handleResendVerificationMail} className='underline underline-offset-1 cursor-pointer hover:text-blue-400 ml-1'>resend it</span>.</p>
+          </div>
+       }  
       <div className='custom-div py-4 flex flex-row items-center justify-between'>
          <div className='flex gap-4 text-gray-600 items-center'>
             <span className='cursor-pointer'>My Dashboard</span>
           
          </div>
-         <button onClick={()=>setOpenPopUp(true)} className='text-gray-600 cursor-pointer flex gap-2 items-center'>
+         <button onClick={handleOpenTeamPopUp} className='text-gray-600 cursor-pointer flex gap-2 items-center'>
           <span><AddIcon></AddIcon></span>
           <span>Add Member</span>
          </button>

@@ -59,6 +59,7 @@ const AuthReducer=(state,action)=>{
 export const AuthContextProvider=({children})=>{
     const [state,dispatch]=useReducer(AuthReducer,INITIAL_STATE)
     const [isAdmin,setIsAdmin]=useState(false)
+    const [isVerified,setIsVerified]=useState(true)
 
     //Check for user is admin or not
     const checkAdmin=async ()=>{
@@ -67,25 +68,43 @@ export const AuthContextProvider=({children})=>{
             let res=null;
             if(state.user.userType==='enterprise') res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/enterpriseteam/checkadmin/${state.user._id}`)
             else res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/recruitingteam/checkadmin/${state.user._id}`)
-            
             if(res.data) setIsAdmin(true)
             else setIsAdmin(false)
+            
          }catch(err){
             console.log(err)
          }
         }
     }
 
+    //check for user is verified by master admin or not
+
+    const handleCheckisVerified=async ()=>{
+        try{
+           let res=null
+           if(state.user.userType==='enterprise') res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/enterprise/isverifiedaccount/${state.user.enterprise_id}`)
+           else res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/recruiting/isverified/${state.user.recruiting_agency_id}`)
+           setIsVerified(res.data)
+        }catch(err){
+          console.log(err)
+          
+        }
+     }
+   
+    
+
     useEffect(()=>{
        localStorage.setItem("user",JSON.stringify(state.user))
        checkAdmin()
+       handleCheckisVerified()
     },[state.user])
 
     
     return (
         <AuthContext.Provider
          value={
-            {   isAdmin,
+            {   isVerified,
+                isAdmin,
                 user:state.user,
                 loading:state.loading,
                 error:state.error,

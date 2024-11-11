@@ -18,7 +18,7 @@ import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
 
 export default function LiveJobsItem({jobObj,handleOpenPreviewBox,showNotification,setLoader,fetchLiveJobs}) {
 
-  const {user}=useContext(AuthContext)
+  const {user,isVerified}=useContext(AuthContext)
 
   //Creating country mapping
   const country=new Map([
@@ -62,6 +62,11 @@ export default function LiveJobsItem({jobObj,handleOpenPreviewBox,showNotificati
          console.log(err)
          showNotification("Something went wrong.",'failure')
       }
+  }
+
+  const handleOpenConfirmPopUpBox=()=>{
+      if(isVerified) setOpenConfirmPopUpBox(true)
+      else showNotification("You have not access for send the job request.",'warning')
   }
   
 
@@ -156,7 +161,7 @@ export default function LiveJobsItem({jobObj,handleOpenPreviewBox,showNotificati
            </div>
          </div>
          <div>
-            <button disabled={jobObj.isRequestJob} onClick={()=>setOpenConfirmPopUpBox(true)} className='bg-blue-400 disabled:cursor-not-allowed disabled:bg-slate-200 text-white p-1 text-md rounded-sm'><ArrowRightAltIcon style={{marginRight:"4px"}}></ArrowRightAltIcon> {jobObj.isRequestJob?("Mapping Request Sent"):("Request Map")}</button>
+            <button disabled={jobObj.isRequestJob} onClick={handleOpenConfirmPopUpBox} className='bg-blue-400 disabled:cursor-not-allowed disabled:bg-slate-200 text-white p-1 text-md rounded-sm'><ArrowRightAltIcon style={{marginRight:"4px"}}></ArrowRightAltIcon> {jobObj.isRequestJob?("Mapping Request Sent"):("Request Map")}</button>
          </div>
        </div>
     </div>

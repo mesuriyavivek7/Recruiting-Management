@@ -119,7 +119,6 @@ export const addNewCandidate = async (req, res, next) => {
 export const getRecruiterTeamMember = async (req, res, next) => {
   try {
     const candidates = await ENTERPRISETEAM.findById(req.params.enmemberid, { _id: 0, received_candidates: 1 })
-    if (candidates.received_candidates.length === 0) res.status(200).json([])
 
     const recruiterData = await Promise.all(candidates.received_candidates.map(async (obj) => {
       const candidatedetails = await CANDIDATE.findById(obj.candidateId)
@@ -220,4 +219,17 @@ export const getDashboardCount=async (req,res,next)=>{
   }catch(err){
     next(err)
   }
+}
+
+export const isEnterpriseMemberEmailVerified=async (req,res,next)=>{
+   try{
+     const enmember=await ENTERPRISETEAM.findById(req.params.enmemberid)
+     if(!enmember) return res.status(404).json({message:"User not found!",type:"failure"})
+     
+     if(enmember.email_verified) res.status(200).json(true)
+     else res.status(200).json(false)
+     
+   }catch(err){
+     next(err)
+   }
 }

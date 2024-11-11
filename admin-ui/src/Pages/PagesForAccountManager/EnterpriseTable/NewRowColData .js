@@ -7,7 +7,7 @@ export const getFormateDate = (cdate) => {
   };
   
   export const columns = (handleInactivateButton,handleRowClick) => [
-    { field: '_id', headerName: 'ID', width: 150 },
+    { field: 'displayIndex', headerName: 'Sr No', width: 100 },
     { field: 'full_name', headerName: 'Full Name', width: 200 },
     { field: 'email', headerName: 'Email', width: 250 },
     { field: 'mobileno', headerName: 'Mobile No.', width: 150 },

@@ -29,7 +29,7 @@ const recruitingteamSchema=new mongoose.Schema({
         type:Boolean,
         default:false
     },
-    accout_status:{
+    account_status:{
        type:String,
        default:"Active"
     },

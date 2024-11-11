@@ -24,7 +24,7 @@ const AllJobData = () => {
   // Fetch job data from the backend
   const fetchJobs = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/api/job'); // Your API endpoint
+      const response = await axios.get(`${process.env.REACT_APP_API_APP_URL}/job`); // Your API endpoint
       setRow(response.data); // Set the fetched data to rows
     } catch (error) {
       console.error('Error fetching jobs:', error); // Handle error

@@ -294,9 +294,9 @@ const NewRecruitingAgencyData = () => {
                 <div className='mt-2 w-full'>
                   {selectedRow?.kyc_documents && (
                     selectedRow?.kyc_documents.filename.endsWith('.pdf') ? (
-                      <iframe src={`http://localhost:8080/kycdocs/${selectedRow?.kyc_documents.filename}`} width="600" height="400"></iframe>
+                      <iframe src={`${process.env.REACT_APP_APP_URL}/kycdocs/${selectedRow?.kyc_documents.filename}`} width="600" height="400"></iframe>
                     ) : (
-                      <img className='w-full' src={`http://localhost:8080/kycdocs/${selectedRow?.kyc_documents.filename}`} />
+                      <img className='w-full' src={`${process.env.REACT_APP_APP_URL}/kycdocs/${selectedRow?.kyc_documents.filename}`} />
                     )
                   )}
 

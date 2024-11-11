@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 import { ReactComponent as ExpandIcon } from "../assets/asset19.svg";
 import { ReactComponent as DashboardIcon } from "../assets/asset28.svg";
 import { ReactComponent as CandidatesIcon } from "../assets/asset20.svg";
@@ -17,7 +18,7 @@ import { Link ,useLocation} from "react-router-dom";
 const SideNavbar = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isSupportVisible, setIsSupportVisible] = useState(false); // State for pop-up visibility
-
+  const {isAdmin}=useContext(AuthContext)
   const location=useLocation()
 
   const currentPath=location.pathname
@@ -64,13 +65,17 @@ const SideNavbar = () => {
           {isExpanded && <span className="text-white">Post a Job</span>}
         </div>
       </Link>
-
-       <Link to="team">
+      
+      {
+        isAdmin &&
+        <Link to="team">
         <div className={`hover:bg-gray-400 ${currentPath==="/employer/team" && "bg-gray-400"} rounded-md flex items-center gap-2 p-2`}>
           <span className="w-[24px] text-white"><PeopleOutlinedIcon></PeopleOutlinedIcon></span>
           {isExpanded && <span className="text-white">Team</span>}
         </div>
-      </Link>
+       </Link>
+      }
+      
       <Link to="bulkactions">
         <div className={`hover:bg-gray-400 ${currentPath==="/employer/bulkactions" && "bg-gray-400"} rounded-md p-2 flex items-center gap-2`}>
           <ActionIcon className="w-[24px] text-white" />

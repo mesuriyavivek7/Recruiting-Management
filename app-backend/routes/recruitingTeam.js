@@ -1,5 +1,5 @@
 import express from 'express'
-import { addJobIntoAcceptList, addJobIntoFavoutiteList, addNewCandidate, changeAccountStatus, changeCommissionFlag, checkCreadentials, checkEmailAddress, checkForRequestJob, checkIsAdmin, checkMobileNo, createteammember, getDashBoardCount, getEnterpriseTeamMember, getFavouriteJobIds, getRecruiterCandidateDetails, getRecruiterProfilePageDetails, getRecuritingTeamDetails, isFavouriteJob, rejectJob, removeJobFromFavouriteList, requestMapJob, unmapJob, updateJobMappedList, updateRecruiterTeamDetails } from '../controller/recrutingTeamController.js'
+import { addJobIntoAcceptList, addJobIntoFavoutiteList, addNewCandidate, changeAccountStatus, changeCommissionFlag, checkCreadentials, checkEmailAddress, checkForRequestJob, checkIsAdmin, checkMobileNo, createteammember, getDashBoardCount, getEnterpriseTeamMember, getFavouriteJobIds, getRecruiterCandidateDetails, getRecruiterProfilePageDetails, getRecuritingTeamDetails, isFavouriteJob, isVerifiedMail, rejectJob, removeJobFromFavouriteList, requestMapJob, unmapJob, updateJobMappedList, updateRecruiterTeamDetails } from '../controller/recrutingTeamController.js'
 
 
 
@@ -77,5 +77,7 @@ router.post('/requestmapjob',requestMapJob)
 //For check particular jon is requested job or not
 router.get('/checkforrequestjob/:rememberid/:orgjobid',checkForRequestJob)
 
+//For check particuler recruiter member is verified email or not
+router.get('/checkisverifiedmail/:rememberid',isVerifiedMail)
 
 export default router

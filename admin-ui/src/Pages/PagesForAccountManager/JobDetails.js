@@ -25,7 +25,7 @@ function JobDetails() {
 
   // Fetch job details from backend when component loads
   useEffect(() => {
-    axios.get(`http://localhost:8080/api/job/showjob/${id}`)
+    axios.get(`${process.env.REACT_APP_API_BASE_URL}/job/showjob/${id}`)
       .then(response => {
         setJob(response.data);
       })
