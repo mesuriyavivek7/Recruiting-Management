@@ -5,7 +5,7 @@ import { RcTeamCols } from './RowColData'; // Import columns configuration
 import { FaPhone, FaEnvelope, FaUserCheck, FaBriefcase } from 'react-icons/fa'; // Import all required icons
 import { fetchRecuritingTeam } from '../../../services/api';
 
-const AdminRcTeam = ({ recuritingAgenciesDetails }) => {
+const AcRcTeam = ({ recuritingAgenciesDetails }) => {
   const [RcTeamrows, setRcTeamrows] = useState([]); // Holds the resolved data
   const [selectedRow, setSelectedRow] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -168,9 +168,9 @@ const AdminRcTeam = ({ recuritingAgenciesDetails }) => {
           </button>
         </DialogActions>
       </Dialog>
-      
+     
     </Card>
   );
 };
 
-export default AdminRcTeam;
+export default AcRcTeam;

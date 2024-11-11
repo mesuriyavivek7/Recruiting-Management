@@ -198,14 +198,14 @@ const Navbar = ({ enterpriseData, recruiterData }) => {
         </div>
 
           
-          <div className="border-t pt-2">
+          <div className="border-t pt-2  h-[500px] overflow-hidden">
 
             {popupSearchTerm && (
               <>
                 {showEnterpriseData ? (
                   <>
                     <h4 className="font-semibold text-xl">Enterprise Results:</h4>
-                    <div className="h-[360px] mt-2 overflow-auto">
+                    <div className="max-h-[400px] mt-2 overflow-auto">
                     {filteredEnterpriseData.length > 0 ? (
                       filteredEnterpriseData.map((item, index) => (
                         <Box
@@ -240,7 +240,7 @@ const Navbar = ({ enterpriseData, recruiterData }) => {
                 ) : (
                   <>
                     <h4 className="font-semibold text-xl">Recruiter Results:</h4>
-                    <div className="h-[360px] mt-2 overflow-auto">
+                    <div className="max-h-[400px] mt-2 overflow-auto">
                     {filteredRecruiterData.length > 0 ? (
                       filteredRecruiterData.map((item, index) => (
                         <Box
