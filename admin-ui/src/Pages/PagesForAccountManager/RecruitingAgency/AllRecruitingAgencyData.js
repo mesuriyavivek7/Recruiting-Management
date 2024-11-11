@@ -129,7 +129,7 @@ const navigate=useNavigate();
       <p className='text-lg xl:text-2xl'>All Recruiting Agency </p>
       <Box sx={{ height: 600, width: '100%', paddingTop: '19px' }}>
         <DataGrid
-          getRowId={(rows) => rows.id} // Specify the custom ID field
+          getRowId={(rows) => rows._id} // Specify the custom ID field
           rows={filteredRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
           columns={columns}
           rowHeight={80}
