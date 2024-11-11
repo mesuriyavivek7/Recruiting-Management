@@ -197,6 +197,26 @@ export const fetchPendingJobsByAdminId = async(m_admin_id) => {
     }
 }
 
+export const fetchVerifiedJobsByACManagerId = async(ac_manager_id) => {
+    try {
+        const response = await axios.get(`${admin_be_uri}/accountmanager/getverifiedjobs/${ac_manager_id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching verified jobs : ", error);
+        throw error;
+    }
+}
+
+export const fetchPendingJobsByACManagerId = async(ac_manager_id) => {
+    try {
+        const response = await axios.get(`${admin_be_uri}/accountmanager/getpendingjobs/${ac_manager_id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching peding verify jobs : ", error);
+        throw error;
+    }
+}
+
 export const fetchRecuritingAgencybyId = async (r_agency_id) => {
     try {
         const response = await axios.get(`${app_be_uri}/recruiting/${r_agency_id}`);

@@ -1,5 +1,7 @@
 import { format, formatDistanceToNowStrict } from 'date-fns';
 import React from 'react';
+import { fetchJobBasicDetailsByJobId, fetchJobDetailsById, fetchPendingJobsByACManagerId, fetchRecruiterByEId } from '../../../services/api';
+import { store } from '../../../State/Store';
 
 // Column definitions
 export const columns = [
@@ -12,12 +14,25 @@ export const columns = [
     align: 'left',
   },
   {
-    field: 'job_title',
+    field: 'title',
     headerName: 'Job Title',
     flex: 2,
     minWidth: 200,
     headerAlign: 'left',
     align: 'left',
+    renderCell: (params) => {
+      const jobTitle = params.row?.job_title || 'No Title Available';
+      const jobId = params.row?.job_id || 'No ID Available';
+
+      return (
+        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%', padding: '8px 0' }}>
+          <p style={{ margin: 0, lineHeight: 1.5 }}>
+            <span>{jobTitle}</span>
+          </p>
+          <p style={{ margin: 0, color: 'gray', lineHeight: 1.5 }}>{jobId}</p>
+        </div>
+      );
+    },
   },
   {
     field: 'recruiter',
@@ -26,28 +41,17 @@ export const columns = [
     minWidth: 250,
     headerAlign: 'left',
     align: 'left',
-    renderCell: (params) => (
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        {/* Rounded Circle for the first letter of the recruiter's email */}
-        <div
-          style={{
-            width: 32,
-            height: 32,
-            borderRadius: '50%',
-            backgroundColor: '#3f51b5',
-            color: '#fff',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginRight: 8,
-          }}
-        >
-          {params.row.recruiter.charAt(0).toUpperCase()}
+    renderCell: (params) => {
+      const recruiter = params.row?.recruiter || 'Unknown Recruiter';
+      return (
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <div style={{ width: 32, height: 32, borderRadius: '50%', backgroundColor: '#3f51b5', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: 8 }}>
+            {recruiter.charAt(0).toUpperCase()}
+          </div>
+          {recruiter}
         </div>
-        {/* Display the recruiter's full email */}
-        {params.row.recruiter}
-      </div>
-    ),
+      );
+    },
   },
   {
     field: 'location',
@@ -56,47 +60,72 @@ export const columns = [
     minWidth: 250,
     headerAlign: 'left',
     align: 'left',
-    renderCell: (params) => (
-      <div>
-        {params.row.location.state}, {params.row.location.country}
-      </div>
-    ),
+    renderCell: (params) => {
+      const locationState = params.row?.location?.state || 'Unknown State';
+      const locationCountry = params.row?.location?.country || 'Unknown Country';
+      return (
+        <div>
+          {locationState}, {locationCountry}
+        </div>
+      );
+    },
   },
-  
   {
-    field: 'createdOn',
+    field: 'createdAt',
     headerName: 'Created On',
     flex: 1,
     minWidth: 150,
     headerAlign: 'left',
     align: 'left',
     renderCell: (params) => {
-      const createdOnDate = new Date(params.row.createdOn);
+      const createdOnDate = new Date(params.row.createdAt); // Parse ISO date string
       const formattedDate = format(createdOnDate, 'dd-MMM-yy'); // Format the date as 13-Sep-23
       const timeAgo = formatDistanceToNowStrict(createdOnDate, { addSuffix: true }); // Get "X days ago"
-  
+
       return (
-        <div
-          
-        >
-         
-          <span>{formattedDate}</span>
-       
-          <span style={{ fontSize: '0.9em', color: '#888',paddingLeft:'8px' }}>({timeAgo})</span>
+        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%', padding: '8px 0' }}>
+          <p style={{ margin: 0, lineHeight: 1.5 }}>
+            <span>{formattedDate}</span>
+          </p>
+          <p style={{ margin: 0, color: 'gray', lineHeight: 1.5 }}>{timeAgo}</p>
         </div>
       );
     },
   },
-  
+
 ];
 
 
-export const rows = Array(10)
-  .fill(null)
-  .map((_, index) => ({
-    _id: String(index + 1),
-    job_title: "zigo",
-    recruiter: "Arati Dangar",
-    location: { state: 'Karnataka', country: 'India' },
-    createdOn: new Date(2024, 7, index + 1), // Example date (varying days in August 2023)
-  }));
+const selectUserData = (state) => state?.admin?.userData;
+const userData = selectUserData(store?.getState());
+
+// Proceed only if userData.admin_type is 'account_manager'
+let rows = [];
+if (userData?.admin_type === "account_manager") {
+  const verifiedJobsIds = await fetchPendingJobsByACManagerId(userData?._id);
+
+  rows = await Promise.all(
+    verifiedJobsIds.map(async (jobId, index) => {
+      const jobDetails = await fetchJobDetailsById(jobId);
+
+      // Fetch recruiter asynchronously
+      const recruiter = await fetchRecruiterByEId(jobDetails.enterprise_id);
+
+      const basicjobDetails = await fetchJobBasicDetailsByJobId(jobDetails.job_id);
+
+      return {
+        _id: String(`${index + 1}`),
+        job_title: basicjobDetails?.job_title || "No Title Available",
+        job_id: jobDetails?.job_id || "No ID Available",
+        recruiter: recruiter || "Unknown Recruiter",
+        location: {
+          state: basicjobDetails?.state || 'Unknown State',
+          country: basicjobDetails?.country || 'Unknown Country',
+        },
+        createdAt: jobDetails?.createdAt ? new Date(jobDetails.createdAt) : new Date(),
+      };
+    })
+  );
+}
+
+export { rows };

@@ -92,6 +92,23 @@ export const getAllPendingRecuritingAgencies = async (req, res, next) => {
 }
 
 
+export const getAllVerifiedJobs = async (req, res, next) => {
+  try {
+      const verifiedJobs = await ACCOUNTMANAGER.findById(req.params.ac_manager_id);
+      res.status(200).json(verifiedJobs.verified_jobs);
+  } catch (error) {
+      next(error);
+  }
+}
+
+export const getAllPendingJobs = async (req, res, next) => {
+  try {
+      const PendingJobs = await ACCOUNTMANAGER.findById(req.params.ac_manager_id);
+      res.status(200).json(PendingJobs.pending_verify_jobs);
+  } catch (error) {
+      next(error);
+  }
+}
 
 
 

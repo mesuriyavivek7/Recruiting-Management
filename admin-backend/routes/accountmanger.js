@@ -1,5 +1,5 @@
 import express from 'express'
-import { addCandidatePendingList, addCandidateVerifiedList, addEnterprise, addJobIntoVerifyList, addJobsPendingList, AddNewAccountManager, addRecruiting, addVerifiedRecruitng, getAcByMadminId, getAccountManager, getAcManagerEmail, getAcmanagerMailandName, getAllPendingEnterprises, getAllPendingRecuritingAgencies, getAllverifiedEnterprises, getAllVerifiedRecuritingAgencies} from '../controller/accountmanagerController.js'
+import { addCandidatePendingList, addCandidateVerifiedList, addEnterprise, addJobIntoVerifyList, addJobsPendingList, AddNewAccountManager, addRecruiting, addVerifiedRecruitng, getAcByMadminId, getAccountManager, getAcManagerEmail, getAcmanagerMailandName, getAllPendingEnterprises, getAllPendingJobs, getAllPendingRecuritingAgencies, getAllverifiedEnterprises, getAllVerifiedJobs, getAllVerifiedRecuritingAgencies} from '../controller/accountmanagerController.js'
 
 const router=express.Router()
 
@@ -32,6 +32,12 @@ router.get('/getagencies/:ac_manager_id', getAllVerifiedRecuritingAgencies)
 
 //get all pending verified recuriting agencies by ac manager id
 router.get('/getpendingagencies/:ac_manager_id', getAllPendingRecuritingAgencies)
+
+//get verified all jobs by ac manager id
+router.get('/getverifiedjobs/:ac_manager_id', getAllVerifiedJobs)
+
+//get all pending verify jobs by ac manager id
+router.get('/getpendingjobs/:ac_manager_id', getAllPendingJobs)
 
 //add created job into ac manager pendin verify list
 router.post('/addpendingjob',addJobsPendingList)
