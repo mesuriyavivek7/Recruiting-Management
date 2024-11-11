@@ -191,7 +191,7 @@ const AcNavbar = () => {
           </div>
 
           
-          <div className="border-t pt-4 max-h-[400px] ">
+          <div className="border-t pt-4 max-h-[400px]  h-[220px]">
             {popupSearchTerm && (
               <>
                 {showEnterpriseData ? (

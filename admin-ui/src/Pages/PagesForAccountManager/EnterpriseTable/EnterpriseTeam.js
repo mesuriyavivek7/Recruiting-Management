@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { useNavigate } from 'react-router-dom';
-import { columns } from './RowColOfEnterpriseTeam'; 
+import { colsTeam } from './RowColData'; 
 import {
   Card, TablePagination, Button, Box, Typography, Dialog, DialogTitle,
   DialogContent, DialogActions, CircularProgress
@@ -9,7 +9,7 @@ import {
 import {
   FaPhone, FaEnvelope, FaUserCheck, FaBriefcase, FaCalendarAlt
 } from 'react-icons/fa';
-import { fetchEnterpriseTeam } from '../../services/api';
+import { fetchEnterpriseTeam } from '../../../services/api';
 
 
 const EnterpriseTeam = ({ enterpriseDetails }) => {
@@ -77,7 +77,7 @@ const EnterpriseTeam = ({ enterpriseDetails }) => {
           <div style={{ height: 600, width: '100%' }} className="pt-4">
             <DataGrid
               rows={paginatedRows}
-              columns={columns}
+              columns={colsTeam}
               rowHeight={80}
               onRowClick={(params) => handleRowClick(params.row)}
               getRowId={(row) => row._id}
