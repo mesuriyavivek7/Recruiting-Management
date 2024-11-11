@@ -123,7 +123,7 @@ export default function AllRecruitingAgencyData() {
       <p className='text-lg xl:text-2xl pt-9'>All Recruiting Agency</p>
       <Box sx={{ height: 600, width: '100%', paddingTop: '19px' }}>
         <DataGrid
-          getRowId={(row) => row.id}
+          getRowId={(row) => row._id}
           rows={filteredRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
           columns={columns}
           rowHeight={80}

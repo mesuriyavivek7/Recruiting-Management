@@ -1,3 +1,4 @@
+import ACCOUNTMANAGER from "../models/ACCOUNTMANAGER.js";
 import MASTERADMIN from "../models/MASTERADMIN.js";
 import axios from 'axios'
 
@@ -150,3 +151,41 @@ export const getAllPendingRecuritingAgencies = async (req, res, next) => {
         next(error);
     }
 }
+
+export const getAllVerifiedJobs = async (req, res, next) => {
+    try {
+        const masterAdmin = await MASTERADMIN.findById(req.params.m_admin_id);
+        const accountManagerIds = masterAdmin.account_manager; 
+        const accountManagers = await ACCOUNTMANAGER.find({ _id: { $in: accountManagerIds } });
+
+        const allVerifiedJobs = accountManagers.reduce((acc, manager) => {
+            if (manager.verified_jobs) {
+                acc.push(...manager.verified_jobs);
+            }
+            return acc;
+        }, []);
+
+        res.status(200).json(allVerifiedJobs);
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const getAllPendingJobs = async (req, res, next) => {
+    try {
+        const masterAdmin = await MASTERADMIN.findById(req.params.m_admin_id);
+        const accountManagerIds = masterAdmin.account_manager; 
+        const accountManagers = await ACCOUNTMANAGER.find({ _id: { $in: accountManagerIds } });
+
+        const allPendingJobs = accountManagers.reduce((acc, manager) => {
+            if (manager.verified_jobs) {
+                acc.push(...manager.pending_verify_jobs);
+            }
+            return acc;
+        }, []);
+
+        res.status(200).json(allPendingJobs);
+    } catch (error) {
+        next(error);
+    }
+};
