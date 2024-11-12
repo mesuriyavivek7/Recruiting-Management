@@ -157,7 +157,7 @@ export const getAllPendingRecuritingAgencies = async (req, res, next) => {
 export const getAllVerifiedJobs = async (req, res, next) => {
     try {
         const masterAdmin = await MASTERADMIN.findById(req.params.m_admin_id);
-        const accountManagerIds = masterAdmin.account_manager; 
+        const accountManagerIds = masterAdmin.account_manager;
         const accountManagers = await ACCOUNTMANAGER.find({ _id: { $in: accountManagerIds } });
 
         const allVerifiedJobs = accountManagers.reduce((acc, manager) => {
@@ -176,7 +176,7 @@ export const getAllVerifiedJobs = async (req, res, next) => {
 export const getAllPendingJobs = async (req, res, next) => {
     try {
         const masterAdmin = await MASTERADMIN.findById(req.params.m_admin_id);
-        const accountManagerIds = masterAdmin.account_manager; 
+        const accountManagerIds = masterAdmin.account_manager;
         const accountManagers = await ACCOUNTMANAGER.find({ _id: { $in: accountManagerIds } });
 
         const allPendingJobs = accountManagers.reduce((acc, manager) => {
@@ -187,6 +187,45 @@ export const getAllPendingJobs = async (req, res, next) => {
         }, []);
 
         res.status(200).json(allPendingJobs);
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const getAllVerifiedCandidates = async (req, res, next) => {
+    try {
+        const masterAdmin = await MASTERADMIN.findById(req.params.m_admin_id);
+        const accountManagerIds = masterAdmin.account_manager;
+        const accountManagers = await ACCOUNTMANAGER.find({ _id: { $in: accountManagerIds } });
+
+        const allVerifiedCandidates = accountManagers.reduce((acc, manager) => {
+            if (manager.verified_jobs) {
+                acc.push(...manager.verified_candidate_profile);
+            }
+            return acc;
+        }, []);
+
+        res.status(200).json(allVerifiedCandidates);
+    } catch (error) {
+        next(error);
+    }
+};
+
+
+export const getAllPendingCandidates = async (req, res, next) => {
+    try {
+        const masterAdmin = await MASTERADMIN.findById(req.params.m_admin_id);
+        const accountManagerIds = masterAdmin.account_manager;
+        const accountManagers = await ACCOUNTMANAGER.find({ _id: { $in: accountManagerIds } });
+
+        const allPendingCandidates = accountManagers.reduce((acc, manager) => {
+            if (manager.verified_jobs) {
+                acc.push(...manager.pending_verify_candidate_profile);
+            }
+            return acc;
+        }, []);
+
+        res.status(200).json(allPendingCandidates);
     } catch (error) {
         next(error);
     }

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { Box, Card, CircularProgress, TablePagination } from '@mui/material';
 import { RcCandidatecols } from './RowColData';
-import { fetchCandidateDetailsByRecruiterId, fetchCandidateStatusById, fetchJobBasicDetailsByJobId } from '../../../services/api';
+import { fetchCandidateBasicDetailsById, fetchCandidateDetailsByRecruiterId, fetchCandidateStatusById, fetchJobBasicDetailsByJobId, fetchRecuritingTeam } from '../../../services/api';
 import { cstatus } from '../../../constants/jobStatusMapping';
 
 const calculateRowHeight = (params) => {
@@ -19,13 +19,20 @@ const AdminCandidate = ({ recuritingAgenciesDetails }) => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const generateRowsFromDetails = async (details) => {
-    const data = await fetchCandidateDetailsByRecruiterId(details._id);
+    const recuritingTeam = await fetchRecuritingTeam(details._id);
+
+    // Using map and flat to combine all submitted_candidate_profile arrays
+    let submitted_candidates = recuritingTeam
+      .map(team => team.submited_candidate_profile) // Extract submitted_candidate_profile from each team
+      .flat(); // Flatten the array of arrays into a single array
 
     const rows = await Promise.all(
-      data.map(async (candidateDetails, index) => {
-        const c_id = candidateDetails.candidate_id;
-        const candidate = await fetchCandidateStatusById(c_id);
-        const job_basic_details = await fetchJobBasicDetailsByJobId(candidate.job_id);
+      submitted_candidates.map(async (submitted_candidates, index) => {
+        let candidateId = submitted_candidates.candidateId
+
+        const { job_id, basic_details } = await fetchCandidateBasicDetailsById(candidateId);
+        const candidate = await fetchCandidateStatusById(basic_details.candidate_id)
+        const job_basic_details = await fetchJobBasicDetailsByJobId(job_id);
 
         const candidateStatusKey = candidate.candidate_status || "Status Unavailable";
         const candidateStatus = cstatus.get(candidateStatusKey) || candidateStatusKey;
@@ -33,17 +40,17 @@ const AdminCandidate = ({ recuritingAgenciesDetails }) => {
         return {
           _id: String(index + 1),
           candidate_name: {
-            first_name: candidateDetails?.first_name || 'No First Name',
-            last_name: candidateDetails?.last_name || 'No Last Name',
+            first_name: basic_details?.first_name || 'No First Name',
+            last_name: basic_details?.last_name || 'No Last Name',
           },
           job_title: job_basic_details?.job_title || "No Job Title",
           job_id: job_basic_details?.job_id || "No Job Id",
           candidate_status: candidateStatus,
-          submitted: candidateDetails?.createdAt || "No Submission Date",
-          lastUpdated: candidateDetails?.updatedAt || "No Update Date",
-          notice_period: candidateDetails?.notice_period || "N/A",
-          email: candidateDetails?.primary_email_id || "No Email",
-          mobile: candidateDetails?.primary_contact_number || "No Contact Number"
+          submitted: candidate?.createdAt || "No Submission Date",
+          lastUpdated: basic_details?.updatedAt || "No Update Date",
+          notice_period: basic_details?.notice_period || "N/A",
+          email: basic_details?.primary_email_id || "No Email",
+          mobile: basic_details?.primary_contact_number || "No Contact Number"
         };
       })
     );
@@ -121,7 +128,7 @@ const AdminCandidate = ({ recuritingAgenciesDetails }) => {
               }}
             />
           </div>
-      
+
         </Card>
       )}
     </div>
