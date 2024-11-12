@@ -27,6 +27,9 @@ import messageRoute from './routes/message.js'
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+//app configure
+const port=process.env.PORT || 8080
+
 
 const app=express()
 dotenv.config()
@@ -116,7 +119,7 @@ app.use((err,req,res,next)=>{
 })
 
 
-app.listen(8080,()=>{
+app.listen(port,()=>{
     connect()
     console.log("connected on port:8080 to backend!")
 })
