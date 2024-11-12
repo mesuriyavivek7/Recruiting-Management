@@ -51,48 +51,103 @@ export const addVerifiedEnterprise = async (req, res, next) => {
   }
 }
 
-export const getAllverifiedEnterprises = async (req, res, next) => {
+export const getAllVerifiedEnterprises = async (req, res, next) => {
   try {
-    const acmanager = await ACCOUNTMANAGER.findById(req.params.ac_manager_id);
-    res.status(200).json(acmanager.verified_enterprise);
+    const accountManager = await ACCOUNTMANAGER.findById(req.params.ac_manager_id);
+    if (!accountManager) return res.status(404).json({ message: "Account manager not found" });
 
+    res.status(200).json(accountManager.verified_enterprise);
   } catch (error) {
     next(error);
   }
-}
-
+};
 
 export const getAllPendingEnterprises = async (req, res, next) => {
   try {
-    const acmanager = await ACCOUNTMANAGER.findById(req.params.ac_manager_id);
-    res.status(200).json(acmanager.pending_verify_enterprise);
+    const accountManager = await ACCOUNTMANAGER.findById(req.params.ac_manager_id);
+    if (!accountManager) return res.status(404).json({ message: "Account manager not found" });
 
+    res.status(200).json(accountManager.pending_verify_enterprise);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getAllVerifiedRecruitingAgencies = async (req, res, next) => {
+  try {
+    const accountManager = await ACCOUNTMANAGER.findById(req.params.ac_manager_id);
+    if (!accountManager) return res.status(404).json({ message: "Account manager not found" });
+
+    res.status(200).json(accountManager.verified_recruiting_agency);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getAllPendingRecruitingAgencies = async (req, res, next) => {
+  try {
+    const accountManager = await ACCOUNTMANAGER.findById(req.params.ac_manager_id);
+    if (!accountManager) return res.status(404).json({ message: "Account manager not found" });
+
+    res.status(200).json(accountManager.pending_verify_recruiting_agency);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getAllVerifiedJobs = async (req, res, next) => {
+  try {
+    const accountManager = await ACCOUNTMANAGER.findById(req.params.ac_manager_id);
+    if (!accountManager) return res.status(404).json({ message: "Account manager not found" });
+
+    res.status(200).json(accountManager.verified_jobs);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getAllPendingJobs = async (req, res, next) => {
+  try {
+    const accountManager = await ACCOUNTMANAGER.findById(req.params.ac_manager_id);
+    if (!accountManager) return res.status(404).json({ message: "Account manager not found" });
+
+    res.status(200).json(accountManager.pending_verify_jobs);
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+export const getAllVerifiedCandidates = async (req, res, next) => {
+  try {
+    const { ac_manager_id } = req.params;
+    const accountManager = await ACCOUNTMANAGER.findById(ac_manager_id);
+
+    if (!accountManager) {
+      return res.status(404).json({ message: "Account manager not found" });
+    }
+
+    res.status(200).json(accountManager.verified_candidate_profile);
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+export const getAllPendingCandidates = async (req, res, next) => {
+  try {
+    const { ac_manager_id } = req.params;
+    const accountManager = await ACCOUNTMANAGER.findById(ac_manager_id);
+
+    if (!accountManager) {
+      return res.status(404).json({ message: "Account manager not found" });
+    }
+
+    res.status(200).json(accountManager.pending_verify_candidate_profile);
   } catch (error) {
     next(error);
   }
 }
-
-
-export const getAllVerifiedRecuritingAgencies = async (req, res, next) => {
-  try {
-      const RecruitingAgencies = await ACCOUNTMANAGER.findById(req.params.ac_manager_id);
-      res.status(200).json(RecruitingAgencies.verified_recruiting_agency);
-  } catch (error) {
-      next(error);
-  }
-}
-
-export const getAllPendingRecuritingAgencies = async (req, res, next) => {
-  try {
-      const RecruitingAgencies = await ACCOUNTMANAGER.findById(req.params.ac_manager_id);
-      res.status(200).json(RecruitingAgencies.pending_verify_recruiting_agency);
-  } catch (error) {
-      next(error);
-  }
-}
-
-
-
 
 
 export const addJobsPendingList = async (req, res, next) => {
@@ -103,7 +158,6 @@ export const addJobsPendingList = async (req, res, next) => {
     next(err)
   }
 }
-
 
 export const addJobIntoVerifyList = async (req, res, next) => {
   try {

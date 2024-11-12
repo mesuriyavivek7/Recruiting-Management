@@ -32,13 +32,13 @@ export const addAcManager = async (req, res, next) => {
   }
 }
 
-export const getCandidate= async (req,res,next)=>{
-   try{
-     const candidate=await CANDIDATE.findById(req.params.cid)
-     res.status(200).json(candidate)
-   } catch(err){
-     next(err)
-   }
+export const getCandidate = async (req, res, next) => {
+  try {
+    const candidate = await CANDIDATE.findById(req.params.cid)
+    res.status(200).json(candidate)
+  } catch (err) {
+    next(err)
+  }
 }
 
 export const changeCandidateStatus = async (req, res, next) => {
@@ -130,92 +130,111 @@ export const getAllCandidates = async (req, res, next) => {
   }
 }
 
-export const getCandidateAllDetails=async (req,res,next)=>{
-   try{
-      const candidate=await CANDIDATE.findOne({candidate_id:req.params.cid})
-      let candidateBasicDetails=null
-      let candidateAttachments=null
-      let candidateSQ=null
-      let candidateConsetProof=null
-      
-      if(candidate.candidate_basic_details) candidateBasicDetails=await CANDIDATEBASICDETAILS.findById(candidate.candidate_basic_details)
-      if(candidate.candidate_attachments) candidateAttachments=await CANDIDATEATTACHMENT.findById(candidate.candidate_attachments)
-      if(candidate.candidate_question_answer) candidateSQ=await CANDIDATESQANSWER.findById(candidate.candidate_question_answer)
-      if(candidate.candidate_consent_proof) candidateConsetProof=await CANDIDATECONSETPROOF.findById(candidate.candidate_consent_proof)
+export const getCandidateBasicDetailsById = async (req, res, next) => {
+  try {
+    const candidate = await CANDIDATE.findById(req.params.id);
 
+    if (!candidate) {
+      return res.status(404).json({ message: "Error to get the details of candidate" });
+    }
+    const candidateBasicDetails = await CANDIDATEBASICDETAILS.findById(candidate.candidate_basic_details)
 
-      let obj={
-        candidateBasicDetails,
-        candidateAttachments,
-        candidateSQ,
-        candidateConsetProof,
-        candidateStatus:candidate.candidate_status
-      }
+    res.status(200).json({
+      job_id: candidate.job_id,
+      basic_details: candidateBasicDetails,
+    });
 
-      res.status(200).json(obj)
-
-   }catch(err){
-     next(err)
-   }
+  } catch (error) {
+    next(error);
+  }
 }
 
+export const getCandidateAllDetails = async (req, res, next) => {
+  try {
+    const candidate = await CANDIDATE.findOne({ candidate_id: req.params.cid })
+    let candidateBasicDetails = null
+    let candidateAttachments = null
+    let candidateSQ = null
+    let candidateConsetProof = null
 
-export const getJobBasicDetails=async (req,res,next)=>{
-     try{
-       const jobid=await CANDIDATE.findOne({candidate_id:req.params.cid},{job_id:1,_id:0})
-       const jobbasicdetails=await JOBBASICDETAILS.findOne({job_id:jobid.job_id})
-       res.status(200).json(jobbasicdetails)
-     }catch(err){
-       next(err)
-     }
-}
+    if (candidate.candidate_basic_details) candidateBasicDetails = await CANDIDATEBASICDETAILS.findById(candidate.candidate_basic_details)
+    if (candidate.candidate_attachments) candidateAttachments = await CANDIDATEATTACHMENT.findById(candidate.candidate_attachments)
+    if (candidate.candidate_question_answer) candidateSQ = await CANDIDATESQANSWER.findById(candidate.candidate_question_answer)
+    if (candidate.candidate_consent_proof) candidateConsetProof = await CANDIDATECONSETPROOF.findById(candidate.candidate_consent_proof)
 
-export const getAcManagerName=async (req,res,next)=>{
-      try{
-        const acmanager=await CANDIDATE.findOne({candidate_id:req.params.cid},{alloted_account_manager:1,_id:0})
-        if(acmanager.alloted_account_manager){
-           const nameandmail=await axios.get(`${process.env.ADMIN_SERVER_URL}/accountmanager/getmailandname/${acmanager.alloted_account_manager}`)
-           res.status(200).json(nameandmail.data)
-        }else{
-           res.status(200).json(null)
-        }
-      }catch(err){
-        next(err)
-      }
-}
 
-export const downloadCandidateAttachments=async (req,res,next)=>{
-  try{
-   const {filePath,fileName}=req.body
-   
-   const fileExist=fs.existsSync(filePath)
+    let obj = {
+      candidateBasicDetails,
+      candidateAttachments,
+      candidateSQ,
+      candidateConsetProof,
+      candidateStatus: candidate.candidate_status
+    }
 
-   if(fileExist){
-    res.download(filePath,fileName)
-   }else{
-    res.status(404).json("File path not found.")
-   }
-  }catch(err){
+    res.status(200).json(obj)
+
+  } catch (err) {
     next(err)
   }
 }
 
 
-export const viewCandidateAttachments=async (req,res,next)=>{
-    try{
-      const {candidateId,fileName}=req.params
-      const filepath=path.join(__dirname,'..','uploads','candidatedocs',candidateId,fileName)
-      fs.access(filepath,fs.constants.F_OK,(err)=>{
-        if(err){
-          return res.status(404).json('My File not found')
-        }else{
-          res.sendFile(filepath)
-        }
-      })
-      
-    }catch(err){
-       next(err)
+export const getJobBasicDetails = async (req, res, next) => {
+  try {
+    const jobid = await CANDIDATE.findOne({ candidate_id: req.params.cid }, { job_id: 1, _id: 0 })
+    const jobbasicdetails = await JOBBASICDETAILS.findOne({ job_id: jobid.job_id })
+    res.status(200).json(jobbasicdetails)
+  } catch (err) {
+    next(err)
+  }
+}
+
+export const getAcManagerName = async (req, res, next) => {
+  try {
+    const acmanager = await CANDIDATE.findOne({ candidate_id: req.params.cid }, { alloted_account_manager: 1, _id: 0 })
+    if (acmanager.alloted_account_manager) {
+      const nameandmail = await axios.get(`${process.env.ADMIN_SERVER_URL}/accountmanager/getmailandname/${acmanager.alloted_account_manager}`)
+      res.status(200).json(nameandmail.data)
+    } else {
+      res.status(200).json(null)
     }
+  } catch (err) {
+    next(err)
+  }
+}
+
+export const downloadCandidateAttachments = async (req, res, next) => {
+  try {
+    const { filePath, fileName } = req.body
+
+    const fileExist = fs.existsSync(filePath)
+
+    if (fileExist) {
+      res.download(filePath, fileName)
+    } else {
+      res.status(404).json("File path not found.")
+    }
+  } catch (err) {
+    next(err)
+  }
+}
+
+
+export const viewCandidateAttachments = async (req, res, next) => {
+  try {
+    const { candidateId, fileName } = req.params
+    const filepath = path.join(__dirname, '..', 'uploads', 'candidatedocs', candidateId, fileName)
+    fs.access(filepath, fs.constants.F_OK, (err) => {
+      if (err) {
+        return res.status(404).json('My File not found')
+      } else {
+        res.sendFile(filepath)
+      }
+    })
+
+  } catch (err) {
+    next(err)
+  }
 }
 
 export const getCandidateStatusById = async (req, res, next) => {
@@ -236,66 +255,66 @@ export const getCandidateStatusById = async (req, res, next) => {
   }
 }
 
-export const getJobCandidateForPreview=async (req,res,next)=>{ 
-    try{
-      const candidate=await CANDIDATE.findById(req.params.cid)
+export const getJobCandidateForPreview = async (req, res, next) => {
+  try {
+    const candidate = await CANDIDATE.findById(req.params.cid)
 
-      const candidateBasicDetails=await CANDIDATEBASICDETAILS.findById(candidate.candidate_basic_details)
-      
-      const obj={
-        candidate_full_name:`${candidateBasicDetails.first_name} ${candidateBasicDetails.last_name}`,
-        candidate_email:candidateBasicDetails.primary_email_id,
-        candidate_contact_no:candidateBasicDetails.primary_contact_number,
-        candidate_id:candidate.candidate_id,
-        candidate_status:candidate.candidate_status,
-        create_date:candidate.createdAt,
-        update_date:candidate.updatedAt
-      }
+    const candidateBasicDetails = await CANDIDATEBASICDETAILS.findById(candidate.candidate_basic_details)
 
-      res.status(200).json(obj)
-
-    }catch(err){
-      next(err)
+    const obj = {
+      candidate_full_name: `${candidateBasicDetails.first_name} ${candidateBasicDetails.last_name}`,
+      candidate_email: candidateBasicDetails.primary_email_id,
+      candidate_contact_no: candidateBasicDetails.primary_contact_number,
+      candidate_id: candidate.candidate_id,
+      candidate_status: candidate.candidate_status,
+      create_date: candidate.createdAt,
+      update_date: candidate.updatedAt
     }
+
+    res.status(200).json(obj)
+
+  } catch (err) {
+    next(err)
+  }
 }
 
-export const getCandidateAttachmentFileType=async (req,res,next)=>{
-   try{
-     const attachment=await CANDIDATEATTACHMENT.findOne({folder_name:req.params.cid})
+export const getCandidateAttachmentFileType = async (req, res, next) => {
+  try {
+    const attachment = await CANDIDATEATTACHMENT.findOne({ folder_name: req.params.cid })
 
-     let jobAttachmentFileType=null
-     switch(req.params.filetype){
-         case "evaluation_form":
-          jobAttachmentFileType=attachment.evaluation_form.filetype
-          break;
+    let jobAttachmentFileType = null
+    switch (req.params.filetype) {
+      case "evaluation_form":
+        jobAttachmentFileType = attachment.evaluation_form.filetype
+        break;
 
-         case "audio_brief":
-          jobAttachmentFileType=attachment.audio_brief.filetype
-          break;
+      case "audio_brief":
+        jobAttachmentFileType = attachment.audio_brief.filetype
+        break;
 
-         case "other_docs":
-          jobAttachmentFileType=attachment.other_docs.filetype
-          break;
+      case "other_docs":
+        jobAttachmentFileType = attachment.other_docs.filetype
+        break;
 
-         default:
-          break;
-     }
+      default:
+        break;
+    }
 
-     res.status(200).json(jobAttachmentFileType)
+    res.status(200).json(jobAttachmentFileType)
 
-   }catch(err){
-     next(err)
-   }
+  } catch (err) {
+    next(err)
+  }
 }
 
 
-export const getJobResumeSubmitCount=async (req,res,next)=>{
-   try{
-      const {jobid,rememberid}=req.params
+export const getJobResumeSubmitCount = async (req, res, next) => {
+  try {
+    const { jobid, rememberid } = req.params
 
-      const count=await CANDIDATE.countDocuments({job_id:jobid,recruiter_member_id:rememberid})
-      res.status(200).json(count)
-   }catch(err){
-     next(err)
-   }
+    const count = await CANDIDATE.countDocuments({ job_id: jobid, recruiter_member_id: rememberid })
+    res.status(200).json(count)
+  } catch (err) {
+    next(err)
+  }
 }

@@ -15,7 +15,7 @@ const AdminAllJobData = () => {
   const [filteredRows, setFilteredRows] = useState(rows);
 
   const navigate = useNavigate();
-  
+
   const handleRowClick = (id) => {
     setSelectedRowId(id);
     navigate(`/master_admin/job/${id}`);
@@ -34,19 +34,6 @@ const AdminAllJobData = () => {
     });
     setFilteredRows(newFilteredRows);
   }, [searchTerm, filterStatus]);
-
-  // Pagination states and handlers
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-
-  useEffect(() => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-    }, 1000);
-  }, [page, rowsPerPage]);
-
-  
 
   return (
     <div>
@@ -104,23 +91,25 @@ const AdminAllJobData = () => {
         </Box>
       </Box>
       {loading ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 400, color: '#315370' }}>
-            <CircularProgress />
-          </Box>
-        ) : (
-      <Card className='mt-9 font-sans'>
-     
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 400, color: '#315370' }}>
+          <CircularProgress />
+        </Box>
+      ) : (
+        <Card className='mt-9 font-sans'>
           <div style={{ height: 600, width: '100%' }} className='pt-4'>
             <DataGrid
-              rows={filteredRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
+              rows={filteredRows}
               columns={columns}
               rowHeight={80}
               onRowClick={(params) => handleRowClick(params.id)}
               getRowId={(row) => row._id}
               getRowHeight={calculateRowHeight}
-             // pageSize={rowsPerPage}
+
               initialState={{ pagination: { paginationModel: { page: 0, pageSize: 10 } } }}
               pageSizeOptions={[5, 10]}
+   pagination
+              autoPageSize
+
               disableSelectionOnClick
               sx={{
                 '& .MuiDataGrid-root': {
@@ -138,8 +127,8 @@ const AdminAllJobData = () => {
               }}
             />
           </div>
-       
-      </Card> )}
+        </Card>
+      )}
     </div>
   );
 };

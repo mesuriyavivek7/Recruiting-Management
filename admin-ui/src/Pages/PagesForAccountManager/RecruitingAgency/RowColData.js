@@ -1,14 +1,11 @@
 import Button from '@mui/material/Button';
-
-import { fetchRecuritingAgencies } from '../../../services/api';
+import { fetchRecuritingAgencybyId, fetchVerifiedRAgenciesByACmanagerId, fetchVerifiedRAgenciesByAdminId } from '../../../services/api';
 import { format, formatDistanceToNowStrict } from 'date-fns';
-
-import { fetchRecuritingAgencybyId, fetchVerifiedRAgenciesByACmanagerId } from '../../../services/api';
 import { store } from '../../../State/Store';
 
 export const columns = [
   {
-    field: 'id',
+    field: 'displayIndex',
     headerName: 'Sr No.',
     minWidth: 100,
     flex: 0.1,
@@ -89,14 +86,65 @@ export const columns = [
 
 const selectUserData = (state) => state?.admin?.userData;
 const userData = selectUserData(store?.getState());
-console.log(userData);
+// Fetch and map data
+let rows = [];
+let rowsr = [];
+
+if (userData?.admin_type === 'account_manager') {
+  const data = await fetchVerifiedRAgenciesByACmanagerId(userData?._id);
+  rows = data
+    ? await Promise.all(
+      data.map(async (agency_id, index) => {
+        const agency = await fetchRecuritingAgencybyId(agency_id);
+        return {
+          _id: agency._id,
+          displayIndex: index + 1,
+          full_name: agency.full_name || `User ${index + 1}`,
+          email: agency.email || `user${index + 1}@example.com`,
+          designation: agency.designation || "Not Provided",
+          company_name: agency.company_name || "Unknown",
+          country: agency.country || "Unknown",
+          city: agency.city || "Unknown",
+          domains: Array.isArray(agency.domains) ? agency.domains : [], // Ensure it's an array
+          firm_type: Array.isArray(agency.firm_type) ? agency.firm_type : [], // Ensure it's an array
+          linkedin_url: agency.linkedin_url || "Not Provided", // Fallback if not provided
+          email_verified: agency.email_verified ? "Yes" : "No",
+        };
+      })
+    )
+    : [];
+
+
+  rowsr = Array.isArray(data)
+    ? data.map((agency, index) => ({
+      _id: index + 1,
+      full_name: agency.full_name || `User ${index + 1}`,
+      email: agency.email || `user${index + 1}@example.com`,
+      designation: agency.designation || "Not Provided",
+      company_name: agency.company_name || "Unknown",
+      country: agency.country || "Unknown",
+      city: agency.city || "Unknown",
+      domains: Array.isArray(agency.domains) ? agency.domains : [], // Ensure it's an array
+      firm_type: Array.isArray(agency.firm_type) ? agency.firm_type : [], // Ensure it's an array
+      linkedin_url: agency.linkedin_url || "Not Provided", // Fallback if not provided
+      email_verified: agency.email_verified ? "Yes" : "No",
+    }))
+    : [];
+}
+
+
+export { rows, rowsr };
+
+
+
+
 export const RcTeamCols = [
   {
     field: '_id',
     headerName: 'Sr No.',
     minWidth: 100,
     flex: 0.1,
-    align : 'center',
+    align: 'center',
     headerAlign: 'center',
   },
   {
@@ -105,14 +153,14 @@ export const RcTeamCols = [
     flex: 1,
     minWidth: 150,
     headerAlign: 'center',
-    align : 'center',
+    align: 'center',
   },
   {
     field: 'email',
     headerName: 'Email',
     flex: 2,
     minWidth: 250,
-    align : 'center',
+    align: 'center',
     headerAlign: 'center',
   },
   {
@@ -120,7 +168,7 @@ export const RcTeamCols = [
     headerName: 'Mobile No',
     flex: 1.5,
     minWidth: 150,
-    align : 'center',
+    align: 'center',
     headerAlign: 'center',
   },
   {
@@ -136,7 +184,7 @@ export const RcTeamCols = [
     headerName: 'Mapped Jobs',
     flex: 1,
     minWidth: 150,
-    align : 'center',
+    align: 'center',
     headerAlign: 'center',
   },
   {
@@ -145,7 +193,7 @@ export const RcTeamCols = [
     flex: 1,
     minWidth: 150,
     headerAlign: 'center',
-    align : 'center',
+    align: 'center',
   },
   {
     field: 'submited_candidate_profile',
@@ -153,10 +201,10 @@ export const RcTeamCols = [
     flex: 1.5,
     minWidth: 200,
     headerAlign: 'center',
-    align : 'center',
-   
+    align: 'center',
+
   },
- 
+
 ];
 
 
@@ -280,12 +328,12 @@ export const RcCandidatecols = [
     align: 'left',
     renderCell: (params) => (
       <div>
-        {params.row.email.length > 15 
-          ? `${params.row.email.slice(0, 15)}...` 
+        {params.row.email.length > 15
+          ? `${params.row.email.slice(0, 15)}...`
           : params.row.email}
       </div>
     ),
-  },  
+  },
   {
     field: 'mobile',
     headerName: 'Contact',
@@ -300,37 +348,3 @@ export const RcCandidatecols = [
     ),
   },
 ];
-// Proceed only if userData.admin_type is 'account_manager'
-let rows = [];
-if (userData?.admin_type === "account_manager") {
-  const verifiedAgenciesIds = await fetchVerifiedRAgenciesByACmanagerId(userData?._id);
-  console.log(verifiedAgenciesIds);
-
-
-
-
-  // Fetch enterprise details for each ID
-  rows = await Promise.all(
-    verifiedAgenciesIds.map(async (r_agency_id, index) => {
-      const agency = await fetchRecuritingAgencybyId(r_agency_id);
-      return {
-        id: index + 1,
-        full_name: agency.full_name || `User ${index + 1}`,
-        email: agency.email || `user${index + 1}@example.com`,
-        designation: agency.designation || "Not Provided",
-        company_name: agency.company_name || "Unknown",
-        country: agency.country || "Unknown",
-        city: agency.city || "Unknown",
-        domains: Array.isArray(agency.domains) ? agency.domains : [], // Ensure it's an array
-        firm_type: Array.isArray(agency.firm_type) ? agency.firm_type : [], // Ensure it's an array
-        linkedin_url: agency.linkedin_url || "Not Provided", // Fallback if not provided
-        email_verified: agency.email_verified ? "Yes" : "No",
-      };
-    })
-  );
-} else {
-  console.log("User is not an account manager, skipping recruiting agency data fetch.");
-}
-
-export { rows };
-

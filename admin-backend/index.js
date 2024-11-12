@@ -14,6 +14,9 @@ import masteradminRoute from './routes/masteradmin.js'
 import accountmanagerRoute from './routes/accountmanger.js'
 import mailRoute from './routes/mail.js'
 
+//app configure 
+const port = process.env.PORT || 8000
+
 const app=express()
 dotenv.config()
 
@@ -81,7 +84,7 @@ app.use((err,req,res,next)=>{
 })
 
 
-app.listen(8000,()=>{
+app.listen(port,()=>{
     connect()
     console.log("connected on port:8000 to backend!")
 })
