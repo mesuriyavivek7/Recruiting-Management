@@ -35,6 +35,7 @@ router.get('/getpendingenterprises/:m_admin_id', getPendingVerifiedEnterpriseByM
 //get the account manager from the master admin list
 router.get('/getaccountmanagerdetails/:m_admin_id',getAccountManagerDetailsByMId)
 
+
 //handle assign enterprise to any account manager
 router.post('/assignenterprisetoac',handleAssignEnterpriseToAc)
 

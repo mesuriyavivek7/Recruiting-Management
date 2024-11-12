@@ -47,7 +47,7 @@ export default function AllEnterPriseData() {
       // Set default filtered rows to include "All" filter
       const newFilteredRows = rowsData.filter((row) => {
         const matchesSearch = row.full_name.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesStatus = filterStatus === 'All' || row.status === filterStatus;
+        const matchesStatus = filterStatus === 'All' || row.account_status.status === filterStatus;
         return matchesSearch && matchesStatus;
       });
       setFilteredRows(newFilteredRows);
@@ -74,7 +74,7 @@ export default function AllEnterPriseData() {
     setFilterStatus(status);
     const newFilteredRows = rows.filter((row) => {
       const matchesSearch = row.full_name.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesStatus = status === 'All' || row.status === status;
+      const matchesStatus = status === 'All' || row.account_status.status === status;
       return matchesSearch && matchesStatus;
     });
     setFilteredRows(newFilteredRows);
@@ -118,7 +118,7 @@ export default function AllEnterPriseData() {
             <Button
               key={status}
               variant={filterStatus === status ? 'contained' : 'outlined'}
-              onClick={() => handleFilterClick('All')}
+              onClick={() => handleFilterClick(status)}
               sx={{
                 backgroundColor: filterStatus === status ? '#315370' : '#e0e0e0',
                 color: filterStatus === status ? 'white' : 'gray',
@@ -159,7 +159,7 @@ export default function AllEnterPriseData() {
             getRowId={(row) => row.id} // Specify the custom ID field
             getRowHeight={calculateRowHeight}
            // pagination={false}
-            pageSize={rowsPerPage}
+           // pageSize={rowsPerPage}
             initialState={{
               pagination: {
                 paginationModel: { page: 0, pageSize: 10 },

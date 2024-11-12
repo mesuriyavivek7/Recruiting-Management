@@ -22,12 +22,14 @@ const AdminAllJobData = () => {
   };
 
   const handleFilterClick = (status) => setFilterStatus(status);
+ 
+ 
 
   // Filter rows based on searchTerm and filterStatus
   useEffect(() => {
     const newFilteredRows = rows.filter((row) => {
       const matchesSearch = row.job_title.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesStatus = filterStatus === 'All' || row.status === filterStatus;
+      const matchesStatus = filterStatus === 'All' || row.job_status === filterStatus;
       return matchesSearch && matchesStatus;
     });
     setFilteredRows(newFilteredRows);
@@ -116,7 +118,7 @@ const AdminAllJobData = () => {
               onRowClick={(params) => handleRowClick(params.id)}
               getRowId={(row) => row._id}
               getRowHeight={calculateRowHeight}
-              pageSize={rowsPerPage}
+             // pageSize={rowsPerPage}
               initialState={{ pagination: { paginationModel: { page: 0, pageSize: 10 } } }}
               pageSizeOptions={[5, 10]}
               disableSelectionOnClick

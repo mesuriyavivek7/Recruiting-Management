@@ -31,7 +31,7 @@ const AdminAllCandidateData = () => {
     const newFilteredRows = rows.filter((row) => {
       const fullName = `${row.candidate_name.first_name} ${row.candidate_name.last_name}`.toLowerCase();
       const matchesSearch = fullName.includes(searchTerm.toLowerCase());
-      const matchesStatus = filterStatus === 'All' || row.status === filterStatus;
+      const matchesStatus = filterStatus === 'All' || row.candidate_status === filterStatus;
       return matchesSearch && matchesStatus;
     });
     setFilteredRows(newFilteredRows);
@@ -118,7 +118,7 @@ const AdminAllCandidateData = () => {
               onRowClick={(params) => handleRowClick(params.id)}
               getRowId={(row) => row._id}
               getRowHeight={calculateRowHeight}
-              pageSize={rowsPerPage}
+             // pageSize={rowsPerPage}
               pageSizeOptions={[5, 10]}
               initialState={{
                 pagination: { paginationModel: { page: 0, pageSize: 10 } },

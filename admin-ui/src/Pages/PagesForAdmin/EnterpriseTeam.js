@@ -81,10 +81,12 @@ const EnterpriseTeam = ({ enterpriseDetails }) => {
               rowHeight={80}
               onRowClick={(params) => handleRowClick(params.row)}
               getRowId={(row) => row._id}
-              pageSize={rowsPerPage}
-              paginationMode="server"
-              onPageChange={handleChangePage}
-              onPageSizeChange={handleChangeRowsPerPage}
+             
+             
+              pageSizeOptions={[5, 10]}
+              initialState={{
+                pagination: { paginationModel: { page: 0, pageSize: 10} },
+              }}
               disableSelectionOnClick
               sx={{
                 '& .MuiDataGrid-root': { fontSize: { xs: '0.75rem', lg: '1.09rem' } },
