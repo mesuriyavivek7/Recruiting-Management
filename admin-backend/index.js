@@ -26,7 +26,9 @@ const corsOptions={
         const allowedOrigins=[
             "http://localhost:3000",
             "https://app-ui-tiyf.onrender.com",
-            "https://app-backend-jna4.onrender.com"
+            "https://app-backend-jna4.onrender.com",
+            "https://admin-ui-l3vq.onrender.com",
+            "https://admin-backend-1vl2.onrender.com",
         ];
         const isAllowed = allowedOrigins.includes(origin);
         callback(null, isAllowed ? origin : false);
