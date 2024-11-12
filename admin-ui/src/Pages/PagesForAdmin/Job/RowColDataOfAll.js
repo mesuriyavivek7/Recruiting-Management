@@ -181,7 +181,7 @@ export const columns = [
 const selectUserData = (state) => state?.admin?.userData;
 const userData = selectUserData(store?.getState());
 
-// Proceed only if userData.admin_type is 'account_manager'
+// Proceed only if userData.admin_type is 'master_admin'
 let rows = [];
 if (userData?.admin_type === "master_admin") {
   const verifiedJobsIds = await fetchVerifiedJobsByAdminId(userData?._id);
