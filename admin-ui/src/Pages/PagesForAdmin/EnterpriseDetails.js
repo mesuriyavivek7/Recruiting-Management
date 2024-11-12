@@ -33,7 +33,7 @@ const EnterpriseDetails = ({enterpriseDetails}) => {
       
       {/* First Section: Enterprise Details */}
       <Box sx={{ mb: 2, pb: 2, borderBottom: '4px solid white' }}>
-        <Typography variant="h5" fontWeight="bold" className="flex items-center mb-2">
+        <Typography variant="h5" fontWeight="bold" className="flex items-center mb-2 pb-2">
           <FaBriefcase className="mr-2 text-black" /> Enterprise Details
         </Typography>
         <Grid container spacing={2}>
@@ -62,7 +62,7 @@ const EnterpriseDetails = ({enterpriseDetails}) => {
 
       {/* Second Section: Company Details */}
       <Box sx={{ mb: 2, pb: 2, borderBottom: '4px solid white' }}>
-        <Typography variant="h5" fontWeight="bold" className="flex items-center mb-2">
+        <Typography variant="h5" fontWeight="bold" className="flex items-center mb-2 pb-2">
           <FaBuilding className="mr-2 text-black" /> Company Details
         </Typography>
         <Grid container spacing={2}>
@@ -96,7 +96,7 @@ const EnterpriseDetails = ({enterpriseDetails}) => {
 
       {/* Third Section: Other Details */}
       <Box>
-        <Typography variant="h5" fontWeight="bold" className="flex items-center mb-2">
+        <Typography variant="h5" fontWeight="bold" className="flex items-center mb-2 pb-2">
           <FaInfoCircle className="mr-2 text-black" /> Other Details
         </Typography>
         <Grid container spacing={2}>

@@ -95,6 +95,7 @@ export const fetchAllJobDetails = async () => {
     }
 }
 
+
 export const fetchJobBasicDetailsByJobId = async (job_id) => {
     try {
         const response = await axios.get(`${app_be_uri}/job/getbasicjobdetails/${job_id}`);

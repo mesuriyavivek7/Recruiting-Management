@@ -132,7 +132,7 @@ const Navbar = ({ enterpriseData, recruiterData }) => {
         maxWidth="lg"
       >
 
-        <DialogContent className=" bg-white p-6 ">
+        <DialogContent className=" bg-white p-6  "  style={{ height: '500px', maxHeight: '500px',overflowY:'hidden' }}>
         <h2 className="text-xl font-bold mb-4">Search Users</h2>
 
           <div className="flex place-items-center gap-2 mb-4">
@@ -198,14 +198,14 @@ const Navbar = ({ enterpriseData, recruiterData }) => {
         </div>
 
           
-          <div className="border-t pt-2  h-[500px] overflow-hidden">
+          <div className="border-t pt-2  mt-2 max-h-[300px] overflow-y-auto">
 
             {popupSearchTerm && (
               <>
                 {showEnterpriseData ? (
                   <>
                     <h4 className="font-semibold text-xl">Enterprise Results:</h4>
-                    <div className="max-h-[400px] mt-2 overflow-auto">
+                    <div className="mt-2  ">
                     {filteredEnterpriseData.length > 0 ? (
                       filteredEnterpriseData.map((item, index) => (
                         <Box
@@ -240,7 +240,7 @@ const Navbar = ({ enterpriseData, recruiterData }) => {
                 ) : (
                   <>
                     <h4 className="font-semibold text-xl">Recruiter Results:</h4>
-                    <div className="max-h-[400px] mt-2 overflow-auto">
+                    <div className="mt-2 ">
                     {filteredRecruiterData.length > 0 ? (
                       filteredRecruiterData.map((item, index) => (
                         <Box

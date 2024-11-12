@@ -108,7 +108,7 @@ export default function AllEnterPriseData() {
             <Button
               key={status}
               variant={filterStatus === status ? 'contained' : 'outlined'}
-              onClick={() => handleFilterClick('All')}
+              onClick={() => handleFilterClick(status)}
               sx={{
                 backgroundColor: filterStatus === status ? '#315370' : '#e0e0e0',
                 color: filterStatus === status ? 'white' : 'gray',

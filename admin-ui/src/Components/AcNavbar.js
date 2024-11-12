@@ -14,7 +14,7 @@ import { BiSearch } from "react-icons/bi";
 const AcNavbar = () => {
     const [showProfilePopup, setShowProfilePopup] = useState(false);
   const profileRef = useRef(null);
-  
+
   const [popupSearchTerm, setPopupSearchTerm] = useState("");
   const [openSearchDialog, setOpenSearchDialog] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -66,7 +66,6 @@ const AcNavbar = () => {
 
 
  
-
  
   return (
     <div className="w-full flex justify-between py-4 px-3 bg-blue-230">
@@ -114,6 +113,7 @@ const AcNavbar = () => {
         >
           <p className="text-sm font-semibold">admin@example.com</p>
           <p className="text-sm">Type: Domestic</p>
+        
         </div>
       )}
 
@@ -125,7 +125,7 @@ const AcNavbar = () => {
         fullWidth
         maxWidth="lg"
       >
-        <DialogContent className="relative bg-white p-6" style={{ maxHeight: "600px", overflowY: "auto" }}>
+        <DialogContent className="relative bg-white p-6" style={{ height: '500px', maxHeight: '500px',overflowY:'hidden' }}>
         <h2 className="text-xl font-bold mb-4">Search Users</h2>
           <div className="flex place-items-center gap-2 mb-4">
           <TextField
@@ -191,7 +191,7 @@ const AcNavbar = () => {
           </div>
 
           
-          <div className="border-t pt-4 max-h-[400px]  h-[220px]">
+          <div className="border-t pt-4 mt-2 max-h-[300px] overflow-y-auto">
             {popupSearchTerm && (
               <>
                 {showEnterpriseData ? (

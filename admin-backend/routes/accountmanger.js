@@ -67,4 +67,5 @@ router.post('/addcandidateintoverifiedlist/:acmanagerid', addCandidateVerifiedLi
 router.post('/create/:master_admin_id', AddNewAccountManager);
 
 
+
 export default router

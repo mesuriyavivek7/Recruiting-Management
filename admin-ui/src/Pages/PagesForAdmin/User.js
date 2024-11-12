@@ -3,6 +3,7 @@ import { ReactComponent as JobsIcon } from "../../assets/asset21.svg";
 import { ReactComponent as ActionIcon } from "../../assets/asset23.svg";
 import { Link } from "react-router-dom";
 import AccountManagerTable from "./AccountManager/AccountManagerTable";
+
 import { useRows as enterprise_rows } from "./EnterpriseTable/RowColData";
 import { rows as r_agency_rows } from "./RecruitingAgency/RowColData";
 import { rows as job_rows } from "./Job/RowColDataOfAll";
@@ -37,8 +38,10 @@ const User = () => {
               <Link to="/master_admin/enterprise" className="inline-block  bg-blue-230 text-white py-2 px-4 rounded hover:bg-gray-400 text-xs xl:text-lg">see all</Link>
               <img height="50" src="https://img.icons8.com/ios-filled/50/company.png" alt="company" className="w-10" />
             </div>
+
           </div>
         </div>
+
 
 
         <div className="w-full lg:w-96 xl:w-full mx-auto bg-white border border-gray-300  rounded-lg overflow-hidden">
@@ -53,8 +56,10 @@ const User = () => {
               <Link to="/master_admin/recruiting-agency" className="inline-block  bg-blue-230 text-white py-2 px-4 rounded hover:bg-gray-400 text-xs xl:text-lg">see all</Link>
               <ActionIcon className="w-9 xl:w-11" />
             </div>
+
           </div>
         </div>
+
 
 
         <div className="w-full lg:w-96 xl:w-full mx-auto bg-white border border-gray-300  rounded-lg overflow-hidden">
@@ -72,6 +77,7 @@ const User = () => {
 
               <img height="50" src="https://img.icons8.com/ios-filled/50/manager.png" alt="manager" className="w-10" />
             </div>
+
           </div>
         </div>
 
@@ -88,6 +94,7 @@ const User = () => {
 
               <JobsIcon className=" w-9 xl:w-11" />
             </div>
+
           </div>
         </div>
 

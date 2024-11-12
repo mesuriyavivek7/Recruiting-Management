@@ -11,16 +11,16 @@ import { ReactComponent as OffersIcon } from "../assets/asset25.svg";
 import { ReactComponent as VideosIcon } from "../assets/asset24.svg";
 import { ReactComponent as SettingsIcon } from "../assets/asset26.svg";
 import { ReactComponent as ChatsIcon } from "../assets/asset27.svg";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { PiBuildingApartmentFill } from "react-icons/pi";
 import { PiBuildingOfficeThin } from "react-icons/pi";
 import { MdWork } from 'react-icons/md'
 import { FaBriefcase } from "react-icons/fa";
-
+import { FaSignOutAlt } from "react-icons/fa"; // Import logout icon
 const SideNavbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
-
+const navigate=useNavigate();
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
@@ -37,6 +37,8 @@ const SideNavbar = () => {
       return path;
     }
   };
+
+  
   return (
     <div className={`p-3 relative bg-blue-230 border-t  border-t-gray-400 flex flex-col gap-2 transition-width duration-300 font-noto-sans ease-in-out ${isOpen ? "w-64" : "w-20"}`}>
       <div className={`hover:bg-gray-400 rounded-md p-2 ${!isOpen && "justify-center"} flex gap-2`} onClick={toggleSidebar}
@@ -95,10 +97,11 @@ const SideNavbar = () => {
         {isOpen && <span className="text-white">Candidates</span>}
       </NavLink>
      
-     
-     
-     
-     
+      
+   
+
+
+ 
     
     </div>
   );
