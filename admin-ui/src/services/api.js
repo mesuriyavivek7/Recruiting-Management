@@ -237,6 +237,26 @@ export const fetchPendingCandidatesByACManagerId = async (ac_manager_id) => {
     }
 }
 
+export const fetchVerifiedCandidatesByMAdminId = async (m_admin_id) => {
+    try {
+        const response = await axios.get(`${admin_be_uri}/masteradmin/getverifiedcandidates/${m_admin_id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching verified candidates : ", error);
+        throw error;
+    }
+}
+
+export const fetchPendingCandidatesByMAdminId = async (m_admin_id) => {
+    try {
+        const response = await axios.get(`${admin_be_uri}/masteradmin/getpendingcandidates/${m_admin_id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching peding verify candidates : ", error);
+        throw error;
+    }
+}
+
 export const fetchRecuritingAgencybyId = async (r_agency_id) => {
     try {
         const response = await axios.get(`${app_be_uri}/recruiting/${r_agency_id}`);
@@ -301,7 +321,7 @@ export const fetchCandidateBasicDetailsById = async (candidate_id) => {
     try {
         const response = await axios.get(`${app_be_uri}/candidate/getdetails/${candidate_id}`);
         const { job_id, basic_details } = response.data;
-        
+
         return { job_id, basic_details };
     } catch (error) {
         console.error("Error while fetching candidate details:", error);
