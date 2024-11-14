@@ -3,20 +3,16 @@
 import React, { useState } from "react";
 import { ReactComponent as ExpandIcon } from "../assets/asset19.svg";
 import { ReactComponent as DashboardIcon } from "../assets/asset28.svg";
-import { ReactComponent as JobsIcon } from "../assets/asset21.svg";
+
 import { ReactComponent as CandidatesIcon } from "../assets/asset20.svg";
-import { ReactComponent as PostIcon } from "../assets/asset22.svg";
+
 import { ReactComponent as ActionIcon } from "../assets/asset23.svg";
-import { ReactComponent as OffersIcon } from "../assets/asset25.svg";
-import { ReactComponent as VideosIcon } from "../assets/asset24.svg";
-import { ReactComponent as SettingsIcon } from "../assets/asset26.svg";
-import { ReactComponent as ChatsIcon } from "../assets/asset27.svg";
+
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { PiBuildingApartmentFill } from "react-icons/pi";
-import { PiBuildingOfficeThin } from "react-icons/pi";
-import { MdWork } from 'react-icons/md'
+
 import { FaBriefcase } from "react-icons/fa";
-import { FaSignOutAlt } from "react-icons/fa"; // Import logout icon
+
 const SideNavbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   
@@ -25,10 +21,10 @@ const navigate=useNavigate();
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
-  // Use an object to track the visibility of each tooltip
+  
   const [visibleTooltips, setVisibleTooltips] = useState({});
 
-  // Handlers to show/hide tooltips for specific icons
+  
   const handleMouseEnter = (name) => {
     setVisibleTooltips((prev) => ({ ...prev, [name]: true }));
   };
