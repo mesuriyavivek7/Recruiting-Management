@@ -83,6 +83,8 @@ let rows = [];
 if (userData?.admin_type === "account_manager") {
   // Fetch verified enterprise IDs by account manager ID
   const verifiedEnterprisesId = await fetchVerifedEntepreiseByACId(userData?._id);
+ 
+
 
   // Fetch enterprise details for each ID
   rows = await Promise.all(
@@ -101,6 +103,8 @@ if (userData?.admin_type === "account_manager") {
       };
     })
   );
+ 
+
 } else {
   console.log("User is not an account manager, skipping enterprise data fetch.");
 }

@@ -13,14 +13,14 @@ const Job = () => {
     const [activeTab, setActiveTab] = useState('Job');
     const [jobCount, setJobCount] = useState(0);
   const [candidateCount, setCandidateCount] = useState(0);
-  const [mappedCandidateCount, setMappedCandidateCount] = useState(0);
-  const [requestedCandidateCount, setRequestedCandidateCount] = useState(0);
+  const [mappedRecruiterCount, setMappedRecruiterCount] = useState(0);
+  const [requestedRecruiterCount, setRequestedRecruiterCount] = useState(0);
   useEffect(() => {
     
     setJobCount(1);
     setCandidateCount(100); 
-    setMappedCandidateCount(40); 
-    setRequestedCandidateCount(20); 
+    setMappedRecruiterCount(40); 
+    setRequestedRecruiterCount(20); 
   }, []);
     const handleTabChange = (tab) => {
       setActiveTab(tab);
@@ -78,8 +78,8 @@ const Job = () => {
           aria-haspopup="true"
           disableElevation
           style={{
-            backgroundColor: activeTab === 'mCandidate' ? '#315370' : '#e0e0e0',
-            color: activeTab === 'mCandidate' ? 'white' : '#000',
+            backgroundColor: activeTab === 'mRecruiter' ? '#315370' : '#e0e0e0',
+            color: activeTab === 'mRecruiter' ? 'white' : '#000',
             border: '2px solid white', 
             fontSize: '16px',
             textTransform: 'none',
@@ -87,9 +87,9 @@ const Job = () => {
             borderRadius: '0 0 0 0',  // Rounded right side
             width: 'auto',
           }}
-          onClick={() => handleTabChange('mCandidate')}
+          onClick={() => handleTabChange('mRecruiter')}
         >
-          {mappedCandidateCount} Mapped Candidates
+          {mappedRecruiterCount} Mapped Recruiter
         </Button>
           {/* Requested Candidate Button */}
           <Button
@@ -97,8 +97,8 @@ const Job = () => {
           aria-haspopup="true"
           disableElevation
           style={{
-            backgroundColor: activeTab === 'rCandidate' ? '#315370' : '#e0e0e0',
-            color: activeTab === 'rCandidate' ? 'white' : '#000',
+            backgroundColor: activeTab === 'rRecruiter' ? '#315370' : '#e0e0e0',
+            color: activeTab === 'rRecruiter' ? 'white' : '#000',
             fontSize: '16px',
             textTransform: 'none',
             border: '2px solid white', 
@@ -106,9 +106,9 @@ const Job = () => {
             borderRadius: '0 20px 20px 0',  // Rounded right side
             width: 'auto',
           }}
-          onClick={() => handleTabChange('rCandidate')}
+          onClick={() => handleTabChange('rRecruiter')}
         >
-          {requestedCandidateCount} Requested Candidates
+          {requestedRecruiterCount} Requested Recruiter 
         </Button>
 </div>
 <div>
@@ -122,12 +122,12 @@ const Job = () => {
         <AllCandidateData/>
         </div>
       )}
-       {activeTab === 'mCandidate' && (
+       {activeTab === 'mRecruiter' && (
         <div className='pt-9 '>
         <MappedCandidateData/>
         </div>
       )}
-       {activeTab === 'rCandidate' && (
+       {activeTab === 'rRecruiter' && (
         <div className='pt-9 '>
         <RequestedCandidateData/>
         </div>

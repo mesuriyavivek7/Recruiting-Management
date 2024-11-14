@@ -182,6 +182,7 @@ export const fetchVerifiedJobsByAdminId = async (m_admin_id) => {
     try {
         const response = await axios.get(`${admin_be_uri}/masteradmin/getverifiedjobs/${m_admin_id}`);
         return response.data;
+      
     } catch (error) {
         console.error("Error fetching verified jobs : ", error);
         throw error;

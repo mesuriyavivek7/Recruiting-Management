@@ -10,6 +10,7 @@ import { Link } from "react-router-dom";
 import { Dialog, DialogContent, Button, TextField, IconButton, Box, DialogActions, InputAdornment } from "@mui/material";
 import { MdPerson, MdEmail, MdVerifiedUser, MdBusinessCenter, MdBusiness, MdWork } from 'react-icons/md';
 import { BiSearch } from "react-icons/bi";
+import { MdLogout } from "react-icons/md"; 
 
 const AcNavbar = () => {
     const [showProfilePopup, setShowProfilePopup] = useState(false);
@@ -95,9 +96,9 @@ const AcNavbar = () => {
       </div>
 
       <div className="flex place-items-center gap-4">
-        <Link to="/">
-          <img src={asset29} alt="notification" width={26} />
-        </Link>
+      <Link to="/logout">
+        <MdLogout size={26} className="text-white" /> {/* Logout icon */}
+      </Link>
         <div
           className="w-[30px] h-[30px] rounded-full bg-white flex place-items-center cursor-pointer"
           onClick={handleProfileClick}
@@ -111,8 +112,8 @@ const AcNavbar = () => {
           className="absolute right-0 mt-9 w-48 bg-white shadow-lg rounded-lg p-4 z-10"
           ref={profileRef}
         >
-          <p className="text-sm font-semibold">admin@example.com</p>
-          <p className="text-sm">Type: Domestic</p>
+          <p className="text-sm font-semibold">Josh rao</p>
+          <p className="text-sm">admin@example.com</p>
         
         </div>
       )}
@@ -157,7 +158,7 @@ const AcNavbar = () => {
           style={{
             backgroundColor: showEnterpriseData ? '#315370' : '#e0e0e0',
             color: showEnterpriseData ? 'white' : '#000',
-            fontSize: '16px',
+            fontSize: '20px',
             textTransform: 'none',
             height: '40px',
             border: '2px solid white',
@@ -175,7 +176,7 @@ const AcNavbar = () => {
           style={{
             backgroundColor: !showEnterpriseData ? '#315370' : '#e0e0e0',
             color: !showEnterpriseData ? 'white' : '#000',
-            fontSize: '16px',
+            fontSize: '20px',
             height: '40px',
             textTransform: 'none',
             border: '2px solid white',

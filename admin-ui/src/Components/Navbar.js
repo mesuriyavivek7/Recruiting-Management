@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import { Dialog, DialogContent, Button, TextField, IconButton, Box, DialogActions, InputAdornment } from "@mui/material";
 import { MdPerson, MdEmail, MdVerifiedUser, MdBusinessCenter, MdBusiness, MdWork } from 'react-icons/md';
 import { BiSearch } from "react-icons/bi";
+import { MdLogout } from "react-icons/md"; 
 
 
 import { fetchMasterAdminDetailsById } from '../services/api';
@@ -105,7 +106,9 @@ const Navbar = ({ enterpriseData, recruiterData }) => {
       </div>
 
       <div className="flex place-items-center gap-4">
-        
+      <Link to="/logout">
+        <MdLogout size={26} className="text-white" /> {/* Logout icon */}
+      </Link>
         <div
           className="w-[30px] h-[30px] rounded-full bg-white flex place-items-center cursor-pointer"
           onClick={handleProfileClick}
@@ -163,7 +166,7 @@ const Navbar = ({ enterpriseData, recruiterData }) => {
           style={{
             backgroundColor: showEnterpriseData ? '#315370' : '#e0e0e0',
             color: showEnterpriseData ? 'white' : '#000',
-            fontSize: '16px',
+            fontSize: '20px',
             textTransform: 'none',
             height: '40px',
             border: '2px solid white',
@@ -182,7 +185,7 @@ const Navbar = ({ enterpriseData, recruiterData }) => {
           style={{
             backgroundColor: !showEnterpriseData ? '#315370' : '#e0e0e0',
             color: !showEnterpriseData ? 'white' : '#000',
-            fontSize: '16px',
+            fontSize: '20px',
             height: '40px',
             textTransform: 'none',
             border: '2px solid white',
