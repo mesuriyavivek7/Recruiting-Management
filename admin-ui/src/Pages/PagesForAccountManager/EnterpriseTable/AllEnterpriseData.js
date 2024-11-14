@@ -149,7 +149,7 @@ export default function AllEnterPriseData() {
           pageSize={rowsPerPage}
           pageSizeOptions={[5, 10]}
           initialState={{
-            pagination: { paginationModel: { page: 0, pageSize: 10 } },
+            pagination: { paginationModel: { page: 0, pageSize: 5 } },
           }} 
           disableSelectionOnClick
           sx={{

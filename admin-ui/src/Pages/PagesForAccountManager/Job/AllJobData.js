@@ -42,6 +42,7 @@ const AllJobData = () => {
     }, 1000);
   }, [page, rowsPerPage]);
   const handleRowClick = (job_id) => {
+    console.log('click me')
     setSelectedRowId(job_id);
     navigate(`/account_manager/job/${job_id}`); 
   };
