@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useContext } from "react";
 import { ReactComponent as ExpandIcon } from "../../assets/asset19.svg";
 import { ReactComponent as DashboardIcon } from "../../assets/asset28.svg";
 import { ReactComponent as JobsIcon } from "../../assets/asset21.svg";
@@ -9,7 +9,8 @@ import { ReactComponent as VideosIcon } from "../../assets/asset24.svg";
 import { ReactComponent as SettingsIcon } from "../../assets/asset26.svg";
 import { ReactComponent as ChatsIcon } from "../../assets/asset27.svg";
 import { Link, useLocation } from "react-router-dom";
-import Support from "../../pages/Support"; 
+import RecruiterSupport from "../../pages/RecruiterSupport";
+import { AuthContext } from "../../context/AuthContext";
 
 const SideNavbar = () => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -18,7 +19,7 @@ const SideNavbar = () => {
   const location=useLocation()
 
   const currentPath=location.pathname
-  
+  const {isAdmin}=useContext(AuthContext)
 
   const handleExpand = () => {
     setIsExpanded(!isExpanded);
@@ -61,12 +62,16 @@ const SideNavbar = () => {
         </div>
       </Link>
       
-      <Link to="team">
+      {
+        isAdmin && 
+        <Link to="team">
         <div className={`hover:bg-gray-400 ${currentPath==="/recruiter/team" && "bg-gray-400"} rounded-md p-2 flex items-center`}>
           <GroupIcon className="w-[24px] text-white" />
           {isExpanded && <span className="ml-3 text-white">Team</span>}
         </div>
       </Link>
+      }
+      
       
       <Link to="offers">
         <div className="hover:bg-gray-400 rounded-md p-2 flex items-center">
@@ -103,8 +108,8 @@ const SideNavbar = () => {
       {/* Support Pop-up */}
       {isSupportVisible && (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-          <div className="bg-white p-4 rounded-lg shadow-lg w-3/4 max-w-md">
-            <Support />
+          <div className="bg-white p-4 rounded-lg shadow-lg w-5/12 max-w-xl">
+            <RecruiterSupport />
             <button
               className="mt-4 bg-blue-600 text-white px-4 py-2 rounded"
               onClick={toggleSupportPopup} // Close pop-up

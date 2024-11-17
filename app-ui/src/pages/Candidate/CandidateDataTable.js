@@ -42,7 +42,13 @@ export const candidateCol=[
                 </div>
             </div>
          )
-        }
+        },
+        sortComparator: (v1, v2, param1, param2) => {
+          const name1 = param1.row.candidate_full_name || ""; // Default to empty string if undefined
+          const name2 = param2.row.candidate_full_name || "";
+          return name1.toLowerCase().localeCompare(name2.toLowerCase());
+          
+        },
     },
     {
         field:"jobid&title",headerName:'Uphire Job Id/Name',headerClassName:'super-app-theme--header',width:250,
@@ -58,7 +64,12 @@ export const candidateCol=[
             </div>
            </div>
           )
-          }
+        },
+        sortComparator: (v1, v2, param1, param2) => {
+          const name1 = param1.row.job_title || ""; // Default to empty string if undefined
+          const name2 = param2.row.job_title || "";
+          return name1.toLowerCase().localeCompare(name2.toLowerCase());
+        },
     },
     {
         field:"cstatus",headerName:"Candidate Status",headerClassName:'super-app-theme--header',width:230,
@@ -105,7 +116,12 @@ export const candidateCol=[
                   <span className="text-sm text-gray-400">({getDays(params.row.submited)} days ago)</span>
               </div>
           )
-      }
+      },
+      sortComparator: (v1, v2, param1, param2) => {
+        const date1 = new Date(param1.row.submited);
+        const date2 = new Date(param2.row.submited);
+        return date1 - date2; // Ascending order
+      },
     },
     {
         field:"updated",headerName:"Last Updated",headerClassName:'super-app-theme--header',width:160,
@@ -116,7 +132,12 @@ export const candidateCol=[
                   <span className="text-sm text-gray-400">({getDays(params.row.updated)} days ago)</span>
               </div>
           )
-      }
+      },
+      sortComparator: (v1, v2, param1, param2) => {
+        const date1 = new Date(param1.row.updated);
+        const date2 = new Date(param2.row.updated);
+        return date1 - date2; // Ascending order
+      },
     },
     {
         field:"notice_period",headerName:"Notice Period",headerClassName:'super-app-theme--header',width:170,
@@ -150,7 +171,10 @@ export const candidateCol=[
                <span className='text-sm'>{params.row.recruiter_name}</span>
             </div>
          )
-      }
+      },
+      sortComparator: (v1, v2, param1, param2) => {
+        return param1.row.recruiter_name.localeCompare(param2.row.recruiter_name);
+      },
     },
     {
       field:'remarks',headerName:'Remarks' , headerClassName:'super-app-theme--header',width:200,

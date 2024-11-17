@@ -55,7 +55,7 @@ const DemoVideosPage = () => {
   return (
     <div className="custom-div">
       <h2 className="text-xl font-semibold">Demo Video</h2>
-      <p className="text-gray-700">Quick guide on using CBREX efficiently</p>
+      <p className="text-gray-700">Quick guide on using UPHIRE efficiently</p>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {videos.map((video, index) => (
           <DemoVideo

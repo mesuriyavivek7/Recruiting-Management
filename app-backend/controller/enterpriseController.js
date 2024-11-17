@@ -3,8 +3,6 @@ import ENTERPRISETEAM from "../models/ENTERPRISETEAM.js";
 import JOBS from "../models/JOBS.js";
 import bcrypt from 'bcryptjs'
 import axios from 'axios'
-import { sendEmailUpdateVerificationEnterprise } from "./mailController.js";
-import { Op } from 'sequelize';
 
 export const getMobileNo = async (req, res, next) => {
   try {
@@ -21,14 +19,10 @@ export const changeMail = async (req, res, next) => {
     const enterpriseteamuser = await ENTERPRISETEAM.findById(req.params.id)
     if (enterpriseteamuser.isAdmin) {
       await ENTERPRISE.findByIdAndUpdate(enterpriseteamuser.enterprise_id, { $set: { email: req.body.email, email_verified: false } })
-      await ENTERPRISETEAM.findByIdAndUpdate(req.params.id, { $set: { email: req.body.email, email_verified: false } })
-      //adding name of enterprise user
-      req.body.name = enterpriseteamuser.full_name
-      await sendEmailUpdateVerificationEnterprise(req, res, next)
-    } else {
-      await ENTERPRISETEAM.findByIdAndUpdate(req.params.id, { $set: { email: req.body.email, email_verified: false } })
-      res.status(200).json("Email address is updated")
-    }
+    } 
+    await ENTERPRISETEAM.findByIdAndUpdate(req.params.id, { $set: { email: req.body.email, email_verified: false } })  
+    await axios.post(`${process.env.APP_SERVER_URL}/mail/sendupdateemailverificationenterprise`,{name:enterpriseteamuser.full_name,email:req.body.email})
+    res.status(200).json("Email address is updated")
   } catch (err) {
     next(err)
   }
@@ -60,6 +54,7 @@ export const changepassword = async (req, res, next) => {
 
     //changing into enterprose team
     await ENTERPRISETEAM.findByIdAndUpdate(req.params.id, { $set: { password: hash } })
+    res.status(200).json("Successfully password changed.")
   } catch (err) {
     next(err)
   }

@@ -4,12 +4,19 @@ import axios from "axios";
 
 
 const token=Cookies.get("t_user")
-let userData=JSON.parse(localStorage.getItem("user")) || null
+let userData=((localStorage.getItem("user")!=="undefined" && localStorage.getItem("user")!==undefined && localStorage.getItem("user")!==null)?(JSON.parse(localStorage.getItem("user"))):null)
 if(token===undefined){
      if(userData!=null){
         localStorage.removeItem("user")
      }
      userData=null
+}
+
+if(!userData){
+    if(token){
+        Cookies.remove("t_user");
+    }
+    userData=null
 }
 
 const INITIAL_STATE={
@@ -65,12 +72,13 @@ export const AuthContextProvider=({children})=>{
     const checkAdmin=async ()=>{
         if(state.user){
          try{
+            if(state.user){
             let res=null;
             if(state.user.userType==='enterprise') res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/enterpriseteam/checkadmin/${state.user._id}`)
             else res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/recruitingteam/checkadmin/${state.user._id}`)
             if(res.data) setIsAdmin(true)
             else setIsAdmin(false)
-            
+            }
          }catch(err){
             console.log(err)
          }
@@ -81,10 +89,12 @@ export const AuthContextProvider=({children})=>{
 
     const handleCheckisVerified=async ()=>{
         try{
+           if(state.user){
            let res=null
            if(state.user.userType==='enterprise') res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/enterprise/isverifiedaccount/${state.user.enterprise_id}`)
            else res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/recruiting/isverified/${state.user.recruiting_agency_id}`)
            setIsVerified(res.data)
+           }
         }catch(err){
           console.log(err)
           

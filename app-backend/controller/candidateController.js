@@ -1,15 +1,16 @@
-import { response } from "express";
 import CANDIDATE from "../models/CANDIDATE.js";
 import CANDIDATEATTACHMENT from "../models/CANDIDATEATTACHMENT.js";
 import CANDIDATEBASICDETAILS from "../models/CANDIDATEBASICDETAILS.js";
 import CANDIDATECONSETPROOF from "../models/CANDIDATECONSETPROOF.js";
 import CANDIDATESQANSWER from "../models/CANDIDATESQANSWER.js";
 import JOBBASICDETAILS from "../models/JOBBASICDETAILS.js";
+import INVOICE from "../models/INVOICE.js";
 import axios from "axios";
 import path from 'path'
 import { fileURLToPath } from 'url';
 import fs from 'fs'
-
+import exceljs from 'exceljs'
+import { cstatus } from "../helper/candidateStatusMapping.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -44,6 +45,30 @@ export const getCandidate = async (req, res, next) => {
 export const changeCandidateStatus = async (req, res, next) => {
   try {
     await CANDIDATE.findByIdAndUpdate(req.params.orgcid, { $set: { candidate_status: req.body.status } })
+    const candidateInvoice=await INVOICE.findOne({candidate_id:req.params.orgcid})
+    if(req.body.status==="o-accepted"){
+      if(!candidateInvoice){
+         const candidate = await CANDIDATE.findById(req.params.orgcid)
+         const candidateBasicDetails=await CANDIDATEBASICDETAILS.findOne({candidate_id:candidate.candidate_id})
+         const jobBasicDetails=await JOBBASICDETAILS.findOne({job_id:candidate.job_id})
+         const invoice=new INVOICE({
+           candidate_id:candidate._id,
+           c_id:candidate.candidate_id,
+           candidate_name:`${candidateBasicDetails.first_name} ${candidateBasicDetails.last_name}`,
+           candidate_email:candidateBasicDetails.primary_email_id,
+           candidate_mobile_no:candidateBasicDetails.primary_contact_number,
+           job_id:candidate.job_id,
+           job_name:jobBasicDetails.job_title,
+           submited_recruiter_member_id:candidate.recruiter_member_id
+          })
+
+          await invoice.save()
+      }
+    }else{
+       if(candidateInvoice){
+         await INVOICE.findOneAndDelete({candidate_id:req.params.orgcid})
+       }
+    }
     res.status(200).json("Candidate status changed.")
   } catch (err) {
     next(err)
@@ -92,6 +117,30 @@ export const changeMultipleCandidateStatus = async (req, res, next) => {
 
     await Promise.all(candidateIds.map(async id => {
       await CANDIDATE.findByIdAndUpdate(id, { candidate_status: status })
+      const candidateInvoice=await INVOICE.findOne({candidate_id:req.params.orgcid})
+      if(req.body.status==="o-accepted"){
+        if(!candidateInvoice){
+          const candidate = await CANDIDATE.findById(req.params.orgcid)
+          const candidateBasicDetails=await CANDIDATEBASICDETAILS.findOne({candidate_id:candidate.candidate_id})
+          const jobBasicDetails=await JOBBASICDETAILS.findOne({job_id:candidate.job_id})
+          const invoice=new INVOICE({
+            candidate_id:candidate._id,
+            c_id:candidate.candidate_id,
+            candidate_name:`${candidateBasicDetails.first_name} ${candidateBasicDetails.last_name}`,
+            candidate_email:candidateBasicDetails.primary_email_id,
+            candidate_mobile_no:candidateBasicDetails.primary_contact_number,
+            job_id:candidate.job_id,
+            job_name:jobBasicDetails.job_title,
+            submited_recruiter_member_id:candidate.recruiter_member_id
+           })
+
+           await invoice.save()
+       }
+     }else{
+        if(candidateInvoice){
+          await INVOICE.findOneAndDelete({candidate_id:req.params.orgcid})
+        }
+     }
     }))
 
     res.status(200).json("all candidate status changed.")
@@ -317,4 +366,67 @@ export const getJobResumeSubmitCount = async (req, res, next) => {
   } catch (err) {
     next(err)
   }
+}
+
+
+export const exportData=async (req,res,next)=>{
+    try{
+      const candidate=await axios.get(`${process.env.APP_SERVER_URL}/enterpriseteam/getcandidate/${req.params.enmemberid}`)
+      console.log('candidate fetched---->',candidate.data)
+      const candidateData=await Promise.all(candidate.data.map(async (cd)=>{
+          const candidateBasic=await CANDIDATE.findById(cd.candidateId)
+          const candidateBasicDetails=await CANDIDATEBASICDETAILS.findById(candidateBasic.candidate_basic_details)
+          return {
+            candidate_id:candidateBasic.candidate_id,
+            candidate_name:`${candidateBasicDetails.first_name} ${candidateBasicDetails.last_name}`,
+            mobile_no:candidateBasicDetails.primary_contact_number,
+            email_address:candidateBasicDetails.primary_email_id,
+            education_qualificaiton:candidateBasicDetails.education_qualification,
+            experience:candidateBasicDetails.experience,
+            relevent_experience:candidateBasicDetails.relevant_experience,
+            notice_period:candidateBasicDetails.notice_period,
+            candidate_status:cstatus.get(candidateBasic.candidate_status),
+            submited:candidateBasic.createdAt
+          }
+      }))
+
+      const workbook = new exceljs.Workbook();
+      const worksheet = workbook.addWorksheet("Data");
+
+      //Add headers
+      worksheet.columns = [
+        {header:"C_ID",key:"candidate_id",width:30},
+        {header:"NAME",key:"candidate_name",width:30},
+        {header:"MOBILE NO",key:"mobile_no",width:30},
+        {header:"EMAIL",key:"email_address",width:30},
+        {header:"EDUCATION",key:"education_qualificaiton",width:30},
+        {header:"EXPERIENCE",key:"experience",width:30},
+        {header:"RELEVENT EXPERIENCE",key:"relevent_experience",width:50},
+        {header:"NOTICE PERIOD",key:"notice_period",width:50},
+        {header:"C STATUS",key:"candidate_status",width:40},
+        {header:"SUBMITED",key:"submited",width:30},
+      ]
+
+      //Add rows
+      candidateData.forEach((item)=>{
+        worksheet.addRow(item)
+      })
+
+       // Set response headers
+       res.setHeader(
+          "Content-Type",
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+       );
+       res.setHeader(
+           "Content-Disposition",
+        "attachment; filename=data.xlsx"
+       );
+
+      // Write the workbook to the response
+      await workbook.xlsx.write(res);
+      res.status(200).end();
+
+    }catch(err){
+       next(err)
+    }
 }

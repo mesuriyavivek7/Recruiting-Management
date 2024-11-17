@@ -1,5 +1,5 @@
 import express from 'express'
-import { addJobIntoAcceptList, addJobIntoFavoutiteList, addNewCandidate, changeAccountStatus, changeCommissionFlag, checkCreadentials, checkEmailAddress, checkForRequestJob, checkIsAdmin, checkMobileNo, createteammember, getDashBoardCount, getEnterpriseTeamMember, getFavouriteJobIds, getRecruiterCandidateDetails, getRecruiterProfilePageDetails, getRecuritingTeamDetails, isFavouriteJob, isVerifiedMail, rejectJob, removeJobFromFavouriteList, requestMapJob, unmapJob, updateJobMappedList, updateRecruiterTeamDetails } from '../controller/recrutingTeamController.js'
+import { addJobIntoAcceptList, addJobIntoFavoutiteList, addNewCandidate, changeAccountStatus, changeCommissionFlag, changeEmailAddress, changePassword, checkCreadentials, checkEmailAddress, checkForRequestJob, checkIsAdmin, checkMobileNo, checkPassword, createteammember, getDashBoardCount, getEnterpriseTeamMember, getFavouriteJobIds, getRecruiterCandidateDetails, getRecruiterProfilePageDetails, getRecuritingTeamDetails, getSubmitedCandidates, isFavouriteJob, isVerifiedMail, rejectJob, removeJobFromFavouriteList, requestMapJob, unmapJob, updateJobMappedList, updateRecruiterTeamDetails } from '../controller/recrutingTeamController.js'
 
 
 
@@ -80,4 +80,15 @@ router.get('/checkforrequestjob/:rememberid/:orgjobid',checkForRequestJob)
 //For check particuler recruiter member is verified email or not
 router.get('/checkisverifiedmail/:rememberid',isVerifiedMail)
 
+//For change email address
+router.put('/changeemail',changeEmailAddress)
+
+//For check current password
+router.post('/checkpassword/:rememberid',checkPassword)
+
+//For change current password
+router.put('/changepassword/:rememberid',changePassword)
+
+//For getting submited candidates
+router.get('/getsubmitedcandidate/:rememberid',getSubmitedCandidates)
 export default router

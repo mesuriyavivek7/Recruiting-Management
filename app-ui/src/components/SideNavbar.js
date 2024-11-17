@@ -116,7 +116,7 @@ const SideNavbar = () => {
       {/* Support Pop-up */}
       {isSupportVisible && (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-          <div className="bg-white p-4 rounded-lg shadow-lg w-3/4 max-w-md">
+          <div className="bg-white p-4 rounded-lg shadow-lg w-5/12 max-w-xl">
             <Support />
             <button
               className="mt-4 bg-blue-600 text-white px-4 py-2 rounded"

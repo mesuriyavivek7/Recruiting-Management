@@ -22,6 +22,7 @@ import enterpriseTeamRoute from './routes/enterpriseTeam.js'
 import jobRoute from './routes/jobs.js'
 import candidateRoute from './routes/candidate.js'
 import messageRoute from './routes/message.js'
+import invoiceRoute from './routes/invoice.js'
 
 // Get the directory name
 const __filename = fileURLToPath(import.meta.url);
@@ -96,6 +97,7 @@ app.use('/api/enterpriseteam',enterpriseTeamRoute)
 app.use('/api/job',jobRoute)
 app.use('/api/candidate',candidateRoute)
 app.use('/api/message',messageRoute)
+app.use('/api/invoice',invoiceRoute)
 
 app.get('/',(req,res)=>{
     res.send("Bahut maja ara hai bhai🐱")
@@ -106,6 +108,9 @@ app.use('/kycdocs', express.static(path.join(__dirname, 'uploads/kycdocs')));
 
 // Serve static files from the 'uploads/resumedocs' directory
 app.use('/resumedocs',express.static(path.join(__dirname,'uploads/resumedocs')));
+
+//Server static file from the 'uploads/invoice' directory
+app.use('/invoicedocs',express.static(path.join(__dirname,'uploads/invoice')));
 
 //middleware for error handeling
 app.use((err,req,res,next)=>{
