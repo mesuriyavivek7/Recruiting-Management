@@ -1,11 +1,12 @@
-import React, { useContext, useState } from "react";
+import React, {useState, useContext} from 'react'
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
-import Notification from "../components/Notification";
+import Notification from '../components/Notification';
 
+export default function RecruiterSettings() {
 
-const Settings = () => {
   const {user,dispatch}=useContext(AuthContext)
+  
   const [loading,setLoading]=useState(false)
   const [passwordLoad,setPasswordLoad]=useState(false)
   const [errors,setErrors]=useState({})
@@ -14,19 +15,18 @@ const Settings = () => {
   const [showpasswordbutton,setShowPasswordButton]=useState(false)
   const [emailData,setEmailData]=useState("")
   
-
   const [passwordData,setPasswordData]=useState({
     current_password:"",
     new_password:"",
     confirm_password:""
   })
 
-  const [notification,setNotification]=useState(null)
+ const [notification,setNotification]=useState(null)
 
-  //for showing notification
-  const showNotification=(message,type)=>{
-   setNotification({message,type})
-  }
+ //for showing notification
+ const showNotification=(message,type)=>{
+  setNotification({message,type})
+ }
 
   //for email address
   const handleEmailDataChange=(e)=>{
@@ -36,7 +36,7 @@ const Settings = () => {
   }
 
   const validateEmailAddress=(email)=>{
-    let newErrors={};
+     let newErrors={};
      //regax for check email address
      const emailreg=/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/
 
@@ -53,35 +53,35 @@ const Settings = () => {
      let newErrors={}
      dispatch({type:"USER_FETCH_START"})
      try{
-      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/enterprise/changemail/${userObj._id}`,{email:emailData})
+      await axios.put(`${process.env.REACT_APP_API_BASE_URL}/recruitingteam/changeemail`,{email:userObj.email,newemail:emailData})
       //change email address in localstorage
       userObj["email"]=emailData
       dispatch({type:"USER_FETCH_SUCCESS",payload:userObj})
       setShowEmailButton(false)
       setEmailData("")
-      showNotification("Successully email address changed.",'success')
+      showNotification("Successfully email address changed.",'success')
      }catch(err){
-        setLoading(false)
         console.log(err)
+        setLoading(false)
         newErrors.internal="Something went wrong...!"
-        showNotification("Something went wrong.",'failure')
+        showNotification("Something went wrong while changeing email address.",'failure')
      }
      setErrors(newErrors)
      setLoading(false)
   }
 
-  const checkEmailAdress=async ()=>{
-     try{
-       setLoading(true)
-       const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/enterpriseteam/checkmail/${emailData}`)
-       if(res.data) showNotification("Entered email address is already exist.",'failure')
-       else await emailSubmit()
-     }catch(err){
+  const checkEmailAddress=async ()=>{
+       try{
+          setLoading(true)
+          const res=await axios.post(`${process.env.REACT_APP_API_BASE_URL}/recruitingteam/checkemailaddress/${user._id}`,{email:emailData})
+          if(res.data) showNotification("Entered email address is already exist.",'failure')
+          else await emailSubmit()
+       } catch(err){
+         setLoading(false)
+         console.log(err)
+         showNotification("Something went wrong.",'failure')
+       }
        setLoading(false)
-       console.log(err)
-       showNotification("Something went wrong.",'failure')
-     }
-     setLoading(false)
   }
 
   const passwordDataChange=(e)=>{
@@ -92,8 +92,8 @@ const Settings = () => {
 
   const checkCurrentPassword=async ()=>{
      try{
-      setPasswordLoad(true)
-      const isPasswordCorrect=await axios.post(`${process.env.REACT_APP_API_BASE_URL}/enterprise/checkpassword/${user._id}`,{password:passwordData.current_password})
+      setPasswordLoad(false)
+      const isPasswordCorrect=await axios.post(`${process.env.REACT_APP_API_BASE_URL}/recruitingteam/checkpassword/${user._id}`,{password:passwordData.current_password})
       if(isPasswordCorrect.data) await submitPasswordData()
       else showNotification("You entered wrong current password.",'failure')
      }catch(err){
@@ -139,18 +139,18 @@ const Settings = () => {
         let newErrors={}
         setPasswordLoad(true)
         try{
-           await axios.post(`${process.env.REACT_APP_API_BASE_URL}/enterprise/changepassword/${user._id}`,{password:passwordData.confirm_password})
+           await axios.put(`${process.env.REACT_APP_API_BASE_URL}/recruitingteam/changepassword/${user._id}`,{password:passwordData.confirm_password})
            setShowPasswordButton(false)
            setPasswordData({
             current_password:"",
             new_password:"",
             confirm_password:""
            })
-           showNotification("Successfully password data change.",'success')
+           showNotification("Successfully password changed.",'success')
         }catch(err){
-           setPasswordLoad(false)
+           console.log(err)
            newErrors.internal="Something went wrong....!"
-           showNotification("Something went wrong.",'failure')
+           showNotification("Something went wrong while changing password.",'failure')
         }
         setPasswordErrors(newErrors)
         setPasswordLoad(false)
@@ -169,7 +169,7 @@ const Settings = () => {
           </label>
           <input
             type="email"
-            value={user?.email}
+            value={user && user.email}
             name="current-email"
             id="current-email"
             className="input-field disabled:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-50"
@@ -196,7 +196,7 @@ const Settings = () => {
         </div>
         {
           showemailbutton &&  (<div className="mt-2 flex container space-x-2">
-                                 <button onClick={checkEmailAdress} disabled={(errors.email || loading)?(true):(false)} className="relative flex-1 bg-blue-500 text-white py-2 px-2 rounded disabled:bg-gray-400 disabled:cursor-not-allowed disabled:opacity-50">
+                                 <button type='button' onClick={checkEmailAddress} disabled={(errors.email || loading)?(true):(false)} className="relative flex-1 bg-blue-500 text-white py-2 px-2 rounded disabled:bg-gray-400 disabled:cursor-not-allowed disabled:opacity-50">
                                      {loading && (<span className="absolute inset-0 flex items-center justify-center">
                                           <svg className="w-5 h-5 text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -275,7 +275,7 @@ const Settings = () => {
 
         {
           showpasswordbutton &&  (<div className="mt-2 flex container space-x-2">
-                                 <button onClick={checkCurrentPassword} disabled={(passwordData.current_password==="" || passwordData.new_password==="" || passwordData.confirm_password==="" ||passwordError.current_password || passwordError.new_password || passwordError.confirm_password || passwordLoad)?(true):(false)} className="relative flex-1 bg-blue-500 text-white py-2 px-2 rounded disabled:bg-gray-400 disabled:cursor-not-allowed disabled:opacity-50">
+                                 <button type='button' onClick={checkCurrentPassword} disabled={(passwordData.current_password==="" || passwordData.new_password==="" || passwordData.confirm_password==="" ||passwordError.current_password || passwordError.new_password || passwordError.confirm_password || passwordLoad)?(true):(false)} className="relative flex-1 bg-blue-500 text-white py-2 px-2 rounded disabled:bg-gray-400 disabled:cursor-not-allowed disabled:opacity-50">
                                      {passwordLoad && (<span className="absolute inset-0 flex items-center justify-center">
                                           <svg className="w-5 h-5 text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -296,9 +296,5 @@ const Settings = () => {
       </form>
     
     </div>
-  );
-};
-
-
-
-export default Settings;
+  )
+}

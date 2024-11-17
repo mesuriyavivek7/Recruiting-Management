@@ -96,6 +96,10 @@ const Login = () => {
     }
   }
 
+  const handleNavigateResetPassword=()=>{
+      navigate('/resetpassword',{state:loginUserType})
+  }
+
   return (
     <div className="login max-w-full h-full relative overflow-hidden">
     {notification && <Notification message={notification.message} type={notification.type} onClose={()=>setNotification(null)}></Notification>}
@@ -192,14 +196,9 @@ const Login = () => {
                        ></input>
                        <label className="input-label" htmlFor="recruiter">Recruiter Agency</label>
                    </div>
-                    <p className="text-end my-3">
-                   <Link
-                     to="/resetpassword"
-                     className="text-sm text-blue-400"
-                   >
+                    <p onClick={handleNavigateResetPassword} className="text-end my-3 cursor-pointer text-sm text-blue-400">        
                       Forgot your password?
-                   </Link>
-                   </p>
+                    </p>
                 </div>
                
                 <button disabled={loading} type="button" onClick={handleSubmit} className="w-full py-[6px] bg-green-600 text-white rounded-md disabled:bg-gray-400 disabled:cursor-not-allowed disabled:opacity-50" >

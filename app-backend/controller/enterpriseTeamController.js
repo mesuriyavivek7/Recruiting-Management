@@ -233,3 +233,23 @@ export const isEnterpriseMemberEmailVerified=async (req,res,next)=>{
      next(err)
    }
 }
+
+export const checkEmailAddress=async (req,res,next)=>{
+  try{
+   const user=await ENTERPRISETEAM.findOne({email:req.params.email})
+   if(user) res.status(200).json(true)
+   else res.status(200).json(false)
+  }catch(err){
+    next(err)
+  }
+}
+
+export const getCandidate=async (req,res,next)=>{
+  try{
+    const candidate=await ENTERPRISETEAM.findById(req.params.enmemberid)
+    if(!candidate) return res.status(404).json({message:"user not found"})
+    res.status(200).json(candidate.received_candidates)
+  }catch(err){
+     next(err)
+  }
+}

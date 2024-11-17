@@ -1,5 +1,5 @@
 import express from 'express'
-import { sendMail,sendVerificationMailRecruiting,sendVerificationMailEnterprise,verifyemailEnterprise,verifyemailRecruiting, sendTeamMemberNotifyMail, sendEmailUpdateVerificationEnterprise, verifyemailEnterpriseTeam, sendVerificationMailEnterpriseTeam, verifyemailRecruitingTeam, sendVerificationMailRecruitingTeam, sendBulkMail, shareResumeWithHiringManager, requestResetPassword, verifyResetPassword } from '../controller/mailController.js'
+import { sendMail,sendVerificationMailRecruiting,sendVerificationMailEnterprise,verifyemailEnterprise,verifyemailRecruiting, sendTeamMemberNotifyMail, sendEmailUpdateVerificationEnterprise, verifyemailEnterpriseTeam, sendVerificationMailEnterpriseTeam, verifyemailRecruitingTeam, sendVerificationMailRecruitingTeam, sendBulkMail, shareResumeWithHiringManager, requestResetPassword, verifyResetPassword, sendEmailUpdateVerificaitonRecruiting } from '../controller/mailController.js'
 import multer from 'multer'
 import fs from 'fs'
 import path from 'path'
@@ -55,6 +55,12 @@ router.post('/sendverificaitionrecruiting',sendVerificationMailRecruiting)
 //sending verify mail for recruiting team member
 router.post('/sendverificationrecruitingteam',sendVerificationMailRecruitingTeam)
 
+//Sending verification mail when enterprise update his email address
+router.post('/sendupdateemailverificationenterprise',sendEmailUpdateVerificationEnterprise)
+
+//Sending verification mail when recruiter update his email address
+router.post('/sendupdateemailverificationrecruiter',sendEmailUpdateVerificaitonRecruiting)
+
 //verify mail for recruiting verification
 router.get('/recruitingverifymail/:token',verifyemailRecruiting)
 
@@ -71,5 +77,5 @@ router.get('/enterpriseteamverifymail/:token',verifyemailEnterpriseTeam)
 router.post('/request-reset-password',requestResetPassword)
 
 //For verify person for reset password
-router.post('/verify-reset-password/:token',verifyResetPassword)
+router.post('/verify-reset-password/:token/:usertype',verifyResetPassword)
 export default router

@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 
 export default function ChangePassword() {
   const navigate=useNavigate()
-  const {token}=useParams()
+  const {token,usertype}=useParams()
   const [newPassword,setNewPassword]=useState('')
   const [confirmPassword,setConfirmPassword]=useState('')
   const [errors,setErrors]=useState({})
@@ -36,7 +36,7 @@ export default function ChangePassword() {
     if(validate()){
       setLoading(true)
       try{
-         const response= await axios.post(`${process.env.REACT_APP_API_BASE_URL}/mail/verify-reset-password/${token}`,{newPassword})
+         const response= await axios.post(`${process.env.REACT_APP_API_BASE_URL}/mail/verify-reset-password/${token}/${usertype}`,{newPassword})
          showNotification(response.data.message,response.data.type)
          navigate('/',{state:{message:"Password Changed, Now Please Login."}})
       }catch(err){

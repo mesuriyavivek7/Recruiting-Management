@@ -35,7 +35,6 @@ export default function RecruiterTeam() {
   const [errors,setErrors]=useState({})
   const [teamLoad,setTeamLoad]=useState(false)
 
-
   const handleTeamFormData=(e)=>{
     const {name,value}=e.target
     setTeamFormData((prevData)=>({...prevData,[name]:value}))
@@ -213,13 +212,13 @@ const checkCreadentials=async ()=>{
 
                     <div
                     className={`w-12 h-6 mt-7 flex items-center rounded-full p-1 cursor-pointer ${
-                     (params.row.accout_status==="Active") ? 'bg-blue-500' : 'bg-gray-300'
+                     (params.row.account_status==="Active") ? 'bg-blue-500' : 'bg-gray-300'
                     }`}
-                    onClick={()=>handleChangeAccountStatus(params.row._id,(params.row.accout_status==="Active")?("InActive"):("Active"))}
+                    onClick={()=>handleChangeAccountStatus(params.row._id,(params.row.account_status==="Active")?("InActive"):("Active"))}
                   >
                   <div
                    className={`bg-white w-4 h-4 rounded-full shadow-md transform duration-300 ease-in-out ${
-                    (params.row.accout_status==="Active") ? 'translate-x-6' : 'translate-x-0'
+                    (params.row.account_status==="Active") ? 'translate-x-6' : 'translate-x-0'
                    }`}
                    ></div>
                   </div>

@@ -1,5 +1,5 @@
-import React ,{useState} from 'react'
-
+import React ,{useEffect, useState} from 'react'
+import { useLocation, useNavigate } from 'react-router-dom';
 import Notification from "../../components/Notification";
 import asset2 from "../../assets/asset 2.png";
 import asset1 from "../../assets/asset 1.png";
@@ -7,7 +7,8 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 
 export default function ResetPassword() {
-
+  const location=useLocation()
+  const navigate=useNavigate()
   const [notification,setNotification]=useState(null)
   const [errors,setErrors]=useState('')
   const [loading,setLoading]=useState(false)
@@ -16,6 +17,10 @@ export default function ResetPassword() {
   const showNotification=(message,type)=>{
     setNotification({message,type})
   }
+
+  useEffect(()=>{
+     if(!location.state) navigate('/')
+  },[])
 
   const [email,setEmail]=useState('')
   const validate=()=>{
@@ -33,7 +38,7 @@ export default function ResetPassword() {
     if(validate()){
     setLoading(true)
      try{
-        const res=await axios.post(`${process.env.REACT_APP_API_BASE_URL}/mail/request-reset-password`,{email})
+        const res=await axios.post(`${process.env.REACT_APP_API_BASE_URL}/mail/request-reset-password`,{email,userType:location.state})
         setEmail('')
         showNotification(res.data.message,res.data.type)
      }catch(err){

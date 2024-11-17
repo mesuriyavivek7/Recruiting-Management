@@ -94,7 +94,6 @@ export const addNewCandidate=async (req,res,next)=>{
 export const getEnterpriseTeamMember=async (req,res,next)=>{
       try{
         const jobs=await RECRUITINGTEAM.findById(req.params.rememberid,{_id:0,submited_candidate_profile:1})
-        if(jobs.submited_candidate_profile.length===0) res.status(200).json([])
 
         const enterpriseData=await Promise.all(jobs.submited_candidate_profile.map(async (obj)=>{
             const jobdetails=await JOBS.findById(obj.jobId)
@@ -143,7 +142,7 @@ export const changeCommissionFlag=async (req,res,next)=>{
 
 export const changeAccountStatus=async (req,res,next)=>{
     try{
-       await RECRUITINGTEAM.findByIdAndUpdate(req.params.rememberid,{$set:{accout_status:req.body.status}})
+       await RECRUITINGTEAM.findByIdAndUpdate(req.params.rememberid,{$set:{account_status:req.body.status}})
        res.status(200).json("Recruiter member account status changed.")
     }catch(err){
         next(err)
@@ -362,3 +361,53 @@ export const isVerifiedMail=async (req,res,next)=>{
         next(err)
      }
 }
+
+export const changeEmailAddress=async (req,res,next)=>{
+     try{
+        const {email,newemail}=req.body
+        const recruiter=await RECRUITINGTEAM.findOne({email:email})
+        if(!recruiter) return res.status(404).json({message:"User not found by this email address"})
+        if(recruiter.isAdmin) await RECRUITING.findOneAndUpdate({email:email},{$set:{email:newemail,email_verified:false}})
+        await RECRUITINGTEAM.findOneAndUpdate({email:email},{$set:{email:newemail,email_verified:false}})
+        
+        //redirect this request to verify email
+        await axios.post(`${process.env.APP_SERVER_URL}/mail/sendupdateemailverificationrecruiter`,{name:recruiter.full_name,email:newemail})
+
+        return res.status(200).json("Successfully email address changed.")
+     }catch(err){ 
+       next(err)
+     }
+}
+
+export const checkPassword=async (req, res, next)=>{
+    try{
+      const recruiteruser=await RECRUITINGTEAM.findById(req.params.rememberid)
+      const isPasswordCorrect=await bcrypt.compare(req.body.password,recruiteruser.password)
+      res.status(200).json(isPasswordCorrect)
+    }catch(err){
+      next(err)
+    }
+ }
+
+ export const changePassword=async (req, res, next)=>{
+    const salt= bcrypt.genSaltSync(10);
+    const hash=bcrypt.hashSync(req.body.password,salt)
+    try{
+        await RECRUITINGTEAM.findByIdAndUpdate(req.params.rememberid,{$set:{password:hash}})
+        res.status(200).json("Successfully password changed.")
+    }catch(err){
+        next(err)
+    }
+ }
+
+ export const getSubmitedCandidates=async (req,res,next)=>{
+    try{
+       const recruiter=await RECRUITINGTEAM.findById(req.params.rememberid)
+
+       if(!recruiter) return res.status(404).json({message:"User not found"})
+
+       res.status(200).json(recruiter.submited_candidate_profile)
+    }catch(err){
+        next(err)
+    }
+ }

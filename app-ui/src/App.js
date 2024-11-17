@@ -15,7 +15,7 @@ import PostJob from "./pages/PostJob";
 import DemoVideosPage from "./components/DemoVideos";
 import JobPostings from "./pages/jobs/JobPostings";
 import BulkActions from "./components/BulkActions";
-import OffersPage from "./components/OffersPage";
+import Offers from "./pages/EnterpriseOffers/Offers";
 import Support from "./pages/Support";
 import Candidate from "./pages/Candidate/Candidate";
 import EnterpriseTeam from "./pages/Enterpriseteam/EnterpriseTeam";
@@ -28,7 +28,9 @@ import UploadResume from "./pages/UploadResume";
 import RecruiterTeam from "./pages/Recruiterteam/RecruiterTeam";
 import RecruiterCandidate from "./pages/Recruitercandidate/RecruiterCandidate";
 import RecruiterProfilePage from "./pages/RecruiterProfilePage";
-
+import RecruiterDemoVideos from "./components/RecruiterDemoVideos";
+import RecruiterSettings from "./pages/RecruiterSettings";
+import RecruiterOffers from "./pages/RecruiterOffers/Offers";
 
 const App = () => {
   const AppRouter = createBrowserRouter([
@@ -53,7 +55,7 @@ const App = () => {
       element: <ResetPassword/>
     },
     {
-      path: "/reset-password/:token",
+      path: "/reset-password/:token/:usertype",
       element: <ChangePassword></ChangePassword>
     },
     {
@@ -96,7 +98,7 @@ const App = () => {
         },
         {
           path: "offers",
-          element: <OffersPage/>,
+          element: <Offers/>,
         },
         {
           path: "support",
@@ -137,6 +139,18 @@ const App = () => {
         {
           path:'srprofilepage',
           element:<RecruiterProfilePage></RecruiterProfilePage>
+        },
+        {
+          path:'offers',
+          element:<RecruiterOffers/>
+        },
+        {
+          path:'demovideos',
+          element:<RecruiterDemoVideos></RecruiterDemoVideos>
+        },
+        {
+          path:'settings',
+          element:<RecruiterSettings></RecruiterSettings>
         }
        ]
     }

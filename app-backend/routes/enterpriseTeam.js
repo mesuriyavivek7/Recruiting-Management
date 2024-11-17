@@ -1,5 +1,5 @@
 import express from 'express'
-import { addNewCandidate, changeAccountStatus, checkCreadentials, checkIsAdmin, createEnterpriseTeam, getCandidateDetails, getDashboardCount, getEnterpriseTeam, getOneEnterpriseMember, getRecruiterTeamMember, getSubmitedCandidateMailId, isEnterpriseMemberEmailVerified } from '../controller/enterpriseTeamController.js'
+import { addNewCandidate, changeAccountStatus, checkCreadentials, checkEmailAddress, checkIsAdmin, createEnterpriseTeam, getCandidate, getCandidateDetails, getDashboardCount, getEnterpriseTeam, getOneEnterpriseMember, getRecruiterTeamMember, getSubmitedCandidateMailId, isEnterpriseMemberEmailVerified } from '../controller/enterpriseTeamController.js'
 
 
 
@@ -32,13 +32,19 @@ router.get('/checkadmin/:eid',checkIsAdmin)
 //for change account status
 router.put('/changeaccoutstatus/:eid',changeAccountStatus)
 
-//get the submited candidate mail id
+//get the received candidate mail id
 router.get('/getthecandidatemails/:ememberid',getSubmitedCandidateMailId)
+
+//get the received candidates
+router.get('/getcandidate/:enmemberid',getCandidate)
 
 //get dashboard count
 router.get('/getdashboardcount/:enmemberid',getDashboardCount)
 
 //for check enterprise memeber is email verified or not
 router.get('/isemailverified/:enmemberid',isEnterpriseMemberEmailVerified)
+
+//for check email address is exist or not
+router.get('/checkmail/:email',checkEmailAddress)
 
 export default router;
