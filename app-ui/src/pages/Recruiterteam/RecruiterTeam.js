@@ -12,7 +12,7 @@ import Box from '@mui/material/Box';
 //import icons
 import AddIcon from '@mui/icons-material/Add';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-
+import BackupTableOutlinedIcon from '@mui/icons-material/BackupTableOutlined';
 
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
@@ -178,6 +178,21 @@ const checkCreadentials=async ()=>{
   const handleClosePreviewBox=()=>{
      setRecruiterDetails(null)
      setOpenPreviewBox(false)
+  }
+
+  const handleExportData=async ()=>{
+     try{
+      const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/recruiting/export-member-data/${user.recruiting_agency_id}`,{responseType:'blob'})
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "recruiterteammemberdata.xlsx");
+      document.body.appendChild(link);
+      link.click();
+     }catch(err){
+       console.log(err)
+       showNotification("Something went wrong while export the data",'failure')
+     }
   }
 
   
@@ -405,10 +420,16 @@ const checkCreadentials=async ()=>{
     <div className='custom-div gap-6'>
         <div className='w-full flex justify-between'>
             <h2 className='text-gray-500 font-medium'>Team Page</h2>
-            <button onClick={()=>setOpenPopUp(true)} className='text-gray-600 cursor-pointer flex gap-2 items-center'>
-               <span><AddIcon></AddIcon></span>
-               <span>Add Member</span>
-            </button>
+            <div className='flex items-center gap-4'>
+              <button onClick={handleExportData} className='text-gray-600 cursor-pointer flex gap-2 items-center'>
+                 <span><BackupTableOutlinedIcon></BackupTableOutlinedIcon></span>
+                 <span>Export</span>
+              </button>
+              <button onClick={()=>setOpenPopUp(true)} className='text-gray-600 cursor-pointer flex gap-2 items-center'>
+                 <span><AddIcon></AddIcon></span>
+                 <span>Add Member</span>
+              </button>
+            </div>
         </div>
       <Box sx={{
       height:600,width:'100%',

@@ -47,6 +47,21 @@ export default function RecruiterCandidate() {
      fetchCandidateData()
   },[dataView])
 
+  //for the export the data into excel form
+  const handleExportData=async ()=>{
+     try{
+      const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/candidate/export-data-recruiter/${user._id}`,{responseType:'blob'})
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "candidatedata.xlsx");
+      document.body.appendChild(link);
+      link.click();
+     }catch(err){
+       console.log(err)
+       showNotification("Something went wrong.",'failure')
+     }
+  }
  
 
   return (
@@ -72,7 +87,7 @@ export default function RecruiterCandidate() {
                 }
              </div>
              
-             <div className='flex cursor-pointer text-sm text-gray-800 items-center gap-2'>
+             <div onClick={handleExportData} className='flex cursor-pointer text-sm text-gray-800 items-center gap-2'>
                 <span><BackupTableIcon></BackupTableIcon></span>
                 <span>Export</span>
              </div>

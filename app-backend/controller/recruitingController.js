@@ -5,6 +5,7 @@ import JOBS from "../models/JOBS.js"
 import RECRUITING from "../models/RECRUITING.js"
 import RECRUITINGTEAM from "../models/RECRUITINGTEAM.js"
 import fs from 'fs'
+import exceljs from 'exceljs'
 
 
 //for kyc details submission
@@ -247,4 +248,57 @@ export const checkIsVerifiedRecruiter=async (req,res,next)=>{
     }catch(err){
         next(err)
     }
+}
+
+export const exportMemberData=async (req,res,next)=>{
+     try{
+        const members=await RECRUITINGTEAM.find({recruiting_agency_id:req.params.ragencyid})
+        const membersData=members.map((item)=>{
+            return {
+                full_name:item.full_name,
+                email:item.email,
+                mobileno:item.mobileno,
+                isAdmin:item.isAdmin,
+                mapped_job:item.mapped_jobs.length,
+                accepted_job:item.accepted_jobs.length,
+                hide_commision:item.hide_commision
+            }
+        })
+
+        const workbook = new exceljs.Workbook();
+        const worksheet = workbook.addWorksheet("Data");
+
+        //Add headers
+        worksheet.columns = [
+            {header:"FULL NAME",key:'full_name',width:30},
+            {header:"EMAIL",key:"email",width:30},
+            {header:"MOBILENO",key:"mobileno",width:30},
+            {header:"ISADMIN",key:"isAdmin",width:30},
+            {header:"MAPPED JOBS",key:"mapped_job",width:30},
+            {header:"ACCEPTED JOBS",key:"accepted_job",width:30},
+            {header:"HIDE COMMISSION",key:"hide_commision",width:30},
+        ]
+
+     //Add rows
+     membersData.forEach((item)=>{
+        worksheet.addRow(item)
+     })
+        
+     //Set Response Header
+     res.setHeader(
+        "Content-Type",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+     );
+     res.setHeader(
+         "Content-Disposition",
+      "attachment; filename=data.xlsx"
+     );
+
+    // Write the workbook to the response
+    await workbook.xlsx.write(res);
+    res.status(200).end();
+
+     }catch(err){
+        next(err)
+     }
 }

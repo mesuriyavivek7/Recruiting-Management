@@ -13,6 +13,7 @@ import "react-phone-input-2/lib/style.css";
 //importing icons
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import AddIcon from '@mui/icons-material/Add';
+import BackupTableOutlinedIcon from '@mui/icons-material/BackupTableOutlined';
 
 //importing loader
 import WhiteLoader from '../../assets/whiteloader.svg'
@@ -271,6 +272,22 @@ export default function EnterpriseTeam() {
   ]
 
 
+  //For export data into excel form
+  const handleExportData=async ()=>{
+      try{
+          const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/enterprise/export-member-data/${user.enterprise_id}`,{responseType:'blob'})
+          const url = window.URL.createObjectURL(new Blob([res.data]));
+          const link = document.createElement("a");
+          link.href = url;
+          link.setAttribute("download", "enterprisememeberdata.xlsx");
+          document.body.appendChild(link);
+          link.click();
+      }catch(err){
+        console.log(err)
+        showNotification("Something went while export data.",'failure')
+      }
+  }
+
 
   return (
     <>
@@ -399,10 +416,16 @@ export default function EnterpriseTeam() {
         {notification && <Notification message={notification.message} type={notification.type} onClose={() => setNotification(null)}></Notification>}
         <div className='w-full flex justify-between'>
           <h2 className='text-gray-500 font-medium'>Team Page</h2>
-          <button onClick={handleOpenTeamPopUp} className='text-gray-600 cursor-pointer flex gap-2 items-center'>
-            <span><AddIcon></AddIcon></span>
-            <span>Add Member</span>
-          </button>
+          <div className='flex gap-4 items-center'>
+          <button onClick={handleExportData} className='text-gray-600 cursor-pointer flex gap-2 items-center'>
+             <span><BackupTableOutlinedIcon></BackupTableOutlinedIcon></span>
+             <span>Export</span>
+           </button>
+           <button onClick={handleOpenTeamPopUp} className='text-gray-600 cursor-pointer flex gap-2 items-center'>
+             <span><AddIcon></AddIcon></span>
+             <span>Add Member</span>
+           </button>
+          </div>
         </div>
 
         <Box sx={{

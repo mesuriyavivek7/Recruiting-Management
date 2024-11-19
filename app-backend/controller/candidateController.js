@@ -369,10 +369,9 @@ export const getJobResumeSubmitCount = async (req, res, next) => {
 }
 
 
-export const exportData=async (req,res,next)=>{
+export const exportDataEnterprise=async (req,res,next)=>{
     try{
       const candidate=await axios.get(`${process.env.APP_SERVER_URL}/enterpriseteam/getcandidate/${req.params.enmemberid}`)
-      console.log('candidate fetched---->',candidate.data)
       const candidateData=await Promise.all(candidate.data.map(async (cd)=>{
           const candidateBasic=await CANDIDATE.findById(cd.candidateId)
           const candidateBasicDetails=await CANDIDATEBASICDETAILS.findById(candidateBasic.candidate_basic_details)
@@ -429,4 +428,66 @@ export const exportData=async (req,res,next)=>{
     }catch(err){
        next(err)
     }
+}
+
+export const exportDataRecruiter=async (req,res,next)=>{
+   try{
+      const candidates=await CANDIDATE.find({recruiter_member_id:req.params.rememberid})
+      
+      const candidateData=await Promise.all(candidates.map(async (candidate)=>{
+        const candidateBasicDetails=await CANDIDATEBASICDETAILS.findById(candidate.candidate_basic_details)
+        return {
+          candidate_id:candidate.candidate_id,
+          candidate_name:`${candidateBasicDetails.first_name} ${candidateBasicDetails.last_name}`,
+          mobile_no:candidateBasicDetails.primary_contact_number,
+          email_address:candidateBasicDetails.primary_email_id,
+          education_qualificaiton:candidateBasicDetails.education_qualification,
+          experience:candidateBasicDetails.experience,
+          relevent_experience:candidateBasicDetails.relevant_experience,
+          notice_period:candidateBasicDetails.notice_period,
+          candidate_status:cstatus.get(candidate.candidate_status),
+          submited:candidate.createdAt
+        }
+    }))
+
+    const workbook = new exceljs.Workbook();
+    const worksheet = workbook.addWorksheet("Data");
+
+    //Add headers
+    worksheet.columns = [
+      {header:"C_ID",key:"candidate_id",width:30},
+      {header:"NAME",key:"candidate_name",width:30},
+      {header:"MOBILE NO",key:"mobile_no",width:30},
+      {header:"EMAIL",key:"email_address",width:30},
+      {header:"EDUCATION",key:"education_qualificaiton",width:30},
+      {header:"EXPERIENCE",key:"experience",width:30},
+      {header:"RELEVENT EXPERIENCE",key:"relevent_experience",width:50},
+      {header:"NOTICE PERIOD",key:"notice_period",width:50},
+      {header:"C STATUS",key:"candidate_status",width:40},
+      {header:"SUBMITED",key:"submited",width:30},
+    ]
+
+    //Add rows
+    candidateData.forEach((item)=>{
+      worksheet.addRow(item)
+    })
+
+     // Set response headers
+     res.setHeader(
+        "Content-Type",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+     );
+     res.setHeader(
+         "Content-Disposition",
+      "attachment; filename=data.xlsx"
+     );
+
+    // Write the workbook to the response
+    await workbook.xlsx.write(res);
+    res.status(200).end();
+
+      
+   }catch(err){
+     next(err)
+   }
 }
