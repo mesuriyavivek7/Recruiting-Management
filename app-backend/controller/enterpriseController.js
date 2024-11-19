@@ -3,6 +3,7 @@ import ENTERPRISETEAM from "../models/ENTERPRISETEAM.js";
 import JOBS from "../models/JOBS.js";
 import bcrypt from 'bcryptjs'
 import axios from 'axios'
+import exceljs from 'exceljs'
 
 export const getMobileNo = async (req, res, next) => {
   try {
@@ -155,6 +156,61 @@ export const getEnterpriseMember = async (req, res, next) => {
   } catch (err) {
     next(err)
   }
+}
+
+export const exportEnterpriseMemberData=async (req,res,next)=>{
+    try{
+      const enterpriseMember = await ENTERPRISETEAM.find({ enterprise_id: req.params.eid })
+      const enterpriseData = await Promise.all(enterpriseMember.map(async (enterprise) => {
+          const activeJobCount = await JOBS.countDocuments({ enterprise_member_id: enterprise._id, job_status: 'Active' })
+          const pendingJobCount = await JOBS.countDocuments({ enterprise_member_id: enterprise._id, job_status: 'Pending' })
+          return (
+           {
+            full_name: enterprise.full_name,
+            account_status: enterprise.account_status,
+            active_jobs: activeJobCount,
+            pending_jobs: pendingJobCount,
+            isAdmin: enterprise.isAdmin,
+            createdAt: enterprise.createdAt
+          }
+         )
+      }))
+
+      const workbook = new exceljs.Workbook();
+      const worksheet = workbook.addWorksheet("Data");
+
+      //Add headers
+      worksheet.columns = [
+        {header:"FULL NAME",key:'full_name',width:40},
+        {header:"ACCOUNT STATUS",key:'account_status',width:40},
+        {header:"ACTIVE JOBS",key:'active_jobs',width:40},
+        {header:"PENDING JOBS",key:'pending_jobs',width:40},
+        {header:"ISADMIN",key:'isAdmin',width:40},
+        {header:"CREATED AT",key:'createdAt',width:40},
+      ]
+
+      //Add rows
+      enterpriseData.forEach((item)=>{
+        worksheet.addRow(item)
+      })
+
+      // Set response headers
+       res.setHeader(
+            "Content-Type",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+       );
+       res.setHeader(
+           "Content-Disposition",
+          "attachment; filename=data.xlsx"
+       );
+
+      // Write the workbook to the response
+      await workbook.xlsx.write(res);
+      res.status(200).end();
+
+    }catch(err){
+      next(err)
+    }
 }
 
 export const getAcmanagerMailandName = async (req, res, next) => {

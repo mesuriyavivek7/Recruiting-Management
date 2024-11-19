@@ -476,7 +476,7 @@ const getDate=(date)=>{
    //for the export the data into excel form
    const handleExportData=async ()=>{
       try{
-           const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/candidate/export-data/${user._id}`,{responseType:'blob'})
+           const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/candidate/export-data-enterprise/${user._id}`,{responseType:'blob'})
            const url = window.URL.createObjectURL(new Blob([res.data]));
            const link = document.createElement("a");
            link.href = url;
