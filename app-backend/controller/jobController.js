@@ -69,18 +69,34 @@ export const activateJob = async (req, res, next) => {
 
 export const getAllJobDetails = async (req, res, next) => {
   try {
-    const jobs = await JOBS.find({ enterprise_member_id: req.params.ememberid, isDraft: false })
-    const mydata = await Promise.all(jobs.map(async (item) => {
-      const { job_id, job_status, job_basic_details, createdAt } = item
-      const basicDetails = await JOBBASICDETAILS.findById(job_basic_details)
+    const searchQuery=req.query.title || ''
+      
+    //Filter job by enterprise id
+    const jobsData=await JOBS.find({enterprise_member_id:req.params.enmemberid,isDraft:false},{job_id:1,_id:0})
+    
+    const jobsDataEnid=jobsData.map((item)=>item.job_id)
+
+    //Filter job by job title
+    const jobsDataTitle=await JOBBASICDETAILS.find({job_title: {$regex:searchQuery, $options: 'i'}},{job_id:1,_id:0})
+
+    //merger this both jobs
+    const filterJobId=jobsDataTitle.filter((item)=>{
+         if(jobsDataEnid.includes(item.job_id)) return item.job_id
+    })
+    
+    const jobId=filterJobId.map((item)=>item.job_id)
+
+    const mydata = await Promise.all(jobId.map(async (item) => {
+      const job=await JOBS.findOne({job_id:item})
+      const basicDetails = await JOBBASICDETAILS.findById(job.job_basic_details)
       const { job_title, country, city } = basicDetails
       return (
         {
-          orgjobid: item._id,
-          job_id,
+          orgjobid: job._id,
+          job_id:item,
           job_title,
-          createdAt,
-          job_status,
+          createdAt:job.createdAt,
+          job_status:job.job_status,
           country,
           city
         }
@@ -94,16 +110,32 @@ export const getAllJobDetails = async (req, res, next) => {
 
 export const getAllJobDraftDetails = async (req, res, next) => {
   try {
-    const draftjobs = await JOBS.find({ enterprise_member_id: req.params.ememberid, isDraft: true })
-    const mydata = await Promise.all(draftjobs.map(async (item) => {
-      const { job_id, job_basic_details, createdAt } = item
-      const basicDetails = await JOBBASICDETAILS.findById(job_basic_details)
+    const searchQuery=req.query.title || ''
+      
+    //Filter job by enterprise id
+    const jobsData=await JOBS.find({enterprise_member_id:req.params.enmemberid,isDraft:true},{job_id:1,_id:0})
+    
+    const jobsDataEnid=jobsData.map((item)=>item.job_id)
+
+    //Filter job by job title
+    const jobsDataTitle=await JOBBASICDETAILS.find({job_title: {$regex:searchQuery, $options: 'i'}},{job_id:1,_id:0})
+
+    //merger this both jobs
+    const filterJobId=jobsDataTitle.filter((item)=>{
+         if(jobsDataEnid.includes(item.job_id)) return item.job_id
+    })
+
+    const jobId=filterJobId.map((item)=>item.job_id)
+
+    const mydata = await Promise.all(jobId.map(async (item) => {
+      const job=await JOBS.findOne({job_id:item})
+      const basicDetails = await JOBBASICDETAILS.findById(job.job_basic_details)
       const { job_title, country, city } = basicDetails
       return (
         {
-          orgjobid: item._id,
-          job_id,
-          createdAt,
+          orgjobid: job._id,
+          job_id:item,
+          createdAt:job.createdAt,
           job_title,
           country,
           city
@@ -818,3 +850,29 @@ export const SearchJobByTitle = async (req, res, next) => {
   }
 };
 
+
+export const SearchPastJobByTitleAndEnMemberId=async (req, res, next)=>{
+    try{
+      const searchQuery=req.query.title || ''
+      
+      //Filter job by enterprise id
+      const jobsData=await JOBS.find({enterprise_member_id:req.params.enmemberid,isDraft:false},{job_id:1,_id:0})
+      
+      const jobsDataEnid=jobsData.map((item)=>item.job_id)
+
+      //Filter job by job title
+      const jobsDataTitle=await JOBBASICDETAILS.find({job_title: {$regex:searchQuery, $options: 'i'}},{job_id:1,_id:0})
+
+      //merger this both jobs
+      const filterJobId=jobsDataTitle.filter((item)=>{
+           if(jobsDataEnid.includes(item.job_id)) return item.job_id
+      })
+      
+      const jobId=filterJobId.map((item)=>item.job_id)
+      
+      res.status(200).json(jobId)
+
+    }catch(err){
+      next(err)
+    }
+}

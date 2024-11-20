@@ -14,7 +14,9 @@ const JobPostings = () => {
   const [pastLoad,setPastLoad]=useState(false)
   const [pastRows,setPastRows]=useState([])
   const [notification,setNotification]=useState(null)
-
+  
+  const [pastJobTitle,setPastJobTitile]=useState('')
+  const [draftJobTitle,setDraftJobTitle]=useState('')
   const navigate=useNavigate()
 
   //for showing notification
@@ -26,7 +28,7 @@ const JobPostings = () => {
  const fetchingDraftData=async ()=>{
   try{
      setDraftLoad(true)
-     const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/job/getalljobdraftdetails/${user._id}`)
+     const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/job/getalljobdraftdetails/${user._id}?title=${draftJobTitle}`)
      setDraftRows(()=>res.data.map((item,index)=>({...item,full_name:user.full_name,id:index+1})))
   }catch(err){
     console.log(err)
@@ -39,7 +41,7 @@ const JobPostings = () => {
 const fetchingPastData=async ()=>{
   try{
     setPastLoad(true)
-    const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/job/getalljobdetails/${user._id}`)
+    const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/job/getalljobdetails/${user._id}?title=${pastJobTitle}`)
     setPastRows(()=> res.data.map((item,index)=> ({...item,full_name:user.full_name,id:index+1})))
   }catch(err){
     console.log(err)
@@ -53,11 +55,24 @@ const handleNavigate=()=>{
     else showNotification("You have not access for post the jobs.",'warning')
 }
 
+//for fetch and filter out past job data
+useEffect(()=>{
+  fetchingPastData()
+},[pastJobTitle])
 
 useEffect(()=>{
-    fetchingDraftData()
-    fetchingPastData()
-},[])
+  fetchingDraftData()
+},[draftJobTitle])
+
+const handleChangeFilter=(e)=>{
+    if(activeState===1){
+       setPastJobTitile(e.target.value)
+    }else{
+       setDraftJobTitle(e.target.value)
+    }
+}
+
+
 
   return (
     <>
@@ -97,6 +112,7 @@ useEffect(()=>{
 
         <div className="mb-4">
           <input
+            onChange={handleChangeFilter}
             type="text"
             placeholder="Search Job"
             className="border rounded p-2 w-full"

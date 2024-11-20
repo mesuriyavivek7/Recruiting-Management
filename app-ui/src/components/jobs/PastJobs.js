@@ -140,8 +140,6 @@ const handleFetchJobCandidate=async (jobid)=>{
    }
 }
 
-console.log("candidate details----->",candidateDetails)
-
 const handleFetchJobHotMark=async (jobid)=>{
   if(!markLoader){
     try{

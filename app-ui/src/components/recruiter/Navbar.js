@@ -1,4 +1,4 @@
-import React, { useContext,useState } from "react";
+import React, { useContext, useEffect, useRef ,useState } from "react";
 import asset1 from "../../assets/asset 1.png";
 import asset29 from "../../assets/asset29.svg";
 import asset15 from "../../assets/asset15.svg";
@@ -8,12 +8,36 @@ import { AuthContext } from "../../context/AuthContext";
 import Notification from "../Notification";
 import axios from "axios";
 import Loader from '../../assets/whiteloader.svg'
+
+//importing icons
+import SearchIcon from '@mui/icons-material/Search';
+
 const Navbar = () => {
   const navigate=useNavigate()
   const {user}=useContext(AuthContext)
   const [openProfile,setOpenProfile]=useState(false)
   const [openMessageBox,setOpenMessageBox]=useState(false)
   const [logoutLoader,setLogoutLoader]=useState(false)
+  const [openSearchBox,setOpenSearchBox]=useState(false)
+
+  const popupRef=useRef(null)
+
+  useEffect(()=>{
+    const handleClickOutside = (event) => {
+      // Check if the click is outside the popup
+      if (popupRef.current && !popupRef.current.contains(event.target)) {
+        setOpenSearchBox(false); // Close the popup
+      }
+    };
+
+    // Add event listener to the document
+    document.addEventListener("mousedown", handleClickOutside);
+
+    // Cleanup on component unmount
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  },[])
 
   const [notification,setNotification]=useState(null)
 
@@ -59,7 +83,22 @@ const Navbar = () => {
   return (
    <>
    {notification && <Notification message={notification.message} type={notification.type} onClose={()=>setNotification(null)}></Notification>}
-
+   {
+    openSearchBox && 
+    <div className="fixed inset-0 z-50 flex bg-black justify-center bg-opacity-50 backdrop-blur-md items-start">
+         <div ref={popupRef} className="custom-div gap-0 w-[40%] p-0 mt-[80px]">
+             <div className="bg-white p-2 rounded-md overflow-hidden flex items-center gap-2 w-full">
+                <span className="text-gray-400"><SearchIcon></SearchIcon></span>
+                <input className="w-full outline-none text-[15px]" placeholder="Search Job/Candidate" type="text" ></input>
+             </div>
+             <div className="w-full flex items-center p-2 border-t">
+               <button className="text-[15px] rounded-l-md py-1 px-2 border">All</button>
+               <button className="text-[15px]  py-1 px-2 border">Candidates</button>
+               <button className="text-[15px] rounded-r-md py-1 px-2 border">Jobs</button>
+             </div>
+         </div>
+    </div>
+   }
    {
       logoutLoader && 
       <div className="fixed inset-0 z-50 flex bg-black justify-center bg-opacity-50 backdrop-blur-md items-center">
@@ -76,15 +115,9 @@ const Navbar = () => {
         <div className="h-[30px] flex place-items-center overflow-hidden rounded-md">
           <img src={asset1} alt="logo" width={95} />
         </div>
-        <div className="search-input flex place-items-center gap-2 text-sm px-4 w-[600px] bg-white-400 py-[5px] rounded-md">
+        <div onClick={()=>setOpenSearchBox(true)} className="search-input cursor-pointer flex place-items-center gap-3 text-sm px-4 w-[600px] bg-white-400 py-[5px] rounded-md">
           <img src={asset15} alt="search-icon" width={15} />
-          <input
-            type="search"
-            name="search"
-            id="search"
-            placeholder="Search"
-            className="bg-transparent w-full "
-          />
+          <span className="text-gray-500 text-sm">Search</span>
         </div>
       </div>
       <div className="flex place-items-center gap-4">
