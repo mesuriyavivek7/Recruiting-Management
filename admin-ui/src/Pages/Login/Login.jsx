@@ -5,14 +5,23 @@ import axios from 'axios'
 import asset2 from '../../assets/asset 2.png'
 import { useNavigate } from "react-router-dom";
 import { setUserData } from '../../State/Admin/Action';
+import Notification from '../../Components/Notification';
 
+//importing icons
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
 export default function Login() {
 
   const myValue=useSelector((state) => state.admin);
-  console.log(myValue);
-
   const navigate=useNavigate();
+  const [notification,setNotification]=useState(null)
+
+   //for showing notification
+   const showNotification=(message,type)=>{
+     setNotification({message,type})
+   }
+
   useEffect(()=>{
      if(myValue.userData){
         switch(myValue.userData.admin_type){
@@ -39,7 +48,15 @@ export default function Login() {
     password:"",
     admin_type:""
   });
+
   const dispatch=useDispatch();
+  
+
+  const [showPassword, setShowPassword] = useState(false);
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
 
   const handlechange=(e)=>{
     const {name,value}=e.target
@@ -61,13 +78,11 @@ export default function Login() {
   }
 
   const handleSubmit=async ()=>{
-    
     if(validateFormData()){
       setLoad(true)
-      let newErros={}
+      
       try{
         const response=await axios.post(`${process.env.REACT_APP_API_BASE_URL}/auth/login`,formData,{withCredentials:true})
-        
         dispatch(setUserData(response.data.details));
         console.log(response.data.details)
         if(response.data.details.admin_type==="admin"){
@@ -75,29 +90,25 @@ export default function Login() {
         }else if(response.data.details.admin_type==="account_manager"){
           navigate('/account_manager/dashboard')
         }
-      else if(response.data.details.admin_type==="super_admin"){
+        else if(response.data.details.admin_type==="super_admin"){
         navigate('/super_admin/dashboard')
-      }
-        
+        }
         else{
           navigate('/admin/dashboard')
         }
         
       }catch(err){  
-        if(err.response.status===404){
-          newErros.autherr="Invalid email address or password"
-        }else{
-        newErros.internal="Something went wrong....!"
-        }
+         console.log(err)
+         showNotification(err.response.data.message)
       }
       
       setLoad(false)
-      setErrors(newErros)
     }
 
   }
   return (
      <div className='login bg-gray-100 max-w-full  relative h-full flex overflow-hidden'>
+     {notification && <Notification message={notification.message} type={notification.type} onClose={()=>setNotification(null)}></Notification>}
       <div className='w-full flex place-items-center relative'>
        <div className='login-form w-[38%] relative'>
         <div className='w-8/12 h-full flex flex-col mx-auto'>
@@ -121,10 +132,10 @@ export default function Login() {
                   )
                 }
               </div>
-              <div className='flex-start w-full gap-2'>
+              <div className='flex-start relative w-full gap-2'>
                 <label htmlFor='password' className='input-label'>Password*</label>
                 <input
-                type='password'
+                type={showPassword ? 'text' : 'password'}
                 name='password'
                 id='password'
                 value={formData.password}
@@ -132,6 +143,9 @@ export default function Login() {
                 required
                 className='input-field'
                 ></input>
+                <button type="button" className="right-2  top-8 absolute"  onClick={togglePasswordVisibility} >
+                    {showPassword ? <VisibilityIcon style={{fontSize:"1.2rem"}}></VisibilityIcon> : <VisibilityOffIcon style={{fontSize:"1.2rem"}}></VisibilityOffIcon> }
+                 </button>
                 {
                     errors.password && (
                       <p className="text-red-600 text-xs">{errors.password}</p>
@@ -161,16 +175,6 @@ export default function Login() {
 
               </div>
               <button type='button' onClick={handleSubmit} disabled={load} className='w-full mt-2 py-[6px] bg-blue-400 text-white rounded-md disabled:bg-gray-400 disabled:cursor-not-allowed disabled:opacity-50'>Login</button>
-              {
-                errors.internal && (
-                  <p className="text-red-600 text-xs">{errors.internal}</p>
-                )
-              }
-              {
-                errors.autherr && (
-                  <p className="text-red-600 text-xs">{errors.autherr}</p>
-                )
-              }
             </form>
          </div>
          </div>
