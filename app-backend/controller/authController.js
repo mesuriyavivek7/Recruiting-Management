@@ -38,7 +38,7 @@ export const login=async (req,res,next)=>{
 
         const token=jwt.sign({id:user._id,isAdmin:user.isAdmin},process.env.JWT)
         const {password,email_verified,isAdmin,hide_commision,...otherDetails}=user._doc
-        res.cookie("t_user",token,{expires:new Date(Date.now()+2592000000),httpOnly:false,secure:true,sameSite:'none'}).status(200).json({details:{...otherDetails,userType}})
+        res.cookie("t_user",token,{expires:new Date(Date.now()+2592000000),httpOnly:true,secure: process.env.NODE_ENV === 'production',sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'}).status(200).json({details:{...otherDetails,userType}})
 
     }catch(err){
         next(err)
@@ -59,7 +59,7 @@ export const enterpriseLogin=async (req,res,next)=>{
 
         if(!isPasswordCorrect) return res.status(404).json({message:"Password is incorrect",type:'failure'})
 
-        const token=jwt.sign({id:user._id,isAdmin:user.isAdmin},process.env.JWT)
+        const token=jwt.sign({id:user._id,isAdmin:user.isAdmin},process.env.JWT,{ expiresIn: '30d' })
         const {password,email_verified,isAdmin,hide_commision,...otherDetails}=user._doc
         res.cookie("t_user",token,{expires:new Date(Date.now()+2592000000),httpOnly:false,secure:true,sameSite:'none'}).status(200).json({details:{...otherDetails,userType:"enterprise"}})
 
@@ -81,9 +81,9 @@ export const recruiterLogin=async (req,res,next)=>{
 
      if(!isPasswordCorrect) return res.status(404).json({message:"Password is incorrect",type:'failure'})
 
-     const token=jwt.sign({id:user._id,isAdmin:user.isAdmin},process.env.JWT)
+     const token=jwt.sign({id:user._id,isAdmin:user.isAdmin},process.env.JWT,{ expiresIn: '30d' })
      const {password,email_verified,isAdmin,hide_commision,...otherDetails}=user._doc
-     res.cookie("t_user",token,{expires:new Date(Date.now()+2592000000),httpOnly:false,secure:true,sameSite:'none'}).status(200).json({details:{...otherDetails,userType:"recruiting"}})
+     res.cookie("t_user",token,{expires:new Date(Date.now()+2592000000),httpOnly:true,secure: process.env.NODE_ENV === 'production',sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'}).status(200).json({details:{...otherDetails,userType}})
 
    }catch(err){
      next(err)
