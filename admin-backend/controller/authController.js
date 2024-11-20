@@ -27,7 +27,7 @@ export const login=async (req,res,next)=>{
         if(!isPasswordCorrect) return res.status(404).json({message:"Password is incorrect."})
         const token=jwt.sign({id:admin._id,admin_type:admin.admin_type},process.env.JWT)
         const {_id,email,admin_type}=admin._doc
-        res.cookie("admin_user",token,{expires:new Date(Date.now()+2592000000),httpOnly:true,secure:true,sameSite:'none'}).status(200).json({details:{_id,email,admin_type}})
+        res.cookie("admin_user",token,{expires:new Date(Date.now()+2592000000),httpOnly:false,secure:true,sameSite:'lax'}).status(200).json({details:{_id,email,admin_type}})
 
       }else{
           return res.status(404).json({message:"User not found by this email address."})

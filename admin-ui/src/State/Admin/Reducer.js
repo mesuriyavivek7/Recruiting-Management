@@ -1,7 +1,8 @@
 import Cookies from 'js-cookie';
 
-const cookievalue = Cookies.get('admin_user')
+const cookievalue = Cookies.get("admin_user")
 let localUserData = ((localStorage.getItem("userData")!=="undefined" && localStorage.getItem("userData")!==undefined && localStorage.getItem("userData")!==null)?(JSON.parse(localStorage.getItem("userData"))):null)
+
 
 if(cookievalue===undefined){
   if(localUserData!==null){
