@@ -2,7 +2,6 @@ import MASTERADMIN from "../models/MASTERADMIN.js"
 import ACCOUNTMANAGER from "../models/ACCOUNTMANAGER.js"
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
-import { error } from "../utils/error.js"
 import SUPERADMIN from "../models/SUPER.js"
 
 
@@ -25,13 +24,13 @@ export const login=async (req,res,next)=>{
       }
       if(admin){
         const isPasswordCorrect=await bcrypt.compare(req.body.password,admin.password)
-        if(!isPasswordCorrect) return next(404,"Password is incorrect")
+        if(!isPasswordCorrect) return res.status(404).json({message:"Password is incorrect."})
         const token=jwt.sign({id:admin._id,admin_type:admin.admin_type},process.env.JWT)
         const {_id,email,admin_type}=admin._doc
-        res.cookie("admin_user",token,{expires:new Date(Date.now()+2592000000),httpOnly:false,secure:true,sameSite:'none'}).status(200).json({details:{_id,email,admin_type}})
+        res.cookie("admin_user",token,{expires:new Date(Date.now()+2592000000),httpOnly:true,secure:true,sameSite:'none'}).status(200).json({details:{_id,email,admin_type}})
 
       }else{
-         return next(error(404,"User not found by this emial address"))
+          return res.status(404).json({message:"User not found by this email address."})
       }
    }catch(err){
       next(err)
