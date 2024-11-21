@@ -1,23 +1,19 @@
-
-
 import React, { useState } from "react";
+//importing icons
 import { ReactComponent as ExpandIcon } from "../assets/asset19.svg";
 import { ReactComponent as DashboardIcon } from "../assets/asset28.svg";
-
 import { ReactComponent as CandidatesIcon } from "../assets/asset20.svg";
-
 import { ReactComponent as ActionIcon } from "../assets/asset23.svg";
-
-import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { PiBuildingApartmentFill } from "react-icons/pi";
-
 import { FaBriefcase } from "react-icons/fa";
+
+import { NavLink, useLocation } from "react-router-dom";
+
 
 const SideNavbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   
   const location = useLocation();
- const navigate=useNavigate();
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
@@ -62,10 +58,10 @@ const SideNavbar = () => {
   {isOpen && <span className="text-white">Collapse</span>}
 
   {!isOpen && visibleTooltips["collapse"] && (
-    <div className="absolute bg-gray-400 text-white p-2 rounded-md" style={{
-      top: "-40px",
-      left: "60px",  // Consistent left offset
-      fontSize: "21px",
+    <div className="absolute bg-gray-500 text-white p-1.5 rounded-md" style={{
+      top: "0px",
+      left: "65px",
+      fontSize: "16px",
       whiteSpace: "nowrap",
       pointerEvents: "none",
       zIndex: 9999,
