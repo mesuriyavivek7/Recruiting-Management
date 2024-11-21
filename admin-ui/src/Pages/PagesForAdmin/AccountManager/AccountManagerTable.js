@@ -4,7 +4,6 @@ import { DataGrid } from '@mui/x-data-grid';
 import { Card } from '@mui/material';
 import {  Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 
-import { useNavigate } from 'react-router-dom';
 import { columns} from './RowColDataOfAll'; // Import columns configuration
 //importin icons
 import {  FaBriefcase, FaUsers, FaUserClock, FaClipboardList, FaBusinessTime, FaBuilding, FaUserTie } from 'react-icons/fa';
@@ -24,7 +23,6 @@ const AccountManagerTable = () => {
   const [selectedRow, setSelectedRow] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [loader,setLoader]=useState(false)
-  const navigate = useNavigate();
 
   const [notification,setNotification]=useState(null)
 
@@ -85,7 +83,7 @@ const AccountManagerTable = () => {
   return (
     <div>
     {notification && <Notification message={notification.message} type={notification.type} onClose={()=>setNotification(null)}></Notification>}
-      <Card className='mt-12 border font-sans px-4 py-2'>
+      <Card className='mt-12 shadow border font-sans px-4 py-2'>
         <p className='text-lg xl:text-2xl'>Account Managers</p>
         <div style={{ height: 600, width: '100%' }} className='pt-4'>
 
@@ -135,7 +133,6 @@ const AccountManagerTable = () => {
               },
               '& .MuiDataGrid-cell': {
                 fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem' },
-
               },
 
               '& .MuiDataGrid-cellContent': {
@@ -143,12 +140,8 @@ const AccountManagerTable = () => {
                 alignItems: 'center',
               },
               '& .MuiDataGrid-cell': {
-                minHeight: '2.5rem',
-              },
-              '& .MuiDataGrid-cell': {
                 fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem' },
-
-
+                minHeight: '2.5rem',
               },
               '& .MuiDataGrid-row': {
                 borderBottom: 'none',
