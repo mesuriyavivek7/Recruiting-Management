@@ -27,9 +27,6 @@ const NewEnterpriseData = () => {
   const [selectedRow, setSelectedRow] = useState(null);
   const [loading, setLoading] = React.useState(false); // Loader state
 
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-
 
 
   React.useEffect(() => {
@@ -38,7 +35,7 @@ const NewEnterpriseData = () => {
     setTimeout(() => {
       setLoading(false); // Stop loading after data is "fetched"
     }, 1000); // Simulate 1 second loading time
-  }, [newEnterprise, page, rowsPerPage]);
+  }, [newEnterprise]);
 
 
   const showNotification = (message, type) => {
@@ -182,7 +179,7 @@ const NewEnterpriseData = () => {
             columns={columns(handleInactivateButton, handleRowClick)}
             rowHeight={80}
             onRowClick={(params) => handleRowClick(params?.row)}
-            pageSize={rowsPerPage}
+            pageSize={8}
             // pagination={false}
             initialState={{
               pagination: {
