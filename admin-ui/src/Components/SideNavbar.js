@@ -17,7 +17,7 @@ const SideNavbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   
   const location = useLocation();
-const navigate=useNavigate();
+ const navigate=useNavigate();
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
@@ -88,10 +88,10 @@ const navigate=useNavigate();
   </NavLink>
 
   {!isOpen && visibleTooltips["dashboard"] && (
-    <div className="absolute bg-gray-400 text-white p-2 rounded-md" style={{
-      top: "-40px",
-      left: "60px",
-      fontSize: "21px",
+    <div className="absolute bg-gray-500 text-white p-1.5 rounded-md" style={{
+      top: "0px",
+      left: "65px",
+      fontSize: "16px",
       whiteSpace: "nowrap",
       pointerEvents: "none",
       zIndex: 9999,
@@ -114,10 +114,10 @@ const navigate=useNavigate();
   </NavLink>
 
   {!isOpen && visibleTooltips["enterprise"] && (
-    <div className="absolute bg-gray-400 text-white p-2 rounded-md" style={{
-      top: "-40px",
-      left: "60px",
-      fontSize: "21px",
+    <div className="absolute bg-gray-500 text-white p-1.5 rounded-md" style={{
+      top: "0px",
+      left: "65px",
+      fontSize: "16px",
       whiteSpace: "nowrap",
       pointerEvents: "none",
       zIndex: 9999,
@@ -140,10 +140,10 @@ const navigate=useNavigate();
   </NavLink>
 
   {!isOpen && visibleTooltips["recruiting"] && (
-    <div className="absolute bg-gray-400 text-white p-2 rounded-md" style={{
-      top: "-40px",
-      left: "60px",
-      fontSize: "21px",
+    <div className="absolute bg-gray-500 text-white p-1.5 rounded-md" style={{
+      top: "0px",
+      left: "65px",
+      fontSize: "16px",
       whiteSpace: "nowrap",
       pointerEvents: "none",
       zIndex: 9999,
@@ -166,10 +166,10 @@ const navigate=useNavigate();
   </NavLink>
 
   {!isOpen && visibleTooltips["job"] && (
-    <div className="absolute bg-gray-400 text-white p-2 rounded-md" style={{
-      top: "-40px",
-      left: "60px",
-      fontSize: "21px",
+    <div className="absolute bg-gray-500 text-white p-1.5 rounded-md" style={{
+      top: "0px",
+      left: "65px",
+      fontSize: "16px",
       whiteSpace: "nowrap",
       pointerEvents: "none",
       zIndex: 9999,
@@ -192,10 +192,10 @@ const navigate=useNavigate();
   </NavLink>
 
   {!isOpen && visibleTooltips["candidates"] && (
-    <div className="absolute bg-gray-400 text-white p-2 rounded-md" style={{
-      top: "-40px",
-      left: "60px",
-      fontSize: "21px",
+    <div className="absolute bg-gray-500 text-white p-1.5 rounded-md" style={{
+      top: "0px",
+      left: "65px",
+      fontSize: "16px",
       whiteSpace: "nowrap",
       pointerEvents: "none",
       zIndex: 9999,
