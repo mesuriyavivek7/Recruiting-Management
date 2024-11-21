@@ -14,13 +14,17 @@ export const getFormateDate = (cdate) => {
 
 // DataGrid columns configuration
 export const columns = (handleInactivateButton, handleRowClick) => [
-  { field: 'id', headerName: 'ID', width: 150 },
+  { field: 'id', headerName: 'ID', width: 100 },
   { field: 'full_name', headerName: 'Full Name', width: 200 },
-  { field: 'email', headerName: 'Email', width: 250 },
-  { field: 'mobileno', headerName: 'Mobile No.', width: 150 },
+  { field: 'email', headerName: 'Email', width: 300 },
+  { field: 'mobileno', headerName: 'Mobile No.', width: 200, 
+    renderCell:(params)=> (
+      <span>+{params?.row?.mobileno}</span>
+    ) 
+  },
   { field: 'designation', headerName: 'Designation', width: 200 },
   { field: 'company_name', headerName: 'Company Name', width: 200 },
-  { field: 'company_size', headerName: 'Company Size', width: 150 },
+  { field: 'company_size', headerName: 'Company Size', width: 180 },
   { field: 'country', headerName: 'Country', width: 150 },
   { field: 'state', headerName: 'State', width: 150 },
   { field: 'city', headerName: 'City', width: 150 },
@@ -29,7 +33,7 @@ export const columns = (handleInactivateButton, handleRowClick) => [
     headerName: 'Email Verification',
     width: 180,
     renderCell: (params) => (
-      <span className={`px-8 py-2 rounded-2xl text-md text-white ${params.value ? 'bg-green-500' : 'bg-red-500'}`}>
+      <span className={`px-6 py-1.5 rounded-2xl text-md text-white ${params.value ? 'bg-green-500' : 'bg-red-500'}`}>
         {params?.value ? 'Yes' : 'No'}
       </span>
     ),
@@ -39,7 +43,7 @@ export const columns = (handleInactivateButton, handleRowClick) => [
     headerName: 'Account Status',
     width: 200,
     renderCell: (params) => (
-      <span className={`px-8 py-2 rounded-2xl text-md text-white ${params.value.status === 'Active' ? 'bg-green-600' : 'bg-gray-500'}`}>
+      <span className={`px-6 py-1.5 rounded-2xl text-md text-white ${params.value.status === 'Active' ? 'bg-green-600' : 'bg-gray-500'}`}>
         {params?.value?.status}
       </span>
     ),
@@ -47,7 +51,7 @@ export const columns = (handleInactivateButton, handleRowClick) => [
   {
     field: 'action',
     headerName: 'Action',
-    width: '300',
+    width: '250',
     renderCell: (params) => (
       <div className="flex gap-2 pt-4">
         <Button
