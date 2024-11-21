@@ -273,7 +273,7 @@ export const isVerifiedEnterprise=async (req,res,next)=>{
      const enterprise=await ENTERPRISE.findById(req.params.eid)
      if(!enterprise) return res.status(404).status({message:"User not found...!",type:"failure"})
 
-     if(enterprise.admin_verified){
+     if(enterprise.admin_verified && enterprise.account_manager_verified){
       res.status(200).json(true)
      }else{
       res.status(200).json(false)

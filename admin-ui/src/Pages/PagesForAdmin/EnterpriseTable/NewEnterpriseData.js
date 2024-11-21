@@ -104,7 +104,7 @@ const NewEnterpriseData = () => {
       });
       await fetchEnterprise();
       handleClose();
-      showNotification('Assigned to account manager successfully', 'success');
+      showNotification('Successfully enterprise assigned to account manager ', 'success');
     } catch (err) {
       handleClose()
       console.error(err)
@@ -384,14 +384,14 @@ const NewEnterpriseData = () => {
           <DialogActions className="bg-gray-100 px-6 py-6">
             <Button
               onClick={handleClose}
-              className="bg-gray-600 hover:bg-blue-230 text-white px-4 py-2 text-xl rounded-md"
+              className="bg-gray-600 hover:bg-blue-500 hover:text-white text-white px-4 py-2 text-xl rounded-md"
             >
               Cancel
             </Button>
             <Button
               disabled={selectedManager === ''}
               onClick={handleAssignAcManager}
-              className="bg-gray-600 disabled:bg-slate-200 disabled:cursor-not-allowed hover:bg-blue-230 text-white px-4 py-2 text-xl rounded-md"
+              className="bg-gray-600 disabled:bg-slate-200 disabled:cursor-not-allowed hover:bg-blue-500 hover:text-white text-white px-4 py-2 text-xl rounded-md"
             >
               {assignLoad && <span>Loading...</span>}
               {!assignLoad && <span>Assign</span>}
