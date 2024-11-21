@@ -1,23 +1,40 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+//Importing mui content
 import { DataGrid } from '@mui/x-data-grid';
 import { Card } from '@mui/material';
 import {  Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+
 import { useNavigate } from 'react-router-dom';
-import { columns, rows } from './RowColDataOfAll'; // Import columns configuration
+import { columns} from './RowColDataOfAll'; // Import columns configuration
+//importin icons
 import {  FaBriefcase, FaUsers, FaUserClock, FaClipboardList, FaBusinessTime, FaBuilding, FaUserTie } from 'react-icons/fa';
+
+import Notification from '../../../Components/Notification';
+import { fetchAccountManagerDetailsById,fetchAccountManagerMasterAdmin } from '../../../services/api';
+import { store } from "../../../State/Store";
+
 const calculateRowHeight = (params) => {
 
   const contentHeight = params.row ? params.row.content.length / 10 : 50;
   return Math.max(80, contentHeight);
 };
+
 const AccountManagerTable = () => {
-  const [selectedRowId, setSelectedRowId] = useState(null);
+  const [rows,setRows]=useState([])
   const [selectedRow, setSelectedRow] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [loader,setLoader]=useState(false)
   const navigate = useNavigate();
 
-  const handleRowClick = (row) => {
+  const [notification,setNotification]=useState(null)
 
+   //for showing notification
+   const showNotification=(message,type)=>{
+     setNotification({message,type})
+   }
+
+  const handleRowClick = (row) => {
+    console.log(row)
     setSelectedRow(row);
     setDialogOpen(true);
   };
@@ -25,42 +42,64 @@ const AccountManagerTable = () => {
   const handleClose = () => {
     setDialogOpen(false);
     setSelectedRow(null);
-    setSelectedRowId(null);
   };
 
-  // State for pagination
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const selectUserData = (state) => state.admin?.userData;
+  const userData = selectUserData(store.getState());
 
-  // Handle pagination change
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
+  const handleFetchAcManagerData=async ()=>{
+      try{
+        setLoader(true)
+        const response = await fetchAccountManagerMasterAdmin(userData._id) || [];
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
+        const rows = await Promise.all(
+          response.map(async (item, index) => {
+             const acManagerDetails = await fetchAccountManagerDetailsById(item.ac_id);
 
-  // Calculate the rows to display
-  const paginatedRows = rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+              return {
+                 _id: index + 1,
+                 full_name: acManagerDetails.full_name,
+                 total_enterprise: (acManagerDetails.pending_verify_enterprise?.length || 0) + (acManagerDetails.verified_enterprise?.length || 0),
+                 pending_enterprise: acManagerDetails.pending_verify_enterprise?.length || 0,
+                 total_jobs: acManagerDetails.pending_jobs?.length || 0,
+                 pending_jobs: acManagerDetails.pending_jobs?.length || 0,
+                 total_recruiter_agency: (acManagerDetails.verified_recruiting_agency?.length || 0) + (acManagerDetails.pending_verify_recruiting_agency?.length || 0),
+                 pending_recruiter_agency: acManagerDetails.pending_verify_recruiting_agency?.length || 0,
+              };
+         })
+        );
+        setRows(rows)
+        setLoader(false)
+      }catch(err){
+         setLoader(false)
+         console.log(err)
+         showNotification("Something went wrong.",'failure')
+      }
+  }
+
+  useEffect(()=>{
+      handleFetchAcManagerData()
+  },[])
+  
 
   return (
     <div>
-      <Card className='mt-14 font-sans px-6'>
+    {notification && <Notification message={notification.message} type={notification.type} onClose={()=>setNotification(null)}></Notification>}
+      <Card className='mt-12 border font-sans px-4 py-2'>
         <p className='text-lg xl:text-2xl'>Account Managers</p>
         <div style={{ height: 600, width: '100%' }} className='pt-4'>
 
           <DataGrid
-            rows={paginatedRows}
+            rows={rows}
             columns={columns}
             rowHeight={80}
             onRowClick={(params) => handleRowClick(params.row)} // Pass the whole row object
             getRowId={(row) => row._id} // Specify the custom ID field onRowClick={(params) => handleRowClick(params.row)} // Pass the whole row object
             getRowHeight={calculateRowHeight}
+            loading={loader}
           // pagination={false}
             
-            pageSize={rowsPerPage}
+            pageSize={8}
             pageSizeOptions={[5, 10]}
             initialState={{
               pagination: {
@@ -155,7 +194,7 @@ const AccountManagerTable = () => {
                   <FaBuilding className="mr-2 text-black text-xl xl:text-2xl" />
                   <div className="flex gap-2 text-xl">
                     <span className="block font-medium">Total Enterprise:</span>
-                    <span>{selectedRow.total_enterprise || ' Not Available'}</span>
+                    <span>{selectedRow.total_enterprise}</span>
                   </div>
                 </div>
 
@@ -164,7 +203,7 @@ const AccountManagerTable = () => {
                   <FaBusinessTime className="mr-2 text-black text-xl xl:text-2xl" />
                   <div className="flex gap-2 text-xl">
                     <span className="block font-medium">Pending Enterprise:</span>
-                    <span>{selectedRow.pending_enterprise || ' Not Available'}</span>
+                    <span>{selectedRow.pending_enterprise}</span>
                   </div>
                 </div>
 
@@ -173,7 +212,7 @@ const AccountManagerTable = () => {
                   <div className="flex gap-2 text-xl">
                     <span className="block font-medium">Total Recruiter Agency:</span>
                     <span>
-                      {selectedRow.total_recruiter_agency || ' Not Available'}
+                      {selectedRow.total_recruiter_agency}
                     </span>
                   </div>
                 </div>
@@ -184,7 +223,7 @@ const AccountManagerTable = () => {
                   <div className="flex gap-2 text-xl">
                     <span className="block font-medium">Pending Recruiter Agency:</span>
                     <span>
-                      {selectedRow.pending_recruiter_agency || ' Not Available'}
+                      {selectedRow.pending_recruiter_agency}
                     </span>
                   </div>
                 </div>
@@ -194,7 +233,7 @@ const AccountManagerTable = () => {
                   <div className="flex gap-2 text-xl">
                     <span className="block font-medium">Total Jobs:</span>
                     <span>
-                      {selectedRow.pending_recruiter_agency || ' Not Available'}
+                      {selectedRow.pending_recruiter_agency}
                     </span>
                   </div>
                 </div>
@@ -204,7 +243,7 @@ const AccountManagerTable = () => {
                   <div className="flex gap-2 text-xl">
                     <span className="block font-medium">Pending Jobs:</span>
                     <span>
-                      {selectedRow.pending_recruiter_agency || ' Not Available'}
+                      {selectedRow.pending_recruiter_agency}
                     </span>
                   </div>
                 </div>
@@ -214,7 +253,7 @@ const AccountManagerTable = () => {
                   <div className="flex gap-2 text-xl">
                     <span className="block font-medium">Total Candidate:</span>
                     <span>
-                      {selectedRow.pending_recruiter_agency || ' Not Available'}
+                      {selectedRow.pending_recruiter_agency}
                     </span>
                   </div>
                 </div>
@@ -224,7 +263,7 @@ const AccountManagerTable = () => {
                   <div className="flex gap-2 text-xl">
                     <span className="block font-medium">Pending Candidate:</span>
                     <span>
-                      {selectedRow.pending_recruiter_agency || ' Not Available'}
+                      {selectedRow.pending_recruiter_agency}
                     </span>
                   </div>
                 </div>
