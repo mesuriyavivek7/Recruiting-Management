@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useState } from 'react';
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
-import { rows, columns } from './RowColData';
+import { columns } from './RowColData';
 import { useNavigate } from 'react-router-dom';
 import { Button, CircularProgress, IconButton, InputAdornment, TextField } from '@mui/material';
 import { FaSearch } from 'react-icons/fa';
@@ -19,7 +19,7 @@ const calculateRowHeight = (params) => {
 export default function AllRecruitingAgencyData() {
   const [searchTerm, setSearchTerm] = React.useState('');
   const [filterStatus, setFilterStatus] = React.useState('All');
-  const [filteredRows, setFilteredRows] = React.useState(rows);
+  const [filteredRows, setFilteredRows] = React.useState([]);
   const navigate = useNavigate();
   const [loading, setLoading] = React.useState(false);
 

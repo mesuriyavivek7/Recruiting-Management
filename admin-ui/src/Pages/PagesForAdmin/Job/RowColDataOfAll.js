@@ -1,7 +1,6 @@
 import { format, formatDistanceToNowStrict } from 'date-fns';
 import React from 'react';
 import { fetchVerifiedJobsByAdminId, fetchJobBasicDetailsByJobId, fetchRecruiterByEId, fetchJobDetailsById } from '../../../services/api';
-import Button from '@mui/material/Button';
 import { store } from '../../../State/Store';
 
 export const columns = [
@@ -35,20 +34,20 @@ export const columns = [
     },
   },
   {
-    field: 'recruiter',
-    headerName: 'Recruiter',
+    field: 'enterprise_member',
+    headerName: 'Enterprise',
     flex: 2,
     minWidth: 250,
     headerAlign: 'left',
     align: 'left',
     renderCell: (params) => {
-      const recruiter = params.row?.recruiter || 'Unknown Recruiter';
+      const enterprise_member = params.row?.enterprise_member || 'Unknown Recruiter';
       return (
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <div style={{ width: 32, height: 32, borderRadius: '50%', backgroundColor: '#3f51b5', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: 8 }}>
-            {recruiter.charAt(0).toUpperCase()}
+            {enterprise_member.charAt(0).toUpperCase()}
           </div>
-          {recruiter}
+          {enterprise_member}
         </div>
       );
     },
@@ -84,52 +83,20 @@ export const columns = [
     },
   },
   {
-    field: 'job_status',
-    headerName: 'Job Status',
-    flex: 1.5, // Flexible width with moderate space
-    minWidth: 200, // Minimum width
-    renderCell: (params) => {
-      let backgroundColor;
-      let hoverColor;
-
-      // Determine background and hover colors based on job status
-      switch (params.value) {
-        case 'Pending':
-          backgroundColor = 'blue';
-          hoverColor = 'darkblue';
-          break;
-        case 'Active':
-          backgroundColor = 'green'; // Green for Active
-          hoverColor = 'darkgreen'; // Darker green on hover
-          break;
-        case 'Draft':
-          backgroundColor = 'gray'; // Gray for Draft
-          hoverColor = 'darkgray'; // Darker gray on hover
-          break;
-        default:
-          backgroundColor = 'red'; // Default to red for unknown status
-          hoverColor = 'darkred'; // Dark red on hover
-      }
-
-      return (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-          <Button
-            variant="contained"
-            sx={{
-              backgroundColor: backgroundColor,
-              color: 'white',
-              padding: '8px 16px', // Consistent padding
-              margin: '4px', // Consistent margin
-              '&:hover': {
-                backgroundColor: hoverColor,
-              },
-            }}
-          >
-            {params.value}
-          </Button>
-        </div>
-      );
-    },
+    field: 'account_manager',
+    headerName: 'Account Manager',
+    flex: 1,
+    minWidth: 200,
+    headerAlign: 'left',
+    align: 'left',
+    renderCell: (params) =>(
+      <div className='w-full h-full flex gap-2 items-center'>
+          <span className='flex justify-center items-center text-white h-8 w-8 rounded-full bg-orange-400'>
+             {params.row.account_manager.charAt(0).toUpperCase()}
+          </span>
+          <span>{params.row.account_manager}</span>
+      </div>
+    )
   },
   {
     field: 'createdAt',

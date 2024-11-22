@@ -1,42 +1,107 @@
 import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Box, Button, Card, CircularProgress, IconButton, InputAdornment, TextField } from '@mui/material';
+import { Box, Card, CircularProgress, IconButton, InputAdornment, TextField } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { columns, rows } from './RowColDataOfAll';
+import { columns } from './RowColDataOfAll';
 import { FaSearch } from 'react-icons/fa';
+import { fetchVerifiedJobsByAdminId,fetchAccountManager, fetchJobBasicDetailsByJobId, fetchEnterpriseMemberDetails, fetchJobDetailsById } from '../../../services/api';
+import { store } from '../../../State/Store';
+
+import Notification from '../../../Components/Notification';
 
 const calculateRowHeight = () => Math.max(80);
 
 const AdminAllJobData = () => {
-  const [selectedRowId, setSelectedRowId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterStatus, setFilterStatus] = useState('All');
-  const [filteredRows, setFilteredRows] = useState(rows);
+  const [filteredRows, setFilteredRows] = useState([]);
+
+  const selectUserData = (state) => state?.admin?.userData;
+  const userData = selectUserData(store?.getState());
 
   const navigate = useNavigate();
 
   const handleRowClick = (id) => {
-    setSelectedRowId(id);
     navigate(`/master_admin/job/${id}`);
   };
 
-  const handleFilterClick = (status) => setFilterStatus(status);
- 
- 
+  const [notification, setNotification] = useState(null);
+
+  const showNotification = (message, type) => {
+    setNotification({ message, type });
+  };
 
   // Filter rows based on searchTerm and filterStatus
   useEffect(() => {
-    const newFilteredRows = rows.filter((row) => {
-      const matchesSearch = row.job_title.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesStatus = filterStatus === 'All' || row.job_status === filterStatus;
-      return matchesSearch && matchesStatus;
-    });
-    setFilteredRows(newFilteredRows);
-  }, [searchTerm, filterStatus]);
+    const fetchData=async ()=>{
+      setLoading(true)
+      try{
+        //Fetching jobs id which is verified by account manager
+        const verifiedJobsIds = await fetchVerifiedJobsByAdminId(userData?._id);
+
+        const rows = await Promise.all(verifiedJobsIds.map(async (jobId, index) => {
+            //Fetching more details about jobs
+            const jobDetails = await fetchJobDetailsById(jobId);
+
+            //Fetching account manager details
+            const accountManager = await fetchAccountManager(jobDetails?.alloted_account_manager);
+            
+            //Fetching details of enterprise member
+            const enterpriseMember=await fetchEnterpriseMemberDetails(jobDetails.enterprise_member_id)
+            
+            //Fetching job basinc details
+            const basicjobDetails = await fetchJobBasicDetailsByJobId(jobDetails.job_id);
+      
+            return {
+              _id: String(`${index + 1}`),
+              job_title: basicjobDetails?.job_title || "No Title Available",
+              job_id: jobDetails?.job_id || "No ID Available",
+              enterprise_member: enterpriseMember.full_name || "Unknown Recruiter",
+              location: {
+                state: basicjobDetails?.state || 'Unknown State',
+                country: basicjobDetails?.country || 'Unknown Country',
+              },
+              experience: {
+                minexp: basicjobDetails?.experience?.minexp || 'N/A',
+                maxexp: basicjobDetails?.experience?.maxexp || 'N/A',
+              },
+              job_status: jobDetails.job_status,
+              account_manager: accountManager ? `${accountManager.full_name}` : null,
+              createdAt: jobDetails?.createdAt ? new Date(jobDetails.createdAt) : new Date(),
+              lastUpdated: jobDetails?.updatedAt ? new Date(jobDetails.updatedAt) : new Date()
+            };
+          })
+        );
+
+        const filteredRows=rows.filter((job)=>{
+          const matchesSearch = job.job_title.toLowerCase().includes(searchTerm.toLowerCase());
+          return matchesSearch
+        })
+
+        setFilteredRows(filteredRows)
+
+      }catch(err){
+        showNotification("Something went wrong while fetching data",'failure')
+        console.log(err)
+      }finally{
+        setLoading(false)
+      }
+    }
+    fetchData()
+    },[searchTerm]);
+    
+  
 
   return (
     <div>
+    {notification && (
+        <Notification
+          open={true}
+          message={notification.message}
+          type={notification.type}
+          onClose={() => setNotification(null)}
+        />
+      )}
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} gap={2} pt={4}>
         <TextField
           label="Search..."
@@ -64,38 +129,14 @@ const AdminAllJobData = () => {
             ),
           }}
         />
-
-        <Box display="flex" gap={0}>
-          {['All', 'Active', 'Pending'].map((status) => (
-            <Button
-              key={status}
-              variant={filterStatus === status ? 'contained' : ''}
-              onClick={() => handleFilterClick(status)}
-              sx={{
-                backgroundColor: filterStatus === status ? '#315370' : '#e0e0e0',
-                color: filterStatus === status ? 'white' : 'gray',
-                fontSize: '16px',
-                height: '45px',
-                textTransform: 'none',
-                width: '120px',
-                border: '1px solid gray',
-                borderRadius: status === 'All' ? '20px 0 0 20px' : status === 'Pending' ? '0 20px 20px 0' : '0',
-                '&:hover': {
-                  backgroundColor: filterStatus === status ? '#315380' : '#e0e0e0',
-                },
-              }}
-            >
-              {status}
-            </Button>
-          ))}
-        </Box>
+       
       </Box>
       {loading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 400, color: '#315370' }}>
           <CircularProgress />
         </Box>
       ) : (
-        <Card className='mt-9 font-sans'>
+        <Card className='mt-6 p-2 shadow border font-sans'>
           <div style={{ height: 600, width: '100%' }} className='pt-4'>
             <DataGrid
               rows={filteredRows}
@@ -107,7 +148,7 @@ const AdminAllJobData = () => {
 
               initialState={{ pagination: { paginationModel: { page: 0, pageSize: 10 } } }}
               pageSizeOptions={[5, 10]}
-   pagination
+              pagination
               autoPageSize
 
               disableSelectionOnClick
