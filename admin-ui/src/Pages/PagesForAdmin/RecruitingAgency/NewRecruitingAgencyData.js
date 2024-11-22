@@ -14,7 +14,10 @@ import {
 import { DataGrid } from '@mui/x-data-grid';
 import Notification from '../../../Components/Notification';
 import { rows, cols } from './NewRowColData';
-import { FaEnvelope, FaBuilding, FaUsers, FaBriefcase, FaFlag, FaMapMarkerAlt, FaCity, FaCheckCircle, FaIdCard, FaLinkedin, FaGlobe } from 'react-icons/fa';
+import InsertLinkOutlinedIcon from '@mui/icons-material/InsertLinkOutlined';
+import CorporateFareOutlinedIcon from '@mui/icons-material/CorporateFareOutlined';
+import CreditCardOutlinedIcon from '@mui/icons-material/CreditCardOutlined';
+import { FaEnvelope, FaBuilding, FaUsers, FaPhone, FaBriefcase, FaMapMarkerAlt, FaCity, FaCheckCircle, FaLinkedin, FaGlobe } from 'react-icons/fa';
 import { fetchPendingRAgenciesByAdminId, fetchRecuritingAgencybyId } from '../../../services/api';
 import { store } from '../../../State/Store';
 
@@ -32,9 +35,9 @@ const NewRecruitingAgencyData = () => {
   const [selectedRow, setSelectedRow] = useState(null);
   const [acManager, setAcManager] = useState([]);
   const [selectedManager, setSelectedManager] = useState('');
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [loading, setLoading] = React.useState(false);
+  const [inactivateLoad,setInactivateLoad]=useState(false)
+  const [assignLoad,setAssignLoad]=useState(false)
 
   const handleManagerChange = (event) => {
     setSelectedManager(event.target.value);
@@ -45,26 +48,22 @@ const NewRecruitingAgencyData = () => {
     setTimeout(() => {
       setLoading(false);
     }, 1000);
-  }, [rows, page, rowsPerPage]);
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
+  }, [rows]);
 
   const fetchRecruitingAgency = async () => {
     try {
+      setLoading(true)
+      //fetch ids of recruiter agency
       const res = await fetchPendingRAgenciesByAdminId(userData?._id);
-      const agencyIds = res.flat();
+      
       const pendingAgencies = await Promise.all(
-        agencyIds.map(async (agencyId) => {
+        res.map(async (agencyId,index) => {
           try {
+            //Fetch complete details of recruiter
             const agencyArray = await fetchRecuritingAgencybyId(agencyId);
-            return agencyArray;
+            return ({
+              ...agencyArray,id:index+1
+            });
           } catch (fetchError) {
             console.error("Error fetching agency data for ID:", agencyId, fetchError);
             return [];
@@ -76,12 +75,15 @@ const NewRecruitingAgencyData = () => {
     } catch (err) {
       console.error("Error in fetchRecruitingAgency:", err);
       showNotification("There is something wrong while fetching data", "error");
+    }finally{
+      setLoading(false)
     }
   };
 
   const fetchAccountManager = async () => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/accountmanager/madmin/${myValue.userData._id}`)
+      console.log(response.data)
       setAcManager(response.data)
     } catch (err) {
       console.error("Error fetching account managers:", err);
@@ -104,17 +106,21 @@ const NewRecruitingAgencyData = () => {
       setOpenPopup(true);
     } else {
       try {
+        setInactivateLoad(true)
         await axios.post(`${process.env.REACT_APP_API_APP_URL}/recruiting/changestatus`, { id: item._id, status: item.account_status.status, reason, admin_id: myValue.userData._id })
         showNotification("Successfully account status changed.", "success")
         fetchRecruitingAgency();
       } catch (err) {
         showNotification("Something went wrong in account status change...!", "failure")
+      }finally{
+        setInactivateLoad(false)
       }
     }
   };
 
   const handleSubmitButton = async () => {
     try {
+      setInactivateLoad(true)
       await axios.post(`${process.env.REACT_APP_API_APP_URL}/recruiting/changestatus`, {
         id: selectInactive._id,
         status: selectInactive.account_status.status,
@@ -126,24 +132,30 @@ const NewRecruitingAgencyData = () => {
       showNotification("Successfully Recruiting agency status changed!", "success");
     } catch (err) {
       showNotification("There is something wrong in account status change", "failure");
+    }finally{
+      setInactivateLoad(false)
     }
   };
 
-  const handleRowClick = (params) => {
-    setSelectedRow(params.row);
+  const handleRowClick = (row) => {
+    setSelectedRow(row);
     setOpen(true);
   };
 
   const handleAssignAcManager = async () => {
     try {
+      setAssignLoad(true)
       await axios.post(`${process.env.REACT_APP_API_APP_URL}/recruiting/allocatedacmanager`, { ra_id: selectedRow._id, ac_id: selectedManager });
       await axios.post(`${process.env.REACT_APP_API_BASE_URL}/accountmanager/addrecruiting`, { ra_id: selectedRow._id, ac_id: selectedManager });
       await axios.post(`${process.env.REACT_APP_API_BASE_URL}/masteradmin/rmvrecruitingpendinglist`, { m_id: myValue.userData._id, ra_id: selectedRow._id });
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/masteradmin/recruiterverifiedbymadmin`,{m_id:myValue.userData._id,ra_id:selectedRow._id})
       fetchRecruitingAgency();
       handleClose();
       showNotification("Successfully assigned to account manager.", "success");
     } catch (err) {
       showNotification("There is something wrong while assigning to account manager.", "failure");
+    }finally{
+      setAssignLoad(false)
     }
   };
 
@@ -158,16 +170,7 @@ const NewRecruitingAgencyData = () => {
     setSelectedRow(null);
   };
 
-  // Add a `displayIndex` based on the page and rows per page
-  const displayedRows = recruitingAgency.map((agency, index) => ({
-    ...agency,
-    displayIndex: page * rowsPerPage + index + 1, // Calculate display index
-  })).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
-  const columns = [
-    { field: 'displayIndex', headerName: 'No.', width: 70 },
-    ...cols(handleInactivateButton),
-  ];
 
   return (
     <div>
@@ -182,11 +185,11 @@ const NewRecruitingAgencyData = () => {
           <Card className='mt-4 font-sans'>
             <div style={{ height: 600, width: '100%' }}>
               <DataGrid
-                rows={displayedRows}
-                columns={columns}
+                rows={recruitingAgency}
+                columns={cols(handleInactivateButton)}
                 rowHeight={80}
-                onRowClick={handleRowClick}
-                pageSize={rowsPerPage}
+                onRowClick={(params)=>handleRowClick(params?.row)}
+                pageSize={8}
                 pageSizeOptions={[5, 10]}
                 getRowId={(row) => row._id}
                 initialState={{
@@ -222,16 +225,11 @@ const NewRecruitingAgencyData = () => {
                   },
                   '& .MuiDataGrid-cell': {
                     fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem' },
+                    minHeight: '2.5rem',
                   },
                   '& .MuiDataGrid-cellContent': {
                     display: 'flex',
                     alignItems: 'center',
-                  },
-                  '& .MuiDataGrid-cell': {
-                    minHeight: '2.5rem',
-                  },
-                  '& .MuiDataGrid-cell': {
-                    fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem' },
                   },
                   '& .MuiDataGrid-row': {
                     borderBottom: 'none',
@@ -242,7 +240,220 @@ const NewRecruitingAgencyData = () => {
                 }}
               />
             </div>
-          </Card>
+            {/* Dialpg box for inactivate account */}
+            <Dialog open={openPopup} onClose={handleCloseInactivateButton}>
+              <DialogTitle>Reason for Inactivating</DialogTitle>
+              <DialogContent>
+                 <DialogContentText>
+                    Provide a reason for inactivating this enterprise:
+                 </DialogContentText>
+                 <TextField
+                     autoFocus
+                     margin="dense"
+                     id="reason"
+                     label="Reason"
+                     type="text"
+                     fullWidth
+                     value={reason}
+                     onChange={(e) => setReason(e.target.value)}
+                   />
+               </DialogContent>
+              <DialogActions>
+              <Button onClick={handleCloseInactivateButton} color="primary">Cancel</Button>
+              <Button onClick={handleSubmitButton} color="primary" disabled={inactivateLoad || !reason}>
+             {inactivateLoad ? 'Inactivating...' : 'Submit'}
+             </Button>
+            </DialogActions>
+            </Dialog>
+
+            {/* Dialog box for Show Recruiter preview */}
+            {selectedRow && (
+        <Dialog open={open} onClose={handleClose} fullWidth maxWidth="xl">
+          {/* Dialog Title */}
+          <DialogTitle className="bg-gray-600 text-white text-lg font-bold">
+            Details for {selectedRow?.full_name}
+          </DialogTitle>
+
+          {/* Dialog Content */}
+          <DialogContent className="bg-gray-50">
+            <div className="bg-white shadow-md rounded-lg p-6 my-8">
+              <div className="text-center mb-8">
+                <h2 className="text-2xl xl:text-3xl font-semibold text-gray-800">
+                  {selectedRow.full_name}
+                </h2>
+                <p className="text-gray-500 pt-1">Member Information</p>
+              </div>
+           <div className='flex items-start'>
+              {/* Professional details container */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                {/* Email */}
+                <div className="flex items-center text-gray-700">
+                  <FaEnvelope className="mr-2 text-black text-md xl:text-xl" />
+                  <div className="flex gap-2 text-[18px]">
+                    <span className="block font-medium">Email:</span>
+                    <span>{selectedRow?.email}</span>
+                  </div>
+                </div>
+
+                {/* Mobile No */}
+                <div className="flex items-center text-gray-700">
+                  <FaPhone className="mr-2 text-black text-md" />
+                  <div className="flex gap-2 text-[18px]">
+                    <span className="block font-medium">Mobile No:</span>
+                    <span>+{selectedRow?.mobileno}</span>
+                  </div>
+                </div>
+
+                {/* Designation */}
+                <div className="flex items-center text-gray-700">
+                  <FaBriefcase className="mr-2 text-black text-md" />
+                  <div className="flex gap-2 text-[18px]">
+                    <span className="block font-medium">Designation:</span>
+                    <span>{selectedRow?.designation}</span>
+                  </div>
+                </div>
+
+                {/* Company Name */}
+                <div className="flex items-center text-gray-700">
+                  <FaBuilding className="mr-2 text-black text-md" />
+                  <div className="flex gap-2 text-[18px]">
+                    <span className="block font-medium">Company Name:</span>
+                    <span>{selectedRow?.company_name}</span>
+                  </div>
+                </div>
+
+                {/* Company Size */}
+                <div className="flex items-center text-gray-700">
+                  <FaUsers className="mr-2 text-black text-md" />
+                  <div className="flex gap-2 text-[18px]">
+                    <span className="block font-medium">Company Size:</span>
+                    <span>{selectedRow?.company_size}</span>
+                  </div>
+                </div>
+
+                {/* Country */}
+                <div className="flex items-center text-gray-700">
+                  <FaGlobe className="mr-2 text-black text-md" />
+                  <div className="flex gap-2 text-[18px]">
+                    <span className="block font-medium">Country:</span>
+                    <span>{selectedRow?.country}</span>
+                  </div>
+                </div>
+
+                {/* State */}
+                <div className="flex items-center text-gray-700">
+                  <FaMapMarkerAlt className="mr-2 text-black text-md" />
+                  <div className="flex gap-2 text-[18px]">
+                    <span className="block font-medium">State:</span>
+                    <span>{selectedRow?.state}</span>
+                  </div>
+                </div>
+
+                {/* City */}
+                <div className="flex items-center text-gray-700">
+                  <FaCity className="mr-2 text-black text-md" />
+                  <div className="flex gap-2 text-[18px]">
+                    <span className="block font-medium">City:</span>
+                    <span>{selectedRow?.city}</span>
+                  </div>
+                </div>
+
+                {/* Linkedin */}
+                <div className="flex items-center text-gray-700">
+                  <FaLinkedin className="mr-2 text-black text-md" />
+                  <div className="flex gap-2 text-[18px]">
+                    <span className="block font-medium">LinkedIn Url:</span>
+                    <a className='text-blue-400' rel="noreferrer" target='_blank' href={`${selectedRow?.linkedin_url}`}><InsertLinkOutlinedIcon></InsertLinkOutlinedIcon></a>
+                  </div>
+                </div>
+
+                {/* Kyc Submited */}
+                <div className="flex items-center text-gray-700">
+                  <FaCheckCircle className="mr-2 text-black text-md" />
+                  <div className="flex gap-2 text-[18px]">
+                    <span className="block font-medium">Kyc Submited:</span>
+                    <span>{(selectedRow.kyc_details)?("Yes"):("No")}</span>
+                  </div>
+                </div>
+
+                {/* Entity type */}
+                {
+                  selectedRow.kyc_details && 
+                  <div className="flex items-center text-gray-700">
+                    <CorporateFareOutlinedIcon className="mr-2 text-black text-md" />
+                    <div className="flex gap-2 text-[18px]">
+                      <span className="block font-medium">Entity Type:</span>
+                      <span>{selectedRow?.kyc_details.entity_type}</span>
+                    </div>
+                  </div>
+                }
+
+                {/* Pancard number */}
+                {
+                  selectedRow.kyc_details && 
+                  <div className="flex items-center text-gray-700">
+                    <CreditCardOutlinedIcon className="mr-2 text-black text-md" />
+                    <div className="flex gap-2 text-[18px]">
+                      <span className="block font-medium">Pancard Number:</span>
+                      <span>{selectedRow?.kyc_details.pancard_number}</span>
+                    </div>
+                  </div>
+                }
+
+
+
+
+
+                {/* Account Manager Selection */}
+                <FormControl fullWidth variant="outlined">
+                  <InputLabel>Select Account Manager</InputLabel>
+                  <Select
+                    value={selectedManager}
+                    onChange={handleManagerChange}
+                    label="Select Account Manager"
+                  >
+                    {acManager?.map((manager) => (
+                      <MenuItem key={manager._id} value={manager._id}>
+                        {manager.full_name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </div>
+              <div className='border rounded-md bg-gray-50 overflow-hidden flex justify-center items-center w-[600px] h-[400px]'>
+                {
+                  selectedRow.kyc_details?(
+                    <iframe title='kyc docs' className='transform scale-100 origin-top-left w-full h-full' src={`${process.env.REACT_APP_APP_URL}/kycdocs/${selectedRow.kyc_documents?.filename}`}></iframe>
+                  ):(
+                     <span>KYC details are not submitted.</span>
+                  )
+                }
+                
+              </div>
+            </div>
+            </div>
+          </DialogContent>
+
+          {/* Dialog Actions */}
+          <DialogActions className="bg-gray-100 px-6 py-6">
+            <Button
+              onClick={handleClose}
+              className="bg-gray-600 hover:bg-blue-500 hover:text-white text-white px-4 py-2 text-xl rounded-md"
+            >
+              Cancel
+            </Button>
+            <Button
+              disabled={selectedManager === ''}
+              onClick={handleAssignAcManager}
+              className="bg-gray-600 disabled:bg-slate-200 disabled:cursor-not-allowed hover:bg-blue-500 hover:text-white text-white px-4 py-2 text-xl rounded-md"
+            >
+              {assignLoad && <span>Loading...</span>}
+              {!assignLoad && <span>Assign</span>}
+            </Button>
+          </DialogActions>
+        </Dialog>
+      )}
+       </Card>
         )}
       </div>
     </div>

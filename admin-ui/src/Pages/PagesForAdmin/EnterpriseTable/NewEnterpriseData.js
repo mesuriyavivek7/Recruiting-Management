@@ -257,15 +257,11 @@ const NewEnterpriseData = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseInactivateButton} color="primary">Cancel</Button>
-          <Button onClick={handleSubmitButton} color="primary" disabled={inactivateLoad}>
+          <Button onClick={handleSubmitButton} color="primary" disabled={inactivateLoad || !reason}>
             {inactivateLoad ? 'Inactivating...' : 'Submit'}
           </Button>
         </DialogActions>
       </Dialog>
-
-
-
-
 
       {selectedRow && (
         <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
@@ -396,10 +392,7 @@ const NewEnterpriseData = () => {
           </DialogActions>
         </Dialog>
       )}
-      {/* Notification */}
-      {notification && (
-        <Notification message={notification.message} type={notification.type} />
-      )}
+      
 
     </>
   );

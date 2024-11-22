@@ -13,7 +13,7 @@ export const getFormateDate = (cdate) => {
 };
 
 // DataGrid columns configuration
-export const columns = (handleInactivateButton, handleRowClick) => [
+export const columns = (handleInactivateButton) => [
   { field: 'id', headerName: 'ID', width: 100 },
   { field: 'full_name', headerName: 'Full Name', width: 200 },
   { field: 'email', headerName: 'Email', width: 300 },
