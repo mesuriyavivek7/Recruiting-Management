@@ -24,7 +24,7 @@ export const columns = [
     field: 'email',
     headerName: 'Email',
     flex: 2,
-    minWidth: 250,
+    minWidth: 300,
     align: 'center',
     headerAlign: 'center',
   },
@@ -82,6 +82,37 @@ export const columns = [
       </Button>
     ),
   },
+  {
+      field: 'status',
+      headerName: 'Account Status',
+      flex: 1.5,
+      minWidth: 200,
+      headerAlign: 'center',
+      align: 'center',
+      renderCell: (params) => (
+        <span className={`text-white text-[17px] px-4 rounded-md p-2 ${params.row.status==="Active"?"bg-green-500":"bg-red-500"}`}>{params.row.status}</span>
+      ),
+    },
+    {
+      field:"account_manager_verified",
+      headerName:'Ac Manager Verified',
+      flex:1.5,
+      minWidth:200,
+      headerAlign:"center",
+      align:'center',
+      renderCell: (params) =>(
+        <span className={`text-white text-[17px] px-6 rounded-md p-2 ${params.row.account_manager_verified?"bg-green-500":"bg-red-500"}`}>{params.row.account_manager_verified?"Yes":"No"}</span>
+      )
+    },
+    {
+      field:"account_manager",
+      headerName:"Account Manager",
+      flex:1.5,
+      minWidth:200,
+      headerAlign:"center",
+      align:'center',
+    }
+  
 ];
 
 const selectUserData = (state) => state?.admin?.userData;
@@ -91,6 +122,7 @@ let rows = [];
 let rowsr = [];
 
 if (userData?.admin_type === 'master_admin') {
+  //fetch enterprise data(enterprise id)
   const data = await fetchVerifiedRAgenciesByAdminId(userData?._id);
   rows = data
     ? await Promise.all(
@@ -114,22 +146,6 @@ if (userData?.admin_type === 'master_admin') {
     )
     : [];
 
-
-  const rowsr = Array.isArray(data)
-    ? data.map((agency, index) => ({
-      _id: index + 1,
-      full_name: agency.full_name || `User ${index + 1}`,
-      email: agency.email || `user${index + 1}@example.com`,
-      designation: agency.designation || "Not Provided",
-      company_name: agency.company_name || "Unknown",
-      country: agency.country || "Unknown",
-      city: agency.city || "Unknown",
-      domains: Array.isArray(agency.domains) ? agency.domains : [], // Ensure it's an array
-      firm_type: Array.isArray(agency.firm_type) ? agency.firm_type : [], // Ensure it's an array
-      linkedin_url: agency.linkedin_url || "Not Provided", // Fallback if not provided
-      email_verified: agency.email_verified ? "Yes" : "No",
-    }))
-    : [];
 }
 
 
