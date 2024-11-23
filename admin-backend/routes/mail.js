@@ -4,8 +4,7 @@ import { sendMail } from '../controller/mailController.js'
 
 const router=express.Router()
 
-//for sending mail
-
-router.post('/send-mail',sendMail);
+//Sending mail for invite account manager to dashboard
+router.post('/invite-acmanager',sendMail);
 
 export default router;

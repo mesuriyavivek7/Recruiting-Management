@@ -69,7 +69,7 @@ mongoose.connection.on("connected",()=>{
 app.use('/api/auth',authRoute)
 app.use('/api/masteradmin',masteradminRoute)
 app.use('/api/accountmanager',accountmanagerRoute)
-app.use('/api',mailRoute)
+app.use('/api/mail',mailRoute)
 
 
 //middleware for error handeling

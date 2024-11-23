@@ -222,38 +222,39 @@ const Navbar = ({ enterpriseData, recruiterData }) => {
                 {showEnterpriseData ? (
                   <>
                     <h4 className="font-semibold text-xl">Enterprise Results:</h4>
-                    <div className="mt-2  ">
-                      {filteredEnterpriseData.length > 0 ? (
-                        filteredEnterpriseData.map((item, index) => (
-                          <Box
-                            key={index}
-                            className="p-4 my-2 mb-3 bg-gray-100 flex flex-col gap-1 hover:bg-gray-200 rounded-lg shadow-md transition duration-300"
-                          >
-                            <div className="flex gap-1 items-center">
-                              <span className="text-[15px] font-semibold w-36">Full Name:</span>
-                              <span className="">{item.full_name}</span>
-                            </div>
-                            <div className="flex gap-1 items-center">
-                              <span className="text-[15px] font-semibold w-36">Email:</span>
-                              <span className="">{item.email}</span>
-                            </div>
-                            <div className="flex gap-1 items-center">
-                              <span className="text-[15px] font-semibold w-36">Account Status:</span>
-                              <span className="">{item.account_status.status}</span>
-                            </div>
-                            <div className="flex gap-1 items-center">
-                              <span className="text-[15px] font-semibold w-36">Account Manager:</span>
-                              <span className="">{item.account_manager}</span>
-                            </div>
+                    <div className="mt-2">
+                    {filteredEnterpriseData.length > 0 ? (
+                      filteredEnterpriseData.map((item, index) => (
+                        <Box
+                          key={index}
+                          className="p-4 my-2 mb-3 bg-gray-100 flex flex-col gap-1 hover:bg-gray-200 rounded-lg shadow-md transition duration-300"
+                        >
+                          <div className="flex gap-1 items-center">
+                            <span className="text-[15px] font-semibold w-36">Full Name:</span>
+                            <span className="">{item.full_name}</span>
+                          </div>
+                          <div className="flex gap-1 items-center">
+                            <span className="text-[15px] font-semibold w-36">Email:</span>
+                            <span className="">{item.email}</span>
+                          </div>
+                          <div className="flex gap-1 items-center">
+                            <span className="text-[15px] font-semibold w-36">Account Status:</span>
+                            <span className="">{item.account_status.status}</span>
+                          </div>
+                          <div className="flex gap-1 items-center">
+                            <span className="text-[15px] font-semibold w-36">Account Manager:</span>
+                            <span className="">{item.account_manager}</span>
+                          </div>
+                          
+                        </Box>
+                      ))
+                    ) : (
+                      <p>No enterprise results found.</p>
+                    )}
 
-                          </Box>
-                        ))
-                      ) : (
-                        <p>No enterprise results found.</p>
-                      )}
+                  </div>
+                </>
 
-                    </div>
-                  </>
                 ) : (
                   <>
                     <h4 className="font-semibold text-xl">Recruiter Results:</h4>

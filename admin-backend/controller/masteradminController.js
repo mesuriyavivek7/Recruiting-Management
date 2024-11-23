@@ -239,3 +239,14 @@ export const getAllPendingCandidates = async (req, res, next) => {
         next(error);
     }
 };
+
+
+export const handleAddAcManager=async (req,res,next)=>{
+     try{ 
+        const {m_admin_id, ac_id}=req.body
+        await MASTERADMIN.findByIdAndUpdate(m_admin_id,{$push:{account_manager:ac_id}})
+        res.status(200).json("Account manager added.")
+     }catch(err){
+         next(err)
+     }
+}

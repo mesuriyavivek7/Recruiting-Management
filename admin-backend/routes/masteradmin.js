@@ -1,5 +1,5 @@
 import express from 'express'
-import { addEnterprise, addRecruitingAgency, getAccountManagerDetailsByMId, getAllPendingCandidates, getAllPendingJobs, getAllPendingRecuritingAgencies, getAllVerifiedCandidates, getAllVerifiedJobs, getAllVerifiedRecuritingAgencies, getMasterAdminDetails, getPendingVerifiedEnterpriseByMAdmin, getVerifiedEnterprisesByMAdmin, handleAssignEnterpriseToAc, recruiterAgencyVerified, rmvEnterprisePendingList, rmvRecruitingPendingList } from '../controller/masteradminController.js'
+import { addEnterprise, addRecruitingAgency, getAccountManagerDetailsByMId, getAllPendingCandidates, getAllPendingJobs, getAllPendingRecuritingAgencies, getAllVerifiedCandidates, getAllVerifiedJobs, getAllVerifiedRecuritingAgencies, getMasterAdminDetails, getPendingVerifiedEnterpriseByMAdmin, getVerifiedEnterprisesByMAdmin, handleAddAcManager, handleAssignEnterpriseToAc, recruiterAgencyVerified, rmvEnterprisePendingList, rmvRecruitingPendingList } from '../controller/masteradminController.js'
 
 
 const router=express.Router()
@@ -50,9 +50,11 @@ router.get('/getpendingenterprises/:m_admin_id', getPendingVerifiedEnterpriseByM
 //get the account manager from the master admin list
 router.get('/getaccountmanagerdetails/:m_admin_id',getAccountManagerDetailsByMId)
 
-
 //handle assign enterprise to any account manager
 router.post('/assignenterprisetoac',handleAssignEnterpriseToAc)
+
+//Adding account manager
+router.post('/addacmanager',handleAddAcManager)
 
 
 export default router;

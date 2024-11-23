@@ -11,11 +11,12 @@ const admin_be_uri = process.env.REACT_APP_API_BASE_URL;
 const Add = () => {
   const adminData = useSelector((state) => state.admin.userData)
   const [open, setOpen] = useState(false);
-  
+  const [loading,setLoading]=useState(false)
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [notification, setNotification] = useState(null);
+  const [errors,setErrors]=useState({})
 
   const showNotification = (message, type) => {
     setNotification({ message, type });
@@ -28,57 +29,62 @@ const Add = () => {
     setOpen(false);
   };
 
+  const handleValidateData= () =>{
+      let newerrors={}
+      
+      const emailRegax=/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+
+      if(!fullName) newerrors.fullname="Fullname is required."
+      if(!email) newerrors.email="Email address is required."
+      else if(!emailRegax.test(email)) newerrors.email="Email address is not valid."
+      if(!password) newerrors.password="Password is required."
+
+      setErrors(newerrors)
+
+      return Object.keys(newerrors).length===0
+  }
+
   const handleSubmit = async () => {
-    const data = {
-      full_name: fullName,
-      email: email,
-      password: password,
-    };
+    if(handleValidateData()){
+         setLoading(true)
+         const data = {
+           full_name: fullName,
+           email: email,
+           password: password,
+         };
 
-    const response = await CreateAccountManager(adminData?._id, data);
-    if (response.status === 200) {
-      showNotification('Successfully account status manager created', 'success');
-
-      //send invitation mail
-      try {
-        const emailResponse = await axios.post(`${admin_be_uri}/send-mail`, {
-          fullName,
-          email,
-          password,
-        });
-        if (emailResponse.status === 200) {
-          showNotification('Email sent successfully', 'success');
-        } else {
-          showNotification('Failed to send email', 'error');
-        }
-      } catch (error) {
-        console.error('Error sending email:', error);
-        showNotification('Error occurred while sending email', 'error');
-      }
+         try{
+          await CreateAccountManager(adminData?._id, data);
+      
+          //send invitation mail
+          await axios.post(`${admin_be_uri}/mail/invite-acmanager`, {
+            fullName,
+            email,
+            password,
+          });
+          setFullName('')
+          setEmail('')
+          setPassword('')
+          setOpen(false);
+          showNotification("Successfully new account manager added.",'success')
+         }catch(error){
+          if(error.response.status===400){
+            showNotification(error.response.data.message,'failure')
+          }else{
+            showNotification('Something went wrong while adding account manager.', 'failure');
+          }
+         }finally{
+          setLoading(false)
+         }
+        
     }
-    else {
-      showNotification('Something went wrong in changing account status..!', 'failure');
-      console.error("Error while creating account manager");
-    }
-    // try {
-    //   const response = await axios.post('http://localhost:8000/api/send-mail', data);
-    //   if (response.status === 200) {
-    //     console.log('Email sent successfully');
-    //   } else {
-    //     console.error('Failed to send email');
-    //   }
-    // } catch (error) {
-    //   console.error('Error:', error);
-    // }
-
-    setOpen(false);
   };
 
   return (
     <div className='relative h-16 xl:h-20 px-5 flex items-center font-medium xl:text-lg  bg-blue-120 '>
       {/* Centered Links */}
       <div className=' flex justify-center gap-5'>
-        <a href='#' className='hover:border-b-2 hover:border-blue-230 transition duration-300'>My Dashboard</a>
+        <span className='hover:border-b-2 hover:border-blue-230 transition duration-300'>My Dashboard</span>
    
       </div>
 
@@ -103,8 +109,10 @@ const Add = () => {
             backgroundColor: 'white',
             padding: '10px',
             borderRadius: '10px',
+            width:'500px'
           }}>
             <DialogContent>
+              <div className='flex flex-col mb-3'>
               <Typography component="label" sx={{ fontWeight: 'bold', mb: 1 }}>
                 Full Name <Typography component="span" color="error">*</Typography>
               </Typography>
@@ -117,7 +125,6 @@ const Add = () => {
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 sx={{
-                  mb: 2,
                   '& .MuiOutlinedInput-root': {
                     borderRadius: '10px',
                     '& fieldset': {
@@ -136,6 +143,11 @@ const Add = () => {
                   },
                 }}
               />
+              {
+                errors.fullname && <span className='text-red-400 mt-1 text-sm'>{errors.fullname}</span>
+              }
+              </div>
+              <div className='flex flex-col mb-3'>
               <Typography component="label" sx={{ fontWeight: 'bold', mb: 1 }}>
                 Email Address <Typography component="span" color="error">*</Typography>
               </Typography>
@@ -145,7 +157,6 @@ const Add = () => {
                 fullWidth
                 value={email}
                 sx={{
-                  mb: 2,
                   '& .MuiOutlinedInput-root': {
                     borderRadius: '10px',
                     '& fieldset': {
@@ -165,7 +176,11 @@ const Add = () => {
                 }}
                 onChange={(e) => setEmail(e.target.value)}
               />
-
+              {
+                errors.email && <span className='text-red-400 mt-1 text-sm'>{errors.email}</span>
+              }
+              </div>
+              <div className='flex mb-2 flex-col'>
               <Typography component="label" sx={{ fontWeight: 'bold', mb: 1 }}>
                 Password <Typography component="span" color="error">*</Typography>
               </Typography>
@@ -175,7 +190,6 @@ const Add = () => {
                 fullWidth
                 value={password}
                 sx={{
-                  mb: 2,
                   '& .MuiOutlinedInput-root': {
                     borderRadius: '10px',
                     '& fieldset': {
@@ -195,10 +209,15 @@ const Add = () => {
                 }}
                 onChange={(e) => setPassword(e.target.value)}
               />
+              {
+                errors.password && <span className='text-red-400 mt-1 text-sm'>{errors.password}</span>
+              }
+              </div>
             </DialogContent>
 
             <DialogActions sx={{ padding: '16px' }}>
               <Button
+                disabled={loading}
                 fullWidth
                 onClick={handleSubmit}
                 sx={{

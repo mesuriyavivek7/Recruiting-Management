@@ -10,7 +10,10 @@ import { useSelector } from "react-redux";
 
 const Admin = () => {
   const getRows = useRows();
-  const [rows, setRows] = useState([]);
+  const [rows, setRows] = useState([])
+
+  const [enterpriseData,setEnterpriseData]=useState([])
+  const [recruiterData,setRecruiterData]=useState([])
 
   const navigate = useNavigate()
   const myvalue = useSelector((state) => state.admin)

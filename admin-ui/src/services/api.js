@@ -442,15 +442,7 @@ export const SearchJobs = async (query = '') => {
 // create a account manager using master admin id
 export const CreateAccountManager = async (m_admin_id, formData) => {
     try {
-        const response = await axios.post(
-            `${admin_be_uri}/accountmanager/create/${m_admin_id}`,
-            formData,
-            {
-                headers: {
-                    "Content-Type": "application/json",
-                }
-            }
-        );
+        const response = await axios.post(`${admin_be_uri}/accountmanager/create/${m_admin_id}`,formData);
         return response;
     } catch (error) {
         console.error("Error while creating account manager : ", error);
