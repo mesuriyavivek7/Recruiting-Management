@@ -1,5 +1,4 @@
-import Button from '@mui/material/Button';
-import { fetchAllCandidateDetails, fetchCandidateBasicDetailsById, fetchCandidateStatusById, fetchJobBasicDetailsByJobId, fetchVerifiedCandidatesByACManagerId, fetchVerifiedCandidatesByMAdminId } from '../../../services/api';
+import { fetchCandidateBasicDetailsById, fetchCandidateStatusById, fetchJobBasicDetailsByJobId, fetchVerifiedCandidatesByMAdminId } from '../../../services/api';
 import { cstatus } from '../../../constants/jobStatusMapping';
 import { format, formatDistanceToNowStrict } from 'date-fns';
 import { store } from '../../../State/Store';
@@ -10,7 +9,7 @@ export const columns = [
     field: '_id',
     headerName: 'ID',
     flex: 1,
-    minWidth: 100,
+    minWidth: 90,
     headerAlign: 'left',
     align: 'left',
   },
@@ -52,12 +51,84 @@ export const columns = [
     },
   },
   {
+    field: 'email',
+    headerName: 'Email',
+    flex: 2,
+    minWidth: 200,
+    headerAlign: 'left',
+    align: 'left',
+    renderCell: (params) => (
+      <div>
+        {params.row.email.length > 15
+          ? `${params.row.email.slice(0, 15)}...`
+          : params.row.email}
+      </div>
+    ),
+  },
+  {
+    field: 'mobile',
+    headerName: 'Contact',
+    flex: 2,
+    minWidth: 200,
+    headerAlign: 'left',
+    align: 'left',
+    renderCell: (params) => (
+      <div>
+       +{params.row.mobile}
+      </div>
+    ),
+  },
+  {
     field: 'candidate_status',
     headerName: 'Candidate Status',
     flex: 1,
     minWidth: 200,
     headerAlign: 'left',
     align: 'left',
+    renderCell : (params) =>(
+      <span className='p-2 bg-slate-50 text-[16px] rounded-md border'>{params.row.candidate_status}</span>
+    )
+  },
+  {
+    field: 'recruiter_member',
+    headerName: 'Recruiter',
+    flex: 1,
+    minWidth: 200,
+    headerAlign: 'left',
+    align: 'left',
+    renderCell:(params) =>(
+      <div className='w-full h-full flex gap-2 items-center'>
+        <span className='h-8 w-8 text-white bg-blue-500 rounded-full flex justify-center items-center'>{params.row.recruiter_member.charAt(0).toUpperCase()}</span>
+        <span>{params.row.recruiter_member}</span>
+      </div>
+    )
+  },
+  {
+    field: 'notice_period',
+    headerName: 'Notice Period',
+    flex: 1,
+    minWidth: 150,
+    headerAlign: 'left',
+    align: 'left',
+    renderCell: (params) => (
+      <div>
+        {params.row.notice_period} Days
+      </div>
+    ),
+  },
+  { 
+    field: 'account_manager',
+    headerName: 'Account Manager',
+    flex: 1,
+    minWidth: 180,
+    headerAlign: 'left',
+    align: 'left',
+    renderCell: (params) => (
+      <div className='w-full h-full flex gap-2 items-center'>
+         <span className='w-8 h-8 text-white rounded-full flex justify-center bg-orange-400 items-center'>{params.row.account_manager.charAt(0).toUpperCase()}</span>
+         <span>{params.row.account_manager}</span>
+      </div>
+    )
   },
   {
     field: 'submitted',
@@ -103,47 +174,8 @@ export const columns = [
       );
     },
   },
-  {
-    field: 'notice_period',
-    headerName: 'Notice Period',
-    flex: 1,
-    minWidth: 150,
-    headerAlign: 'left',
-    align: 'left',
-    renderCell: (params) => (
-      <div>
-        {params.row.notice_period} Days
-      </div>
-    ),
-  },
-  {
-    field: 'email',
-    headerName: 'Email',
-    flex: 2,
-    minWidth: 200,
-    headerAlign: 'left',
-    align: 'left',
-    renderCell: (params) => (
-      <div>
-        {params.row.email.length > 15
-          ? `${params.row.email.slice(0, 15)}...`
-          : params.row.email}
-      </div>
-    ),
-  },
-  {
-    field: 'mobile',
-    headerName: 'Contact',
-    flex: 2,
-    minWidth: 200,
-    headerAlign: 'left',
-    align: 'left',
-    renderCell: (params) => (
-      <div>
-        {params.row.mobile}
-      </div>
-    ),
-  },
+  
+  
 ];
 
 

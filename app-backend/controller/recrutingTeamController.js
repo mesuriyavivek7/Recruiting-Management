@@ -25,6 +25,15 @@ export const createteammember=async (req,res,next)=>{
     } 
 }
 
+export const getRecruiterMemberById=async (req,res,next)=>{
+    try{
+      const recruiter=await RECRUITINGTEAM.findById(req.params.rememberid)
+      res.status(200).json(recruiter)
+    }catch(err){
+        next(err)
+    }
+}
+
 export const checkCreadentials=async (req,res,next)=>{
      try{
        const user=await RECRUITINGTEAM.findOne({$or:[{email:req.body.email},{mobileno:req.body.mobileno}]})

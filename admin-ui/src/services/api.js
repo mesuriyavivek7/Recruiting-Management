@@ -309,6 +309,16 @@ export const fetchRecuritingTeam = async (r_agency_id) => {
     }
 }
 
+//Get recruiter member details by re_member_id
+export const fetchRecruiterMemberDetails = async (re_member_id) =>{
+    try{
+         const response= await axios.get(`${app_be_uri}/recruitingteam/${re_member_id}`)
+         return response.data
+    }catch(error){
+        console.error("Error while fetching the recruiter member details: ",error)
+    }
+}
+
 export const fetchAllCandidateDetails = async () => {
     try {
         const response = await axios.get(`${app_be_uri}/candidate/details`)

@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Box, Button, Card, CircularProgress, IconButton, InputAdornment, TextField } from '@mui/material';
+import { Box, Card, CircularProgress, IconButton, InputAdornment, TextField } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { columns, rows } from './RowColDataOfAll'; // Import columns configuration
+import { columns } from './RowColDataOfAll'; // Import columns configuration
 import { FaSearch } from 'react-icons/fa';
+import Notification from '../../../Components/Notification';
+import { store } from '../../../State/Store';
+import { fetchCandidateBasicDetailsById, fetchAccountManager, fetchRecruiterMemberDetails, fetchCandidateStatusById, fetchJobBasicDetailsByJobId, fetchVerifiedCandidatesByMAdminId } from '../../../services/api';
+import { cstatus } from '../../../constants/jobStatusMapping';
 
 const calculateRowHeight = (params) => {
   const contentHeight = params.row ? params.row.content.length / 10 : 50;
@@ -11,39 +15,103 @@ const calculateRowHeight = (params) => {
 };
 
 const AdminAllCandidateData = () => {
-  const [selectedRowId, setSelectedRowId] = useState(null);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterStatus, setFilterStatus] = useState('All');
-  const [filteredRows, setFilteredRows] = useState(rows);
+  const [filteredRows, setFilteredRows] = useState([]);
+
+  
+  const selectUserData = (state) => state?.admin?.userData;
+  const userData = selectUserData(store?.getState());
+
+  const [notification, setNotification] = useState(null);
+
+  const showNotification = (message, type) => {
+    setNotification({ message, type });
+  };
 
   useEffect(() => {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
     }, 1000);
-  }, [page, rowsPerPage]);
+  }, []);
 
   useEffect(() => {
-    const newFilteredRows = rows.filter((row) => {
-      const fullName = `${row.candidate_name.first_name} ${row.candidate_name.last_name}`.toLowerCase();
-      const matchesSearch = fullName.includes(searchTerm.toLowerCase());
-      const matchesStatus = filterStatus === 'All' || row.candidate_status === filterStatus;
-      return matchesSearch && matchesStatus;
-    });
-    setFilteredRows(newFilteredRows);
-  }, [searchTerm, filterStatus]);
+
+    const fetchData=async ()=>{
+        try{
+           setLoading(true)
+           //Fetch verified candidate ids
+           const verifiedCandiatesIds = await fetchVerifiedCandidatesByMAdminId(userData._id);
+
+           const rows = await Promise.all(verifiedCandiatesIds.map(async (candidateId, index) => {
+        
+              const { job_id, basic_details } = await fetchCandidateBasicDetailsById(candidateId);
+              const job_basic_details = await fetchJobBasicDetailsByJobId(job_id);
+              const candidate = await fetchCandidateStatusById(basic_details.candidate_id)
+        
+              // Get candidate status, defaulting to "Status Unavailable" if not found
+              const candidateStatusKey = candidate.candidate_status || "Status Unavailable";
+              const candidateStatus = cstatus.get(candidateStatusKey) || candidateStatusKey; // Map status or use original
+
+              // Fetch account manager
+              const accountManager=await fetchAccountManager(candidate?.alloted_account_manager)
+
+              //Fetch recruiter member id
+              const recruiterMember=await fetchRecruiterMemberDetails(candidate?.recruiter_member_id)
+        
+              return {
+                _id: String(index + 1),
+                candidate_name: {
+                  first_name: basic_details?.first_name || 'No First Name',
+                  last_name: basic_details?.last_name || 'No Last Name',
+                },
+                job_title: job_basic_details?.job_title || "No Job Title",
+                job_id: job_basic_details?.job_id || "No Job Id",
+                candidate_status: candidateStatus,
+                submitted: basic_details?.createdAt || "No Submission Date",
+                lastUpdated: basic_details?.updatedAt || "No Update Date",
+                notice_period: basic_details?.notice_period || "N/A",
+                email: basic_details?.primary_email_id || "No Email",
+                mobile: basic_details?.primary_contact_number || "No Contact Number",
+                account_manager: accountManager ? `${accountManager.full_name}` : null,
+                recruiter_member: recruiterMember?.full_name
+              };
+            }));
+
+          const newFilteredRows = rows.filter((row) => {
+            const fullName = `${row.candidate_name.first_name} ${row.candidate_name.last_name}`.toLowerCase();
+            const matchesSearch = fullName.includes(searchTerm.toLowerCase());
+            return matchesSearch ;
+         });
+
+         setFilteredRows(newFilteredRows);
+
+        }catch(err){
+          console.log(err)
+          showNotification("Something went wrong while fetching data",'failure')
+        }finally{
+          setLoading(false)
+        }
+    }
+    fetchData()
+  }, [searchTerm]);
 
   const handleRowClick = (id) => {
-    setSelectedRowId(id);
     navigate(`/master_admin/candidate/${id}`);
   };
 
   return (
     <div>
+    {notification && (
+        <Notification
+          open={true}
+          message={notification.message}
+          type={notification.type}
+          onClose={() => setNotification(null)}
+        />
+      )}
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} gap={2} pt={4}>
         <TextField
           label="Search..."
@@ -75,32 +143,6 @@ const AdminAllCandidateData = () => {
           }}
         />
 
-        <Box display="flex" gap={0}>
-          {['All', 'Active', 'Pending'].map((status) => (
-            <Button
-              key={status}
-              variant={filterStatus === status ? 'contained' : 'outlined'}
-              onClick={() => setFilterStatus(status)}
-              sx={{
-                backgroundColor: filterStatus === status ? '#315370' : '#e0e0e0',
-                color: filterStatus === status ? 'white' : 'gray',
-                fontSize: '16px',
-                height: '45px',
-                textTransform: 'none',
-                width: '120px',
-                border: '1px solid gray',
-                borderRadius:
-                  status === 'All' ? '20px 0 0 20px' :
-                    status === 'Pending' ? '0 20px 20px 0' : '0',
-                '&:hover': {
-                  backgroundColor: filterStatus === status ? '#315380' : '#e0e0e0',
-                },
-              }}
-            >
-              {status}
-            </Button>
-          ))}
-        </Box>
 
       </Box>
 
@@ -109,16 +151,16 @@ const AdminAllCandidateData = () => {
           <CircularProgress />
         </Box>
       ) : (
-        <Card className="mt-9 font-sans">
+        <Card className="mt-8 p-2 border shadow font-sans">
           <div style={{ height: 600, width: '100%' }} className="pt-4">
             <DataGrid
-              rows={filteredRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
+              rows={filteredRows}
               columns={columns}
               rowHeight={80}
               onRowClick={(params) => handleRowClick(params.id)}
               getRowId={(row) => row._id}
               getRowHeight={calculateRowHeight}
-             // pageSize={rowsPerPage}
+              pageSize={8}
               pageSizeOptions={[5, 10]}
               initialState={{
                 pagination: { paginationModel: { page: 0, pageSize: 10 } },

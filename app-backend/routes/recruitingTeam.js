@@ -1,5 +1,5 @@
 import express from 'express'
-import { addJobIntoAcceptList, addJobIntoFavoutiteList, addNewCandidate, changeAccountStatus, changeCommissionFlag, changeEmailAddress, changePassword, checkCreadentials, checkEmailAddress, checkForRequestJob, checkIsAdmin, checkMobileNo, checkPassword, createteammember, getDashBoardCount, getEnterpriseTeamMember, getFavouriteJobIds, getRecruiterCandidateDetails, getRecruiterProfilePageDetails, getRecuritingTeamDetails, getSubmitedCandidates, isFavouriteJob, isVerifiedMail, rejectJob, removeJobFromFavouriteList, requestMapJob, unmapJob, updateJobMappedList, updateRecruiterTeamDetails } from '../controller/recrutingTeamController.js'
+import { addJobIntoAcceptList, addJobIntoFavoutiteList, addNewCandidate, changeAccountStatus, changeCommissionFlag, changeEmailAddress, changePassword, checkCreadentials, checkEmailAddress, checkForRequestJob, checkIsAdmin, checkMobileNo, checkPassword, createteammember, getDashBoardCount, getEnterpriseTeamMember, getFavouriteJobIds, getRecruiterCandidateDetails, getRecruiterMemberById, getRecruiterProfilePageDetails, getRecuritingTeamDetails, getSubmitedCandidates, isFavouriteJob, isVerifiedMail, rejectJob, removeJobFromFavouriteList, requestMapJob, unmapJob, updateJobMappedList, updateRecruiterTeamDetails } from '../controller/recrutingTeamController.js'
 
 
 
@@ -7,6 +7,9 @@ const router=express.Router()
 
 //for creating new recruiting member
 router.post('/',createteammember)
+
+//for get recruiter member id using id
+router.get('/:rememberid',getRecruiterMemberById)
 
 //for check recruiting team creadentials
 router.post('/checkcredentials',checkCreadentials)
