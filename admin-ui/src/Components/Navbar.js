@@ -208,7 +208,7 @@ const Navbar = ({ enterpriseData, recruiterData }) => {
                 {showEnterpriseData ? (
                   <>
                     <h4 className="font-semibold text-xl">Enterprise Results:</h4>
-                    <div className="mt-2  ">
+                    <div className="mt-2">
                     {filteredEnterpriseData.length > 0 ? (
                       filteredEnterpriseData.map((item, index) => (
                         <Box

@@ -48,7 +48,7 @@ const accountmanagerSchema=new mongoose.Schema({
     },
     admin_type:{
         type:String,
-        required:true
+        default:"account_manager"
     }
 },{timestamps:true})
 

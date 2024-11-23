@@ -23,7 +23,7 @@ export const sendMail = async (req, res) => {
             address: 'vivekmesuriya110@gmail.com'
         },
         to: email,
-        subject: "For account manager access",
+        subject: "Invitation to Join Uphire as an Account Manager",
         html: `<!DOCTYPE html>
         <html lang="en">
         <head>
@@ -82,17 +82,17 @@ export const sendMail = async (req, res) => {
         <body>
             <div class="container">
                 <div class="header">
-                    <h1>Registration Successful!</h1>
+                    <h1>You are invited for Account Manager Role.</h1>
                 </div>
                 <div class="content">
                     <h1>Welcome to UPHIRE,</h1>
                     <p>Dear ${fullName},</p>
-                    <p>Thank you for registering with us. Your account has been created successfully.</p>
-                    <p>You are now a part of the fastest-growing network of Recruiting firms in the world.
-                        Your credentials for accessing the UPHIRE platform are given below.</p>
+                    <p>I hope this message finds you well. Your account has been created successfully.</p>
+                    <p>I am pleased to invite you to join our team at Uphire as an Account Manager. Your skills and experience make you an excellent fit for this role, and we are excited about the value you will bring to our organization..</p>
                     <div>
+                       <p>Credentials For Uphire Dashboard.</p>
                        <div class="cred-data">
-                         <span>Username:</span>
+                         <span>Email:</span>
                          <span style="color:blue;">${email}</span>
                        </div>
                        <div class="cred-data">

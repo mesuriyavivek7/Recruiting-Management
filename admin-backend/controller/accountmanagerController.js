@@ -1,3 +1,4 @@
+import axios from "axios"
 import ACCOUNTMANAGER from "../models/ACCOUNTMANAGER.js"
 import bcrypt from 'bcryptjs'
 
@@ -220,13 +221,13 @@ export const getAccountManager = async (req, res, next) => {
 
 export const AddNewAccountManager = async (req, res, next) => {
   try {
-    const { full_name, mobileno, email, password, admin_type } = req.body;
+    const { full_name, email, password } = req.body;
     const { master_admin_id } = req.params;
 
     // Check if email already exists
     const existingManager = await ACCOUNTMANAGER.findOne({ email });
     if (existingManager) {
-      return res.status(400).json({ message: 'Email already exists' });
+      return res.status(400).json({ message: 'Email address is already exists' });
     }
 
     // Generate salt and hash the password
@@ -236,11 +237,9 @@ export const AddNewAccountManager = async (req, res, next) => {
     // Create new account manager with master admin reference
     const newManager = new ACCOUNTMANAGER({
       full_name,
-      mobileno: mobileno || undefined,
       email,
       password: hashedPassword,
       master_admin: master_admin_id,
-      admin_type: "account_manager",                    // Set admin type (required field)
       pending_verify_enterprise: [],
       pending_verify_recruiting_agency: [],
       verified_enterprise: [],
@@ -251,7 +250,11 @@ export const AddNewAccountManager = async (req, res, next) => {
       verified_jobs: [],
     });
 
-    await newManager.save();
+    const acManager=await newManager.save();
+
+    //Adding account manager into master admin list
+    await axios.post(`${process.env.ADMIN_SERVER_URL}/masteradmin/addacmanager`,{m_admin_id:master_admin_id,ac_id:acManager._id})
+
     res.status(200).json({ message: 'Account manager created successfully' });
   } catch (error) {
     next(error);
