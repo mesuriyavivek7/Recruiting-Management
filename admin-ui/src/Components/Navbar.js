@@ -1,39 +1,53 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useSelector } from 'react-redux';
-import asset29 from "../assets/asset29.svg";
+import { useDispatch, useSelector } from 'react-redux';
 import logo from "../assets/logo.jpeg"
 import asset15 from "../assets/asset15.svg";
-import { Link } from "react-router-dom";
-
-import { Dialog, DialogContent, Button, TextField, IconButton, Box, DialogActions, InputAdornment } from "@mui/material";
-import { MdPerson, MdEmail, MdVerifiedUser, MdBusinessCenter, MdBusiness, MdWork } from 'react-icons/md';
+import { Link, useNavigate } from "react-router-dom";
+import { Dialog, DialogContent, Button, TextField, Box, DialogActions, InputAdornment } from "@mui/material";
 import { BiSearch } from "react-icons/bi";
-import { MdLogout } from "react-icons/md"; 
-
-
+import { MdLogout } from "react-icons/md";
 import { fetchMasterAdminDetailsById } from '../services/api';
-
+import Cookies from 'js-cookie';
 
 const Navbar = ({ enterpriseData, recruiterData }) => {
   const userData = useSelector((state) => state.admin?.userData);
   const [showProfilePopup, setShowProfilePopup] = useState(false);
   const [popupSearchTerm, setPopupSearchTerm] = useState("");
-  const [openSearchDialog, setOpenSearchDialog] = useState(false);
   const [adminEmail, setAdminEmail] = useState('example@gmail.com');
   const [adminType, setAdminType] = useState('Domestic');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [showEnterpriseData, setShowEnterpriseData] = useState(true); // State to toggle between enterprise and recruiter data
   const profileRef = useRef(null);
   const searchRef = useRef(null);
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false); // State for logout confirmation dialog
+
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   // Handle profile click
   const handleProfileClick = () => {
     setShowProfilePopup(!showProfilePopup);
   };
-  const handleClose = () => {
-    setOpenSearchDialog(false)
+  // Logout function (now handles the confirmation)
+  const handleLogout = () => {
+    setShowLogoutDialog(true); 
   };
 
+
+  // Cancel logout
+  const cancelLogout = () => {
+    setShowLogoutDialog(false); 
+  };
+
+  // Confirm logout
+  const confirmLogout = () => {
+    Cookies.remove('admin_user'); 
+    localStorage.removeItem('userData'); 
+    dispatch({ type: 'SET_USER_DATA', payload: null }); 
+    navigate('/');
+    setShowLogoutDialog(false); 
+  };
 
   useEffect(() => {
     // Handle clicks outside profile to close popup
@@ -106,9 +120,9 @@ const Navbar = ({ enterpriseData, recruiterData }) => {
       </div>
 
       <div className="flex place-items-center gap-4">
-      <Link to="/logout">
-        <MdLogout size={26} className="text-white" /> {/* Logout icon */}
-      </Link>
+        <Link onClick={handleLogout}>
+          <MdLogout size={26} className="text-white" /> {/* Logout icon */}
+        </Link>
         <div
           className="w-[30px] h-[30px] rounded-full bg-white flex place-items-center cursor-pointer"
           onClick={handleProfileClick}
@@ -135,11 +149,11 @@ const Navbar = ({ enterpriseData, recruiterData }) => {
         maxWidth="lg"
       >
 
-        <DialogContent className=" bg-white p-6  "  style={{ height: '500px', maxHeight: '500px',overflowY:'hidden' }}>
-        <h2 className="text-xl font-bold mb-4">Search Users</h2>
+        <DialogContent className=" bg-white p-6  " style={{ height: '500px', maxHeight: '500px', overflowY: 'hidden' }}>
+          <h2 className="text-xl font-bold mb-4">Search Users</h2>
 
           <div className="flex place-items-center gap-2 mb-4">
-          <TextField
+            <TextField
               fullWidth
               id="popupSearch"
               placeholder="Search in popup"
@@ -150,7 +164,7 @@ const Navbar = ({ enterpriseData, recruiterData }) => {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <BiSearch size={24} style={{ color: "gray" }}/>
+                    <BiSearch size={24} style={{ color: "gray" }} />
                   </InputAdornment>
                 ),
                 style: { borderRadius: "8px", borderColor: "blue" },
@@ -158,49 +172,49 @@ const Navbar = ({ enterpriseData, recruiterData }) => {
             />
           </div>
 
-        <div className="my-4">
-        <Button
-          variant="contained"
-          size="small"
-         
-          style={{
-            backgroundColor: showEnterpriseData ? '#315370' : '#e0e0e0',
-            color: showEnterpriseData ? 'white' : '#000',
-            fontSize: '20px',
-            textTransform: 'none',
-            height: '40px',
-            border: '2px solid white',
-            borderRadius: '20px 0 0 20px',
-            width: 'auto',
-          }}
-          onClick={() => setShowEnterpriseData(true)}
-        >
-          Enterprise
-        </Button>
+          <div className="my-4">
+            <Button
+              variant="contained"
+              size="small"
 
-        <Button
-          variant="contained"
-          size="small"
-         
-          style={{
-            backgroundColor: !showEnterpriseData ? '#315370' : '#e0e0e0',
-            color: !showEnterpriseData ? 'white' : '#000',
-            fontSize: '20px',
-            height: '40px',
-            textTransform: 'none',
-            border: '2px solid white',
-            borderRadius: '0 20px 20px 0',
-            width: 'auto',
-            marginRight: '-1px',
-            whiteSpace: 'nowrap'
-          }}
-          onClick={() => setShowEnterpriseData(false)}
-        >
-          Recruiter
-        </Button>
-        </div>
+              style={{
+                backgroundColor: showEnterpriseData ? '#315370' : '#e0e0e0',
+                color: showEnterpriseData ? 'white' : '#000',
+                fontSize: '20px',
+                textTransform: 'none',
+                height: '40px',
+                border: '2px solid white',
+                borderRadius: '20px 0 0 20px',
+                width: 'auto',
+              }}
+              onClick={() => setShowEnterpriseData(true)}
+            >
+              Enterprise
+            </Button>
 
-          
+            <Button
+              variant="contained"
+              size="small"
+
+              style={{
+                backgroundColor: !showEnterpriseData ? '#315370' : '#e0e0e0',
+                color: !showEnterpriseData ? 'white' : '#000',
+                fontSize: '20px',
+                height: '40px',
+                textTransform: 'none',
+                border: '2px solid white',
+                borderRadius: '0 20px 20px 0',
+                width: 'auto',
+                marginRight: '-1px',
+                whiteSpace: 'nowrap'
+              }}
+              onClick={() => setShowEnterpriseData(false)}
+            >
+              Recruiter
+            </Button>
+          </div>
+
+
           <div className="border-t pt-2  mt-2 max-h-[300px] overflow-y-auto">
 
             {popupSearchTerm && (
@@ -240,37 +254,38 @@ const Navbar = ({ enterpriseData, recruiterData }) => {
 
                   </div>
                 </>
+
                 ) : (
                   <>
                     <h4 className="font-semibold text-xl">Recruiter Results:</h4>
                     <div className="mt-2 ">
-                    {filteredRecruiterData.length > 0 ? (
-                      filteredRecruiterData.map((item, index) => (
-                        <Box
-                          key={index}
-                          className="p-4 my-2 bg-gray-100 hover:bg-gray-200 rounded-lg shadow-md transition duration-300"
-                        >
-                          <div className="flex gap-1 items-center">
-                            <span className="text-[15px] font-semibold w-36">Full Name:</span>
-                            <span className="">{item.full_name}</span>
-                          </div>
-                          <div className="flex gap-1 items-center">
-                            <span className="text-[15px] font-semibold w-36">Email:</span>
-                            <span className="">{item.email}</span>
-                          </div>
-                          <div className="flex gap-1 items-center">
-                            <span className="text-[15px] font-semibold w-36">Designation:</span>
-                            <span className="">{item.designation}</span>
-                          </div>
-                          <div className="flex gap-1 items-center">
-                            <span className="text-[15px] font-semibold w-36">Company Name:</span>
-                            <span className="">{item.company_name}</span>
-                          </div>
-                        </Box>
-                      ))
-                    ) : (
-                      <p>No recruiter results found.</p>
-                    )}
+                      {filteredRecruiterData.length > 0 ? (
+                        filteredRecruiterData.map((item, index) => (
+                          <Box
+                            key={index}
+                            className="p-4 my-2 bg-gray-100 hover:bg-gray-200 rounded-lg shadow-md transition duration-300"
+                          >
+                            <div className="flex gap-1 items-center">
+                              <span className="text-[15px] font-semibold w-36">Full Name:</span>
+                              <span className="">{item.full_name}</span>
+                            </div>
+                            <div className="flex gap-1 items-center">
+                              <span className="text-[15px] font-semibold w-36">Email:</span>
+                              <span className="">{item.email}</span>
+                            </div>
+                            <div className="flex gap-1 items-center">
+                              <span className="text-[15px] font-semibold w-36">Designation:</span>
+                              <span className="">{item.designation}</span>
+                            </div>
+                            <div className="flex gap-1 items-center">
+                              <span className="text-[15px] font-semibold w-36">Company Name:</span>
+                              <span className="">{item.company_name}</span>
+                            </div>
+                          </Box>
+                        ))
+                      ) : (
+                        <p>No recruiter results found.</p>
+                      )}
                     </div>
                   </>
                 )}
@@ -291,8 +306,52 @@ const Navbar = ({ enterpriseData, recruiterData }) => {
           </button>
         </DialogActions>
       </Dialog>
+
+      {/* Logout Confirmation Dialog */}
+      <Dialog
+        open={showLogoutDialog}
+        onClose={cancelLogout}
+        aria-labelledby="logout-dialog-title"
+        aria-describedby="logout-dialog-description"
+      >
+        <DialogContent>
+          <h2 className="text-xl font-semibold mb-5">Are you sure you want to log out ??</h2>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={cancelLogout} variant="outlined"
+            sx={{
+              color: '#315370',
+              border: '1px solid',
+              borderColor: '#0C4A6E',
+              height: '36px',
+              width: '80px',
+              '&:hover': {
+                borderColor: "#0C4A6E",
+                color: "#315380"
+              },
+            }}>
+            Cancel
+          </Button>
+          <Button
+            onClick={confirmLogout}
+            id="demo-customized-button"
+            aria-haspopup="true"
+            variant="contained"
+            sx={{
+              backgroundColor: '#315370',
+              '&:hover': {
+                backgroundColor: "#0C4A6E",
+              },
+              height: '36px', 
+              width: '80px',  
+            }}
+          >
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
+
     </div>
-    
   );
 };
 
