@@ -2,11 +2,14 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import { useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { useRows, columns } from './RowColData';
+import { columns } from './RowColData';
 import { useNavigate } from 'react-router-dom';
-import { fetchEnterpriseById } from '../../../services/api';
 import { Button, CircularProgress, IconButton, InputAdornment, TextField } from '@mui/material';
 import { FaSearch } from 'react-icons/fa';
+import { useSelector } from 'react-redux';
+import Notification from '../../../Components/Notification';
+//Fetch Apis 
+import { fetchAccountManager, fetchEnterpriseById, fetchEnterpriseVerifiedData } from '../../../services/api';
 
 const calculateRowHeight = (params) => {
   const contentHeight = params?.row ? params?.row?.content?.length / 10 : 50;
@@ -14,11 +17,16 @@ const calculateRowHeight = (params) => {
 };
 
 export default function AllEnterPriseData() {
-  const getRows = useRows();
-  const [rows, setRows] = useState([]);
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const navigate = useNavigate();
+
+  const userData = useSelector((state) => state.admin.userData);
+  const admin_id = userData._id;
+
+  const [notification, setNotification] = useState(null);
+
+  const showNotification = (message, type) => {
+    setNotification({ message, type });
+  };
 
   const handleRowClick = async (params) => {
     const id = params.id;
@@ -31,27 +39,55 @@ export default function AllEnterPriseData() {
       console.error('Error fetching enterprise data:', error);
     }
   };
-  const [searchTerm, setSearchTerm] = React.useState(''); // State for search
-  const [filterStatus, setFilterStatus] = React.useState('All'); // Filter status state
-  const [filteredRows, setFilteredRows] = React.useState(rows);
-  const [loading, setLoading] = React.useState(false); // Loader state
+  const [searchTerm, setSearchTerm] = useState(''); // State for search
+  const [filterStatus, setFilterStatus] = useState('All'); // Filter status state
+  const [filteredRows, setFilteredRows] = useState([]);
+  const [loading, setLoading] = useState(false); // Loader state
 
   React.useEffect(() => {
+
   const fetchData = async () => {
     setLoading(true); // Start loading
-
     try {
-      const rowsData = await getRows();
-      setRows(rowsData);
+      //Fetch enterprise data(enterprise ids)
+      const data = await fetchEnterpriseVerifiedData(admin_id);
+      
+      const rows = await Promise.all(
+        data.map(async (enterprise, index) => {
+            // Fetch complete enterprise details
+            const enterpriseData = await fetchEnterpriseById(enterprise);
+
+            // Fetch account manager details
+            const accountManager = await fetchAccountManager(enterpriseData?.allocated_account_manager);
+
+            // Combine the fetched data
+            return {
+                id: enterpriseData._id || `enterprise-${index}`, // Ensure a unique id
+                displayIndex: index + 1,
+                full_name: enterpriseData.full_name || `User ${index + 1}`,
+                email: enterpriseData.email || `user${index + 1}@example.com`,
+                designation: enterpriseData.designation || "Not Provided",
+                company_name: enterpriseData.company_name || "Unknown",
+                country: enterpriseData.country || "Unknown",
+                city: enterpriseData.city || "Unknown",
+                email_verification: enterpriseData.email_verified ? "yes" : "no",
+                account_status: enterpriseData.account_status || { status: 'Inactive', remark: '', admin_id: '' },
+                account_manager_verified: enterpriseData.account_manager_verified || false,
+                account_manager: accountManager ? `${accountManager.full_name}` : null,
+            };
+        })
+    );
 
       // Set default filtered rows to include "All" filter
-      const newFilteredRows = rowsData.filter((row) => {
+      const newFilteredRows = rows.filter((row) => {
         const matchesSearch = row.full_name.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesStatus = filterStatus === 'All' || row.account_status.status === filterStatus;
         return matchesSearch && matchesStatus;
       });
       setFilteredRows(newFilteredRows);
+
     } catch (error) {
+      showNotification("Something went wrong.",'failure')
       console.error("Error fetching rows:", error);
     } finally {
       setLoading(false); // Stop loading after data is fetched
@@ -59,29 +95,23 @@ export default function AllEnterPriseData() {
   };
 
   fetchData();
-}, [getRows, page, rowsPerPage, searchTerm, filterStatus]); // Add searchTerm and filterStatus to the dependency array
+  }, [searchTerm, filterStatus]); // Add searchTerm and filterStatus to the dependency array
 
-  const handleSearch = () => {
-    const newFilteredRows = rows.filter((row) => {
-      const matchesSearch = row.full_name.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesStatus = filterStatus === 'All' || row.status === filterStatus;
-      return matchesSearch && matchesStatus;
-    });
-    setFilteredRows(newFilteredRows);
-  };
 
   const handleFilterClick = (status) => {
     setFilterStatus(status);
-    const newFilteredRows = rows.filter((row) => {
-      const matchesSearch = row.full_name.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesStatus = status === 'All' || row.account_status.status === status;
-      return matchesSearch && matchesStatus;
-    });
-    setFilteredRows(newFilteredRows);
   };
  
   return (
     <>
+       {notification && (
+        <Notification
+          open={true}
+          message={notification.message}
+          type={notification.type}
+          onClose={() => setNotification(null)}
+        />
+      )}
        <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} gap={2} pt={4}>
         <TextField
           label="Search..."
@@ -114,7 +144,7 @@ export default function AllEnterPriseData() {
         />
 
         <Box display="flex" gap={0}>
-          {['All', 'Active', 'Pending'].map((status) => (
+          {['All', 'Active', 'Inactive'].map((status) => (
             <Button
               key={status}
               variant={filterStatus === status ? 'contained' : 'outlined'}
@@ -129,7 +159,7 @@ export default function AllEnterPriseData() {
                 border: '1px solid gray',
                 borderRadius:
                   status === 'All' ? '20px 0 0 20px' :
-                    status === 'Pending' ? '0 20px 20px 0' : '0',
+                    status === 'Inactive' ? '0 20px 20px 0' : '0',
                 '&:hover': {
                   backgroundColor: filterStatus === status ? '#315380' : '#e0e0e0',
                 },
@@ -148,25 +178,22 @@ export default function AllEnterPriseData() {
           <CircularProgress />
         </Box>
       ) : (
-        <div><p className='text-lg xl:text-2xl pt-12'>All Enterprise</p>
+        <div><p className='text-lg xl:text-2xl pt-8'>All Enterprise</p>
         <Box sx={{ height: 600, width: '100%', paddingTop: '19px' }}>
           
           <DataGrid
-            rows={filteredRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
+            rows={filteredRows}
             columns={columns}
             rowHeight={80}
             onRowClick={handleRowClick} // Pass the params directly
             getRowId={(row) => row.id} // Specify the custom ID field
             getRowHeight={calculateRowHeight}
-           // pagination={false}
-           // pageSize={rowsPerPage}
             initialState={{
               pagination: {
                 paginationModel: { page: 0, pageSize: 10 },
               },
             }}
             pageSizeOptions={[5, 10]}
-           // hideFooterPagination={true}
             disableSelectionOnClick
             sx={{
               '& .MuiDataGrid-root': {

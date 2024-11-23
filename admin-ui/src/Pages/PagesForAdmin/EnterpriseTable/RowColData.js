@@ -57,11 +57,8 @@ export const columns = [
                 <Button
                     variant="contained"
                     sx={{
-                        backgroundColor: params.value === 'yes' ? 'green' : 'red',
+                        backgroundColor: params.value === 'yes' ? '#16a34a' : '#ef4444',
                         color: 'white',
-                        '&:hover': {
-                            backgroundColor: params.value === 'yes' ? 'darkgreen' : 'darkred',
-                        },
                     }}
                 >
                     {params.value}
@@ -79,11 +76,8 @@ export const columns = [
                 <Button
                     variant="contained"
                     sx={{
-                        backgroundColor: params.value.status === 'Active' ? 'green' : 'red',
+                        backgroundColor: params.value.status === 'Active' ? '#16a34a' : '#ef4444',
                         color: 'white',
-                        '&:hover': {
-                            backgroundColor: params.value.status === 'Active' ? 'darkgreen' : 'darkred',
-                        },
                     }}
                 >
                     {params.value.status}
@@ -93,19 +87,16 @@ export const columns = [
     },
     {
         field: 'account_manager_verified',
-        headerName: 'Accoutn Manager Verified',
+        headerName: 'Ac Manager Verified',
         flex: 1, // Flexible width
-        minWidth: 150, // Minimum width
+        minWidth: 220, // Minimum width
         renderCell: (params) => (
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
                 <Button
                     variant="contained"
                     sx={{
-                        backgroundColor: params.value ? 'green' : 'red',
+                        backgroundColor: params.value ? '#16a34a' : '#ef4444',
                         color: 'white',
-                        '&:hover': {
-                            backgroundColor: params.value ? 'darkgreen' : 'darkred',
-                        },
                     }}
                 >
                     {params.value ? 'Yes' : 'No'}
@@ -124,7 +115,7 @@ export const columns = [
 export const useRows = () => {
     const userData = useSelector((state) => state.admin.userData);
     const admin_id = userData._id;
-
+    console.log("All enterprise row call data called")
     const getRows = useMemo(() => {
         return async () => {
             const data = await fetchEnterpriseVerifiedData(admin_id);

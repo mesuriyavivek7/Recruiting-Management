@@ -1,8 +1,9 @@
 import { Button } from "@mui/material";
 
 export const cols = (handleInactivateButton) => [
+  {field: "id", headerName:"ID",width:100},
   { field: 'full_name', headerName: 'Full Name', width: 200 },
-  { field: 'email', headerName: 'Email', width: 250 },
+  { field: 'email', headerName: 'Email', width: 280 },
   { field: 'designation', headerName: 'Designation', width: 180 },
   { field: 'linkedin_url', headerName: 'LinkedIn URL', width: 200 },
   { field: 'company_name', headerName: 'Company Name', width: 200 },
@@ -74,7 +75,7 @@ export const cols = (handleInactivateButton) => [
           '&:focus': { outline: 'none' },
         }}
       >
-        {params.row.account_status === 'Active' ? 'Inactivate' : 'Activate'}
+        {params.row.account_status.status === 'Active' ? 'Inactivate' : 'Activate'}
       </Button>
     ),
   },

@@ -63,6 +63,16 @@ export const fetchEnterpriseTeam = async (enterprise_id) => {
     }
 }
 
+//For fetch particuler enterprise memeber details
+export const fetchEnterpriseMemberDetails = async (en_member_id) => {
+    try{
+        const response = await axios.get(`${app_be_uri}/enterpriseteam/${en_member_id}`)
+        return response.data
+    }catch(error){
+        console.error("Error while fetching enterprise team member details : ",error)
+    }
+}
+
 //get all the verified enterprises by ac manager id
 export const fetchVerifedEntepreiseByACId = async (ac_manager_id) => {
     try {

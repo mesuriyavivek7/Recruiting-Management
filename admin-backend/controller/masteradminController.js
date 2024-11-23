@@ -35,6 +35,15 @@ export const rmvEnterprisePendingList = async (req, res, next) => {
     }
 }
 
+export const recruiterAgencyVerified = async (req, res, next) =>{
+    try{
+        await MASTERADMIN.findByIdAndUpdate(req.body.m_id,{$pull:{pending_verify_recruiting_agency:req.body.ra_id},$push:{verified_recruiting_agency:req.body.ra_id}})
+        res.status(200).json("Successfully recruiter agency verified by masteradmin")
+    }catch(err){
+         next(err)
+    }
+}
+
 
 export const addRecruitingAgency = async (req, res, next) => {
     try {
