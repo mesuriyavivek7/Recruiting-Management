@@ -115,7 +115,6 @@ export const columns = [
 export const useRows = () => {
     const userData = useSelector((state) => state.admin.userData);
     const admin_id = userData._id;
-    console.log("All enterprise row call data called")
     const getRows = useMemo(() => {
         return async () => {
             const data = await fetchEnterpriseVerifiedData(admin_id);
