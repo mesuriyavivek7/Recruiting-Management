@@ -316,6 +316,7 @@ export const fetchRecruiterMemberDetails = async (re_member_id) =>{
          return response.data
     }catch(error){
         console.error("Error while fetching the recruiter member details: ",error)
+        throw error
     }
 }
 
