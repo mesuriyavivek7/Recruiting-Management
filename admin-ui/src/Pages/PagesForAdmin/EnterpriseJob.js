@@ -1,15 +1,12 @@
 import React, { useState, useEffect} from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Card, TablePagination, Tabs, Tab, Button, TextField, Divider, IconButton, Typography, Box, Dialog, DialogTitle, DialogContent, DialogActions, CircularProgress } from '@mui/material';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { FaCaretDown } from 'react-icons/fa';
-import { FaBusinessTime, FaBullseye, FaThumbsUp, FaBan, FaStar, FaQuestionCircle, FaFilePdf, FaFileAlt, FaFileAudio, FaMapMarkerAlt, FaBriefcase, FaInfoCircle, FaPaperclip, FaUsers, FaShareAlt, FaExternalLinkAlt, FaDollarSign, FaClock, FaCalendarAlt } from 'react-icons/fa';
+import { Card, TextField, Box, Dialog, CircularProgress } from '@mui/material';
+import { FaBullseye, FaThumbsUp, FaBan, FaStar, FaFilePdf, FaFileAlt, FaFileAudio, FaMapMarkerAlt, FaBriefcase, FaInfoCircle, FaPaperclip, FaUsers, FaShareAlt, FaDollarSign, FaClock, FaCalendarAlt } from 'react-icons/fa';
 import { columns } from './RowColOfEnterpriseJob';
 import { fetchJobBasicDetailsByEnId, fetchJobStatusByJobId } from '../../services/api';
 
 const EnterpriseJob = ({ enterpriseDetails }) => {
   const [rows, setRows] = useState([]);
-  const [selectedRowId, setSelectedRowId] = useState(null);
   const [jobType, setJobType] = useState('fulltime'); // fulltime or contract
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedJob, setSelectedJob] = useState(null);
@@ -23,7 +20,6 @@ const EnterpriseJob = ({ enterpriseDetails }) => {
 
 
   const handleRowClick = (id) => {
-    setSelectedRowId(id);
     const job = rows.find(row => row._id === id);
     setSelectedJob(job);
     setDialogOpen(true);
@@ -33,49 +29,14 @@ const EnterpriseJob = ({ enterpriseDetails }) => {
     setDialogOpen(false);
   };
 
-  // State for pagination
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-
-  // Handle pagination change
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
-  const handleTabChange = (event, newValue) => {
-    setActiveTab(newValue);
-  };
-
-  const [activeTab, setActiveTab] = useState('one');
-
-
-  const [openSections, setOpenSections] = useState({
-    jobProfile: false,
-    jobDescription: false,
-
-    sourcingGuidelines: false,
-    remuneration: false,
-  });
-
-  // Toggle section visibility
-  const toggleSection = (section) => {
-    setOpenSections((prev) => ({
-      ...prev,
-      [section]: !prev[section],
-    }));
-  };
   const [loading, setLoading] = React.useState(false); // Loader state
 
   // Function to map enterpriseDetails to rows
   const generateRowsFromDetails = async (details) => {
+    setLoading(true)
     const data = await fetchJobBasicDetailsByEnId(details._id);
 
-    
+    console.log("job basic details---->",data)
     
     // Fetch status for each job concurrently
     const rows = await Promise.all(
@@ -91,21 +52,18 @@ const EnterpriseJob = ({ enterpriseDetails }) => {
       })
     );
   
-    return rows; // Return rows after all status requests are completed
+    setRows(rows) // Return rows after all status requests are completed
+    setLoading(false)
   };
 
   
   useEffect(() => {
     if (enterpriseDetails) {
-      setLoading(true);
-      generateRowsFromDetails(enterpriseDetails).then((fetchedRows) => {
-        setRows(fetchedRows);
-        setLoading(false);
-      });
+      generateRowsFromDetails(enterpriseDetails)
     }
   }, [enterpriseDetails]);
   // Calculate the rows to display
-  const paginatedRows = rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+
 
   return (
     <div>
@@ -120,10 +78,6 @@ const EnterpriseJob = ({ enterpriseDetails }) => {
         </Box>
       ) : (
         <div className='px-6 py-5'>
-          
-
-         
-
           {/* Search Field */}
           <TextField 
             variant='outlined' 
@@ -135,13 +89,13 @@ const EnterpriseJob = ({ enterpriseDetails }) => {
           {/* DataGrid Section */}
           <div style={{ height: 600, width: '100%' }} className='pt-4'>
             <DataGrid 
-              rows={paginatedRows}
+              rows={rows}
               columns={columns}
               rowHeight={80}
               onRowClick={(params) => handleRowClick(params.id)}
               getRowId={(row) => row._id}
               //pagination={false} 
-              pageSize={rowsPerPage} 
+              pageSize={5} 
               initialState={{
                 pagination: {
                   paginationModel: { page: 0, pageSize: 10 },
