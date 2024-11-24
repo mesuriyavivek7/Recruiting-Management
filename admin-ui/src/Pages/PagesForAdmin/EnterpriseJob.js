@@ -1,7 +1,7 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Card, TextField, Box, Dialog, CircularProgress } from '@mui/material';
-import { FaBullseye, FaThumbsUp, FaBan, FaStar, FaFilePdf, FaFileAlt, FaFileAudio, FaMapMarkerAlt, FaBriefcase, FaInfoCircle, FaPaperclip, FaUsers, FaShareAlt, FaDollarSign, FaClock, FaCalendarAlt } from 'react-icons/fa';
+import { Card, TextField, Box, Dialog, CircularProgress, InputAdornment } from '@mui/material';
+import { FaBullseye, FaThumbsUp, FaBan, FaStar, FaFilePdf, FaFileAlt, FaFileAudio, FaMapMarkerAlt, FaBriefcase, FaInfoCircle, FaPaperclip, FaUsers, FaShareAlt, FaDollarSign, FaClock, FaCalendarAlt, FaSearch } from 'react-icons/fa';
 import { columns } from './RowColOfEnterpriseJob';
 import { fetchJobBasicDetailsByEnId, fetchJobStatusByJobId } from '../../services/api';
 
@@ -10,6 +10,10 @@ const EnterpriseJob = ({ enterpriseDetails }) => {
   const [jobType, setJobType] = useState('fulltime'); // fulltime or contract
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedJob, setSelectedJob] = useState(null);
+
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredRows, setFilteredRows] = useState(rows || []);
+  const [rowsPerPage] = useState(10);
 
   const uploadedFiles = [
     { name: 'Sample CV', type: 'pdf', url: 'https://www.rd.usda.gov/sites/default/files/pdf-sample_0.pdf' },
@@ -36,8 +40,8 @@ const EnterpriseJob = ({ enterpriseDetails }) => {
     setLoading(true)
     const data = await fetchJobBasicDetailsByEnId(details._id);
 
-    console.log("job basic details---->",data)
-    
+    console.log("job basic details---->", data)
+
     // Fetch status for each job concurrently
     const rows = await Promise.all(
       data.map(async (detail, index) => {
@@ -46,97 +50,118 @@ const EnterpriseJob = ({ enterpriseDetails }) => {
           _id: `${index + 1}`,
           job_title: detail?.job_title,
           enterprise: details?.full_name,
-          status: jobStatus || 'Unknown', // Set status from API or default to 'Unknown'
+          status: jobStatus || 'Unknown', 
           createdOn: detail?.createdAt,
         };
       })
     );
-  
-    setRows(rows) // Return rows after all status requests are completed
-    setLoading(false)
+
+    setRows(rows);
+    setLoading(false);
   };
 
-  
+  useEffect(() => {
+    if (searchTerm === '') {
+      setFilteredRows(rows); 
+    } else {
+      const lowerCaseTerm = searchTerm.toLowerCase();
+      const newFilteredRows = rows.filter((row) =>
+        row.job_title.toLowerCase().includes(lowerCaseTerm)
+      );
+      setFilteredRows(newFilteredRows);
+    }
+  }, [searchTerm, rows]);
+
   useEffect(() => {
     if (enterpriseDetails) {
       generateRowsFromDetails(enterpriseDetails)
     }
   }, [enterpriseDetails]);
-  // Calculate the rows to display
-
 
   return (
     <div>
-      <Card className='mt-4 font-sans shadow-md' sx={{
-        borderRadius: '8px',
-        boxShadow: 3,
-      }}>
-
-         {loading ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 400 ,color:'#315370'}}>
-          <CircularProgress />
-        </Box>
-      ) : (
-        <div className='px-6 py-5'>
-          {/* Search Field */}
-          <TextField 
-            variant='outlined' 
-            placeholder='Search Job...' 
-            fullWidth 
-            className='my-4 pt-9' 
-          />
-
-          {/* DataGrid Section */}
-          <div style={{ height: 600, width: '100%' }} className='pt-4'>
-            <DataGrid 
-              rows={rows}
-              columns={columns}
-              rowHeight={80}
-              onRowClick={(params) => handleRowClick(params.id)}
-              getRowId={(row) => row._id}
-              //pagination={false} 
-              pageSize={5} 
-              initialState={{
-                pagination: {
-                  paginationModel: { page: 0, pageSize: 10 },
-                },
+      <Card
+        className="mt-4 font-sans shadow-md"
+        sx={{ borderRadius: '8px', boxShadow: 3 }}
+      >
+        {loading ? (
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: 400,
+              color: '#315370',
+            }}
+          >
+            <CircularProgress />
+          </Box>
+        ) : (
+          <div className="px-6 py-5">
+            {/* Search Field */}
+            <TextField
+              variant="outlined"
+              placeholder="Search Job..."
+              fullWidth
+              className="my-4 pt-9"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)} // Update searchTerm dynamically
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <FaSearch />
+                  </InputAdornment>
+                ),
               }}
-              pageSizeOptions={[5, 10]}
-             // hideFooterPagination={true} 
-              disableSelectionOnClick 
-              sx={{
-                '& .MuiDataGrid-root': {
-                  fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.09rem' }, 
-                },
-                '[class^=MuiDataGrid]': { border: 'none' },
-                '& .MuiDataGrid-columnHeader': {
-                  fontWeight: 'bold', 
-                  fontSize: { xs: '0.875rem', sm: '1rem', md: '0.7rem', lg: '1.1rem' }, 
-                  color: 'black', 
-                  backgroundColor: '#e3e6ea !important', 
-                  minHeight: '60px', 
-                },
-                '& .MuiDataGrid-cell': {
-                  fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem' }, 
-                  minHeight: '2.5rem', 
-                },
-                '& .MuiDataGrid-cellContent': {
-                  display: 'flex',
-                  alignItems: 'center', 
-                },
-                '& .MuiDataGrid-row': {
-                  borderBottom: 'none', 
-                },
-                '& .MuiDataGrid-cell:focus': {
-                  outline: 'none', 
-                },
-              }}
-      />
+            />
+
+            {/* DataGrid Section */}
+            <div style={{ height: 600, width: '100%' }} className="pt-4">
+              <DataGrid
+                rows={filteredRows}
+                columns={columns}
+                rowHeight={80}
+                pageSize={rowsPerPage}
+                getRowId={(row) => row._id}
+                initialState={{
+                  pagination: {
+                    paginationModel: { page: 0, pageSize: 10 },
+                  },
+                }}
+                pageSizeOptions={[5, 10]}
+                disableSelectionOnClick
+                sx={{
+                  '& .MuiDataGrid-root': {
+                    fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.09rem' },
+                  },
+                  '[class^=MuiDataGrid]': { border: 'none' },
+                  '& .MuiDataGrid-columnHeader': {
+                    fontWeight: 'bold',
+                    fontSize: { xs: '0.875rem', sm: '1rem', md: '0.7rem', lg: '1.1rem' },
+                    color: 'black',
+                    backgroundColor: '#e3e6ea !important',
+                    minHeight: '60px',
+                  },
+                  '& .MuiDataGrid-cell': {
+                    fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem' },
+                    minHeight: '2.5rem',
+                  },
+                  '& .MuiDataGrid-cellContent': {
+                    display: 'flex',
+                    alignItems: 'center',
+                  },
+                  '& .MuiDataGrid-row': {
+                    borderBottom: 'none',
+                  },
+                  '& .MuiDataGrid-cell:focus': {
+                    outline: 'none',
+                  },
+                }}
+              />
             </div>
-          </div>)}
+          </div>
+        )}
       </Card>
-
-
       <Dialog open={dialogOpen} onClose={handleCloseDialog} maxWidth="xl" fullWidth PaperProps={{
         sx: {
 
