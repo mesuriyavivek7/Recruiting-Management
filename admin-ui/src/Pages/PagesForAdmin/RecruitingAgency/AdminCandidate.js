@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Box, Card, CircularProgress, TablePagination } from '@mui/material';
+import { Box, Card, CircularProgress } from '@mui/material';
 import { RcCandidatecols } from './RowColData';
-import { fetchCandidateBasicDetailsById, fetchCandidateDetailsByRecruiterId, fetchCandidateStatusById, fetchJobBasicDetailsByJobId, fetchRecuritingTeam } from '../../../services/api';
+import { fetchCandidateBasicDetailsById,fetchRecruiterMemberDetails, fetchCandidateStatusById, fetchJobBasicDetailsByJobId, fetchRecuritingTeam } from '../../../services/api';
 import { cstatus } from '../../../constants/jobStatusMapping';
 
 const calculateRowHeight = (params) => {
@@ -15,10 +15,8 @@ const AdminCandidate = ({ recuritingAgenciesDetails }) => {
   const [selectedRowId, setSelectedRowId] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-
   const generateRowsFromDetails = async (details) => {
+    setLoading(true)
     const recuritingTeam = await fetchRecuritingTeam(details._id);
 
     // Using map and flat to combine all submitted_candidate_profile arrays
@@ -33,6 +31,8 @@ const AdminCandidate = ({ recuritingAgenciesDetails }) => {
         const { job_id, basic_details } = await fetchCandidateBasicDetailsById(candidateId);
         const candidate = await fetchCandidateStatusById(basic_details.candidate_id)
         const job_basic_details = await fetchJobBasicDetailsByJobId(job_id);
+
+        const recruiterMember=await fetchRecruiterMemberDetails(candidate.recruiter_member_id)
 
         const candidateStatusKey = candidate.candidate_status || "Status Unavailable";
         const candidateStatus = cstatus.get(candidateStatusKey) || candidateStatusKey;
@@ -50,38 +50,25 @@ const AdminCandidate = ({ recuritingAgenciesDetails }) => {
           lastUpdated: basic_details?.updatedAt || "No Update Date",
           notice_period: basic_details?.notice_period || "N/A",
           email: basic_details?.primary_email_id || "No Email",
-          mobile: basic_details?.primary_contact_number || "No Contact Number"
+          mobile: basic_details?.primary_contact_number || "No Contact Number",
+          recruiter_member: recruiterMember.full_name
         };
       })
     );
 
-    return rows;
+    setRcCandidaterow(rows)
+    setLoading(false)
   };
 
   useEffect(() => {
     if (recuritingAgenciesDetails) {
-      setLoading(true);
-      generateRowsFromDetails(recuritingAgenciesDetails).then((fetchedRows) => {
-        setRcCandidaterow(fetchedRows);
-        setLoading(false);
-      });
+      generateRowsFromDetails(recuritingAgenciesDetails)
     }
   }, [recuritingAgenciesDetails]);
 
   const handleRowClick = (id) => {
     setSelectedRowId(id);
   };
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
-  const paginatedRows = RcCandidaterow.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   return (
     <div>
@@ -90,16 +77,16 @@ const AdminCandidate = ({ recuritingAgenciesDetails }) => {
           <CircularProgress />
         </Box>
       ) : (
-        <Card className='mt-9 font-sans px-4'>
+        <Card className='mt-8 border font-sans px-4'>
           <div style={{ height: 600, width: '100%' }} className='pt-4'>
             <DataGrid
-              rows={paginatedRows}
+              rows={RcCandidaterow}
               columns={RcCandidatecols}
               rowHeight={80}
               onRowClick={(params) => handleRowClick(params.id)}
               getRowId={(row) => row._id}
               getRowHeight={calculateRowHeight}
-              pageSize={rowsPerPage}
+              pageSize={8}
               initialState={{
                 pagination: {
                   paginationModel: { page: 0, pageSize: 10 },
