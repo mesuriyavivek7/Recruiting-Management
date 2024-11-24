@@ -450,5 +450,24 @@ export const CreateAccountManager = async (m_admin_id, formData) => {
     }
 }
 
+//For getting active job count for particuler enterprise member
+export const getActiveJobsCountEnMember = async (en_member_id) => {
+    try{
+        const response= await axios.get(`${app_be_uri}/job/getactivejobcount/${en_member_id}`)
+        return response.data
+    }catch(error) {
+        console.error("Error while fetching active jobs count : ",error)
+        throw error
+    }
+}
 
+//For getting pending job count for particular enterprise member
+export const getPendingJobCountEnMember = async (en_member_id) => {
+    try{
+        const response = await axios.get(`${app_be_uri}/job/getpendingjobcount/${en_member_id}`)
+        return response.data
+    }catch(error) {
+        console.error("Error while fetching pending jobs count : ",error)
+    }
+}
 

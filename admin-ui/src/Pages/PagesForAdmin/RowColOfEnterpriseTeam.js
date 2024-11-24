@@ -112,11 +112,13 @@ export const columns = [
       const timeAgo = formatDistanceToNowStrict(createdOnDate, { addSuffix: true }); // Get "X days ago"
 
       return (
-        <div>
-          <span>{formattedDate}</span>
-          <span style={{ fontSize: '0.9em', color: '#888', paddingLeft: '8px' }}>
+        <div className='w-full h-full flex justify-center items-center'>
+         <div className='flex flex-col'>
+          <span className='text-[15px] leading-5'>{formattedDate}</span>
+          <span className='text-sm' style={{ fontSize: '0.9em', color: '#888'}}>
             ({timeAgo})
           </span>
+         </div>
         </div>
       );
     },
