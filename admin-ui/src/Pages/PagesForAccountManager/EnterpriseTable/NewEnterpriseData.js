@@ -2,12 +2,11 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
+import Box from '@mui/material/Box';
 import {
-  Button, Card, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, TextField, MenuItem,
+  Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, TextField, MenuItem,
   TablePagination,
-  InputLabel,
-  Select,
-  FormControl
+  CircularProgress
 } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import Notification from '../../../Components/Notification';
@@ -17,11 +16,11 @@ const NewEnterpriseData = () => {
   const myValue = useSelector((state) => state.admin);
   const [notification, setNotification] = useState(null);
   const [inactivateLoad, setInactivateLoad] = useState(false);
-  const [assignLoad, setAssignLoad] = useState(false);
+  const [loader,setLoader]=useState(false)
   const [open, setOpen] = useState(false);
   const [newEnterprise, setNewEnterprise] = useState([]);
-  const [acManager, setAcManager] = useState([]);
-  const [selectedManager, setSelectedManager] = useState('');
+  
+  
   const [openpopup, setOpenpopup] = useState(false);
   const [reason, setReason] = useState('');
   const [selectInactive, setSelectInactive] = useState(null);
@@ -65,9 +64,6 @@ const NewEnterpriseData = () => {
     setOpenpopup(false);
   };
 
-  const handleManagerChange = (event) => {
-    setSelectedManager(event.target.value);
-  };
 
   const handleSubmitButton = async () => {
     try {
@@ -82,20 +78,6 @@ const NewEnterpriseData = () => {
     setInactivateLoad(false);
   };
 
-  const handleAssignAcManager = async () => {
-    try {
-      setAssignLoad(true);
-      await axios.post(`${process.env.REACT_APP_API_APP_URL}/enterprise/allocatedacmanager`, { en_id: selectedRow._id, ac_id: selectedManager });
-      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/accountmanager/addenterprise`, { ac_id: selectedManager, en_id: selectedRow._id });
-      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/masteradmin/rmventerprisependinglist`, { m_id: myValue.userData._id, en_id: selectedRow._id });
-      fetchEnterprise();
-      handleClose();
-      showNotification('Successfully assigned to account manager', 'success');
-    } catch (err) {
-      showNotification('Something went wrong assigning Enterprise to account manager..!', 'failure');
-    }
-    setAssignLoad(false);
-  };
 
   const handleRowClick = (item) => {
     console.log('Row clicked:', item); // Debugging line
@@ -105,16 +87,11 @@ const NewEnterpriseData = () => {
 
   const handleClose = () => {
     setOpen(false);
-    setSelectedManager('');
     setSelectedRow(null);
   };
 
-  useEffect(() => {
-    fetchEnterprise();
-    fetchAccountManager();
-  }, []);
-
   const fetchEnterprise = async () => {
+    setLoader(true)
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_APP_URL}/enterprise/acpending/${myValue.userData._id}`);
       const data = response.data;
@@ -125,19 +102,23 @@ const NewEnterpriseData = () => {
         id: item._id, // Assuming `_id` is unique
         displayIndex: index + 1
       }));
-
+      console.log("rows with ids---->",rowsWithIds)
       setNewEnterprise(rowsWithIds);
     } catch (err) {
+      console.log(err)
       showNotification('There is something wrong..!', 'failure');
+    } finally{
+      setLoader(false)
     }
   };
+
   const handleApprove = async () => {
     try {
       //get verified enterprise to account manager
       await axios.post(`${process.env.REACT_APP_API_APP_URL}/enterprise/acverified`, { id: selectedRow._id })
 
       //add enterprise into verified list
-      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/accountmanager/addverifiedenterprise`, { ac_id: myValue.userData._id, ra_id: selectedRow._id })
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/accountmanager/addverifiedenterprise`, { ac_id: myValue.userData._id, en_id: selectedRow._id })
       fetchEnterprise()
       handleClose()
       showNotification("Successfully enterprise account verified", "success")
@@ -146,37 +127,39 @@ const NewEnterpriseData = () => {
     }
   }
 
+  useEffect(() => {
+    fetchEnterprise();
+  }, []);
 
-  const fetchAccountManager = async () => {
-    try {
-      const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/accountmanager/madmin/${myValue.userData._id}`);
-      setAcManager(response.data);
-    } catch (err) {
-      showNotification('There is something wrong....!', 'failure');
-    }
-  };
   const paginatedRows = newEnterprise.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
 
   return (
     <>
       <p className='text-lg xl:text-2xl'>New Enterprise</p>
-      <div style={{ height: 600, width: '100%', paddingTop: '19px' }}>
-        <DataGrid
-          getRowId={(rows) => rows._id} // Specify the custom ID field
-          rows={newEnterprise.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
-          columns={columns(handleInactivateButton, handleRowClick)} // Pass the function to columns
-          rowHeight={80}
-          onRowClick={(params) => handleRowClick(params.row)}
-          pagination={false}
-          pageSize={rowsPerPage}
-          hideFooterPagination={true}
-          sx={{
-            '& .MuiDataGrid-root': {
-              fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.09rem' },
-            },
-            '[class^=MuiDataGrid]': { border: 'none' },
-            '& .MuiDataGrid-columnHeader': {
+      {
+        loader?(
+          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 400, color: '#315370' }}>
+             <CircularProgress />
+          </Box>
+        ):(
+          <div style={{ height: 600, width: '100%', paddingTop: '19px' }}>
+          <DataGrid
+           getRowId={(rows) => rows._id} // Specify the custom ID field
+           rows={newEnterprise.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
+           columns={columns(handleInactivateButton)} // Pass the function to columns
+           rowHeight={80}
+           onRowClick={(params) => handleRowClick(params.row)}
+           pagination={false}
+           pageSize={rowsPerPage}
+           loading={loader}
+           hideFooterPagination={true}
+           sx={{
+             '& .MuiDataGrid-root': {
+               fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.09rem' },
+             },
+             '[class^=MuiDataGrid]': { border: 'none' },
+             '& .MuiDataGrid-columnHeader': {
               fontWeight: 'bold !important',
               fontSize: { xs: '0.875rem', sm: '1rem', md: '0.7rem', lg: '1.1rem' },
               color: 'black',
@@ -210,7 +193,10 @@ const NewEnterpriseData = () => {
             },
           }}
         />
-      </div>
+       </div>
+        )
+      }
+      
 
       {notification && (
         <Notification
@@ -283,8 +269,7 @@ const NewEnterpriseData = () => {
         <Dialog
           open={open}
           onClose={handleClose}
-          fullWidth
-          maxWidth="sm"
+          maxWidth="350px"
           sx={{ fontSize: { sm: "16px", xl: "20px" } }}
         >
           <DialogTitle
@@ -297,15 +282,15 @@ const NewEnterpriseData = () => {
             Details for {selectedRow?.full_name}
           </DialogTitle>
           <DialogContent>
-            <div className="space-y-6  space-x-2 pt-4 grid grid-cols-2">
+            <div className="space-y-6  space-x-4 pt-4 grid grid-cols-2">
               <p className="pt-6 pl-3">
-                <strong>Id:</strong> {selectedRow?._id}
+                <strong>Name:</strong> {selectedRow?.full_name}
               </p>
               <p>
                 <strong>Email:</strong> {selectedRow?.email}
               </p>
               <p>
-                <strong>Mobile No:</strong> {selectedRow?.mobile_no}
+                <strong>Mobile No:</strong> +{selectedRow?.mobileno}
               </p>
               <p>
                 <strong>Company:</strong> {selectedRow?.company_name}
