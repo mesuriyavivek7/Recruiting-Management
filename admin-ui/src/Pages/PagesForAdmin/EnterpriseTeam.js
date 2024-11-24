@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { useNavigate } from 'react-router-dom';
 import { columns } from './RowColOfEnterpriseTeam'; 
 import {
-  Card, TablePagination, Button, Box, Typography, Dialog, DialogTitle,
+  Card, Button, Box, Dialog, DialogTitle,
   DialogContent, DialogActions, CircularProgress
 } from '@mui/material';
 import {
   FaPhone, FaEnvelope, FaUserCheck, FaBriefcase, FaCalendarAlt
 } from 'react-icons/fa';
-import { fetchEnterpriseTeam } from '../../services/api';
+import { fetchEnterpriseTeam, getActiveJobsCountEnMember, getPendingJobCountEnMember } from '../../services/api';
 
 
 const EnterpriseTeam = ({ enterpriseDetails }) => {
@@ -17,31 +16,37 @@ const EnterpriseTeam = ({ enterpriseDetails }) => {
   const [selectedRow, setSelectedRow] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+
 
   // Map enterprise details to rows
   const generateRowsFromDetails = async (details) => {
+    setLoading(true)
     const data = await fetchEnterpriseTeam(details._id);
-    return data.map((detail, index) => ({
+
+    const detailsData=await Promise.all(data.map(async (detail, index) => {
+      
+      const activeJobsCount = await getActiveJobsCountEnMember(detail._id)
+      const pendingJobsCount = await getPendingJobCountEnMember(detail._id)
+
+      return {
       _id: `${index + 1}`,
       en_name: detail.full_name || 'Unknown',
       account_role: detail.isAdmin ? "Admin" : "Member",
-      active_job: detail.posted_jobs?.length || 0,
+      active_job:  activeJobsCount || 0,
       createdAt: detail.createdAt || new Date(),
-      pending_job: detail.pending_job || 0,
+      pending_job: pendingJobsCount || 0,
       status: detail.account_status || 'Inactive',
-    }));
+     }
+
+   }));
+   setLoading(false)
+   setRows(detailsData)
   };
 
   // Fetch rows on component mount or enterpriseDetails change
   useEffect(() => {
     if (enterpriseDetails) {
-      setLoading(true);
-      generateRowsFromDetails(enterpriseDetails).then((fetchedRows) => {
-        setRows(fetchedRows);
-        setLoading(false);
-      });
+       generateRowsFromDetails(enterpriseDetails)
     }
   }, [enterpriseDetails]);
 
@@ -49,17 +54,7 @@ const EnterpriseTeam = ({ enterpriseDetails }) => {
     setSelectedRow(row);
     setDialogOpen(true);
   };
-
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
-  const paginatedRows = rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+  
 
   const handleClose = () => {
     setDialogOpen(false);
@@ -76,7 +71,7 @@ const EnterpriseTeam = ({ enterpriseDetails }) => {
         ) : (
           <div style={{ height: 600, width: '100%' }} className="pt-4">
             <DataGrid
-              rows={paginatedRows}
+              rows={rows}
               columns={columns}
               rowHeight={80}
               onRowClick={(params) => handleRowClick(params.row)}

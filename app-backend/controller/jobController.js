@@ -876,3 +876,22 @@ export const SearchPastJobByTitleAndEnMemberId=async (req, res, next)=>{
       next(err)
     }
 }
+
+
+export const getActiveJobCountForEnMember=async (req, res, next) =>{
+    try{
+       const activejobCount=await JOBS.countDocuments({enterprise_member_id:req.params.enmemberid,job_status:"Active"})
+       res.status(200).json(activejobCount)
+    }catch(err){
+       next(err)
+    }
+}
+
+export const getPendingJobCountForEnMember= async (req, res, next) =>{
+   try{
+     const pendingJobCount = await JOBS.countDocuments({enterprise_member_id:req.params.enmemberid,job_status:"Pending"})
+     res.status(200).json(pendingJobCount)
+   }catch(err){
+     next(err)
+   }
+}

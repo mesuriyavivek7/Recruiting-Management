@@ -74,7 +74,9 @@ const EnterpriseJob = ({ enterpriseDetails }) => {
   // Function to map enterpriseDetails to rows
   const generateRowsFromDetails = async (details) => {
     const data = await fetchJobBasicDetailsByEnId(details._id);
-  
+
+    
+    
     // Fetch status for each job concurrently
     const rows = await Promise.all(
       data.map(async (detail, index) => {
