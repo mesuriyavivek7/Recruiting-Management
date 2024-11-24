@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { Box, Card, CircularProgress, TextField } from '@mui/material';
 import { RcCandidatecols } from './RowColData';
-import { fetchCandidateBasicDetailsById, fetchCandidateStatusById, fetchJobBasicDetailsByJobId, fetchRecuritingTeam } from '../../../services/api';
+import { fetchCandidateBasicDetailsById, fetchRecruiterMemberDetails, fetchCandidateStatusById, fetchJobBasicDetailsByJobId, fetchRecuritingTeam } from '../../../services/api';
 import { cstatus } from '../../../constants/jobStatusMapping';
 
 const calculateRowHeight = (params) => {
@@ -17,6 +17,7 @@ const AdminCandidate = ({ recuritingAgenciesDetails }) => {
   const [loading, setLoading] = useState(false);
 
   const generateRowsFromDetails = async (details) => {
+    setLoading(true)
     const recuritingTeam = await fetchRecuritingTeam(details._id);
 
     let submitted_candidates = recuritingTeam
@@ -34,6 +35,8 @@ const AdminCandidate = ({ recuritingAgenciesDetails }) => {
         const candidateStatusKey = candidate.candidate_status || "Status Unavailable";
         const candidateStatus = cstatus.get(candidateStatusKey) || candidateStatusKey;
 
+        const recruiterMember=await fetchRecruiterMemberDetails(candidate.recruiter_member_id)
+
         return {
           _id: String(index + 1),
           candidate_name: {
@@ -48,21 +51,18 @@ const AdminCandidate = ({ recuritingAgenciesDetails }) => {
           notice_period: basic_details?.notice_period || "N/A",
           email: basic_details?.primary_email_id || "No Email",
           mobile: basic_details?.primary_contact_number || "No Contact Number",
+          recruiter_member: recruiterMember.full_name
         };
       })
     );
 
-    return rows;
+    setRcCandidaterow(rows)
+    setLoading(false)
   };
 
   useEffect(() => {
     if (recuritingAgenciesDetails) {
-      setLoading(true);
-      generateRowsFromDetails(recuritingAgenciesDetails).then((fetchedRows) => {
-        setRcCandidaterow(fetchedRows);
-        setFilteredRows(fetchedRows); // Set initial filtered rows
-        setLoading(false);
-      });
+      generateRowsFromDetails(recuritingAgenciesDetails)
     }
   }, [recuritingAgenciesDetails]);
 
@@ -87,7 +87,7 @@ const AdminCandidate = ({ recuritingAgenciesDetails }) => {
           <CircularProgress />
         </Box>
       ) : (
-        <Card className='mt-9 font-sans px-4'>
+        <Card className='mt-8 font-sans px-4'>
           <Box sx={{
             marginBottom: 1,
             paddingTop: '5px',
