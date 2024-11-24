@@ -1,5 +1,5 @@
 import express from 'express'
-import { addCandidatePendingList, addCandidateVerifiedList, addEnterprise, addJobIntoVerifyList, addJobsPendingList, AddNewAccountManager, addRecruiting, addVerifiedRecruitng, getAcByMadminId, getAccountManager, getAcManagerEmail, getAcmanagerMailandName, getAllPendingCandidates, getAllPendingEnterprises, getAllPendingJobs, getAllPendingRecruitingAgencies, getAllVerifiedCandidates, getAllVerifiedEnterprises, getAllVerifiedJobs, getAllVerifiedRecruitingAgencies, } from '../controller/accountmanagerController.js'
+import { addCandidatePendingList, addCandidateVerifiedList, addEnterprise, addJobIntoVerifyList, addJobsPendingList, AddNewAccountManager, addRecruiting, addVerifiedEnterprise, addVerifiedRecruitng, getAcByMadminId, getAccountManager, getAcManagerEmail, getAcmanagerMailandName, getAllPendingCandidates, getAllPendingEnterprises, getAllPendingJobs, getAllPendingRecruitingAgencies, getAllVerifiedCandidates, getAllVerifiedEnterprises, getAllVerifiedJobs, getAllVerifiedRecruitingAgencies, } from '../controller/accountmanagerController.js'
 
 const router = express.Router()
 
@@ -19,7 +19,7 @@ router.post('/addrecruiting', addRecruiting)
 router.post('/addverifiedrecruiting', addVerifiedRecruitng)
 
 //add verified enteprise into verified list
-router.post('/addverifiedenterprise', addEnterprise)
+router.post('/addverifiedenterprise', addVerifiedEnterprise)
 
 //get verified all enterprise by ac manager id
 router.get('/verifiedenterprises/:ac_manager_id', getAllVerifiedEnterprises)
