@@ -13,7 +13,7 @@ export const columns = [
 
   {
     field: 'en_name',
-    headerName: 'Enterprise Name',
+    headerName: 'Member Name',
     minWidth: 230,
     headerAlign: 'left',
     align: 'left',

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Card, TablePagination, Box, Dialog, DialogTitle, DialogContent, DialogActions, CircularProgress } from '@mui/material';
+import { Card, Box, Dialog, DialogTitle, DialogContent, DialogActions, CircularProgress } from '@mui/material';
 import { RcTeamCols } from './RowColData'; // Import columns configuration
 import { FaPhone, FaEnvelope, FaUserCheck, FaBriefcase } from 'react-icons/fa'; // Import all required icons
 import { fetchRecuritingTeam } from '../../../services/api';
@@ -10,32 +10,33 @@ const AdminRcTeam = ({ recuritingAgenciesDetails }) => {
   const [selectedRow, setSelectedRow] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [loading, setLoading] = useState(false); // Loader state
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+
 
   // Function to map enterpriseDetails to rows
   const generateRowsFromDetails = async (details) => {
+    setLoading(true)
     const data = await fetchRecuritingTeam(details._id);
-    return data.map((agency, index) => ({
+    const detailData= data.map((agency, index) => ({
       _id: index + 1,
       full_name: agency.full_name || `User ${index + 1}`,
-      email: agency.email || `user${index + 1}@example.com`,
-      mobile_no: agency.mobileno || "Not Provided",
-      isAdmin: agency.isAdmin ? "Yes" : "No",
+      email:agency.email,
+      mobile_no:agency.mobileno,
+      isAdmin: agency.isAdmin ? "Admin" : "Member",
       mapped_jobs: Array.isArray(agency.mapped_jobs) ? agency.mapped_jobs.length : 0,
       accepted_jobs: Array.isArray(agency.accepted_jobs) ? agency.accepted_jobs.length : 0,
       submited_candidate_profile: Array.isArray(agency.submited_candidate_profile) ? agency.submited_candidate_profile.length : 0,
+      account_status:agency.account_status,
+      createdAt:agency.createdAt || new Date()
     }));
+
+    setRcTeamrows(detailData)
+    setLoading(false)
   };
 
   // Fetch rows when component mounts or enterpriseDetails changes
   useEffect(() => {
     if (recuritingAgenciesDetails) {
-      setLoading(true);
-      generateRowsFromDetails(recuritingAgenciesDetails).then((fetchedRows) => {
-        setRcTeamrows(fetchedRows);
-        setLoading(false);
-      });
+      generateRowsFromDetails(recuritingAgenciesDetails)
     }
   }, [recuritingAgenciesDetails]);
 
@@ -44,16 +45,6 @@ const AdminRcTeam = ({ recuritingAgenciesDetails }) => {
     setDialogOpen(true);
   };
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
-  const paginatedRows = RcTeamrows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   const handleClose = () => {
     setDialogOpen(false);
@@ -63,11 +54,11 @@ const AdminRcTeam = ({ recuritingAgenciesDetails }) => {
   const calculateRowHeight = () => 80;
 
   return (
-    <Card className='mt-4 font-sans shadow-md' sx={{
+    <Card className='mt-4 border font-sans shadow-md' sx={{
       borderRadius: '8px',
       boxShadow: 3,
     }}>
-      <div className="py-5 px-6">
+      <div className="p-4">
         {loading ? (
           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 400, color: '#315370' }}>
             <CircularProgress />
@@ -75,13 +66,13 @@ const AdminRcTeam = ({ recuritingAgenciesDetails }) => {
         ) : (
           <div style={{ height: 600, width: '100%' }} className="pt-4">
             <DataGrid
-              rows={paginatedRows}
+              rows={RcTeamrows}
               columns={RcTeamCols}
               rowHeight={80}
               onRowClick={(params) => handleRowClick(params.row)}
               getRowId={(row) => row._id}
               getRowHeight={calculateRowHeight}
-              pageSize={rowsPerPage}
+              pageSize={8}
               initialState={{
                 pagination: { paginationModel: { page: 0, pageSize: 10 } },
               }}
@@ -127,7 +118,7 @@ const AdminRcTeam = ({ recuritingAgenciesDetails }) => {
                   <FaPhone className="mr-2 text-black text-xl xl:text-2xl" />
                   <div className="flex gap-2 text-xl">
                     <span className="block font-medium">Phone:</span>
-                    <span>{selectedRow.mobile_no || 'Phone Not Available'}</span>
+                    <span>+{selectedRow.mobile_no || 'Phone Not Available'}</span>
                   </div>
                 </div>
                 <div className="flex items-center text-gray-700">
