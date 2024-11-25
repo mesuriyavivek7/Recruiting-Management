@@ -52,7 +52,7 @@ export default function AllEnterPriseData() {
 
           return {
             id: index + 1,
-            _id : enterprise._id,
+            _id: enterprise._id,
             full_name: enterprise.full_name || `User ${index + 1}`,
             email: enterprise.email || `user${index + 1}@example.com`,
             designation: enterprise.designation || "Not Provided",
@@ -88,8 +88,7 @@ export default function AllEnterPriseData() {
     const id = params.id;
     const e_id = params.row._id;
     try {
-      const response = await fetchEnterpriseById(e_id);
-      navigate(`/account_manager/enterprise/${id}`, { state: { enterpriseDetails: response } })
+      navigate(`/account_manager/enterprise/${id}`, { state: { enterpriseId: e_id } })
     } catch (error) {
       console.error("Error fetching enterprise data:", error);
     }
