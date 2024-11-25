@@ -1,58 +1,91 @@
-
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Card, TablePagination } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import { columns ,rows} from './RowColDataOfNew'; // Import columns configuration
+import { Card } from '@mui/material';
+import { columns} from './RowColDataOfNew'; // Import columns configuration
+import Notification from '../../../Components/Notification';
+import { store } from '../../../State/Store';
+import { fetchJobBasicDetailsByJobId, fetchJobDetailsById, fetchPendingJobsByACManagerId, fetchEnterpriseMemberDetails } from '../../../services/api';
+
+const selectUserData = (state) => state?.admin?.userData;
+const userData = selectUserData(store?.getState());
 
 const calculateRowHeight = (params) => {
-
   // const contentHeight = params.row ? params.row.content.length / 10 : 50; 
   return Math.max(80); 
 };
+
 const NewJobData = () => {
-  const [selectedRowId, setSelectedRowId] = useState(null);
-  const navigate = useNavigate();
+  const [loading,setLoading]=useState(false)
+  const [pendingJobs,setPendingJobs]=useState([])
+  const [notification, setNotification] = React.useState(null)
 
-  const handleRowClick = (id) => {
-    setSelectedRowId(id);
-    navigate(`/account_manager/job/${id}`); 
-  };
+  //for showing notification
+  const showNotification = (message, type) => {
+    setNotification({ message, type })
+  }
 
-  // State for pagination
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  useEffect(()=>{
+     const fetchData=async ()=>{
+      setLoading(true)
+      try{
+        //Fetching verified job ids
+        const verifiedJobsIds = await fetchPendingJobsByACManagerId(userData?._id);
 
-  // Handle pagination change
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
+        const rows = await Promise.all(
+          verifiedJobsIds.map(async (jobId, index) => {
+            //Fetch all details of job
+            const jobDetails = await fetchJobDetailsById(jobId);
+      
+            // Fetch recruiter asynchronously
+            const enterprise_member=await fetchEnterpriseMemberDetails(jobDetails.enterprise_member_id)
+      
+            const basicjobDetails = await fetchJobBasicDetailsByJobId(jobDetails.job_id);
+      
+            return {
+              _id: String(`${index + 1}`),
+              job_title: basicjobDetails?.job_title || "No Title Available",
+              job_id: jobDetails?.job_id || "No ID Available",
+              enterprise_member:enterprise_member.full_name,
+              location: {
+                state: basicjobDetails?.state || 'Unknown State',
+                country: basicjobDetails?.country || 'Unknown Country',
+              },
+              createdAt: jobDetails?.createdAt ? new Date(jobDetails.createdAt) : new Date(),
+              job_status:jobDetails.job_status
+            };
+          })
+        );
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
+        setPendingJobs(rows)
+      }catch(err){
+         console.log(err)
+         showNotification("Something went wrong while fetching data",'failure')
+      }finally{
+        setLoading(false)
+      }
+     }
+     fetchData()
+  },[])
 
-  // Calculate the rows to display
-  const paginatedRows = rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   return (
     <div>
-      <Card className='mt-9 font-sans'>
+    {notification && <Notification message={notification.message} type={notification.type} onClose={() => setNotification(null)}></Notification>}
+      <Card className='mt-8 border p-2 font-sans'>
         <p className='text-lg xl:text-2xl'>New Jobs</p>
         <div style={{ height: 600, width: '100%' }} className='pt-4'>
-         
           <DataGrid 
-          rows={paginatedRows}
+          rows={pendingJobs}
           columns={columns}
           rowHeight={80} 
-          onRowClick={(params) => handleRowClick(params.id)}
           getRowId={(row) => row._id} // Specify the custom ID field
           getRowHeight={calculateRowHeight} 
-          pagination={false} 
-          pageSize={rowsPerPage} 
-          hideFooterPagination={true} 
+          initialState={{
+            pagination: { paginationModel: { page: 0, pageSize: 5 } },
+          }}
+          pageSizeOptions={[5, 10]}
+          pageSize={8} 
+          loading={loading}
           disableSelectionOnClick 
            sx={{
             '& .MuiDataGrid-root': {
@@ -73,35 +106,19 @@ const NewJobData = () => {
               minHeight: '60px', 
             },
              '& .MuiDataGrid-columnHeader:focus-within': {
-        outline: 'none', 
-      },
-     
-           
-         
-            
-      
-      '& .MuiDataGrid-columnSeparator': {
-        color: 'blue',
-        visibility: 'visible', 
-      },
-      
-    
-      '& .MuiDataGrid-cell': {
-        fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem' }, 
-        
-      },
-      
-      '& .MuiDataGrid-cellContent': {
-        display: 'flex',
-        alignItems: 'center', 
-      },
-      '& .MuiDataGrid-cell': {
-        minHeight: '2.5rem', 
-      },
+              outline: 'none', 
+            },
+            '& .MuiDataGrid-columnSeparator': {
+               color: 'blue',
+              visibility: 'visible', 
+             },
+            '& .MuiDataGrid-cellContent': {
+               display: 'flex',
+               alignItems: 'center', 
+             },
             '& .MuiDataGrid-cell': {
               fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem'}, 
-              
-              
+              minHeight: '2.5rem', 
             },
             '& .MuiDataGrid-row': {
               borderBottom: 'none', 
@@ -114,16 +131,7 @@ const NewJobData = () => {
         />
         </div>
       </Card>
-      <TablePagination
-        component="div"
-        count={rows.length}
-        page={page}
-        onPageChange={handleChangePage}
-        rowsPerPage={rowsPerPage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-        rowsPerPageOptions={[5, 10, 25]}
-        labelRowsPerPage="Rows per page"
-      />
+
     </div>
   );
 };
