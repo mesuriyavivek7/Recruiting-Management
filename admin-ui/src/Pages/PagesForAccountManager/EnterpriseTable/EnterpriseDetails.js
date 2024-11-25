@@ -40,22 +40,22 @@ const EnterpriseDetails = ({enterpriseDetails}) => {
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
             <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
-              <Typography variant="body1"><strong>Full Name:</strong>{enterpriseDetails?.full_name}</Typography>
+              <Typography variant="body1"><strong>Full Name: </strong>{enterpriseDetails?.full_name}</Typography>
             </Box>
           </Grid>
           <Grid item xs={12} sm={6}>
             <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
-              <Typography variant="body1"><strong>Mobile Number:</strong>{enterpriseDetails?.mobileno}</Typography>
+              <Typography variant="body1"><strong>Mobile Number: </strong>{enterpriseDetails?.mobileno}</Typography>
             </Box>
           </Grid>
           <Grid item xs={12} sm={6}>
             <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
-              <Typography variant="body1"><strong>Email:</strong> {enterpriseDetails?.email}</Typography>
+              <Typography variant="body1"><strong>Email: </strong> {enterpriseDetails?.email}</Typography>
             </Box>
           </Grid>
           <Grid item xs={12} sm={6}>
             <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
-              <Typography variant="body1"><strong>Designation:</strong> {enterpriseDetails?.designation}</Typography>
+              <Typography variant="body1"><strong>Designation: </strong> {enterpriseDetails?.designation}</Typography>
             </Box>
           </Grid>
         </Grid>
@@ -69,27 +69,27 @@ const EnterpriseDetails = ({enterpriseDetails}) => {
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
             <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
-              <Typography variant="body1"><strong>Company Name:</strong> {enterpriseDetails?.company_name}</Typography>
+              <Typography variant="body1"><strong>Company Name: </strong> {enterpriseDetails?.company_name}</Typography>
             </Box>
           </Grid>
           <Grid item xs={12} sm={6}>
             <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
-              <Typography variant="body1"><strong>Company Size:</strong> {enterpriseDetails?.company_size}</Typography>
+              <Typography variant="body1"><strong>Company Size: </strong> {enterpriseDetails?.company_size}</Typography>
             </Box>
           </Grid>
           <Grid item xs={12} sm={6}>
             <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
-              <Typography variant="body1"><strong>Country:</strong> {enterpriseDetails?.country}</Typography>
+              <Typography variant="body1"><strong>Country: </strong> {enterpriseDetails?.country}</Typography>
             </Box>
           </Grid>
           <Grid item xs={12} sm={6}>
             <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
-              <Typography variant="body1"><strong>State:</strong>{enterpriseDetails?.state}</Typography>
+              <Typography variant="body1"><strong>State: </strong>{enterpriseDetails?.state}</Typography>
             </Box>
           </Grid>
           <Grid item xs={12} sm={6}>
             <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
-              <Typography variant="body1"><strong>City:</strong> {enterpriseDetails?.city}</Typography>
+              <Typography variant="body1"><strong>City: </strong> {enterpriseDetails?.city}</Typography>
             </Box>
           </Grid>
         </Grid>
