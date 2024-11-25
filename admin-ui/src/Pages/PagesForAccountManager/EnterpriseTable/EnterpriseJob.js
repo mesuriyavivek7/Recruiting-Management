@@ -1,8 +1,8 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Card, TablePagination, Tabs, Tab, Button, TextField, Divider, IconButton, Typography, Box, Dialog, DialogTitle, DialogContent, DialogActions, CircularProgress } from '@mui/material';
+import { Card, TablePagination, Tabs, Tab, Button, TextField, Divider, IconButton, Typography, Box, Dialog, DialogTitle, DialogContent, DialogActions, CircularProgress, InputAdornment } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { FaCaretDown } from 'react-icons/fa';
+import { FaCaretDown, FaSearch } from 'react-icons/fa';
 import { FaBusinessTime, FaBullseye, FaThumbsUp, FaBan, FaStar, FaQuestionCircle, FaFilePdf, FaFileAlt, FaFileAudio, FaMapMarkerAlt, FaBriefcase, FaInfoCircle, FaPaperclip, FaUsers, FaShareAlt, FaExternalLinkAlt, FaDollarSign, FaClock, FaCalendarAlt } from 'react-icons/fa';
 import { colsJob } from './RowColData';
 import { fetchJobBasicDetailsByEnId, fetchJobStatusByJobId } from '../../../services/api';
@@ -14,6 +14,20 @@ const EnterpriseJob = ({ enterpriseDetails }) => {
   const [jobType, setJobType] = useState('fulltime'); // fulltime or contract
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedJob, setSelectedJob] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredRows, setFilteredRows] = useState(rows || []);
+
+  const [activeTab, setActiveTab] = useState('one');
+  const [openSections, setOpenSections] = useState({
+    jobProfile: false,
+    jobDescription: false,
+    sourcingGuidelines: false,
+    remuneration: false,
+  });
+
+  // State for pagination
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const uploadedFiles = [
     { name: 'Sample CV', type: 'pdf', url: 'https://www.rd.usda.gov/sites/default/files/pdf-sample_0.pdf' },
@@ -21,7 +35,6 @@ const EnterpriseJob = ({ enterpriseDetails }) => {
     { name: 'Audio Briefing by Client', type: 'audio', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3' },
     { name: 'Uploaded Other File', type: 'image', url: 'https://www.w3schools.com/w3images/lights.jpg' },
   ];
-
 
   const handleRowClick = (id) => {
     setSelectedRowId(id);
@@ -33,10 +46,6 @@ const EnterpriseJob = ({ enterpriseDetails }) => {
   const handleCloseDialog = () => {
     setDialogOpen(false);
   };
-
-  // State for pagination
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   // Handle pagination change
   const handleChangePage = (event, newPage) => {
@@ -52,17 +61,6 @@ const EnterpriseJob = ({ enterpriseDetails }) => {
     setActiveTab(newValue);
   };
 
-  const [activeTab, setActiveTab] = useState('one');
-
-
-  const [openSections, setOpenSections] = useState({
-    jobProfile: false,
-    jobDescription: false,
-
-    sourcingGuidelines: false,
-    remuneration: false,
-  });
-
   // Toggle section visibility
   const toggleSection = (section) => {
     setOpenSections((prev) => ({
@@ -75,7 +73,7 @@ const EnterpriseJob = ({ enterpriseDetails }) => {
   // Function to map enterpriseDetails to rows
   const generateRowsFromDetails = async (details) => {
     const data = await fetchJobBasicDetailsByEnId(details._id);
-  
+
     // Fetch status for each job concurrently
     const rows = await Promise.all(
       data.map(async (detail, index) => {
@@ -89,11 +87,22 @@ const EnterpriseJob = ({ enterpriseDetails }) => {
         };
       })
     );
-  
+
     return rows; // Return rows after all status requests are completed
   };
-
   
+  useEffect(() => {
+    if (searchTerm === '') {
+      setFilteredRows(rows); 
+    } else {
+      const lowerCaseTerm = searchTerm.toLowerCase();
+      const newFilteredRows = rows.filter((row) =>
+        row.job_title.toLowerCase().includes(lowerCaseTerm)
+      );
+      setFilteredRows(newFilteredRows);
+    }
+  }, [searchTerm, rows]);
+
   useEffect(() => {
     if (enterpriseDetails) {
       setLoading(true);
@@ -108,79 +117,88 @@ const EnterpriseJob = ({ enterpriseDetails }) => {
 
   return (
     <div>
-      <Card className='mt-4 font-sans shadow-md' sx={{
-        borderRadius: '8px',
-        boxShadow: 3,
-      }}>
-
-         {loading ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 400 ,color:'#315370'}}>
-          <CircularProgress />
-        </Box>
-      ) : (
-        <div className='px-6 py-5'>
-          
-
-         
-
-          {/* Search Field */}
-          <TextField 
-            variant='outlined' 
-            placeholder='Search Job...' 
-            fullWidth 
-            className='my-4 pt-9' 
-          />
-
-          {/* DataGrid Section */}
-          <div style={{ height: 600, width: '100%' }} className='pt-4'>
-            <DataGrid 
-              rows={paginatedRows}
-              columns={colsJob}
-              rowHeight={80}
-              onRowClick={(params) => handleRowClick(params.id)}
-              getRowId={(row) => row._id}
-              //pagination={false} 
-              pageSize={rowsPerPage} 
-              initialState={{
-                pagination: {
-                  paginationModel: { page: 0, pageSize: 10 },
-                },
+      <Card
+        className="mt-4 font-sans shadow-md"
+        sx={{ borderRadius: '8px', boxShadow: 3 }}
+      >
+        {loading ? (
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: 400,
+              color: '#315370',
+            }}
+          >
+            <CircularProgress />
+          </Box>
+        ) : (
+          <div className="px-6 py-5">
+            {/* Search Field */}
+            <TextField
+              variant="outlined"
+              placeholder="Search Job..."
+              fullWidth
+              className="my-4 pt-9"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)} // Update searchTerm dynamically
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <FaSearch />
+                  </InputAdornment>
+                ),
               }}
-              pageSizeOptions={[5, 10]}
-             // hideFooterPagination={true} 
-              disableSelectionOnClick 
-              sx={{
-                '& .MuiDataGrid-root': {
-                  fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.09rem' }, 
-                },
-                '[class^=MuiDataGrid]': { border: 'none' },
-                '& .MuiDataGrid-columnHeader': {
-                  fontWeight: 'bold', 
-                  fontSize: { xs: '0.875rem', sm: '1rem', md: '0.7rem', lg: '1.1rem' }, 
-                  color: 'black', 
-                  backgroundColor: '#e3e6ea !important', 
-                  minHeight: '60px', 
-                },
-                '& .MuiDataGrid-cell': {
-                  fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem' }, 
-                  minHeight: '2.5rem', 
-                },
-                '& .MuiDataGrid-cellContent': {
-                  display: 'flex',
-                  alignItems: 'center', 
-                },
-                '& .MuiDataGrid-row': {
-                  borderBottom: 'none', 
-                },
-                '& .MuiDataGrid-cell:focus': {
-                  outline: 'none', 
-                },
-              }}
-      />
+            />
+
+            {/* DataGrid Section */}
+            <div style={{ height: 600, width: '100%' }} className="pt-4">
+              <DataGrid
+                rows={filteredRows}
+                columns={colsJob}
+                rowHeight={80}
+                pageSize={rowsPerPage}
+                getRowId={(row) => row._id}
+                initialState={{
+                  pagination: {
+                    paginationModel: { page: 0, pageSize: 10 },
+                  },
+                }}
+                pageSizeOptions={[5, 10]}
+                disableSelectionOnClick
+                sx={{
+                  '& .MuiDataGrid-root': {
+                    fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.09rem' },
+                  },
+                  '[class^=MuiDataGrid]': { border: 'none' },
+                  '& .MuiDataGrid-columnHeader': {
+                    fontWeight: 'bold',
+                    fontSize: { xs: '0.875rem', sm: '1rem', md: '0.7rem', lg: '1.1rem' },
+                    color: 'black',
+                    backgroundColor: '#e3e6ea !important',
+                    minHeight: '60px',
+                  },
+                  '& .MuiDataGrid-cell': {
+                    fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem' },
+                    minHeight: '2.5rem',
+                  },
+                  '& .MuiDataGrid-cellContent': {
+                    display: 'flex',
+                    alignItems: 'center',
+                  },
+                  '& .MuiDataGrid-row': {
+                    borderBottom: 'none',
+                  },
+                  '& .MuiDataGrid-cell:focus': {
+                    outline: 'none',
+                  },
+                }}
+              />
             </div>
-          </div>)}
+          </div>
+        )}
       </Card>
-
 
       <Dialog open={dialogOpen} onClose={handleCloseDialog} maxWidth="xl" fullWidth PaperProps={{
         sx: {

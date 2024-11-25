@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { Button } from '@mui/material';
-
 import { useLocation } from 'react-router-dom';
 import EnterpriseDetails from './EnterpriseTable/EnterpriseDetails';
 import EnterpriseJob from './EnterpriseTable/EnterpriseJob';
@@ -8,7 +7,7 @@ import EnterpriseTeam from './EnterpriseTable/EnterpriseTeam';
 
 const AcEnterprise = () => {
   const location = useLocation();
-  const { enterpriseDetails } = location.state || {}; // Access the passed state
+  const { enterpriseDetails } = location.state || {};
   const [activeTab, setActiveTab] = useState('Enterprise Details');
 
   const handleTabChange = (tab) => {
@@ -16,11 +15,8 @@ const AcEnterprise = () => {
   };
   return (
     <div>
-
       <div className='pt-6'>
-
         <div className="flex gap-0">
-
           <Button
             id="demo-customized-button"
             aria-haspopup="true"
@@ -33,7 +29,7 @@ const AcEnterprise = () => {
               height: '50px',
               textTransform: 'none',
               border: '2px solid white',
-              borderRadius: '20px 0 0 20px',  // Rounded left side
+              borderRadius: '20px 0 0 20px', 
               width: 'auto',
               marginRight: '-1px',
               whiteSpace: 'nowrap'
