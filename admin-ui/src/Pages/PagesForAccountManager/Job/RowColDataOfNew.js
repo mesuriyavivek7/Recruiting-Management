@@ -9,7 +9,7 @@ export const columns = [
     field: '_id',
     headerName: 'ID',
     flex: 1,
-    minWidth: 100,
+    minWidth: 90,
     headerAlign: 'left',
     align: 'left',
   },
@@ -35,20 +35,20 @@ export const columns = [
     },
   },
   {
-    field: 'recruiter',
-    headerName: 'Recruiter',
+    field: 'enterprise_member',
+    headerName: 'Enterprise Member',
     flex: 2,
     minWidth: 250,
     headerAlign: 'left',
     align: 'left',
     renderCell: (params) => {
-      const recruiter = params.row?.recruiter || 'Unknown Recruiter';
+      const enterprise_member = params.row?.enterprise_member || 'Unknown Recruiter';
       return (
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <div style={{ width: 32, height: 32, borderRadius: '50%', backgroundColor: '#3f51b5', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: 8 }}>
-            {recruiter.charAt(0).toUpperCase()}
+            {enterprise_member.charAt(0).toUpperCase()}
           </div>
-          {recruiter}
+          {enterprise_member}
         </div>
       );
     },
@@ -69,6 +69,21 @@ export const columns = [
         </div>
       );
     },
+  },
+  {
+    field: 'job_status',
+    headerName: 'Job Status',
+    flex: 2,
+    minWidth: 250,
+    headerAlign: 'left',
+    align: 'left',
+    renderCell : (params) =>(
+      <div className='flex items-center w-full h-full'>
+         <span className={`h-8 w-28 ${params.row.job_status==="Active"?"bg-green-400":"bg-red-400"} text-white rounded-md flex justify-center items-center`}>
+          {params.row.job_status}
+         </span>
+      </div>
+    )
   },
   {
     field: 'createdAt',
