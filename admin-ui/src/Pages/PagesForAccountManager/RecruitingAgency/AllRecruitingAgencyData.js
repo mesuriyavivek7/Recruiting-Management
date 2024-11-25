@@ -88,7 +88,7 @@ export default function AllRecruitingAgencyData() {
     const id = params.id;
     try {
       //const response = await fetchRecuritingAgencyById(id);
-      navigate(`/account_manager/recruiting-agency/${id}`);
+      navigate(`/account_manager/recruiting-agency/${id}`, { state: { r_agency_id: id } });
     } catch (error) {
       console.error('Error fetching enterprise data:', error);
     }
