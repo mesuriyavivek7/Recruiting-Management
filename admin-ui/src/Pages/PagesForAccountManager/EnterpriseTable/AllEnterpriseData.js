@@ -1,12 +1,13 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
-import TablePagination from '@mui/material/TablePagination';
-import { rows, columns } from './RowColData';
+import { columns } from './RowColData';
 import { Button, Card, CircularProgress, IconButton, InputAdornment, TextField } from '@mui/material';
 import { FaSearch } from 'react-icons/fa';
-import { fetchEnterpriseById } from '../../../services/api';
+import { fetchEnterpriseById, fetchVerifedEntepreiseByACId } from '../../../services/api';
 import { useNavigate } from 'react-router-dom';
+import { store } from '../../../State/Store';
+import Notification from '../../../Components/Notification';
 
 const calculateRowHeight = (params) => {
   const contentHeight = params.row ? params.row.content.length / 10 : 50;
@@ -14,46 +15,77 @@ const calculateRowHeight = (params) => {
 };
 
 export default function AllEnterPriseData() {
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [loading, setLoading] = React.useState(false);
+
+  const selectUserData = (state) => state?.admin?.userData;
+  const userData = selectUserData(store?.getState());
 
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = React.useState('');
   const [filterStatus, setFilterStatus] = React.useState('All');
+  const [filteredRows, setFilteredRows] = React.useState([]);
 
-  const [filteredRows, setFilteredRows] = React.useState(rows);
+  const [notification,setNotification]=React.useState(null)
+
+  //for showing notification
+  const showNotification=(message,type)=>{
+    setNotification({message,type})
+  }
+
   React.useEffect(() => {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
     }, 1000);
-  }, [page, rowsPerPage]);
+  }, []);
 
   React.useEffect(() => {
-    const newFilteredRows = rows.filter((row) => {
-      const matchesSearch = row.full_name.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesStatus = filterStatus === 'All' || row.status === filterStatus;
+    const fetchData=async ()=>{
+       setLoading(true)
+       try {
+        //Fetch verified enterprise ids
+        const verifiedEnterprisesId = await fetchVerifedEntepreiseByACId(userData?._id);
+
+        const rows = await Promise.all(verifiedEnterprisesId.map(async (enterpriseId, index) => {
+            //Fetch all details of verified enterprise
+            const enterprise = await fetchEnterpriseById(enterpriseId);
       
-      return matchesSearch && matchesStatus;
-    });
-    setFilteredRows(newFilteredRows);
+            return {
+              id: index + 1,
+              full_name: enterprise.full_name || `User ${index + 1}`,
+              email: enterprise.email || `user${index + 1}@example.com`,
+              designation: enterprise.designation || "Not Provided",
+              company_name: enterprise.company_name || "Unknown",
+              country: enterprise.country || "Unknown",
+              city: enterprise.city || "Unknown",
+              email_verification: enterprise.isEmailVerified ? "yes" : "no",
+              account_status:enterprise.account_status.status
+            };
+          })
+        );
+
+        const newFilteredRows = rows.filter((row) => {
+          const matchesSearch = row.full_name.toLowerCase().includes(searchTerm.toLowerCase());
+          const matchesStatus = filterStatus === 'All' || row.account_status === filterStatus;
+          
+          return matchesSearch && matchesStatus;
+        });
+
+        setFilteredRows(newFilteredRows);
+
+       } catch(err){
+         console.log(err)
+         showNotification("Something went wrong while fetching data",'failure')
+       } finally{
+        setLoading(false)
+       }
+    }
+    fetchData()
   }, [searchTerm, filterStatus]);
-  const handleSearch = () => {
-    const newFilteredRows = rows.filter((row) => {
-      const matchesSearch = row.full_name.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesStatus = filterStatus === 'All' || row.status === filterStatus;
-      return matchesSearch && matchesStatus;
-    });
-    setFilteredRows(newFilteredRows);
-  };
  
   const handleRowClick = async (params) => {
     const id = params.id;
-   
-  
     try {
-    
         navigate(`/account_manager/enterprise/${id}`)
     } catch (error) {
       console.error("Error fetching enterprise data:", error);
@@ -62,16 +94,12 @@ export default function AllEnterPriseData() {
   
   const handleFilterClick = (status) => {
     setFilterStatus(status);
-    const newFilteredRows = rows.filter((row) => {
-      const matchesSearch = row.full_name.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesStatus = status === 'All' || row.status === status;
-      return matchesSearch && matchesStatus;
-    });
-    setFilteredRows(newFilteredRows);
   };
+
   return (
 
     <>
+    {notification && <Notification message={notification.message} type={notification.type} onClose={()=>setNotification(null)}></Notification>}
     <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} gap={2} pt={4}>
         <TextField
           label="Search..."
@@ -104,7 +132,7 @@ export default function AllEnterPriseData() {
         />
 
         <Box display="flex" gap={0}>
-          {['All', 'Active', 'Pending'].map((status) => (
+          {['All', 'Active', 'Inactive'].map((status) => (
             <Button
               key={status}
               variant={filterStatus === status ? 'contained' : 'outlined'}
@@ -119,7 +147,7 @@ export default function AllEnterPriseData() {
                 border: '1px solid gray',
                 borderRadius:
                   status === 'All' ? '20px 0 0 20px' :
-                    status === 'Pending' ? '0 20px 20px 0' : '0',
+                    status === 'Inactive' ? '0 20px 20px 0' : '0',
                 '&:hover': {
                   backgroundColor: filterStatus === status ? '#315380' : '#e0e0e0',
                 },
@@ -141,12 +169,12 @@ export default function AllEnterPriseData() {
       <Box sx={{ height: 600, width: '100%', paddingTop: '19px' }} >
         <DataGrid
           getRowId={(rows) => rows.id} // Specify the custom ID field
-          rows={filteredRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
+          rows={filteredRows}
           columns={columns}
           rowHeight={80}
           getRowHeight={calculateRowHeight}
           onRowClick={handleRowClick}
-          pageSize={rowsPerPage}
+          pageSize={8}
           pageSizeOptions={[5, 10]}
           initialState={{
             pagination: { paginationModel: { page: 0, pageSize: 5 } },

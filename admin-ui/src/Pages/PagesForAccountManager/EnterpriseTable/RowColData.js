@@ -1,7 +1,6 @@
 import Button from '@mui/material/Button';
 import { fetchEnterpriseById, fetchVerifedEntepreiseByACId } from '../../../services/api';
 import { store } from '../../../State/Store';
-import { fetchEnterpriseData } from '../../../services/api';
 import { format, formatDistanceToNowStrict } from 'date-fns';
 import React from 'react';
 
@@ -10,7 +9,7 @@ export const columns = [
     {
         field: 'id',
         headerName: 'Sr No.',
-        minWidth: 110,
+        minWidth: 90,
         flex: 1
     },
     {
@@ -48,6 +47,17 @@ export const columns = [
         headerName: 'City',
         flex: 1, // Flexible width
         minWidth: 150, // Minimum width
+    },
+    {
+        field: 'account_status',
+        headerName: 'Account Status',
+        flex: 1, // Flexible width
+        minWidth: 180, // Minimum width
+        renderCell: (params) =>(
+          <div className='w-full h-full flex items-center'>
+           <span className={`${params.row.account_status==="Active"?"bg-green-500":"bg-red-500"} text-white h-8 w-28 flex rounded-md justify-center items-center`}>{params.row.account_status}</span>
+          </div>
+        )
     },
     {
         field: 'email_verification',
