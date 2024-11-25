@@ -12,18 +12,6 @@ export const cols = (handleInactivateButton) => [
   { field: 'state', headerName: 'State', width: 180 },
   { field: 'city', headerName: 'City', width: 180 },
   {
-    field: 'domains',
-    headerName: 'Domains',
-    width: 250,
-    renderCell: (params) => (
-      <div className="flex flex-wrap">
-        {params?.value?.map((domain, index) => (
-          <div key={index} className="text-md">{domain},</div>
-        ))}
-      </div>
-    ),
-  },
-  {
     field: 'email_verified',
     headerName: 'Email Verified',
     width: 180,

@@ -30,12 +30,12 @@ const AdminAllCandidateData = () => {
     setNotification({ message, type });
   };
 
-  useEffect(() => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-    }, 1000);
-  }, []);
+  // useEffect(() => {
+  //   setLoading(true);
+  //   setTimeout(() => {
+  //     setLoading(false);
+  //   }, 1000);
+  // }, []);
 
   useEffect(() => {
 
@@ -87,11 +87,10 @@ const AdminAllCandidateData = () => {
          });
 
          setFilteredRows(newFilteredRows);
-
         }catch(err){
           console.log(err)
           showNotification("Something went wrong while fetching data",'failure')
-        }finally{
+        } finally{
           setLoading(false)
         }
     }
@@ -161,6 +160,7 @@ const AdminAllCandidateData = () => {
               getRowId={(row) => row._id}
               getRowHeight={calculateRowHeight}
               pageSize={8}
+              loading={loading}
               pageSizeOptions={[5, 10]}
               initialState={{
                 pagination: { paginationModel: { page: 0, pageSize: 10 } },

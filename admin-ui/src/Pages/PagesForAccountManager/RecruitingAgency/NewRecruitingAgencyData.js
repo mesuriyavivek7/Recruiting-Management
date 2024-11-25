@@ -4,11 +4,16 @@ import { useSelector } from 'react-redux';
 import {
   Card, Button, Dialog, DialogTitle, TextField,
   DialogContentText, DialogContent, DialogActions,
-  TablePagination,
 } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import Notification from '../../../Components/Notification';
 import { cols } from './NewRowColData';
+import { FaEnvelope, FaBuilding, FaUsers, FaPhone, FaBriefcase, FaMapMarkerAlt, FaCity, FaCheckCircle, FaLinkedin, FaGlobe } from 'react-icons/fa';
+import InsertLinkOutlinedIcon from '@mui/icons-material/InsertLinkOutlined';
+import CorporateFareOutlinedIcon from '@mui/icons-material/CorporateFareOutlined';
+import CreditCardOutlinedIcon from '@mui/icons-material/CreditCardOutlined';
+import CallToActionOutlinedIcon from '@mui/icons-material/CallToActionOutlined';
+import DomainOutlinedIcon from '@mui/icons-material/DomainOutlined';
 
 const NewRecruitingAgencyData = () => {
   const [open, setOpen] = useState(false);
@@ -19,37 +24,34 @@ const NewRecruitingAgencyData = () => {
   const [reason, setReason] = useState('');
   const [openPopup, setOpenPopup] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
+  const [loader,setLoader]=useState(false)
 
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const handleCloseInactivateButton = () => {
     setSelectInactive(null)
     setOpenPopup(false)
 
   }
-  // Pagination handlers
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0); // Reset page to 0 when rows per page changes
-  };
 
   const fetchRecruitingAgency = async () => {
+    setLoader(true)
     try {
       const res = await axios.get(`${process.env.REACT_APP_API_APP_URL}/recruiting/acmanagerpending/${myValue.userData._id}`);
-      setRecruitingAgency(res.data);
+
+      const resAddIds=res.data.map((item,index)=> ({...item,id:index+1}))
+      setRecruitingAgency(resAddIds);
     } catch (err) {
-      showNotification("There is something wrong while fetching data");
+      showNotification("Something went wrong while fetching data",'failure');
+      console.log(err)
+    }finally{
+      setLoader(false)
     }
   };
 
   useEffect(() => {
     fetchRecruitingAgency();
   }, []);
-  console.log(recruitingAgency);
+
+  
   const showNotification = (message, type) => {
     setNotification({ message, type });
   };
@@ -120,35 +122,28 @@ const NewRecruitingAgencyData = () => {
     setOpen(false);
     setSelectedRow(null);
   };
-
-
-  // const paginatedRows = rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
-  const paginatedRows = recruitingAgency.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+  
   return (
     <div>
       {notification && <Notification message={notification.message} type={notification.type} onClose={() => setNotification(null)} />}
       <p className='text-lg xl:text-2xl'>New Recruiting Agency</p>
       <Card className='mt-4 font-sans'>
 
-        <div style={{ height: 400, width: '100%' }}>
-          {/* <DataGrid
-            rows={recruitingAgency}
-            columns={columns}
-            pageSize={5}
-            rowsPerPageOptions={[5, 10, 25]}
-            onRowClick={handleRowClick}
-          /> */}
+        <div style={{ height: 520, width: '100%' }}>
           <DataGrid
             rows={recruitingAgency}
-            // rows={rows} 
             getRowId={(rows) => rows.id} // Specify the custom ID field
             columns={cols(handleInactivateButton)}
             rowHeight={80}
             onRowClick={handleRowClick}
-            pagination={false}
-            pageSize={rowsPerPage}
-            hideFooterPagination={true}
-
+            pageSize={8}
+            loading={loader}
+            pageSizeOptions={[5, 10]}
+            initialState={{
+                  pagination: {
+                    paginationModel: { page: 0, pageSize: 10 },
+                  },
+            }}
             sx={{
               '& .MuiDataGrid-root': {
                 fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.09rem' },
@@ -170,33 +165,18 @@ const NewRecruitingAgencyData = () => {
               '& .MuiDataGrid-columnHeader:focus-within': {
                 outline: 'none',
               },
-
-
-
-
-
               '& .MuiDataGrid-columnSeparator': {
                 color: 'blue',
                 visibility: 'visible',
               },
-
-
               '& .MuiDataGrid-cell': {
                 fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem' },
-
+                minHeight: '2.5rem',
               },
 
               '& .MuiDataGrid-cellContent': {
                 display: 'flex',
                 alignItems: 'center',
-              },
-              '& .MuiDataGrid-cell': {
-                minHeight: '2.5rem',
-              },
-              '& .MuiDataGrid-cell': {
-                fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem' },
-
-
               },
               '& .MuiDataGrid-row': {
                 borderBottom: 'none',
@@ -255,85 +235,211 @@ const NewRecruitingAgencyData = () => {
           </DialogActions>
         </Dialog>
 
+        {/* Dialog box for Show Recruiter preview */}
         {selectedRow && (
-          <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm" sx={{ fontSize: { sm: '16px', xl: '20px' } }}>
-            <DialogTitle sx={{
-              fontSize: { sm: '20px', xl: '25px' }, borderBottom: '2px solid black', // Add this line for the border
-              paddingBottom: '8px',
-            }}>Details for {selectedRow?.full_name}</DialogTitle>
-            <DialogContent>
-              <div className="space-y-6  space-x-2 pt-4 grid grid-cols-2">
-                <p className='pt-6 pl-3'><strong>Id:</strong> {selectedRow?._id}</p>
-                <p><strong>Email:</strong> {selectedRow?.email}</p>
-                <p><strong>Company:</strong> {selectedRow?.company_name}</p>
+        <Dialog open={open} onClose={handleClose} fullWidth maxWidth="xl">
+          {/* Dialog Title */}
+          <DialogTitle className="bg-gray-600 text-white text-lg font-bold">
+            Details for {selectedRow?.full_name}
+          </DialogTitle>
 
-
-                <p><strong>Company Size:</strong> {selectedRow?.company_size}</p>
-                <p><strong>Designation:</strong> {selectedRow?.designation}</p>
-                <p><strong>Interested in:</strong> {selectedRow?.interested_in}</p>
-                <p><strong>Country:</strong> {selectedRow?.country}</p>
-                <p><strong>State:</strong> {selectedRow?.state}</p>
-                <p><strong>City:</strong> {selectedRow?.city}</p>
-
-                <p><strong>Email verified:</strong> {(selectedRow?.email_verified) ? ("Yes") : ("No")}</p>
-                <p><strong>Pancard Number:</strong> {selectedRow?.pancard_number}</p>
-                <p><strong>Entity Type:</strong> {selectedRow?.entity_type}</p>
-                <p><strong>Linkedin URL:</strong> {selectedRow?.linkedin_url}</p>
-                <p><strong>Domains:</strong>
-                  <div className='flex flex-wrap'>
-                    {selectedRow?.domains.map((domain, index) => (
-                      <div className='bg-gray-200 p-1.5 m-0.5 rounded-lg text-xs' key={index}>{domain}</div>
-                    ))
-                    }
-                  </div></p>
-
+          {/* Dialog Content */}
+          <DialogContent className="bg-gray-50">
+            <div className="bg-white shadow-md rounded-lg p-6 my-8">
+              <div className="text-center mb-8">
+                <h2 className="text-2xl xl:text-3xl font-semibold text-gray-800">
+                  {selectedRow.full_name}
+                </h2>
+                <p className="text-gray-500 pt-1">Member Information</p>
               </div>
-
-              <div className='mt-6'>
-                <strong className='bg-green-400 px-2 py-1 rounded-sm'>PAN Card Document:</strong>
-                <div className='mt-2 w-full'>
-                  {selectedRow?.kyc_documents && (
-                    selectedRow?.kyc_documents.filename.endsWith('.pdf') ? (
-                      <iframe src={`${process.env.REACT_APP_APP_URL}/kycdocs/${selectedRow?.kyc_documents.filename}`} width="600" height="400"></iframe>
-                    ) : (
-                      <img className='w-full' src={`${process.env.REACT_APP_APP_URL}/kycdocs/${selectedRow?.kyc_documents.filename}`} />
-                    )
-                  )}
-
+           <div className='flex items-start'>
+              {/* Professional details container */}
+             <div className='flex flex-col gap-6'> 
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                {/* Email */}
+                <div className="flex items-center text-gray-700">
+                  <FaEnvelope className="mr-2 text-black text-md xl:text-xl" />
+                  <div className="flex gap-2 text-[18px]">
+                    <span className="block font-medium">Email:</span>
+                    <span>{selectedRow?.email}</span>
+                  </div>
                 </div>
+
+                {/* Mobile No */}
+                <div className="flex items-center text-gray-700">
+                  <FaPhone className="mr-2 text-black text-md" />
+                  <div className="flex gap-2 text-[18px]">
+                    <span className="block font-medium">Mobile No:</span>
+                    <span>+{selectedRow?.mobileno}</span>
+                  </div>
+                </div>
+
+                {/* Designation */}
+                <div className="flex items-center text-gray-700">
+                  <FaBriefcase className="mr-2 text-black text-md" />
+                  <div className="flex gap-2 text-[18px]">
+                    <span className="block font-medium">Designation:</span>
+                    <span>{selectedRow?.designation}</span>
+                  </div>
+                </div>
+
+                {/* Company Name */}
+                <div className="flex items-center text-gray-700">
+                  <FaBuilding className="mr-2 text-black text-md" />
+                  <div className="flex gap-2 text-[18px]">
+                    <span className="block font-medium">Company Name:</span>
+                    <span>{selectedRow?.company_name}</span>
+                  </div>
+                </div>
+
+                {/* Company Size */}
+                <div className="flex items-center text-gray-700">
+                  <FaUsers className="mr-2 text-black text-md" />
+                  <div className="flex gap-2 text-[18px]">
+                    <span className="block font-medium">Company Size:</span>
+                    <span>{selectedRow?.company_size}</span>
+                  </div>
+                </div>
+
+                {/* Country */}
+                <div className="flex items-center text-gray-700">
+                  <FaGlobe className="mr-2 text-black text-md" />
+                  <div className="flex gap-2 text-[18px]">
+                    <span className="block font-medium">Country:</span>
+                    <span>{selectedRow?.country}</span>
+                  </div>
+                </div>
+
+                {/* State */}
+                <div className="flex items-center text-gray-700">
+                  <FaMapMarkerAlt className="mr-2 text-black text-md" />
+                  <div className="flex gap-2 text-[18px]">
+                    <span className="block font-medium">State:</span>
+                    <span>{selectedRow?.state}</span>
+                  </div>
+                </div>
+
+                {/* City */}
+                <div className="flex items-center text-gray-700">
+                  <FaCity className="mr-2 text-black text-md" />
+                  <div className="flex gap-2 text-[18px]">
+                    <span className="block font-medium">City:</span>
+                    <span>{selectedRow?.city}</span>
+                  </div>
+                </div>
+
+                {/* Linkedin */}
+                <div className="flex items-center text-gray-700">
+                  <FaLinkedin className="mr-2 text-black text-md" />
+                  <div className="flex gap-2 text-[18px]">
+                    <span className="block font-medium">LinkedIn Url:</span>
+                    <a className='text-blue-400' rel="noreferrer" target='_blank' href={`${selectedRow?.linkedin_url}`}><InsertLinkOutlinedIcon></InsertLinkOutlinedIcon></a>
+                  </div>
+                </div>
+
+                {/* Kyc Submited */}
+                <div className="flex items-center text-gray-700">
+                  <FaCheckCircle className="mr-2 text-black text-md" />
+                  <div className="flex gap-2 text-[18px]">
+                    <span className="block font-medium">Kyc Submited:</span>
+                    <span>{(selectedRow.kyc_details)?("Yes"):("No")}</span>
+                  </div>
+                </div>
+
+                {/* Entity type */}
+                {
+                  selectedRow.kyc_details && 
+                  <div className="flex items-center text-gray-700">
+                    <CorporateFareOutlinedIcon className="mr-2 text-black text-md" />
+                    <div className="flex gap-2 text-[18px]">
+                      <span className="block font-medium">Entity Type:</span>
+                      <span>{selectedRow?.kyc_details.entity_type}</span>
+                    </div>
+                  </div>
+                }
+
+                {/* Pancard number */}
+                {
+                  selectedRow.kyc_details && 
+                  <div className="flex items-center text-gray-700">
+                    <CreditCardOutlinedIcon className="mr-2 text-black text-md" />
+                    <div className="flex gap-2 text-[18px]">
+                      <span className="block font-medium">Pancard Number:</span>
+                      <span>{selectedRow?.kyc_details.pancard_number}</span>
+                    </div>
+                  </div>
+                }
+              </div>
+              <div className='flex items-center gap-2'>
+                 <span className='flex items-center gap-1'><DomainOutlinedIcon></DomainOutlinedIcon> Domains:</span>
+                 {
+                  selectedRow?.domains.map((item)=>(
+                    <span className='py-1 px-1.5 rounded-md bg-gray-200 text-sm flex justify-center items-center'>{item}</span>
+                  ))
+                 }
+              </div>
+              <div className='flex items-center gap-2'>
+                 <span className='flex items-center gap-1'><CallToActionOutlinedIcon></CallToActionOutlinedIcon> Interested in:</span>
+                 {
+                  selectedRow?.firm_type.map((item)=>(
+                    <span className='py-1 px-1.5 rounded-md bg-gray-200 text-sm flex justify-center items-center'>{item}</span>
+                  ))
+                 }
               </div>
 
-            </DialogContent>
-            <DialogActions>
-              <Button
-                variant="contained"
+              </div>
+              <div className='border rounded-md bg-gray-50 overflow-hidden flex justify-center items-center w-[600px] h-[400px]'>
+                {
+                  selectedRow.kyc_details?(
+                    <iframe title='kyc docs' className='transform scale-100 origin-top-left w-full h-full' src={`${process.env.REACT_APP_APP_URL}/kycdocs/${selectedRow.kyc_documents?.filename}`}></iframe>
+                  ):(
+                     <span>KYC details are not submitted.</span>
+                  )
+                }
+                
+              </div>
+            </div>
+            </div>
+          </DialogContent>
 
-                onClick={handleApprove}
-                sx={{
-                  backgroundColor: '#315370', color: 'white',
-                  '&:hover': {
-                    backgroundColor: 'gray',
-                  },
-                }}
-              >
-                Approve
-              </Button>
-
-            </DialogActions>
-          </Dialog>
-        )}
+          {/* Dialog Actions */}
+          <DialogActions className="bg-gray-100 px-6 py-6">
+            <Button
+              onClick={handleClose}
+              sx={{
+              fontSize: { xs: "12px", sm: "14px", xl: "17px" },
+              width: { xl: "100px", sm: "40px" },
+              color: 'white',
+              backgroundColor:
+                "#315370",
+              "&:hover": {
+                backgroundColor: "gray"
+              },
+              textTransform: "none",
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+            onClick={handleApprove}
+            sx={{
+              fontSize: { xs: "12px", sm: "14px", xl: "17px" },
+              width: { xl: "100px", sm: "40px" },
+              color: 'white',
+              backgroundColor:
+                "#315370",
+              "&:hover": {
+                backgroundColor: "gray"
+              },
+              textTransform: "none",
+              }}
+            >Approve</Button>
+            
+          </DialogActions>
+        </Dialog>
+      )}
       </Card>
 
-      <TablePagination
-        component="div"
-        count={paginatedRows.length} // Total number of rows
-        page={page} // Current page number
-        onPageChange={handleChangePage} // Handler for changing page
-        rowsPerPage={rowsPerPage} // Rows per page number
-        onRowsPerPageChange={handleChangeRowsPerPage} // Handler for changing rows per page
-        rowsPerPageOptions={[5, 10, 25]} // Rows per page options
-        labelRowsPerPage="Rows per page" // Label
-      />
     </div>
   );
 };

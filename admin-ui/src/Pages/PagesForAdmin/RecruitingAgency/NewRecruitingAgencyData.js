@@ -13,7 +13,7 @@ import {
 } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import Notification from '../../../Components/Notification';
-import { rows, cols } from './NewRowColData';
+import { cols } from './NewRowColData';
 import InsertLinkOutlinedIcon from '@mui/icons-material/InsertLinkOutlined';
 import CorporateFareOutlinedIcon from '@mui/icons-material/CorporateFareOutlined';
 import CreditCardOutlinedIcon from '@mui/icons-material/CreditCardOutlined';
@@ -48,7 +48,7 @@ const NewRecruitingAgencyData = () => {
     setTimeout(() => {
       setLoading(false);
     }, 1000);
-  }, [rows]);
+  }, []);
 
   const fetchRecruitingAgency = async () => {
     try {
