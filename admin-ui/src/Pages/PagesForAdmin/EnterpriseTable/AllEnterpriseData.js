@@ -32,9 +32,8 @@ export default function AllEnterPriseData() {
     const id = params.id;
     const displayIndex = params?.row?.displayIndex;
     try {
-      const response = await fetchEnterpriseById(id);
       // Pass the entire response as state
-      navigate(`/master_admin/enterprise/${displayIndex}`, { state: { enterpriseDetails: response } });
+      navigate(`/master_admin/enterprise/${displayIndex}`, { state: { enterpriseId: id } });
     } catch (error) {
       console.error('Error fetching enterprise data:', error);
     }
