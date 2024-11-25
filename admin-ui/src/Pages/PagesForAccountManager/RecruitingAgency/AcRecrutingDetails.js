@@ -6,7 +6,6 @@ import { FaBriefcase, FaBuilding, FaInfoCircle } from 'react-icons/fa';
 import { fetchAccountManager } from '../../../services/api';
 
 const AcRecruitingDetails = ({ recuritingAgenciesDetails }) => {
-
   const [accountManager, setAccountManager] = useState(null);
 
   useEffect(() => {
@@ -40,15 +39,18 @@ const AcRecruitingDetails = ({ recuritingAgenciesDetails }) => {
   // Helper function to render object or array values as strings
   const renderValue = (value) => {
     if (typeof value === 'object') {
+      // If the value is an object or array, convert it to a JSON string for display
       return JSON.stringify(value);
     }
-    return value ?? 'N/A';
+    return value ?? 'N/A'; // Handle undefined/null with 'N/A'
   };
 
   return (
     <Card className="mt-4 font-sans py-6" sx={{ borderRadius: '8px', boxShadow: 3, backgroundColor: '#f0f0f0', padding: 3 }}>
-      <Box sx={{ mb: 2, pb: 2, borderBottom: '4px solid white' }}>
-        <Typography variant="h5" fontWeight="bold" className="flex items-center mb-2">
+      <Box sx={{
+        mb: 2, pb: 2, borderBottom: '4px solid white',
+      }}>
+        <Typography variant="h5" fontWeight="bold" className="flex items-center mb-2 pb-2">
           <FaBriefcase className="mr-2 text-black" /> Recruiting Agency Details
         </Typography>
         <Grid container spacing={2}>
@@ -77,7 +79,7 @@ const AcRecruitingDetails = ({ recuritingAgenciesDetails }) => {
 
       {/* Second Section: Company Details */}
       <Box sx={{ mb: 2, pb: 2, borderBottom: '4px solid white' }}>
-        <Typography variant="h5" fontWeight="bold" className="flex items-center mb-2">
+        <Typography variant="h5" fontWeight="bold" className="flex items-center mb-2 pb-2">
           <FaBuilding className="mr-2 text-black" /> Company Details
         </Typography>
         <Grid container spacing={2}>
@@ -112,37 +114,80 @@ const AcRecruitingDetails = ({ recuritingAgenciesDetails }) => {
             </Box>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
-              <Typography variant="body1"><strong>Domains:</strong> {renderValue(recuritingAgenciesDetails?.domains)}</Typography>
+            <Box
+              sx={{
+                p: 2,
+                border: '1px solid #ccc',
+                borderRadius: '8px',
+                backgroundColor: '#fff'
+              }}
+            >
+              <Typography variant="body1">
+                <strong>Domains: </strong>
+                {recuritingAgenciesDetails?.domains?.join(' ● ')}
+              </Typography>
             </Box>
           </Grid>
         </Grid>
       </Box>
-      <Box sx={{ mb: 2, pb: 2, borderBottom: '4px solid white' }}>
-        <Typography variant="h5" fontWeight="bold" className="flex items-center mb-2">
-          <FaFileAlt className="mr-2 text-black" /> Kyc Details
+
+      {/* KYC Details Section */}
+      {recuritingAgenciesDetails?.kyc_details && (<Box sx={{ mb: 2, pb: 2, borderBottom: '4px solid white' }}>
+        <Typography variant="h5" fontWeight="bold" className="flex items-center mb-2 pb-2">
+          <FaFileAlt className="mr-2 text-black" /> KYC Details
         </Typography>
         <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
-            <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
-              <Typography variant="body1"> <strong>KYC Details:</strong>{renderValue(kycData.details)}
+          <Grid item xs={12}>
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                p: 2,
+                border: '1px solid #ccc',
+                borderRadius: '8px',
+                backgroundColor: '#fff',
+              }}
+            >
+              <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1, gap: 0.5 }}>
+                <Typography variant="body1">
+                  <strong>Entity Type:</strong> {recuritingAgenciesDetails?.kyc_details?.entity_type || 'N/A'}
+                </Typography>
+                <Typography variant="body1">
+                  <strong>PAN Card Number:</strong> {recuritingAgenciesDetails?.kyc_details?.pancard_number || 'N/A'}
+                </Typography>
+              </Box>
 
-              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                {recuritingAgenciesDetails?.kyc_documents?.filename ? (
+                  <a
+                    href={`http://localhost:8080/kycdocs/${recuritingAgenciesDetails?.kyc_documents?.filename}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      color: '#1976d2',
+                      textDecoration: 'none',
+                      marginTop: '8px',
+                      display: 'inline-block',
+                      padding: '8px 12px',
+                      border: '1px solid #1976d2',
+                      borderRadius: '4px',
+                    }}
+                  >
+                    View File
+                  </a>
+                ) : (
+                  <Typography>No documents available.</Typography>
+                )}
+              </Box>
             </Box>
           </Grid>
-          <Grid item xs={12} sm={6}>
-            <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
-              <Typography variant="body1"><strong>KYC Documents:</strong>{renderValue(kycData.documents)}
-
-              </Typography>
-            </Box>
-          </Grid>
-
         </Grid>
       </Box>
+      )}
+
       {/* Third Section: Other Details */}
       <Box>
-        <Typography variant="h5" fontWeight="bold" className="flex items-center mb-2">
+        <Typography variant="h5" fontWeight="bold" className="flex items-center mb-2 pb-2">
           <FaInfoCircle className="mr-2 text-black" /> Other Details
         </Typography>
         <Grid container spacing={2}>
@@ -163,7 +208,7 @@ const AcRecruitingDetails = ({ recuritingAgenciesDetails }) => {
           </Grid>
           <Grid item xs={12} sm={6}>
             <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
-              <Typography variant="body1"><strong>Account Status : </strong> {renderValue(recuritingAgenciesDetails?.account_status?.status)}</Typography>
+              <Typography variant="body1"><strong>Account Status :</strong> {renderValue(recuritingAgenciesDetails?.account_status?.status)}</Typography>
             </Box>
           </Grid>
 
