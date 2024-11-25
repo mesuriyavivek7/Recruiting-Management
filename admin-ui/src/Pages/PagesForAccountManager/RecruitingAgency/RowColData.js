@@ -1,5 +1,5 @@
 import Button from '@mui/material/Button';
-import { fetchRecuritingAgencybyId, fetchVerifiedRAgenciesByACmanagerId, fetchVerifiedRAgenciesByAdminId } from '../../../services/api';
+import { fetchRecuritingAgencybyId, fetchVerifiedRAgenciesByACmanagerId } from '../../../services/api';
 import { format, formatDistanceToNowStrict } from 'date-fns';
 import { store } from '../../../State/Store';
 
@@ -9,64 +9,77 @@ export const columns = [
     headerName: 'Sr No.',
     minWidth: 100,
     flex: 0.1,
-    align: 'center',
-    headerAlign: 'center',
+    align: 'left',
+    headerAlign: 'left',
   },
   {
     field: 'full_name',
     headerName: 'Full Name',
     flex: 1,
     minWidth: 150,
-    headerAlign: 'center',
-    align: 'center',
+    headerAlign: 'left',
+    align: 'left',
   },
   {
     field: 'email',
     headerName: 'Email',
     flex: 2,
     minWidth: 250,
-    align: 'center',
-    headerAlign: 'center',
+    align: 'left',
+    headerAlign: 'left',
   },
   {
     field: 'designation',
     headerName: 'Designation',
     flex: 1.5,
     minWidth: 150,
-    align: 'center',
-    headerAlign: 'center',
+    align: 'left',
+    headerAlign: 'left',
   },
   {
     field: 'company_name',
     headerName: 'Company Name',
     flex: 1.5,
     minWidth: 170,
-    align: 'center',
-    headerAlign: 'center',
+    align: 'left',
+    headerAlign: 'left',
   },
   {
     field: 'country',
     headerName: 'Country',
     flex: 1,
     minWidth: 150,
-    align: 'center',
-    headerAlign: 'center',
+    align: 'left',
+    headerAlign: 'left',
   },
   {
     field: 'city',
     headerName: 'City',
     flex: 1,
     minWidth: 150,
-    headerAlign: 'center',
-    align: 'center',
+    headerAlign: 'left',
+    align: 'left',
+  },
+  {
+    field: 'account_status',
+    headerName: 'Account Status',
+    flex: 1,
+    minWidth: 200,
+    headerAlign: 'left',
+    align: 'left',
+    renderCell: (params) =>(
+        <div className='flex items-center w-full h-full'>
+           <span className={`${params.row.account_status==="Active"?"bg-green-400":"bg-red-400"} text-white h-10 w-28 p-2 flex justify-center items-center rounded-md`}>{params.row.account_status}</span>
+        </div>
+    )
   },
   {
     field: 'email_verified',
     headerName: 'Email Verification',
     flex: 1.5,
     minWidth: 200,
-    headerAlign: 'center',
-    align: 'center',
+    headerAlign: 'left',
+    align: 'left',
     renderCell: (params) => (
       <Button
         variant="contained"

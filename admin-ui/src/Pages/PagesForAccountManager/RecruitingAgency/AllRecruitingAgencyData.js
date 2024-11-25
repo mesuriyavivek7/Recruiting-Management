@@ -1,16 +1,13 @@
-
-
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
-import TablePagination from '@mui/material/TablePagination';
 import { rows, columns } from './RowColData';
-import { styled } from '@mui/system';
 import { Button, CircularProgress, IconButton, InputAdornment, TextField } from '@mui/material';
 import { FaSearch } from 'react-icons/fa';
-import { fetchRecuritingAgencyById } from '../../../services/api';
+import { fetchRecuritingAgencybyId, fetchVerifiedRAgenciesByACmanagerId } from '../../../services/api';
 import { useNavigate } from 'react-router-dom';
-
+import { store } from '../../../State/Store';
+import Notification from '../../../Components/Notification';
 
 const calculateRowHeight = (params) => {
 
@@ -19,20 +16,64 @@ const calculateRowHeight = (params) => {
 };
 
 export default function AllRecruitingAgencyData() {
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const selectUserData = (state) => state?.admin?.userData;
+  const userData = selectUserData(store?.getState());
+
   const [searchTerm, setSearchTerm] = React.useState('');
   const [filterStatus, setFilterStatus] = React.useState('All');
   const [filteredRows, setFilteredRows] = React.useState(rows);
   const [loading, setLoading] = React.useState(false);
-const navigate=useNavigate();
+  const navigate=useNavigate();
+
+  const [notification, setNotification] = React.useState(null);
+
+    
+  const showNotification = (message, type) => {
+    setNotification({ message, type });
+  };
+
   React.useEffect(() => {
-    const newFilteredRows = rows.filter((row) => {
-      const matchesSearch = row.full_name.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesStatus = filterStatus === 'All' || row.status === filterStatus;
-      return matchesSearch && matchesStatus;
-    });
-    setFilteredRows(newFilteredRows);
+    const fetchData=async ()=>{
+      setLoading(true)
+      try{
+        //Fetching verified recruiter agencyies id
+        const data = await fetchVerifiedRAgenciesByACmanagerId(userData?._id);
+
+        const rows = data ? await Promise.all(data.map(async (agency_id, index) => {
+            const agency = await fetchRecuritingAgencybyId(agency_id);
+            return {
+              _id: agency._id,
+              displayIndex: index + 1,
+              full_name: agency.full_name || `User ${index + 1}`,
+              email: agency.email || `user${index + 1}@example.com`,
+              designation: agency.designation || "Not Provided",
+              company_name: agency.company_name || "Unknown",
+              country: agency.country || "Unknown",
+              city: agency.city || "Unknown",
+              domains: Array.isArray(agency.domains) ? agency.domains : [], // Ensure it's an array
+              firm_type: Array.isArray(agency.firm_type) ? agency.firm_type : [], // Ensure it's an array
+              linkedin_url: agency.linkedin_url || "Not Provided", // Fallback if not provided
+              email_verified: agency.email_verified ? "Yes" : "No",
+              account_status:agency.account_status.status
+           };}))
+           : [];
+
+        const newFilteredRows = rows.filter((row) => {
+          const matchesSearch = row.full_name.toLowerCase().includes(searchTerm.toLowerCase());
+          const matchesStatus = filterStatus === 'All' || row.account_status === filterStatus;
+          return matchesSearch && matchesStatus;
+        });
+        setFilteredRows(newFilteredRows)
+
+      }catch(err){
+         console.log(err)
+         showNotification("Something went wrong while fetching data",'error')
+      }finally{
+        setLoading(false)
+      }
+    }
+
+     fetchData()
   }, [searchTerm, filterStatus]); // Re-run filter logic whenever searchTerm or filterStatus changes
 
  
@@ -41,11 +82,10 @@ const navigate=useNavigate();
     setTimeout(() => {
       setLoading(false);
     }, 1000);
-  }, [page, rowsPerPage]);
+  }, []);
  
   const handleRowClick = async (params) => {
     const id = params.id;
-    const displayIndex = params?.row?.displayIndex;
     try {
       //const response = await fetchRecuritingAgencyById(id);
       navigate(`/account_manager/recruiting-agency/${id}`);
@@ -55,7 +95,9 @@ const navigate=useNavigate();
   };
 
   return (
-    <> <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} gap={2}>
+    <> 
+    {notification && <Notification message={notification.message} type={notification.type} onClose={() => setNotification(null)} />}
+    <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} gap={2}>
     {/* Search Bar */}
     <TextField
       label="Search..."
@@ -95,7 +137,7 @@ const navigate=useNavigate();
 
     {/* Filter Buttons */}
     <Box display="flex" gap={0}>
-      {['All', 'Active', 'Pending'].map((status) => (
+      {['All', 'Active', 'Inactive'].map((status) => (
         <Button
           key={status}
           variant={filterStatus === status ? 'contained' : 'outlined'}
@@ -109,7 +151,7 @@ const navigate=useNavigate();
             width: '120px',
             border: '1px solid gray',
             borderRadius:
-              status === 'All' ? '20px 0 0 20px' : status === 'Pending' ? '0 20px 20px 0' : '0',
+              status === 'All' ? '20px 0 0 20px' : status === 'Inactive' ? '0 20px 20px 0' : '0',
             '&:hover': {
               backgroundColor: filterStatus === status ? '#315380' : '#e0e0e0',
             },
@@ -125,17 +167,18 @@ const navigate=useNavigate();
             <CircularProgress />
           </Box>
         ) : (
-          <div>
+          <div className='mt-8'>
       <p className='text-lg xl:text-2xl'>All Recruiting Agency </p>
       <Box sx={{ height: 600, width: '100%', paddingTop: '19px' }}>
         <DataGrid
           getRowId={(rows) => rows._id} // Specify the custom ID field
-          rows={filteredRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
+          rows={filteredRows}
           columns={columns}
           rowHeight={80}
           getRowHeight={calculateRowHeight}
           onRowClick={(params) => handleRowClick(params)}
-          pageSize={rowsPerPage}
+          pageSize={8}
+          loading={loading}
           initialState={{ pagination: { paginationModel: { page: 0, pageSize: 10 } } }}
           pageSizeOptions={[5, 10]}
           disableSelectionOnClick

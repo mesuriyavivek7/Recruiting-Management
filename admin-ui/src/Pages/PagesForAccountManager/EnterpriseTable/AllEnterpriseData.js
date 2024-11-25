@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import { DataGrid, EMPTY_PINNED_COLUMN_FIELDS } from '@mui/x-data-grid';
+import { DataGrid } from '@mui/x-data-grid';
 import { columns } from './RowColData';
 import { Button, Card, CircularProgress, IconButton, InputAdornment, TextField } from '@mui/material';
 import { FaSearch } from 'react-icons/fa';
