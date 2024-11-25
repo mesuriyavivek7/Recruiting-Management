@@ -28,44 +28,44 @@ export default function AllRecruitingAgencyData() {
   const showNotification = (message, type) => {
     setNotification({ message, type });
   };
-  
-  
+
+
   const selectUserData = (state) => state?.admin?.userData;
   const userData = selectUserData(store?.getState());
 
   // Filter rows based on search term and filter status
   React.useEffect(() => {
-    const fetchData=async ()=>{
+    const fetchData = async () => {
       setLoading(true)
-      try{
+      try {
         //fetch recruiter ids
         const data = await fetchVerifiedRAgenciesByAdminId(userData?._id);
 
-        const detailData=await Promise.all(data.map(async (agency_id, index)=>{
-            //Fetch complete recruiter agency details
-            const agency = await fetchRecuritingAgencybyId(agency_id);
+        const detailData = await Promise.all(data.map(async (agency_id, index) => {
+          //Fetch complete recruiter agency details
+          const agency = await fetchRecuritingAgencybyId(agency_id);
 
-            //Fetch account manager details
-            const accountManager= await fetchAccountManager(agency.alloted_account_manager)
-            
-            return {
-               _id: agency._id,
-               displayIndex: index + 1,
-               full_name: agency.full_name || `User ${index + 1}`,
-               email: agency.email || `user${index + 1}@example.com`,
-               designation: agency.designation || "Not Provided",
-               company_name: agency.company_name || "Unknown",
-               country: agency.country || "Unknown",
-               city: agency.city || "Unknown",
-               domains: Array.isArray(agency.domains) ? agency.domains : [], // Ensure it's an array
-               firm_type: Array.isArray(agency.firm_type) ? agency.firm_type : [], // Ensure it's an array
-               linkedin_url: agency.linkedin_url || "Not Provided", // Fallback if not provided
-               email_verified: agency.email_verified ? "Yes" : "No",
-               status:agency.account_status.status,
-               account_manager_verified:agency.account_manager_verified || false,
-               account_manager:accountManager ? `${accountManager.full_name}`:null
-            };
-          })
+          //Fetch account manager details
+          const accountManager = await fetchAccountManager(agency.alloted_account_manager)
+
+          return {
+            _id: agency._id,
+            displayIndex: index + 1,
+            full_name: agency.full_name || `User ${index + 1}`,
+            email: agency.email || `user${index + 1}@example.com`,
+            designation: agency.designation || "Not Provided",
+            company_name: agency.company_name || "Unknown",
+            country: agency.country || "Unknown",
+            city: agency.city || "Unknown",
+            domains: Array.isArray(agency.domains) ? agency.domains : [], // Ensure it's an array
+            firm_type: Array.isArray(agency.firm_type) ? agency.firm_type : [], // Ensure it's an array
+            linkedin_url: agency.linkedin_url || "Not Provided", // Fallback if not provided
+            email_verified: agency.email_verified ? "Yes" : "No",
+            status: agency.account_status.status,
+            account_manager_verified: agency.account_manager_verified || false,
+            account_manager: accountManager ? `${accountManager.full_name}` : null
+          };
+        })
         )
 
         const newFilteredRows = detailData.filter((row) => {
@@ -76,24 +76,23 @@ export default function AllRecruitingAgencyData() {
 
         setFilteredRows(newFilteredRows);
 
-      }catch(err){
+      } catch (err) {
         console.log(err)
-        showNotification("Something went wrong while fetching data.",'failure')
-      }finally{
+        showNotification("Something went wrong while fetching data.", 'failure')
+      } finally {
         setLoading(false)
       }
     }
     fetchData()
-     
-    
+
+
   }, [searchTerm, filterStatus]); // Re-run filter logic whenever searchTerm or filterStatus changes
 
   const handleRowClick = async (params) => {
     const id = params.id;
     const displayIndex = params?.row?.displayIndex;
     try {
-      const response = await fetchRecuritingAgencybyId(id);
-      navigate(`/master_admin/recruiting-agency/${displayIndex}`, { state: { recuritingAgenciesDetails: response } });
+      navigate(`/master_admin/recruiting-agency/${displayIndex}`, { state: { r_agency_id: id } });
     } catch (error) {
       console.error('Error fetching enterprise data:', error);
     }
@@ -105,10 +104,10 @@ export default function AllRecruitingAgencyData() {
       setLoading(false);
     }, 1000);
   }, []);
- 
+
   return (
     <>
-     {notification && (
+      {notification && (
         <Notification
           open={true}
           message={notification.message}
@@ -182,80 +181,80 @@ export default function AllRecruitingAgencyData() {
         </Box>
       </Box>
       {loading ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 400, color: '#315370' }}>
-            <CircularProgress />
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 400, color: '#315370' }}>
+          <CircularProgress />
+        </Box>
+      ) : (
+        <div>
+          <p className='text-lg xl:text-2xl pt-9'>All Recruiting Agency</p>
+          <Box sx={{ height: 600, width: '100%', paddingTop: '19px' }}>
+            <DataGrid
+              getRowId={(row) => row._id}
+              rows={filteredRows}
+              columns={columns}
+              rowHeight={80}
+              getRowHeight={calculateRowHeight}
+              pageSize={8}
+              initialState={{ pagination: { paginationModel: { page: 0, pageSize: 10 } } }}
+              pageSizeOptions={[5, 10]}
+              onRowClick={(params) => handleRowClick(params)}
+              disableSelectionOnClick
+              sx={{
+                '& .MuiDataGrid-root': {
+                  fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.09rem' },
+                },
+
+                ' [class^=MuiDataGrid]': { border: 'none' },
+                '& .MuiDataGrid-columnHeader': {
+                  fontWeight: 'bold !impotant',
+                  fontSize: { xs: '0.875rem', sm: '1rem', md: '0.7rem', lg: '1.1rem' },
+                  color: 'black',
+
+                  '&:focus': {
+                    outline: 'none',
+                    border: 'none',
+                  },
+                  backgroundColor: '#e3e6ea !important',
+                  minHeight: '60px',
+                },
+                '& .MuiDataGrid-columnHeader:focus-within': {
+                  outline: 'none',
+                },
+
+                '& .MuiDataGrid-columnSeparator': {
+                  color: 'blue',
+                  visibility: 'visible',
+                },
+
+
+                '& .MuiDataGrid-cell': {
+                  fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem' },
+
+                },
+
+                '& .MuiDataGrid-cellContent': {
+                  display: 'flex',
+                  alignItems: 'center',
+                },
+                '& .MuiDataGrid-cell': {
+                  minHeight: '2.5rem',
+                },
+                '& .MuiDataGrid-cell': {
+                  fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem' },
+
+
+                },
+                '& .MuiDataGrid-row': {
+                  borderBottom: 'none',
+                },
+                '& .MuiDataGrid-cell:focus': {
+                  outline: 'none',
+                },
+
+              }}
+            />
           </Box>
-        ) : (
-          <div>
-      <p className='text-lg xl:text-2xl pt-9'>All Recruiting Agency</p>
-      <Box sx={{ height: 600, width: '100%', paddingTop: '19px' }}>
-        <DataGrid
-          getRowId={(row) => row._id}
-          rows={filteredRows}
-          columns={columns}
-          rowHeight={80}
-          getRowHeight={calculateRowHeight}
-          pageSize={8}
-          initialState={{ pagination: { paginationModel: { page: 0, pageSize: 10 } } }}
-          pageSizeOptions={[5, 10]}
-          onRowClick={(params) => handleRowClick(params)}
-          disableSelectionOnClick
-          sx={{
-            '& .MuiDataGrid-root': {
-              fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.09rem' },
-            },
-
-            ' [class^=MuiDataGrid]': { border: 'none' },
-            '& .MuiDataGrid-columnHeader': {
-              fontWeight: 'bold !impotant',
-              fontSize: { xs: '0.875rem', sm: '1rem', md: '0.7rem', lg: '1.1rem' },
-              color: 'black',
-
-              '&:focus': {
-                outline: 'none',
-                border: 'none',
-              },
-              backgroundColor: '#e3e6ea !important',
-              minHeight: '60px',
-            },
-            '& .MuiDataGrid-columnHeader:focus-within': {
-              outline: 'none',
-            },
-
-            '& .MuiDataGrid-columnSeparator': {
-              color: 'blue',
-              visibility: 'visible',
-            },
-
-
-            '& .MuiDataGrid-cell': {
-              fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem' },
-
-            },
-
-            '& .MuiDataGrid-cellContent': {
-              display: 'flex',
-              alignItems: 'center',
-            },
-            '& .MuiDataGrid-cell': {
-              minHeight: '2.5rem',
-            },
-            '& .MuiDataGrid-cell': {
-              fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem' },
-
-
-            },
-            '& .MuiDataGrid-row': {
-              borderBottom: 'none',
-            },
-            '& .MuiDataGrid-cell:focus': {
-              outline: 'none',
-            },
-
-          }}
-        />
-      </Box>
-      </div>)}
+        </div>)}
     </>
   );
 }
