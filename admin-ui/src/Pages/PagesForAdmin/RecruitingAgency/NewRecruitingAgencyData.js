@@ -400,10 +400,6 @@ const NewRecruitingAgencyData = () => {
                   </div>
                 }
 
-
-
-
-
                 {/* Account Manager Selection */}
                 <FormControl fullWidth variant="outlined">
                   <InputLabel>Select Account Manager</InputLabel>
@@ -428,7 +424,6 @@ const NewRecruitingAgencyData = () => {
                      <span>KYC details are not submitted.</span>
                   )
                 }
-                
               </div>
             </div>
             </div>

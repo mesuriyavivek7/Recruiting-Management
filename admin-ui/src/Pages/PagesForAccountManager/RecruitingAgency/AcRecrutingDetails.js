@@ -40,10 +40,9 @@ const AcRecruitingDetails = ({ recuritingAgenciesDetails }) => {
   // Helper function to render object or array values as strings
   const renderValue = (value) => {
     if (typeof value === 'object') {
-      // If the value is an object or array, convert it to a JSON string for display
       return JSON.stringify(value);
     }
-    return value ?? 'N/A'; // Handle undefined/null with 'N/A'
+    return value ?? 'N/A';
   };
 
   return (
@@ -160,6 +159,11 @@ const AcRecruitingDetails = ({ recuritingAgenciesDetails }) => {
           <Grid item xs={12} sm={6}>
             <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
               <Typography variant="body1"><strong>Allocated Account Manager:</strong> {renderValue(accountManager?.full_name)}</Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
+              <Typography variant="body1"><strong>Account Status : </strong> {renderValue(recuritingAgenciesDetails?.account_status?.status)}</Typography>
             </Box>
           </Grid>
 
