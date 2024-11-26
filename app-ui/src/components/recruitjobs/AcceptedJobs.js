@@ -48,7 +48,7 @@ export default function AcceptedJobs({jobs,loader,showNotification,fetchAccepted
 
   
 
-  const handleFetchJobDetails=async (jobid)=>{
+ const handleFetchJobDetails=async (jobid)=>{
     try{
       const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/job/getjobbasicdetailsforpreview/${jobid}`)
       if(res.data){

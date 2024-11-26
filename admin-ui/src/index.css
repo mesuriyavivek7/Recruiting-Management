@@ -10,8 +10,15 @@
   margin: 0;
 }
 
+.custom-shadow-1 {
+  box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px,
+    rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.1) 0px 1px 2px -1px;
+}
 
 @layer components{
+  .custom-div {
+    @apply pt-3 pb-8 px-4  bg-white rounded-md custom-shadow-1 flex flex-col place-items-start gap-3;
+  }
 
   .btn-custom {
     @apply bg-blue-500 text-white font-bold py-2 px-4 rounded;

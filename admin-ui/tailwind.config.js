@@ -5,7 +5,11 @@ module.exports = {
   ],
   theme: {
     extend: {
-      colors:{"blue-230":"#315370","blue-120":"#eef5f6"},
+      colors:{
+        "blue-230":"#315370",
+        "blue-120":"#eef5f6",
+        "white-600": "#f8fafc",
+      },
       fontFamily: {
         sans: ['Roboto', 'sans-serif'], 
         plex: ['"IBM Plex Sans"', 'sans-serif'],
