@@ -9,7 +9,7 @@ export const columns = [
     field: '_id',
     headerName: 'ID',
     flex: 1,
-    minWidth: 100,
+    minWidth: 80,
     headerAlign: 'left',
     align: 'left',
   },
@@ -24,8 +24,11 @@ export const columns = [
       const first_name = params.row?.candidate_name?.first_name || 'No First Name';
       const last_name = params.row?.candidate_name?.last_name || 'No Last Name';
       return (
-        <div>
-          {first_name} {last_name}
+        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%', padding: '8px 0' }}>
+          <p style={{ margin: 0, lineHeight: 1.5 }}>
+            <span>{first_name} {last_name}</span>
+          </p>
+          <p style={{ margin: 0, color: 'gray', lineHeight: 1.5 }}>{params.row.candidate_id}</p>
         </div>
       );
     },
@@ -57,6 +60,48 @@ export const columns = [
     minWidth: 200,
     headerAlign: 'left',
     align: 'left',
+    renderCell: (params)=>(
+       <span className='p-2 bg-slate-50 border rounded-md'>{params.row.candidate_status}</span>
+    )
+  },
+  {
+    field: 'email',
+    headerName: 'Email',
+    flex: 2,
+    minWidth: 230,
+    headerAlign: 'left',
+    align: 'left',
+    renderCell: (params) => (
+      <div>
+         {params.row.email}
+      </div>
+    ),
+  },
+  {
+    field: 'mobile',
+    headerName: 'Contact',
+    flex: 2,
+    minWidth: 200,
+    headerAlign: 'left',
+    align: 'left',
+    renderCell: (params) => (
+      <div>
+        +{params.row.mobile}
+      </div>
+    ),
+  },
+  {
+    field: 'notice_period',
+    headerName: 'Notice Period',
+    flex: 1,
+    minWidth: 150,
+    headerAlign: 'left',
+    align: 'left',
+    renderCell: (params) => (
+      <div>
+        {params.row.notice_period} Days
+      </div>
+    ),
   },
   {
     field: 'submitted',
@@ -102,47 +147,8 @@ export const columns = [
       );
     },
   },
-  {
-    field: 'notice_period',
-    headerName: 'Notice Period',
-    flex: 1,
-    minWidth: 150,
-    headerAlign: 'left',
-    align: 'left',
-    renderCell: (params) => (
-      <div>
-        {params.row.notice_period} Days
-      </div>
-    ),
-  },
-  {
-    field: 'email',
-    headerName: 'Email',
-    flex: 2,
-    minWidth: 200,
-    headerAlign: 'left',
-    align: 'left',
-    renderCell: (params) => (
-      <div>
-        {params.row.email.length > 15
-          ? `${params.row.email.slice(0, 15)}...`
-          : params.row.email}
-      </div>
-    ),
-  },
-  {
-    field: 'mobile',
-    headerName: 'Contact',
-    flex: 2,
-    minWidth: 200,
-    headerAlign: 'left',
-    align: 'left',
-    renderCell: (params) => (
-      <div>
-        {params.row.mobile}
-      </div>
-    ),
-  },
+  
+  
 ];
 
 const selectUserData = (state) => state?.admin?.userData;
