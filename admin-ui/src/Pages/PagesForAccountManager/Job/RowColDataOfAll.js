@@ -1,6 +1,6 @@
 import { format, formatDistanceToNowStrict } from 'date-fns';
 import React from 'react';
-import { fetchAllJobDetails, fetchJobBasicDetailsByJobId, fetchJobDetailsById, fetchRecruiterByEId, fetchVerifiedJobsByACManagerId } from '../../../services/api';
+import {fetchJobBasicDetailsByJobId, fetchJobDetailsById, fetchRecruiterByEId, fetchVerifiedJobsByACManagerId } from '../../../services/api';
 import Button from '@mui/material/Button';
 import { store } from '../../../State/Store';
 
@@ -9,7 +9,7 @@ export const columns = [
     field: '_id',
     headerName: 'ID',
     flex: 1,
-    minWidth: 100,
+    minWidth: 80,
     headerAlign: 'left',
     align: 'left',
   },
@@ -35,20 +35,20 @@ export const columns = [
     },
   },
   {
-    field: 'recruiter',
-    headerName: 'Recruiter',
+    field: 'enterprise_member',
+    headerName: 'Enterprise Memeber',
     flex: 2,
     minWidth: 250,
     headerAlign: 'left',
     align: 'left',
     renderCell: (params) => {
-      const recruiter = params.row?.recruiter || 'Unknown Recruiter';
+      const enterprise = params.row?.enterprise_member || 'Unknown Enterprise';
       return (
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <div style={{ width: 32, height: 32, borderRadius: '50%', backgroundColor: '#3f51b5', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: 8 }}>
-            {recruiter.charAt(0).toUpperCase()}
+            {enterprise.charAt(0).toUpperCase()}
           </div>
-          {recruiter}
+          {enterprise}
         </div>
       );
     },
