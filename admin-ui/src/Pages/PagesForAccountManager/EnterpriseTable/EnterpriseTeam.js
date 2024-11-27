@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { useNavigate } from 'react-router-dom';
-import { colsTeam } from './RowColData'; 
+import { colsTeam } from './RowColData';
 import {
   Card, TablePagination, Button, Box, Typography, Dialog, DialogTitle,
   DialogContent, DialogActions, CircularProgress
@@ -9,11 +9,10 @@ import {
 import {
   FaPhone, FaEnvelope, FaUserCheck, FaBriefcase, FaCalendarAlt
 } from 'react-icons/fa';
-import { fetchEnterpriseTeam } from '../../../services/api';
-
+import { fetchEnterpriseTeam, getActiveJobsCountEnMember, getPendingJobCountEnMember } from '../../../services/api';
 
 const EnterpriseTeam = ({ enterpriseDetails }) => {
-  const [rows, setRows] = useState([]);
+  const [rows, setRows] = useState([]); // Always an array
   const [selectedRow, setSelectedRow] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -22,26 +21,39 @@ const EnterpriseTeam = ({ enterpriseDetails }) => {
 
   // Map enterprise details to rows
   const generateRowsFromDetails = async (details) => {
-    const data = await fetchEnterpriseTeam(details._id);
-    return data.map((detail, index) => ({
-      _id: `${index + 1}`,
-      en_name: detail.full_name || 'Unknown',
-      account_role: detail.isAdmin ? "Admin" : "Member",
-      active_job: detail.posted_jobs?.length || 0,
-      createdAt: detail.createdAt || new Date(),
-      pending_job: detail.pending_job || 0,
-      status: detail.account_status || 'Inactive',
-    }));
+    setLoading(true);
+    try {
+      const data = await fetchEnterpriseTeam(details._id);
+
+      const detailsData = await Promise.all(
+        data.map(async (detail, index) => {
+          const activeJobsCount = await getActiveJobsCountEnMember(detail._id);
+          const pendingJobsCount = await getPendingJobCountEnMember(detail._id);
+
+          return {
+            _id: `${index + 1}`,
+            en_name: detail.full_name || 'Unknown',
+            account_role: detail.isAdmin ? 'Admin' : 'Member',
+            active_job: activeJobsCount || 0,
+            createdAt: detail.createdAt || new Date(),
+            pending_job: pendingJobsCount || 0,
+            status: detail.account_status || 'Inactive',
+          };
+        })
+      );
+
+      setRows(detailsData);
+    } catch (error) {
+      console.error('Error generating rows:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Fetch rows on component mount or enterpriseDetails change
   useEffect(() => {
     if (enterpriseDetails) {
-      setLoading(true);
-      generateRowsFromDetails(enterpriseDetails).then((fetchedRows) => {
-        setRows(fetchedRows);
-        setLoading(false);
-      });
+      generateRowsFromDetails(enterpriseDetails);
     }
   }, [enterpriseDetails]);
 
@@ -59,7 +71,8 @@ const EnterpriseTeam = ({ enterpriseDetails }) => {
     setPage(0);
   };
 
-  const paginatedRows = rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+  // Safeguard `rows` with optional chaining
+  const paginatedRows = rows?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) || [];
 
   const handleClose = () => {
     setDialogOpen(false);
@@ -67,7 +80,7 @@ const EnterpriseTeam = ({ enterpriseDetails }) => {
   };
 
   return (
-    <Card className='mt-4 font-sans shadow-md' sx={{ borderRadius: '8px', boxShadow: 3 }}>
+    <Card className="mt-4 font-sans shadow-md" sx={{ borderRadius: '8px', boxShadow: 3 }}>
       <div className="py-5 px-6">
         {loading ? (
           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 400, color: '#315370' }}>
@@ -126,12 +139,15 @@ const EnterpriseTeam = ({ enterpriseDetails }) => {
           )}
         </DialogContent>
         <DialogActions className="bg-gray-100 px-6 py-6">
-          <Button onClick={handleClose} variant="contained" color="primary">Close</Button>
+          <Button onClick={handleClose} variant="contained" color="primary">
+            Close
+          </Button>
         </DialogActions>
       </Dialog>
     </Card>
   );
 };
+
 
 const MemberInfo = ({ label, icon, value }) => (
   <div className="flex items-center text-gray-700">

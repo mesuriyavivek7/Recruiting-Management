@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { columns } from './RowColOfEnterpriseTeam'; 
+import { columns } from './RowColOfEnterpriseTeam';
 import {
   Card, Button, Box, Dialog, DialogTitle,
   DialogContent, DialogActions, CircularProgress
@@ -23,30 +23,30 @@ const EnterpriseTeam = ({ enterpriseDetails }) => {
     setLoading(true)
     const data = await fetchEnterpriseTeam(details._id);
 
-    const detailsData=await Promise.all(data.map(async (detail, index) => {
-      
+    const detailsData = await Promise.all(data.map(async (detail, index) => {
+
       const activeJobsCount = await getActiveJobsCountEnMember(detail._id)
       const pendingJobsCount = await getPendingJobCountEnMember(detail._id)
 
       return {
-      _id: `${index + 1}`,
-      en_name: detail.full_name || 'Unknown',
-      account_role: detail.isAdmin ? "Admin" : "Member",
-      active_job:  activeJobsCount || 0,
-      createdAt: detail.createdAt || new Date(),
-      pending_job: pendingJobsCount || 0,
-      status: detail.account_status || 'Inactive',
-     }
+        _id: `${index + 1}`,
+        en_name: detail.full_name || 'Unknown',
+        account_role: detail.isAdmin ? "Admin" : "Member",
+        active_job: activeJobsCount || 0,
+        createdAt: detail.createdAt || new Date(),
+        pending_job: pendingJobsCount || 0,
+        status: detail.account_status || 'Inactive',
+      }
 
-   }));
-   setLoading(false)
-   setRows(detailsData)
+    }));
+    setLoading(false)
+    setRows(detailsData)
   };
 
   // Fetch rows on component mount or enterpriseDetails change
   useEffect(() => {
     if (enterpriseDetails) {
-       generateRowsFromDetails(enterpriseDetails)
+      generateRowsFromDetails(enterpriseDetails)
     }
   }, [enterpriseDetails]);
 
@@ -54,7 +54,7 @@ const EnterpriseTeam = ({ enterpriseDetails }) => {
     setSelectedRow(row);
     setDialogOpen(true);
   };
-  
+
 
   const handleClose = () => {
     setDialogOpen(false);
@@ -76,11 +76,11 @@ const EnterpriseTeam = ({ enterpriseDetails }) => {
               rowHeight={80}
               onRowClick={(params) => handleRowClick(params.row)}
               getRowId={(row) => row._id}
-             
-             
+
+
               pageSizeOptions={[5, 10]}
               initialState={{
-                pagination: { paginationModel: { page: 0, pageSize: 10} },
+                pagination: { paginationModel: { page: 0, pageSize: 10 } },
               }}
               disableSelectionOnClick
               sx={{
