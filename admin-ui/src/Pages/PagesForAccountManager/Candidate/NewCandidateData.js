@@ -33,7 +33,7 @@ const calculateRowHeight = (params) => {
 const NewCandidateData = () => {
   const [newCandidateRows,setNewCandidateRows]=useState([])
   const [loading,setLoading]=useState(false)
-
+  const [assignLoad,setAssignLoad]=useState(false)
   
   const getDate=(date)=>{
     let d=new Date(date)
@@ -55,53 +55,54 @@ const NewCandidateData = () => {
    setNotification({ message, type })
  }
 
+ const fetchData=async ()=>{
+  setLoading(true)
+ try{
+  //Fetch candidate ids
+  const verifiedCandiatesIds = await fetchPendingCandidatesByACManagerId(userData._id);
+
+  const rows = await Promise.all(
+    verifiedCandiatesIds.map(async (candidateId, index) => {
+
+      const { job_id, basic_details } = await fetchCandidateBasicDetailsById(candidateId);
+      const job_basic_details = await fetchJobBasicDetailsByJobId(job_id);
+      const candidate = await fetchCandidateStatusById(basic_details.candidate_id)
+
+      // Get candidate status, defaulting to "Status Unavailable" if not found
+      const candidateStatusKey = candidate.candidate_status || "Status Unavailable";
+      const candidateStatus = cstatus.get(candidateStatusKey) || candidateStatusKey; // Map status or use original
+
+      return {
+        orgcandidateid:candidate._id,
+        candidate_id:basic_details.candidate_id,
+        _id: String(index + 1),
+        candidate_name: {
+          first_name: basic_details?.first_name || 'No First Name',
+          last_name: basic_details?.last_name || 'No Last Name',
+        },
+        job_title: job_basic_details?.job_title || "No Job Title",
+        job_id: job_basic_details?.job_id || "No Job Id",
+        candidate_status: candidateStatus,
+        submitted: basic_details?.createdAt || "No Submission Date",
+        lastUpdated: basic_details?.updatedAt || "No Update Date",
+        notice_period: basic_details?.notice_period || "N/A",
+        email: basic_details?.primary_email_id || "No Email",
+        mobile: basic_details?.primary_contact_number || "No Contact Number"
+      };
+    })
+  );
+
+  setNewCandidateRows(rows)
+
+ }catch(err){
+    console.log(err)
+    showNotification("Something went wrong while fetching data.",'failure')
+ }finally{
+   setLoading(false)
+ }
+}
 
   useEffect(()=>{
-     const fetchData=async ()=>{
-          setLoading(true)
-         try{
-          //Fetch candidate ids
-          const verifiedCandiatesIds = await fetchPendingCandidatesByACManagerId(userData._id);
-
-          const rows = await Promise.all(
-            verifiedCandiatesIds.map(async (candidateId, index) => {
-        
-              const { job_id, basic_details } = await fetchCandidateBasicDetailsById(candidateId);
-              const job_basic_details = await fetchJobBasicDetailsByJobId(job_id);
-              const candidate = await fetchCandidateStatusById(basic_details.candidate_id)
-        
-              // Get candidate status, defaulting to "Status Unavailable" if not found
-              const candidateStatusKey = candidate.candidate_status || "Status Unavailable";
-              const candidateStatus = cstatus.get(candidateStatusKey) || candidateStatusKey; // Map status or use original
-        
-              return {
-                candidate_id:basic_details.candidate_id,
-                _id: String(index + 1),
-                candidate_name: {
-                  first_name: basic_details?.first_name || 'No First Name',
-                  last_name: basic_details?.last_name || 'No Last Name',
-                },
-                job_title: job_basic_details?.job_title || "No Job Title",
-                job_id: job_basic_details?.job_id || "No Job Id",
-                candidate_status: candidateStatus,
-                submitted: basic_details?.createdAt || "No Submission Date",
-                lastUpdated: basic_details?.updatedAt || "No Update Date",
-                notice_period: basic_details?.notice_period || "N/A",
-                email: basic_details?.primary_email_id || "No Email",
-                mobile: basic_details?.primary_contact_number || "No Contact Number"
-              };
-            })
-          );
-
-          setNewCandidateRows(rows)
-
-         }catch(err){
-            console.log(err)
-            showNotification("Something went wrong while fetching data.",'failure')
-         }finally{
-           setLoading(false)
-         }
-     }
      fetchData()
   },[])
 
@@ -113,6 +114,7 @@ const [currentTab,setCurrentTab]=useState('candidate')
 const [openProfilePopup,setOpenProfilePopUp]=useState(false)
 
 //For candidate
+const [currentCandidateId,setCurrentCandidateId]=useState(null)
 const [openCandidatePopUpLoader,setOpenCandidatePopUpLoader]=useState(false)
 const [candidateBasicDetails,setCandidateBasicDetails]=useState(null)
 const [candidateAttachments,setCandidateAttachments]=useState(null)
@@ -293,9 +295,10 @@ const handleFetchSourcingGuidelines=async (jobid)=>{
    }
 }
 
-const handleOpenPopUpBox=async (cid,jobid)=>{
+const handleOpenPopUpBox=async (orgcid,cid,jobid)=>{
     setOpenCandidatePopUpLoader(true)
     setOpenProfilePopUp(true)
+    setCurrentCandidateId(orgcid)
     //For candidate
     await handleSetFileName(cid)
     await handleFetchCandidateDetails(cid)
@@ -312,7 +315,8 @@ const handleOpenPopUpBox=async (cid,jobid)=>{
 }
 
 
-const handleClosePopUpBox=async ()=>{
+const handleClosePopUpBox= ()=>{
+     setCurrentCandidateId(null)
      setOpenProfilePopUp(false)
      setFileName(null)
      setCandidateBasicDetails(null)
@@ -337,18 +341,34 @@ const handleClosePopUpBox=async ()=>{
      setOpenClientDescription(false)
      setOpenSourcingGuidelines(false)
 }
+
+const handleApprove=async ()=>{
+  if(currentCandidateId){
+    setAssignLoad(true)
+    try{
+       await axios.put(`${process.env.REACT_APP_API_APP_URL}/candidate/approvecandidate/${currentCandidateId}`)
+       await axios.post(`${process.env.REACT_APP_API_BASE_URL}/accountmanager/addcandidateintoverifiedlist/${userData._id}`,{orgcid:currentCandidateId})
+       handleClosePopUpBox()
+       await fetchData()
+       showNotification("Successfully Candidate profile approved.",'success')
+    }catch(err){
+       console.log(err)
+       showNotification("Something went wrong while approve candidate.",'failure')
+    }finally{
+      setAssignLoad(false)
+    }
+  }
+}
   
-
-
-
   return (
     <div>
+    {notification && <Notification message={notification.message} type={notification.type} onClose={() => setNotification(null)}></Notification>}
     {
       openProfilePopup &&(
           <div className='fixed inset-0 flex justify-center bg-black z-10 bg-opacity-50 backdrop-blur-md items-center'>
         <div className='custom-div overflow-hidden p-0 w-[90%]'>
           <div className='flex w-[100%] p-2 flex-col gap-2 bg-gradient-to-r from-cyan-100 to-blue-200'>
-            <div className='flex justify-between items-center'>
+            <div className='flex justify-between items-start'>
              <div className='flex gap-1 items-center'>
                 <span onClick={handleClosePopUpBox} className='cursor-pointer'><ChevronLeftIcon style={{fontSize:"1.6rem"}}></ChevronLeftIcon></span>
                 <div className='flex flex-col gap-1'>
@@ -357,11 +377,14 @@ const handleClosePopUpBox=async ()=>{
                 </div>
              </div>
              <div className='flex flex-col gap-2'>
-               <span className='flex items-center gap-1'><small className='text-gray-500'>Ac Manager</small>{acManagerName && acManagerName.full_name}</span>
-               <span className='p-1 px-2 bg-white text-[15px] rounded-md'>{candidateStatus && cstatus.get(candidateStatus)}</span>
+               <div className='flex gap-2 items-center'>
+                 <span className='flex items-center gap-1'><small className='text-gray-500'>Ac Manager</small>{acManagerName && acManagerName.full_name}</span>
+                 <span className='p-1 px-2 bg-white text-[15px] rounded-md'>{candidateStatus && cstatus.get(candidateStatus)}</span>
+               </div>
+               <button onClick={handleApprove} className='p-2 bg-blue-500 hover:bg-blue-600 text-white tracking-wide'>Approve</button>
              </div>
              </div>
-             <div className='flex mt-2 gap-6 px-4'>
+             <div className='flex gap-6 px-4'>
                 <div onClick={()=>setCurrentTab('candidate')} className={`cursor-pointer ${currentTab==='candidate'?("text-blue-400"):("text-gray-500")} hover:text-blue-400`}>
                    Candidate
                    {currentTab==="candidate" &&  <hr className='bg-blue-400 h-1'></hr>}
@@ -737,7 +760,6 @@ const handleClosePopUpBox=async ()=>{
         
       )
      }
-    {notification && <Notification message={notification.message} type={notification.type} onClose={() => setNotification(null)}></Notification>}
       <Card className='mt-8 p-2 border font-sans'>
         <p className='text-lg xl:text-2xl'>New Candidates</p>
         <div style={{ height: 600, width: '100%' }} className='pt-4'>
@@ -747,7 +769,7 @@ const handleClosePopUpBox=async ()=>{
           columns={columns}
           rowHeight={80} 
           loading={loading}
-          onRowClick={(params) => handleOpenPopUpBox(params.row.candidate_id,params.row.job_id)}
+          onRowClick={(params) => handleOpenPopUpBox(params.row.orgcandidateid,params.row.candidate_id,params.row.job_id)}
           getRowId={(row) => row._id} // Specify the custom ID field
           getRowHeight={calculateRowHeight} 
           pageSize={8}

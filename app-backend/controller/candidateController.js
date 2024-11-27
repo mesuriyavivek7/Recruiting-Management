@@ -33,6 +33,15 @@ export const addAcManager = async (req, res, next) => {
   }
 }
 
+export const approveCandidate = async (req, res, next) => {
+  try{
+    await CANDIDATE.findByIdAndUpdate(req.params.orgcid, { $set: {candidate_status: "newresume"}})
+    res.status(200).json("Candidate Approve.")
+  } catch (err) {
+    next(err)
+  }
+}
+
 export const getCandidate = async (req, res, next) => {
   try {
     const candidate = await CANDIDATE.findById(req.params.cid)

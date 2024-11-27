@@ -1,119 +1,136 @@
-
-
 import React, { useEffect, useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { Box, Button, Card, CircularProgress, Dialog, DialogActions, DialogTitle, IconButton, InputAdornment, TablePagination, TextField } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { columns ,rows} from './RowColDataOfAll'; // Import columns configuration
+import { columns} from './RowColDataOfAll'; // Import columns configuration
 import { FaSearch } from 'react-icons/fa';
-
+import { store } from '../../../State/Store';
+import { fetchCandidateBasicDetailsById, fetchCandidateStatusById, fetchJobBasicDetailsByJobId, fetchVerifiedCandidatesByACManagerId } from '../../../services/api';
+import { cstatus } from '../../../constants/jobStatusMapping';
+import axios from 'axios'
+import Notification from '../../../Components/Notification';
+import WhiteLoader from '../../../assets/whiteloader.svg'
 
 const calculateRowHeight = (params) => {
-
   const contentHeight = params.row ? params.row.content.length / 10 : 50; 
   return Math.max(80, contentHeight); 
 };
 const AllCandidateData = () => {
-  const [selectedRowId, setSelectedRowId] = useState(null);
   const navigate = useNavigate();
 
+  const selectUserData = (state) => state?.admin?.userData;
+  const userData = selectUserData(store?.getState());
+
   const [loading, setLoading] = useState(false);
-;
-  const [selectedCandidate, setSelectedCandidate] = useState(null);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [reasonDialogOpen, setReasonDialogOpen] = useState(false);
-  const [rejectionReason, setRejectionReason] = useState('');
+  const [candidateStatusLoader,setCandidateStatusLoader]=useState(false)
 
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('All');
-  const [filteredRows, setFilteredRows] = useState(rows);
-  // Function to handle candidate click
-  const handleCandidateClick = (params) => {
-    setSelectedCandidate(params.row);
-    setDialogOpen(true); // Open the action dialog
-  };
+  const [filteredRows, setFilteredRows] = useState([]);
 
-  // Handle Accept action
-  const handleAccept = () => {
-    console.log('Accepted candidate:', selectedCandidate);
-    // Add logic to verify the candidate
-    setDialogOpen(false); // Close dialog after acceptance
-    setSelectedCandidate(null);
-  };
+  const [notification, setNotification] = useState(null)
 
-  // Handle Reject action - open the reason dialog
-  const handleReject = () => {
-    setDialogOpen(false); // Close the first dialog
-    setReasonDialogOpen(true); // Open the reason dialog
-  };
-
-  // Handle dialog close
-  const handleDialogClose = () => {
-    setDialogOpen(false);
-    setSelectedCandidate(null);
-  };
-
-  // Handle reason dialog close
-  const handleReasonDialogClose = () => {
-    setReasonDialogOpen(false);
-    setRejectionReason('');
-  };
-
-  // Handle submitting rejection reason
-  const handleSubmitRejection = () => {
-    console.log('Rejected candidate:', selectedCandidate, 'Reason:', rejectionReason);
-    // Add logic to handle rejection
-    setReasonDialogOpen(false); // Close the reason dialog
-    setSelectedCandidate(null);
-    setRejectionReason('');
-  };
-
-  const handleCellClick = (params, event) => {
-    if (params.field === 'candidate_name') {
-      event.stopPropagation(); // Prevent the row click event
-      handleCandidateClick(params); // Call the candidate click handler
-    }
-  };
+  //for showing notification
+  const showNotification = (message, type) => {
+   setNotification({ message, type })
+ }
  
-
-  // Get the columns with the handleCandidateClick function passed as an argument
-  //const getcolumns = columns(handleCandidateClick);
-
-
-
   const handleRowClick = (id) => {
-    setSelectedRowId(id);
     navigate(`/account_manager/candidate/${id}`);
   };
-
-  // State for pagination
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-
   
   useEffect(() => {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
     }, 1000);
-  }, [page, rowsPerPage]);
+  }, []);
+
+  const fetchData=async ()=>{
+    try{
+     setLoading(true)
+     //Fetch verified candidate ids
+     const verifiedCandiatesIds = await fetchVerifiedCandidatesByACManagerId(userData._id);
+     
+     const rows = await Promise.all(verifiedCandiatesIds.map(async (candidateId, index) => {
+   
+         const { job_id, basic_details } = await fetchCandidateBasicDetailsById(candidateId);
+         const job_basic_details = await fetchJobBasicDetailsByJobId(job_id);
+         const candidate = await fetchCandidateStatusById(basic_details.candidate_id)
+   
+         // Get candidate status, defaulting to "Status Unavailable" if not found
+         
+         const candidateStatus = candidate.candidate_status || "Status Unavailable"; // Map status or use original
+   
+         return {
+           orgcandidateid:candidate._id,
+           candidate_id:basic_details.candidate_id,
+           _id: String(index + 1),
+           candidate_name: {
+             first_name: basic_details?.first_name || 'No First Name',
+             last_name: basic_details?.last_name || 'No Last Name',
+           },
+           job_title: job_basic_details?.job_title || "No Job Title",
+           job_id: job_basic_details?.job_id || "No Job Id",
+           candidate_status: candidateStatus,
+           submitted: basic_details?.createdAt || "No Submission Date",
+           lastUpdated: basic_details?.updatedAt || "No Update Date",
+           notice_period: basic_details?.notice_period || "N/A",
+           email: basic_details?.primary_email_id || "No Email",
+           mobile: basic_details?.primary_contact_number || "No Contact Number"
+         };
+       })
+     );
+
+     const newFilteredRows = rows.filter((row) => {
+       const fullName = `${row.candidate_name.first_name} ${row.candidate_name.last_name}`.toLowerCase();
+       const matchesSearch = fullName.includes(searchTerm.toLowerCase());
+       const matchesStatus = filterStatus === 'All' || cstatus.get(row.candidate_status) === filterStatus;
+       return matchesSearch && matchesStatus;
+     });
+
+     setFilteredRows(newFilteredRows);
+
+    }catch(err){
+      console.log(err)
+      showNotification("Something went wrong while fetching candidate data.",'failure')
+    }finally{
+     setLoading(false)
+    }
+}
 
   useEffect(() => {
-    const newFilteredRows = rows.filter((row) => {
-      const fullName = `${row.candidate_name.first_name} ${row.candidate_name.last_name}`.toLowerCase();
-      const matchesSearch = fullName.includes(searchTerm.toLowerCase());
-      const matchesStatus = filterStatus === 'All' || row.status === filterStatus;
-      return matchesSearch && matchesStatus;
-    });
-    setFilteredRows(newFilteredRows);
+    fetchData()
   }, [searchTerm, filterStatus]);
-  // Calculate the rows to display
-  const paginatedRows = filteredRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+
+  const candiadteStatusChange=async (e,id)=>{
+    try{
+      setCandidateStatusLoader(true)
+      await axios.post(`${process.env.REACT_APP_API_APP_URL}/candidate/changecandidatestatus/${id}`,{status:e.target.value})
+      await fetchData()
+      showNotification("Successfully candidate status changed.",'success')
+    }catch(err){
+      setCandidateStatusLoader(false)
+      showNotification("Something wrong while changeing candidate status.","failure")
+      console.log(err)
+    }
+    setCandidateStatusLoader(false)
+}
+
 
   return (
     <div>
-
-<Box display="flex" justifyContent="space-between" alignItems="center" mb={2} gap={2} pt={4}>
+    {notification && <Notification message={notification.message} type={notification.type} onClose={() => setNotification(null)}></Notification>}
+     {
+      candidateStatusLoader && 
+       <div className='fixed inset-0 flex justify-center bg-black z-50 bg-opacity-50 backdrop-blur-md items-center'>
+         <div className='custom-div w-[450px] p-4 items-center'>
+            <img className='h-10 w-10' alt='' src={WhiteLoader}></img>
+            <p>Please wait till we update resume status.</p>
+         </div>
+       </div>
+     }
+     <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} gap={2} pt={4}>
         <TextField
           label="Search..."
           variant="outlined"
@@ -145,7 +162,7 @@ const AllCandidateData = () => {
         />
 
         <Box display="flex" gap={0}>
-          {['All', 'Active', 'Pending'].map((status) => (
+          {['All', 'Offer Accepted'].map((status) => (
             <Button
               key={status}
               variant={filterStatus === status ? 'contained' : 'outlined'}
@@ -156,11 +173,11 @@ const AllCandidateData = () => {
                 fontSize: '16px',
                 height: '45px',
                 textTransform: 'none',
-                width: '120px',
+                width: status==="Offer Accepted"?'180px':"150px",
                 border: '1px solid gray',
                 borderRadius:
                   status === 'All' ? '20px 0 0 20px' :
-                    status === 'Pending' ? '0 20px 20px 0' : '0',
+                    status === 'Offer Accepted' ? '0 20px 20px 0' : '0',
                 '&:hover': {
                   backgroundColor: filterStatus === status ? '#315380' : '#e0e0e0',
                 },
@@ -177,21 +194,17 @@ const AllCandidateData = () => {
           <CircularProgress />
         </Box>
       ) : (
-      <Card className='mt-9 font-sans'>
+      <Card className='mt-8 border p-2 font-sans'>
         <p className='text-lg xl:text-2xl'>All Candidates</p>
         <div style={{ height: 600, width: '100%' }} className='pt-4'>
          
           <DataGrid 
-          rows={paginatedRows}
-          columns={columns}
+          rows={filteredRows}
+          columns={columns(candiadteStatusChange,handleRowClick)}
           rowHeight={80} 
-          onRowClick={(params) => handleRowClick(params.id)}
           getRowId={(row) => row._id} // Specify the custom ID field
           getRowHeight={calculateRowHeight} 
-         
-          pageSize={rowsPerPage} 
-          onCellClick={handleCellClick} // Handle cell click events
-          
+          pageSize={8} 
           pageSizeOptions={[5, 10]}
           initialState={{
             pagination: { paginationModel: { page: 0, pageSize: 10} },
@@ -216,23 +229,18 @@ const AllCandidateData = () => {
               minHeight: '60px', 
             },
              '& .MuiDataGrid-columnHeader:focus-within': {
-        outline: 'none', 
-      },
-     
-           
-         
-            
-      
-      '& .MuiDataGrid-columnSeparator': {
-        color: 'blue',
-        visibility: 'visible', 
-      },
+             outline: 'none', 
+        },     
+        '& .MuiDataGrid-columnSeparator': {
+          color: 'blue',
+          visibility: 'visible', 
+        },
       
     
-      '& .MuiDataGrid-cell': {
-        fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem' }, 
+       '& .MuiDataGrid-cell': {
+         fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem' }, 
         
-      },
+       },
       
       '& .MuiDataGrid-cellContent': {
         display: 'flex',
@@ -258,40 +266,7 @@ const AllCandidateData = () => {
         </div>
       </Card>)}
       
-        {/* Initial Dialog for Candidate Action */}
-      <Dialog open={dialogOpen} onClose={handleDialogClose}>
-        <DialogTitle>Candidate Action</DialogTitle>
-        <div style={{ padding: '16px' }}>
-          <p>What would you like to do with {selectedCandidate ? selectedCandidate.candidate_name : ''}?</p>
-        </div>
-        <DialogActions>
-          <Button onClick={handleAccept} color="primary">Accept</Button>
-          <Button onClick={handleReject} color="secondary">Reject</Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* Dialog for Rejection Reason */}
-      <Dialog open={reasonDialogOpen} onClose={handleReasonDialogClose}>
-        <DialogTitle>Rejection Reason</DialogTitle>
-        <div style={{ padding: '16px' }}>
-          <TextField
-            autoFocus
-            margin="dense"
-            label="Reason"
-            type="text"
-            fullWidth
-            variant="outlined"
-            value={rejectionReason}
-            onChange={(e) => setRejectionReason(e.target.value)}
-          />
-        </div>
-        <DialogActions>
-          <Button onClick={handleReasonDialogClose}>Cancel</Button>
-          <Button onClick={handleSubmitRejection} disabled={!rejectionReason}>
-            Submit
-          </Button>
-        </DialogActions>
-      </Dialog>
+       
     </div>
   );
 };
