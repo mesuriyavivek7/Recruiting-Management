@@ -249,10 +249,8 @@ export const fetchVerifiedCandidatesByACManagerId = async (ac_manager_id) => {
 }
 
 export const fetchPendingCandidatesByACManagerId = async (ac_manager_id) => {
-    console.log("Account manager id",ac_manager_id)
     try {
         const response = await axios.get(`${admin_be_uri}/accountmanager/getpendingcandidates/${ac_manager_id}`);
-        console.log("response data---->",response.data)
         return response.data;
     } catch (error) {
         console.error("Error fetching peding verify candidates : ", error);

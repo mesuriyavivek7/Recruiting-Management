@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url';
 
 
 import { cancelProcess, checkParseDetails, createAndParseResume, downloadResumeDocs, getResumeFileName, getResumeFilePath, marksAsCompleted, removeResumeFile} from '../controller/resumeController.js';
-import { addAcManager, changeCandidateStatus, changeMultipleCandidateStatus, createCandidate, downloadCandidateAttachments, exportDataEnterprise, exportDataRecruiter, getAcManagerName, getAllCandidates, getCandidate, getCandidateAllDetails, getCandidateAttachmentFileType, getCandidateBasicDetailsById, getCandidateForMultipleAction, getCandidateStatusById, getJobBasicDetails, getJobCandidateForPreview, getJobResumeSubmitCount, getRecruiterMemberIds, updateCandidateRemarks, viewCandidateAttachments } from '../controller/candidateController.js';
+import { addAcManager, approveCandidate, changeCandidateStatus, changeMultipleCandidateStatus, createCandidate, downloadCandidateAttachments, exportDataEnterprise, exportDataRecruiter, getAcManagerName, getAllCandidates, getCandidate, getCandidateAllDetails, getCandidateAttachmentFileType, getCandidateBasicDetailsById, getCandidateForMultipleAction, getCandidateStatusById, getJobBasicDetails, getJobCandidateForPreview, getJobResumeSubmitCount, getRecruiterMemberIds, updateCandidateRemarks, viewCandidateAttachments } from '../controller/candidateController.js';
 import { checkEmailAndMobile, createCandidateBasicDetails, getAllCandidateBasicDetails, getCandidateBasicDetailsByRecruiterId } from '../controller/candidateBasicController.js';
 import { uploadCandidateAttachments } from '../controller/candidateAttachmentsController.js';
 import { uploadCandidateConsetProof } from '../controller/candidateConsetController.js';
@@ -105,6 +105,9 @@ router.post('/createsqanswer/:orgcid', createSqAnswers)
 
 //adding account manager id
 router.post('/addacmanager/:orgcid', addAcManager)
+
+//Approve Candidate (Changing status from Under Review To New Resume)
+router.put('/approvecandidate/:orgcid',approveCandidate)
 
 //change candidate status
 router.post('/changecandidatestatus/:orgcid', changeCandidateStatus)
