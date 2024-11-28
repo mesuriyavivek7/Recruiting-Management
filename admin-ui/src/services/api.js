@@ -65,11 +65,11 @@ export const fetchEnterpriseTeam = async (enterprise_id) => {
 
 //For fetch particuler enterprise memeber details
 export const fetchEnterpriseMemberDetails = async (en_member_id) => {
-    try{
+    try {
         const response = await axios.get(`${app_be_uri}/enterpriseteam/${en_member_id}`)
         return response.data
-    }catch(error){
-        console.error("Error while fetching enterprise team member details : ",error)
+    } catch (error) {
+        console.error("Error while fetching enterprise team member details : ", error)
     }
 }
 
@@ -138,11 +138,62 @@ export const fetchJobBasicDetailsByEnId = async (enterprise_id) => {
 }
 
 //get job commission details by job_id
-export const fetchJobCommissionDetails = async (job_id) =>{
-    try{
-        
-    }catch(error){
-        console.error("Error while fetching the job commission details : ",error)
+export const fetchJobCommissionDetails = async (job_id) => {
+    try {
+
+    } catch (error) {
+        console.error("Error while fetching the job commission details : ", error)
+    }
+}
+
+//get job company info by job_id
+export const fetchJobCompanyInfoByJobId = async (job_id) => {
+    try {
+        const response = await axios.get(`${app_be_uri}/job/getcompanydetails/${job_id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error while getting job company info : ", error);
+        throw error;
+    }
+}
+// get job sourcing and guidelines details
+export const fetchJobSourcingByJobId = async (job_id) => {
+    try {
+        const response = await axios.get(`${app_be_uri}/job/getsourcingdetails/${job_id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error while getting the job sourcing details : ", error);
+        throw error;
+    }
+}
+// get job attachmaents by job id
+export const fetchJobAttachmentsByJobId = async (job_id) => {
+    try {
+        const response = await axios.get(`${app_be_uri}/job/getjobattachmentdetails/${job_id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error while getting the job sourcing details : ", error);
+        throw error;
+    }
+}
+// get job screening question by job id
+export const fetchSQByJobId = async (job_id) => {
+    try {
+        const response = await axios.get(`${app_be_uri}/job/getscreeningquestions/${job_id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error while getting the job screening questions : ", error);
+        throw error;
+    }
+}
+// get job commision details by job id
+export const fetchCommisionDetailsByJobId = async (job_id) => {
+    try {
+        const response = await axios.get(`${app_be_uri}/job/getjobcommissiondetails/${job_id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error while getting the job commision details : ", error);
+        throw error;
     }
 }
 
@@ -201,7 +252,7 @@ export const fetchVerifiedJobsByAdminId = async (m_admin_id) => {
     try {
         const response = await axios.get(`${admin_be_uri}/masteradmin/getverifiedjobs/${m_admin_id}`);
         return response.data;
-      
+
     } catch (error) {
         console.error("Error fetching verified jobs : ", error);
         throw error;
@@ -319,12 +370,12 @@ export const fetchRecuritingTeam = async (r_agency_id) => {
 }
 
 //Get recruiter member details by re_member_id
-export const fetchRecruiterMemberDetails = async (re_member_id) =>{
-    try{
-         const response= await axios.get(`${app_be_uri}/recruitingteam/${re_member_id}`)
-         return response.data
-    }catch(error){
-        console.error("Error while fetching the recruiter member details: ",error)
+export const fetchRecruiterMemberDetails = async (re_member_id) => {
+    try {
+        const response = await axios.get(`${app_be_uri}/recruitingteam/${re_member_id}`)
+        return response.data
+    } catch (error) {
+        console.error("Error while fetching the recruiter member details: ", error)
         throw error
     }
 }
@@ -452,7 +503,7 @@ export const SearchJobs = async (query = '') => {
 // create a account manager using master admin id
 export const CreateAccountManager = async (m_admin_id, formData) => {
     try {
-        const response = await axios.post(`${admin_be_uri}/accountmanager/create/${m_admin_id}`,formData);
+        const response = await axios.post(`${admin_be_uri}/accountmanager/create/${m_admin_id}`, formData);
         return response;
     } catch (error) {
         console.error("Error while creating account manager : ", error);
@@ -462,22 +513,22 @@ export const CreateAccountManager = async (m_admin_id, formData) => {
 
 //For getting active job count for particuler enterprise member
 export const getActiveJobsCountEnMember = async (en_member_id) => {
-    try{
-        const response= await axios.get(`${app_be_uri}/job/getactivejobcount/${en_member_id}`)
+    try {
+        const response = await axios.get(`${app_be_uri}/job/getactivejobcount/${en_member_id}`)
         return response.data
-    }catch(error) {
-        console.error("Error while fetching active jobs count : ",error)
+    } catch (error) {
+        console.error("Error while fetching active jobs count : ", error)
         throw error
     }
 }
 
 //For getting pending job count for particular enterprise member
 export const getPendingJobCountEnMember = async (en_member_id) => {
-    try{
+    try {
         const response = await axios.get(`${app_be_uri}/job/getpendingjobcount/${en_member_id}`)
         return response.data
-    }catch(error) {
-        console.error("Error while fetching pending jobs count : ",error)
+    } catch (error) {
+        console.error("Error while fetching pending jobs count : ", error)
     }
 }
 
