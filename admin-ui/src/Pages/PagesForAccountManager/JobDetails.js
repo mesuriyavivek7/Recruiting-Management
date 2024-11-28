@@ -9,6 +9,8 @@ import axios from 'axios';
 
 import { useParams } from 'react-router-dom';
 import { FaBusinessTime,FaBullseye,FaThumbsUp,FaBan,FaStar,FaQuestionCircle ,FaFilePdf,FaFileAlt,FaFileAudio, FaMapMarkerAlt, FaBriefcase, FaInfoCircle,FaPaperclip, FaUsers,FaShareAlt,FaExternalLinkAlt,FaDollarSign,FaClock,FaCalendarAlt } from 'react-icons/fa'; // React Icons
+import { Card, Grid, Typography } from '@mui/material';
+import { FaBuilding } from "react-icons/fa";
 
 
 function JobDetails() {
@@ -56,254 +58,814 @@ return (
         indicatorColor="primary"
         aria-label="Job Details Tabs"
         variant="scrollable"
+        sx={{
+          '& .MuiTab-root': {
+            color: 'gray-600',
+             fontSize: '1rem',
+            '&.Mui-selected': {
+              color: '#315370',
+              fontWeight: 'bold',
+            },
+           
+          },
+          '& .MuiTabs-indicator': {
+            backgroundColor: '#315370',
+            height: '6px',
+            borderRadius: '2px',
+          },
+        }}
         scrollButtons="auto"
         allowScrollButtonsMobile
       >
         <Tab value="one" label="Job Details" icon={<FaBriefcase className="text-lg" />} />
-        <Tab value="two" label="Remuneration & Commission" icon={<FaInfoCircle className="text-lg" />} />
-        <Tab value="three" label="Company Details" icon={<FaBusinessTime className="text-lg" />} />
-        <Tab value="four" label="Sourcing Guidelines" icon={<FaUsers className="text-lg" />} />
-        <Tab value="five" label="Screening Questions" icon={<FaQuestionCircle className="text-lg" />} />
+       
+        <Tab value="two" label="Company Details" icon={<FaBusinessTime className="text-lg" />} />
+        <Tab value="three" label="Sourcing Guidelines & Attachments" icon={<FaUsers className="text-lg" />} />
+        <Tab value="four" label="Screening Questions" icon={<FaQuestionCircle className="text-lg" />} />
       </Tabs>
       
       <div className="mt-6">
-        {/* Render content based on the selected tab */}
-        {value === 'one' && (
-          <div className="space-y-6 flex flex-col items-center p-4">
-            <div className="bg-white p-4 rounded-lg w-full space-y-2">
-              <h2 className="text-xl xl:text-2xl font-semibold text-gray-800 flex items-center">
-                <FaBriefcase className="mr-3 text-2xl xl:text-3xl text-blue-600" /> Job Profile
-              </h2>
-              <p className='xl:text-lg'> <strong>Job Title:</strong> {job?.basicDetails?.job_title}</p>
-              <p className='xl:text-lg'><strong>Job Description:</strong> {job?.basicDetails?.job_description}</p>
-              <p className='xl:text-lg'><strong>permanent remote work:</strong> {job?.basicDetails?.permanent_remote_work? 'Yes' : 'No'}</p>
-              <p className='xl:text-lg'><strong>Domain:</strong> {job?.basicDetails?.job_domain}</p>
-              <p className='xl:text-lg'><strong>Experience Required:</strong> {job?.basicDetails?.experience?.minexp} - {job?.basicDetails?.experience?.maxexp}</p>
-              <p className='xl:text-lg'><strong>Positions:</strong> {job?.basicDetails?.positions}</p>
-              <p className='xl:text-lg'><strong>Hiring Managers:</strong> {job?.basicDetails?.hiring_managers}</p>
-              <p className='xl:text-lg'><strong>Share salary details:</strong> {job?.basicDetails?.share_salary_details? 'Yes' : 'No'}</p>
-            </div>
-            <div className="bg-white p-4 rounded-lg w-full space-y-2">
-              <h2 className="text-xl xl:text-2xl font-semibold text-gray-800 flex items-center">
-                <FaMapMarkerAlt className="mr-3 text-2xl text-green-600" /> Location
-              </h2>
-              <p className='xl:text-lg'><strong>Country:</strong> {job?.basicDetails?.country}</p>
-              <p className='xl:text-lg'><strong>State:</strong> {job?.basicDetails?.state}</p>
-              <p className='xl:text-lg'><strong>City:</strong> {job?.basicDetails?.city.join(', ')}</p>
-            </div>
-          </div>
-        )}
-
-        {value === 'two' && (
-          <div className="bg-white p-4 rounded-lg w-full space-y-4">
-       
+  {value === 'one' && (
+    <Card
+      className="mt-4 font-sans py-6"
+      sx={{
+        borderRadius: '8px',
+        boxShadow: 3,
+        backgroundColor: '#f0f0f0',
+        padding: 3,
+      }}
+    >
+      {/* Job Details Section */}
+      <Box sx={{ mb: 2, pb: 2, borderBottom: '4px solid white' }}>
+        <Typography
+          variant="h5"
+          fontWeight="bold"
+          className="flex items-center mb-2 pb-2"
+        >
+          <FaBriefcase className="mr-2 text-black" /> Job Details
+        </Typography>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <Box
+              sx={{
+                p: 2,
+                border: '1px solid #ccc',
+                borderRadius: '8px',
+                backgroundColor: '#fff',
+              }}
+            >
+              <Typography variant="body1">
+                <strong>Job Id:</strong> {job?._id}
+              </Typography>
+              
           
+            </Box>
+          </Grid>
+          <Grid item sx={12} sm={6}>
+          <Box
+              sx={{
+                p: 2,
+                border: '1px solid #ccc',
+                borderRadius: '8px',
+                backgroundColor: '#fff',
+              }}
+            >
+          <Typography variant="body1">
+                <strong>Job Title:</strong> {job?.basicDetails?.job_title}
+              </Typography>
+              </Box>
+          </Grid>
+          <Grid item sx={12} sm={12}>
+          <Box
+              sx={{
+                p: 2,
+                border: '1px solid #ccc',
+                borderRadius: '8px',
+                backgroundColor: '#fff',
+              }}
+            >
+          <Typography variant="body1">
+                <strong>Job Description:</strong> {job?.basicDetails?.job_description}
+              </Typography>
+              </Box>
+          </Grid>
+          <Grid item sx={12} sm={6}>
+          <Box
+              sx={{
+                p: 2,
+                border: '1px solid #ccc',
+                borderRadius: '8px',
+                backgroundColor: '#fff',
+              }}
+            >
+          <Typography variant="body1">
+                <strong>Country:</strong>{job?.basicDetails?.country}
+              </Typography>
+              </Box>
+          </Grid>
+          <Grid item sx={12} sm={6}>
+          <Box
+              sx={{
+                p: 2,
+                border: '1px solid #ccc',
+                borderRadius: '8px',
+                backgroundColor: '#fff',
+              }}
+            >
+          <Typography variant="body1">
+                <strong>City:</strong> {job?.basicDetails?.city.join(', ')}
+              </Typography>
+              </Box>
+          </Grid>
+          <Grid item sx={12} sm={6}>
+          <Box
+              sx={{
+                p: 2,
+                border: '1px solid #ccc',
+                borderRadius: '8px',
+                backgroundColor: '#fff',
+              }}
+            >
+          <Typography variant="body1">
+                <strong>Job Domains:</strong> {job?.basicDetails?.job_domain}
+              </Typography>
+              </Box>
+          </Grid>
+          <Grid item sx={12} sm={6}>
+          <Box
+              sx={{
+                p: 2,
+                border: '1px solid #ccc',
+                borderRadius: '8px',
+                backgroundColor: '#fff',
+              }}
+            >
+          <Typography variant="body1">
+                <strong>Positions:</strong> {job?.basicDetails?.positions}
+              </Typography>
+              </Box>
+          </Grid>
+          <Grid item sx={12} sm={6}>
+          <Box
+              sx={{
+                p: 2,
+                border: '1px solid #ccc',
+                borderRadius: '8px',
+                backgroundColor: '#fff',
+              }}
+            >
+          <Typography variant="body1">
+                <strong>Experience:</strong> {job?.basicDetails?.experience?.minexp} - {job?.basicDetails?.experience?.maxexp}
+              </Typography>
+              </Box>
+          </Grid>
+          <Grid item sx={12} sm={6}>
+          <Box
+              sx={{
+                p: 2,
+                border: '1px solid #ccc',
+                borderRadius: '8px',
+                backgroundColor: '#fff',
+              }}
+            >
+          <Typography variant="body1">
+                <strong>Is Remote Work:</strong>{job?.basicDetails?.permanent_remote_work? 'Yes' : 'No'}
+              </Typography>
+              </Box>
+          </Grid>
+        </Grid>
+      </Box>
 
-            {job.commissionDetails.work_type === 'full_time' && (
-              <>
-                <div className="bg-white pt-2 p-4 rounded-lg shadow-sm   w-full ">
-                <div className=' space-y-3'>
-                  
-                  
-                    
-                    <h2 className="text-xl  xl:text-2xl font-semibold text-gray-800 flex gap-1"><FaDollarSign className="text-2xl xl:text-3xl text-green-600" />Remuneration Details</h2>
-                    <div className='pl-36'>
-                    <p className='xl:text-lg'><strong>Annual Salary:</strong> {job.commissionDetails.work_details.full_time.fixed_salary}</p>
-
-                    <p className='xl:text-lg'><strong>Additional Salary Details:</strong>{job.commissionDetails.work_details.full_time.additional_salary_details} </p>
-                    <p className='xl:text-lg'><strong>Additional Salary Details:</strong>{job.commissionDetails.work_details.full_time.full_time_salary_currency} </p>
-                    <p className='xl:text-lg'><strong>Additional Salary Details:</strong>{job.commissionDetails.work_details.full_time.full_time_salary_type} </p>
-                    </div>
-                 
-                </div>
-                </div>
-
-                <div className="bg-white p-4 rounded-lg shadow-sm  w-full ">
-                <div className=' space-y-3'>
-                  
-                  <div className='space-y-3'>
-                    <h2 className="text-xl xl:text-2xl font-semibold text-gray-800 flex gap-1">  <FaInfoCircle className="text-2xl xl:text-3xl text-blue-600" />Commission</h2>
-                    <div className='pl-36'>
-                    <p className='xl:text-lg'><strong>Commission Type:</strong> {job.commissionDetails.commission_details.commission_type}</p>
-                    <p className='xl:text-lg'><strong>Commission Payout:</strong> {job.commissionDetails.commission_details.commission_fix_pay}</p>
-                    <p className='xl:text-lg'><strong>Payment Terms:</strong> {job.commissionDetails.commission_details.payment_tearms}</p>
-                    <p className='xl:text-lg'><strong>Replacement Clause:</strong> {job.commissionDetails.commission_details.replacement_clause}</p>
-                  </div>
-                  </div>
-                </div>
-               
-                </div>
-              </>
-            )}
-
-            {/* Contract Remuneration Details */}
-            {job.commissionDetails.work_type === 'contract' && (
-              <>
-                <div className="bg-gray-50 p-4 rounded-lg shadow-sm  w-full ">
-                <div className=' '>
-                 
-                  <div className='space-y-3'>
-                    <h2 className="text-xl  xl:text-2xl font-semibold text-gray-800 flex gap-1"> <FaClock className="text-2xl text-purple-600" />Contract Remuneration Details</h2>
-                    <div className='pl-36'>
-                    <p className='xl:text-lg'><strong>Contract duration type:</strong> {job?.commissionDetails.work_details.contract.contract_duration_type}</p>
-                    <p className='xl:text-lg'><strong>Contract Duration:</strong> {job?.commissionDetails.work_details.contract.contract_duration_count}</p>
-                    <p className='xl:text-lg'><strong>Pay Rate:</strong> {job?.commissionDetails.work_details.contract.contract_pay_rate_type}</p>
-                    <p><strong>Contract pay rate currency:</strong> {job?.commissionDetails.work_details.contract.contract_pay_currency}</p>
-            <p className='xl:text-lg'><strong>Fix Contract Pay:</strong> {job?.commissionDetails.work_details.contract.fix_contract_pay}</p>
-                    <p className='xl:text-lg'><strong>Pay Cycle:</strong>  {job?.commissionDetails.work_details.contract.contract_pay_cycle}</p>
-                    <p className='xl:text-lg' ><strong>Working Hours:</strong>{job?.commissionDetails.work_details.contract.weekly_hour_cnt} </p>
-                    <p className='xl:text-lg'><strong>Additional Contract Details:</strong> {job?.commissionDetails.work_details.contract.additional_contract_details}</p>
-                    <p className='xl:text-lg'><strong>Remarks:</strong> {job?.commissionDetails.work_details.contract.remarks}</p>
-                  </div>
-                  </div>
-                </div>
-                </div>
-                <div className="bg-gray-50 p-4 rounded-lg shadow-sm  w-full ">
-                <div className=''>
-                  
-                  <div className='space-y-3'>
-                    <h2 className="text-xl  xl:text-2xl font-semibold text-gray-800 flex gap-1"><FaCalendarAlt className="text-2xl text-red-600" />Commission</h2>
-                    <div className='pl-36'>
-                    <p className='xl:text-lg'><strong>Commission Type:</strong> {job?.commissionDetails.commission_details.commission_type}</p>
-            <p className='xl:text-lg'><strong>Commission Percentage Pay:</strong> {job?.commissionDetails.commission_details.commission_percentage_pay}</p>
-            <p className='xl:text-lg'><strong>Payment Terms:</strong> {job?.commissionDetails.commission_details.payment_tearms}</p>
-            <p className='xl:text-lg'><strong>Repllacement Clause:</strong> {job?.commissionDetails.commission_details.replacement_clause}</p>
-                  </div>
-                  </div>
-                </div>
-                </div>
-              </>
-            )}
-
-
-          </div>
-        )}
-
-        {value === 'three' && (
-          <div className="bg-white p-4 rounded-lg w-full space-y-4">
-            <h2 className="text-xl xl:text-2xl font-semibold text-gray-800 flex items-center">
-              <FaBusinessTime className="mr-3 text-2xl text-green-600" /> Company Details
-            </h2>
-            {/* <p><strong>Target Companies:</strong> {job?.targetCompanies.join(', ')}</p> */}
-            <p className='xl:text-lg'><strong>External Job ID:</strong> {job?.companyDetails?.job_id}</p>
-            <p className='xl:text-lg'><strong>Agrre To Terms:</strong> {job?.companyDetails?.agree_to_tearms?'Yes':'No'}</p>
-            <p className='xl:text-lg'><strong>Client Name:</strong> {job?.companyDetails?.client_name}</p>
-            <p className='xl:text-lg'><strong>Client Description:</strong> {job?.companyDetails?.client_description}</p>
-          
-          </div>
-
-          
-        )}
-
-     
-        {value === 'four' && (
+      {/* Job Commision Details */}
+      <Box sx={{ mb: 2, pb: 2, borderBottom: '4px solid white' }}>
+        <Typography
+          variant="h5"
+          fontWeight="bold"
+          className="flex items-center mb-2 pb-2"
+        >
+          <FaMapMarkerAlt className="mr-2 text-black" /> Job Commission Details
+        </Typography>
+        
+  
  
 
-<div className="  space-y-6 rounded-lg font-sans flex flex-col items-center ">
+  {/* Right Section */}
+  <Grid container spacing={2} sx={{pt:'12px'}} >
+  {job?.commissionDetails.work_type === 'fulltime' && (
+    <>
+      {/* Full-Time Remuneration Details */}
+      <Grid item xs={12} sm={12} sx={{ml:'9px'}}>
+  <Typography
+    variant="h6"
+    fontWeight="bold"
+    display="flex"
+    alignItems="center"
+    paddingTop='8px'
+    gap={1}
+  >
+    <FaDollarSign className="text-black" />
+    Remuneration Details
+  </Typography>
+
+  <Grid container spacing={2} sx={{ mt: 1 }}>
+    <Grid item xs={12} sm={6}>
+      <Box
+        sx={{
+          p: 2,
+          border: "1px solid #ccc",
+          borderRadius: "8px",
+          backgroundColor: "#fff",
+        }}
+      >
+        <Typography variant="body1">
+          <strong>Annual Salary:</strong> {job.commissionDetails?.work_details.full_time.fixed_salary}
+        </Typography>
+      </Box>
+    </Grid>
+
+    <Grid item xs={12} sm={6}>
+      <Box
+        sx={{
+          p: 2,
+          border: "1px solid #ccc",
+          borderRadius: "8px",
+          backgroundColor: "#fff",
+        }}
+      >
+        <Typography variant="body1">
+          <strong>Additional Salary Details:</strong> {job.commissionDetails?.work_details.full_time.additional_salary_details}
+        </Typography>
+      </Box>
+    </Grid>
+  </Grid>
+</Grid>
+
+
+      <Grid item xs={12} sm={12}>
+       
+          <Typography variant="h6" fontWeight="bold" display="flex" alignItems="center" gap={1}>
+            <FaInfoCircle className="text-black" />
+            Commission
+          </Typography>
+
+          <Grid container spacing={2} sx={{mt:1}} >
+    <Grid item xs={12} sm={6}>
+      <Box
+        sx={{
+          p: 2,
+          border: "1px solid #ccc",
+          borderRadius: "8px",
+          backgroundColor: "#fff",
+        }}
+      >
+       <Typography variant="body1" sx={{ pl: 4 }}>
+            <strong>Commission Payout:</strong> {job.commissionDetails?.commission_details.commission_fix_pay}
+          </Typography>
+      </Box>
+    </Grid>
+
+    <Grid item xs={12} sm={6}>
+      <Box
+        sx={{
+          p: 2,
+          border: "1px solid #ccc",
+          borderRadius: "8px",
+          backgroundColor: "#fff",
+        }}
+      >
+       <Typography variant="body1" sx={{ pl: 4 }}>
+            <strong>Payment Terms:</strong> {job.commissionDetails?.commission_details.payment_tearms}
+          </Typography>
+      </Box>
+    </Grid>
+
+    <Grid item xs={12} sm={6}>
+      <Box
+        sx={{
+          p: 2,
+          border: "1px solid #ccc",
+          borderRadius: "8px",
+          backgroundColor: "#fff",
+        }}
+      >
+       <Typography variant="body1" sx={{ pl: 4 }}>
+            <strong>Replacement Clause:</strong> {job.commissionDetails?.commission_details.replacement_clause}
+          </Typography>
+      </Box>
+    </Grid>
+  </Grid>
+         
           
          
-<div className="bg-white p-4 rounded-lg shadow-sm  w-full ">
-<div className='space-y-3'>
-
-<div className='space-y-3'>
-<h2 className="text-xl  xl:text-2xl font-semibold text-gray-800 flex gap-1"><FaStar className="text-2xl text-yellow-600" />Must Haves</h2>
-<div className='pl-36'>
-<ul className="list-disc pl-5 mt-2 space-y-3">
-  {Array.isArray(job?.sourcingGuidelines?.must_haves) ? (
-    job.sourcingGuidelines.must_haves.map((e, index) => (
-      <li key={index}><strong>{e}</strong></li>
-    ))
-  ) : (
-    <li><strong>No must haves available</strong></li> // Fallback in case must_haves is not an array
+       
+      </Grid>
+    </>
   )}
-</ul>
+
+{jobType === 'contract' && (
+  <>
+    {/* Contract Remuneration Details */}
+    <Grid item xs={12} sm={12} sx={{ ml: '6px' }}>
+      <Typography
+        variant="h6"
+        fontWeight="bold"
+        display="flex"
+        alignItems="center"
+        paddingTop="8px"
+        gap={1}
+      >
+        <FaClock className="text-black" />
+        Contract Remuneration Details
+      </Typography>
+
+      <Grid container spacing={2} sx={{ mt: 1 }}>
+       
+
+<Grid item xs={12} sm={6}>
+      <Box
+        sx={{
+          p: 2,
+          border: "1px solid #ccc",
+          borderRadius: "8px",
+          backgroundColor: "#fff",
+        }}
+      >
+        <Typography variant="body1">
+              <strong>Contract Duration:</strong> {job?.commissionDetails?.work_details.contract.contract_duration_count}
+            </Typography>
+      </Box>
+    </Grid>
+    <Grid item xs={12} sm={6}>
+      <Box
+        sx={{
+          p: 2,
+          border: "1px solid #ccc",
+          borderRadius: "8px",
+          backgroundColor: "#fff",
+        }}
+      >
+         <Typography variant="body1">
+              <strong>Contract Pay:</strong> {job?.commissionDetails?.work_details.contract.contract_pay_rate_type}
+            </Typography>
+      </Box>
+    </Grid>
+    <Grid item xs={12} sm={6}>
+      <Box
+        sx={{
+          p: 2,
+          border: "1px solid #ccc",
+          borderRadius: "8px",
+          backgroundColor: "#fff",
+        }}
+      >
+         <Typography variant="body1">
+              <strong>Contract Pay Cycle:</strong> {job?.commissionDetails?.work_details.contract.contract_pay_cycle}
+            </Typography>
+      </Box>
+    </Grid>
+           
+    <Grid item xs={12} sm={6}>
+      <Box
+        sx={{
+          p: 2,
+          border: "1px solid #ccc",
+          borderRadius: "8px",
+          backgroundColor: "#fff",
+        }}
+      >
+            <Typography variant="body1">
+              <strong>Additional  Details:</strong> {job?.commissionDetails?.work_details.contract.additional_contract_details}
+            </Typography>
+      </Box>
+    </Grid>   
+           
+         
+          
+
+        
+      </Grid>
+    </Grid>
+
+    <Grid item xs={12} sm={12}>
+      <Typography
+        variant="h6"
+        fontWeight="bold"
+        display="flex"
+        alignItems="center"
+        gap={1}
+        sx={{ mt: 2 }}
+      >
+        <FaCalendarAlt className="text-black" />
+         Commission 
+      </Typography>
+
+      <Grid container spacing={2} sx={{ mt: 1 }}>
+        
+
+        <Grid item xs={12} sm={6}>
+          <Box
+            sx={{
+              p: 2,
+              border: '1px solid #ccc',
+              borderRadius: '8px',
+              backgroundColor: '#fff',
+            }}
+          >
+            <Typography variant="body1">
+              <strong>Payment Terms:</strong> {job?.commissionDetails?.commission_details.payment_tearms}
+            </Typography>
+          </Box>
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <Box
+            sx={{
+              p: 2,
+              border: '1px solid #ccc',
+              borderRadius: '8px',
+              backgroundColor: '#fff',
+            }}
+          >
+            <Typography variant="body1">
+              <strong>Replacement Clause:</strong> {job?.commissionDetails?.commission_details.replacement_clause}
+            </Typography>
+          </Box>
+        </Grid>
+      </Grid>
+    </Grid>
+  </>
+)}
+
+</Grid>
 
 
 
-</div>
-</div>
-</div>
-</div>
-{/* No Poach Clients */}
-<div className="bg-white p-4 rounded-lg shadow-sm  w-full ">
-<div className=' space-y-3'>
+      </Box>
 
-<div className='space-y-3'>
-<h2 className="text-xl  xl:text-2xl font-semibold text-gray-800 flex gap-1">   <FaBan className="text-2xl xl:text-3xl text-red-600" />No Poach Clients</h2>
-<div className='pl-36'>
-  
-  <p className="mt-2 xl:text-lg"><strong>{job.sourcingGuidelines.poach_clients}</strong></p>
-  
+    
+    </Card>
+  )}
 
-</div>
-</div>
-</div>
-</div>
+{value === 'two' &&  (<Card
+    className="mt-4 font-sans py-6"
+    sx={{
+      borderRadius: '8px',
+      boxShadow: 3,
+      backgroundColor: '#f0f0f0',
+      padding: 3,
+    }}
+  >
+    <Box sx={{ mb: 2, pb: 2, borderBottom: '4px solid white' }}>
+      <Typography
+        variant="h5"
+        fontWeight="bold"
+        className="flex items-center mb-2 pb-2"
+      >
+        <FaBuilding className="text-black" />Company Details
+      </Typography>
 
+      <Grid container spacing={2} sx={{pt:'2px'}}>
+       
+        <Grid item xs={12} sm={3}>
+          <Box
+            sx={{
+              p: 2,
+              border: '1px solid #ccc',
+              borderRadius: '8px',
+              backgroundColor: '#fff',
+            }}
+          >
+            <Typography variant="body1">
+              <strong>Company Name:</strong> oddo
+            </Typography>
+          </Box>
+        </Grid>
 
-{/* Target Companies */}
+        <Grid item xs={12} sm={9}>
+          <Box
+            sx={{
+              p: 2,
+              border: '1px solid #ccc',
+              borderRadius: '8px',
+              backgroundColor: '#fff',
+            }}
+          >
+            <Typography variant="body1">
+              <strong>Company Description:</strong> very good company
+            </Typography>
+          </Box>
+        </Grid>
 
-{/* Attachments */}
-<div className="bg-white p-4 rounded-lg shadow-sm  w-full ">
-<div className=' space-y-3'>
-
-<div className='space-y-3'>
-<h2 className="text-xl  xl:text-2xl font-semibold text-gray-800 flex gap-1 "> <FaPaperclip className="text-2xl  xl:text-3xl text-gray-600" />Attachments</h2>
-<div className='pl-36'>
-<ul className="list-disc pl-5 mt-2 space-y-2  ">
-{uploadedFiles.map((file, index) => (
-  <li key={index} className="flex flex-col   xl:text-lg">
-    <div className="flex items-center space-x-2">
-      {file.type === 'pdf' && <FaFilePdf className="text-red-600" />}
-      {file.type === 'audio' && <FaFileAudio className="text-blue-600" />}
-      {(file.type === 'image' || file.type === 'video') && <FaFileAlt className="text-gray-600" />}
-      <span>{file.name} ({file.type.toUpperCase()})</span>
-    </div>
-   
-    <iframe
-src={file.url}
-title={file.name}
-className="mt-2 border rounded-lg w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl"
-style={{ height: 'auto', aspectRatio: '1 / 1' }}
-frameBorder="0"
-allowFullScreen
-></iframe>
-
-  </li>
-))}
-</ul>
-</div>
-</div>
-</div>
-</div>
-</div>
+        
+      </Grid>
+    </Box>
+    </Card>
 )}
 
 
-        {value === 'five' && (
-          <div className="bg-white p-4 rounded-lg w-full space-y-4">
-            <h2 className="text-xl xl:text-2xl font-semibold text-gray-800 flex items-center">
-              <FaQuestionCircle className="mr-3 text-2xl text-green-600" /> Screening Questions
-            </h2>
-            {job?.screeningQuestions?.screening_questions?.map((question, index) => (
-    <div key={question.id} className="bg-white p-4 rounded-lg mb-4">
-      <h3 className="text-lg font-semibold text-gray-800">
-        Question {index + 1}: {question.question_title}?
-      </h3>
-      <p className='xl:text-lg'><strong>Type:</strong> {question.type}</p>
-      <p className='xl:text-lg'><strong>Answer Type:</strong> {question.ans_type}</p>
-      <p className='xl:text-lg'><strong>Mandatory:</strong> {question.madantory ? 'Yes' : 'No'}</p>
-      <p className='xl:text-lg'><strong>Options:</strong></p>
-      <ul>
-        {question.answer.option?.map((option, optionIndex) => (
-          <li key={optionIndex}>{option}</li>
-        ))}
-      </ul>
-    </div>
-  ))}
-          </div>
-        )}
+{value === 'three' && (
+  <Card
+    className="mt-4 font-sans py-6"
+    sx={{
+      borderRadius: '8px',
+      boxShadow: 3,
+      backgroundColor: '#f0f0f0',
+      padding: 3,
+    }}
+  >
+    <Box sx={{ mb: 2, pb: 2, borderBottom: '4px solid white' }}>
+      <Typography
+        variant="h5"
+        fontWeight="bold"
+        className="flex items-center mb-2 pb-2"
+      >
+        <FaStar className="mr-2 text-black" /> Must Haves
+      </Typography>
+
+      <Grid container spacing={2}>
+        {/* Skills Section */}
+        <Grid item xs={12} sm={6}>
+          <Box
+            sx={{
+              p: 2,
+              border: '1px solid #ccc',
+              borderRadius: '8px',
+              backgroundColor: '#fff',
+            }}
+          >
+            <Typography variant="body1">
+              <strong>Skill 1:</strong> HTML
+            </Typography>
+          </Box>
+        </Grid>
+
+        <Grid item xs={12} sm={6}>
+          <Box
+            sx={{
+              p: 2,
+              border: '1px solid #ccc',
+              borderRadius: '8px',
+              backgroundColor: '#fff',
+            }}
+          >
+            <Typography variant="body1">
+              <strong>Skill 2:</strong> CSS
+            </Typography>
+          </Box>
+        </Grid>
+
+        <Grid item xs={12} sm={6}>
+          <Box
+            sx={{
+              p: 2,
+              border: '1px solid #ccc',
+              borderRadius: '8px',
+              backgroundColor: '#fff',
+            }}
+          >
+            <Typography variant="body1">
+              <strong>Skill 3:</strong> JavaScript
+            </Typography>
+          </Box>
+        </Grid>
+      </Grid>
+    </Box>
+
+
+    <Box sx={{ mb: 2, pb: 2, borderBottom: '4px solid white' }}>
+      <Typography
+        variant="h5"
+        fontWeight="bold"
+        className="flex items-center mb-2 pb-2"
+      >
+       <FaBan className=" mr-2 text-2xl xl:text-3xl text-black-600" />No Poach Clients
+      </Typography>
+
+      <Grid container spacing={2}>
+      
+        <Grid item xs={12} sm={12}>
+          <Box
+            sx={{
+              p: 2,
+              border: '1px solid #ccc',
+              borderRadius: '8px',
+              backgroundColor: '#fff',
+            }}
+          >
+            <Typography variant="body1">
+            <p className="mt-2 xl:text-lg">Strict no-nos for client poaching.</p>
+            </Typography>
+          </Box>
+        </Grid>
+
+        
+
+       
+      </Grid>
+    </Box>
+
+    <Grid container spacing={2} sx={{ mb: 2 }}>
+  {/* Nice to Haves Section */}
+  <Grid item xs={12} md={6}>
+    <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
+      <Typography variant="h5" fontWeight="bold" className="flex items-center mb-2">
+        <FaThumbsUp className="mr-2 text-2xl xl:text-3xl text-black" /> Nice to Haves
+      </Typography>
+      <div className="pl-4">
+        <ul className="list-disc pl-5 mt-2 space-y-3">
+          <li className="xl:text-lg">Java</li>
+          <li className="xl:text-lg">Python</li>
+          <li className="xl:text-lg">C++</li>
+        </ul>
       </div>
+    </Box>
+  </Grid>
+
+  {/* Target Companies Section */}
+  <Grid item xs={12} md={6}>
+    <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
+      <Typography variant="h5" fontWeight="bold" className="flex items-center mb-2">
+        <FaBullseye className="mr-2 text-2xl xl:text-3xl text-black" /> Target Companies
+      </Typography>
+      <div className="pl-4">
+        <ul className="list-disc pl-5 mt-2 space-y-3">
+          <li className="xl:text-lg">Motadata</li>
+          <li className="xl:text-lg">Brevitaz</li>
+          <li className="xl:text-lg">O2h</li>
+        </ul>
+      </div>
+    </Box>
+  </Grid>
+</Grid>
+
+
+    <Box sx={{ mb: 2, pb: 2, borderBottom: '4px solid white' }}>
+      <Typography
+        variant="h5"
+        fontWeight="bold"
+        className="flex items-center mb-2 pb-2"
+      >
+    <FaPaperclip className="mr-2 text-2xl  xl:text-3xl text-black" />Attachments
+      </Typography>
+
+      <Grid container spacing={2}>
+      
+        <Grid item xs={12} sm={12}>
+          <Box
+            sx={{
+              p: 2,
+              border: '1px solid #ccc',
+              borderRadius: '8px',
+              backgroundColor: '#fff',
+            }}
+          >
+            <Typography variant="body1">
+            <div className='pl-36'>
+        <ul className="list-disc pl-5 mt-2 space-y-2  ">
+          {uploadedFiles.map((file, index) => (
+            <li key={index} className="flex flex-col   xl:text-lg">
+              <div className="flex items-center space-x-2">
+                {file.type === 'pdf' && <FaFilePdf className="text-red-600" />}
+                {file.type === 'audio' && <FaFileAudio className="text-blue-600" />}
+                {(file.type === 'image' || file.type === 'video') && <FaFileAlt className="text-gray-600" />}
+                <span>{file.name} ({file.type.toUpperCase()})</span>
+              </div>
+             
+              <iframe
+  src={file.url}
+  title={file.name}
+  className="mt-2 border rounded-lg w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl"
+  style={{ height: 'auto', aspectRatio: '1 / 1' }}
+  frameBorder="0"
+  allowFullScreen
+></iframe>
+
+            </li>
+          ))}
+        </ul>
+        </div>
+            </Typography>
+          </Box>
+        </Grid>
+
+        
+
+       
+      </Grid>
+    </Box>
+    
+  </Card>
+)}
+
+{value === 'four' && (
+  <div className=" p-6 rounded-lg space-y-6 font-sans bg-gray-110 " >
+    {/* Screening Questions */}
+    <h2 className="text-xl xl:text-2xl font-semibold text-gray-800 flex gap-4">
+      <FaQuestionCircle className="text-black" />
+      Screening Questions
+    </h2>
+
+    <Grid container spacing={2} sx={{pt:'2px'}}>
+       
+       <Grid item xs={12} sm={12}>
+         <Box
+           sx={{
+             p: 2,
+             border: '1px solid #ccc',
+             borderRadius: '8px',
+             backgroundColor: '#fff',
+           }}
+         >
+           <Typography variant="body1">
+           <div className="space-y-3">
+        <h3 className="text-lg xl:text-xl font-semibold text-gray-700">Question 1:</h3>
+        <p className="mt-2 text-gray-600 xl:text-lg">What is Your Name?</p>
+      </div>
+           </Typography>
+         </Box>
+       </Grid>
+
+       <Grid item xs={12} sm={12}>
+         <Box
+           sx={{
+             p: 2,
+             border: '1px solid #ccc',
+             borderRadius: '8px',
+             backgroundColor: '#fff',
+           }}
+         >
+           <Typography variant="body1">
+           <div className="space-y-3">
+        <h3 className="text-lg xl:text-xl font-semibold text-gray-700">Question 2:</h3>
+        <p className="mt-2 text-gray-600 xl:text-lg">Where are you from?</p>
+      </div>
+           </Typography>
+         </Box>
+       </Grid>
+
+       <Grid item xs={12} sm={12}>
+         <Box
+           sx={{
+             p: 2,
+             border: '1px solid #ccc',
+             borderRadius: '8px',
+             backgroundColor: '#fff',
+           }}
+         >
+           <Typography variant="body1">
+           <div className="space-y-3">
+       
+       <h3 className="text-lg xl:text-xl font-semibold text-gray-700">Question 3:</h3>
+       <p className="mt-2 text-gray-600 xl:text-lg">Do you have experience with state management?</p>
+       
+       
+       <div className="mt-2">
+         <label className="inline-flex items-center space-x-2">
+           
+           <span className="text-gray-700 xl:text-lg">A. Yes</span>
+         </label>
+         <label className="inline-flex items-center space-x-2 ml-4">
+           
+           <span className="text-gray-700 xl:text-lg">B. No</span>
+         </label>
+       </div>
+     </div>
+           </Typography>
+         </Box>
+       </Grid>
+       <Grid item xs={12} sm={12}>
+         <Box
+           sx={{
+             p: 2,
+             border: '1px solid #ccc',
+             borderRadius: '8px',
+             backgroundColor: '#fff',
+           }}
+         >
+           <Typography variant="body1">
+           <div className="space-y-3">
+        <h3 className="text-lg xl:text-xl font-semibold text-gray-700">Question 4:</h3>
+        <p className="mt-2 text-gray-600 xl:text-lg">Are you comfortable working in a team environment?</p>
+        <div className="mt-2">
+          <label className="inline-flex items-center space-x-2">
+           
+            <span className="text-gray-700 xl:text-lg">A. Yes</span>
+          </label>
+          <label className="inline-flex items-center space-x-2 ml-4">
+            
+            <span className="text-gray-700 xl:text-lg">B. No</span>
+          </label>
+        </div>
+      </div>
+           </Typography>
+         </Box>
+       </Grid>
+     </Grid>
+ 
+  </div>
+)}
+
+
+</div>
     </Box>
   </div>
 );
