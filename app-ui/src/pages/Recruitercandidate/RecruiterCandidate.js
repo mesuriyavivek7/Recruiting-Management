@@ -35,7 +35,7 @@ export default function RecruiterCandidate() {
     setCandidateLoader(true)
    try{
       const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/recruitingteam/getcandidatedetails/${user._id}`)
-      setCandidateRows(res.data)
+      setCandidateRows(res.data.map((item,index)=>({...item,srno:index+1})))
    }catch(err){
       showNotification("Something wrong while fetching candidadte data","failure")
       console.log(err)

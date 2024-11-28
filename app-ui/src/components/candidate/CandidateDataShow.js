@@ -26,7 +26,7 @@ export default function CandidateDataShow({selectedRows,setSelectedRows,showNoti
  const [candidateStatusLoader,setCandidateStatusLoader]=useState(false)
  const [remarksLoader,setRemarksLoader]=useState(false)
 
- const [remarks,setRemarks]=useState(null)
+ const [remarks, setRemarks] = useState({});
 
 const getDate=(date)=>{
   let d=new Date(date)
@@ -124,9 +124,10 @@ const downloadCandidateResume=async (cid)=>{
 const updateCandidateRemarks=async (id)=>{
       try{
          setRemarksLoader(true)
-         await axios.post(`${process.env.REACT_APP_API_BASE_URL}/candidate/updatecandidateremarks/${id}`,{remarks})
+         await axios.post(`${process.env.REACT_APP_API_BASE_URL}/candidate/updatecandidateremarks/${id}`,{remarks:remarks[id]})
          await refetchCandidateData()
          setRemarksLoader(false)
+         showNotification("Successfully candidate remarks changed.",'success')
       }catch(err){
          setRemarksLoader(false)
          console.log(err)
@@ -137,7 +138,7 @@ const updateCandidateRemarks=async (id)=>{
 
 //column for candidate data
 const candidateCol=[
-  { field: 'id', headerName: 'ID',headerClassName:'super-app-theme--header', width: 70, },
+  { field: 'srno', headerName: 'Sr No.',headerClassName:'super-app-theme--header', width: 70, },
   {
       field:"name&id",headerName:'Candidate Name/CID',headerClassName:'super-app-theme--header',width:250, 
       renderCell:(params)=>{
@@ -265,21 +266,34 @@ const candidateCol=[
     }
   },
   {
-    field:'remarks',headerName:'Remarks' , headerClassName:'super-app-theme--header',width:200,
-    renderCell:(params)=>{
+    field: 'remarks', headerName: 'Remarks', headerClassName: 'super-app-theme--header', width: 200,
+    renderCell: (params) => {
+      const currentRemark = remarks[params.row.id] ?? params.row.remarks;
+    
       return (
         <div>
-           <input
-           type='text'
-           className='input-field'
-           value={(remarks===null)?(params.row.remarks):(remarks)}
-           onFocus={()=>setRemarks(params.row.remarks)}
-           onChange={(e)=>setRemarks(e.target.value)}
-           onBlur={()=>updateCandidateRemarks(params.row.id)}
-           ></input>
-        </div>
-      )
-    }
+          <input
+            type="text"
+            className="input-field"
+            value={currentRemark}
+            onFocus={() =>
+               setRemarks((prev) => ({
+                 ...prev,
+                [params.row.id]: currentRemark,
+               }))
+            }
+            onChange={(e) =>
+              setRemarks((prev) => ({
+                 ...prev,
+                [params.row.id]: e.target.value,
+              }))
+            }
+            onBlur={() => updateCandidateRemarks(params.row.id, currentRemark)}
+            />
+          </div>
+        );
+      },
+    
   }
 ]
 
