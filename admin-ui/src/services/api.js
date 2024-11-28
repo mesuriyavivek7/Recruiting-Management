@@ -137,6 +137,15 @@ export const fetchJobBasicDetailsByEnId = async (enterprise_id) => {
     }
 }
 
+//get job commission details by job_id
+export const fetchJobCommissionDetails = async (job_id) =>{
+    try{
+        
+    }catch(error){
+        console.error("Error while fetching the job commission details : ",error)
+    }
+}
+
 //get the job status by job id
 export const fetchJobStatusByJobId = async (job_id) => {
     try {

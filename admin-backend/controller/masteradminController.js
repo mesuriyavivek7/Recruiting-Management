@@ -157,7 +157,8 @@ export const getAllVerifiedRecuritingAgencies = async (req, res, next) => {
 export const getAllPendingRecuritingAgencies = async (req, res, next) => {
     try {
         const RecruitingAgencies = await MASTERADMIN.findById(req.params.m_admin_id);
-        res.status(200).json(RecruitingAgencies.pending_verify_recruiting_agency);
+        if(!RecruitingAgencies) return res.status([])
+        else res.status(200).json(RecruitingAgencies.pending_verify_recruiting_agency);
     } catch (error) {
         next(error);
     }

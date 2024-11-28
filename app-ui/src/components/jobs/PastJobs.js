@@ -27,7 +27,7 @@ import FireIcon from '../../assets/asset39.png'
 
 import axios from 'axios'
 
-export default function PastJobs({ rows, loading, setTotalPastJobs, showNotification }) {
+export default function PastJobs({ rows, loading, showNotification }) {
 
 const [previewLoader,setPriviewLoader]=useState(false)
 const [openPreviewBox,setOpenPreviewBox]=useState(false)

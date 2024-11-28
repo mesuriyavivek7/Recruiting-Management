@@ -6,13 +6,14 @@ import { Dialog, DialogContent, Button, TextField, Box, DialogActions, InputAdor
 import { MdPerson, MdEmail, MdVerifiedUser, MdBusinessCenter, MdBusiness, MdWork } from 'react-icons/md';
 import { BiSearch } from "react-icons/bi";
 import { MdLogout } from "react-icons/md";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Cookies from 'js-cookie';
 
 const AcNavbar = () => {
+  const ACManagerData = useSelector((state) => state.admin?.userData);
+
   const [showProfilePopup, setShowProfilePopup] = useState(false);
   const profileRef = useRef(null);
-
   const [popupSearchTerm, setPopupSearchTerm] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const enterpriseData = ['e', 'b'];
@@ -29,12 +30,10 @@ const AcNavbar = () => {
     setShowProfilePopup(!showProfilePopup);
   };
 
-
   // Logout function (now handles the confirmation)
   const handleLogout = () => {
     setShowLogoutDialog(true);
   };
-
 
   // Cancel logout
   const cancelLogout = () => {
@@ -69,7 +68,6 @@ const AcNavbar = () => {
     if (!dialogOpen) setDialogOpen(true);
   };
 
-
   const handleCloseDialog = () => {
     setDialogOpen(false);
     setPopupSearchTerm("");
@@ -84,9 +82,6 @@ const AcNavbar = () => {
   const filteredRecruiterData = recruiterData.filter((item) =>
     item?.full_name?.toLowerCase().includes(popupSearchTerm.toLowerCase())
   );
-
-
-
 
   return (
     <div className="w-full flex justify-between py-4 px-3 bg-blue-230">
@@ -123,7 +118,7 @@ const AcNavbar = () => {
           className="w-[30px] h-[30px] rounded-full bg-white flex place-items-center cursor-pointer"
           onClick={handleProfileClick}
         >
-          <p className="text-black text-sm mx-auto">AD</p>
+          <p className="text-black text-sm mx-auto">AC</p>
         </div>
       </div>
 
@@ -132,15 +127,11 @@ const AcNavbar = () => {
           className="absolute right-0 mt-9 w-48 bg-white shadow-lg rounded-lg p-4 z-10"
           ref={profileRef}
         >
-          <p className="text-sm font-semibold">Josh rao</p>
-          <p className="text-sm">admin@example.com</p>
-
+          <p className="text-sm font-semibold">{ACManagerData.admin_type}</p>
+          <p className="text-sm">{ACManagerData.email}</p>
         </div>
       )}
-
       <Dialog
-
-
         open={dialogOpen}
         onClose={handleCloseDialog}
         fullWidth
@@ -173,8 +164,6 @@ const AcNavbar = () => {
             <Button
               variant="contained"
               size="small"
-
-
               style={{
                 backgroundColor: showEnterpriseData ? '#315370' : '#e0e0e0',
                 color: showEnterpriseData ? 'white' : '#000',
@@ -192,7 +181,6 @@ const AcNavbar = () => {
             <Button
               variant="contained"
               size="small"
-
               style={{
                 backgroundColor: !showEnterpriseData ? '#315370' : '#e0e0e0',
                 color: !showEnterpriseData ? 'white' : '#000',
@@ -210,8 +198,6 @@ const AcNavbar = () => {
               Recruiter
             </Button>
           </div>
-
-
           <div className="border-t pt-4 mt-2 max-h-[300px] overflow-y-auto">
             {popupSearchTerm && (
               <>
@@ -298,11 +284,7 @@ const AcNavbar = () => {
               </>
             )}
           </div>
-
-
-
         </DialogContent>
-
         <DialogActions className="bg-gray-100 px-6 py-6">
           <button
             onClick={handleCloseDialog}
@@ -348,15 +330,14 @@ const AcNavbar = () => {
               '&:hover': {
                 backgroundColor: "#0C4A6E",
               },
-              height: '36px', 
-              width: '80px',  
+              height: '36px',
+              width: '80px',
             }}
           >
             Yes
           </Button>
         </DialogActions>
       </Dialog>
-
     </div>
   );
 };

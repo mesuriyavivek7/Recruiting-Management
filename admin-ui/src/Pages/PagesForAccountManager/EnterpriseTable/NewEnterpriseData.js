@@ -80,7 +80,6 @@ const NewEnterpriseData = () => {
 
 
   const handleRowClick = (item) => {
-    console.log('Row clicked:', item); // Debugging line
     setSelectedRow(item);
     setOpen(true);
   };

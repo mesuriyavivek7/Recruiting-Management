@@ -1,68 +1,101 @@
-
-
-
 import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { Box, Button, Card, CircularProgress, IconButton, InputAdornment, TablePagination, TextField } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios'; // Import Axios
-import { columns,rows } from './RowColDataOfAll'; // Import columns configuration
+import { columns } from './RowColDataOfAll'; // Import columns configuration
 import { FaSearch } from 'react-icons/fa';
+import { fetchJobBasicDetailsByJobId, fetchJobDetailsById, fetchEnterpriseMemberDetails, fetchVerifiedJobsByACManagerId } from '../../../services/api';
+import Notification from '../../../Components/Notification';
+
+import { store } from '../../../State/Store';
 
 const AllJobData = () => {
-  const [row, setRow] = useState([]); // State to hold job data
-  const [selectedRowId, setSelectedRowId] = useState(null);
+  const selectUserData = (state) => state?.admin?.userData;
+  const userData = selectUserData(store?.getState());
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('All');
-  const [filteredRows, setFilteredRows] = useState(rows);
-  // State for pagination
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [filteredRows, setFilteredRows] = useState([]);
 
-  // Fetch job data from the backend
-  const fetchJobs = async () => {
-    try {
-      const response = await axios.get(`${process.env.REACT_APP_API_APP_URL}/job`); // Your API endpoint
-      setRow(response.data); // Set the fetched data to rows
-    } catch (error) {
-      console.error('Error fetching jobs:', error); // Handle error
-    }
-  };
+  const [notification, setNotification] = useState(null)
 
-  // Use effect to fetch jobs on component mount
-  useEffect(() => {
-    fetchJobs();
-  }, []);
-  useEffect(() => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-    }, 1000);
-  }, [page, rowsPerPage]);
+   //for showing notification
+   const showNotification = (message, type) => {
+    setNotification({ message, type })
+  }
+
   const handleRowClick = (job_id) => {
-    console.log('click me')
-    setSelectedRowId(job_id);
     navigate(`/account_manager/job/${job_id}`); 
   };
+
   const handleFilterClick = (status) => setFilterStatus(status);
 
   // Filter rows based on searchTerm and filterStatus
   useEffect(() => {
-    const newFilteredRows = rows.filter((row) => {
-      const matchesSearch = row.job_title.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesStatus = filterStatus === 'All' || row.status === filterStatus;
-      return matchesSearch && matchesStatus;
-    });
-    setFilteredRows(newFilteredRows);
+    const fetchData=async ()=>{
+       try{
+        setLoading(true)
+        //Fetching verified job ids
+        const verifiedJobsIds = await fetchVerifiedJobsByACManagerId(userData?._id);
+     
+        const rows = await Promise.all(
+          verifiedJobsIds.map(async (jobId, index) => {
+            //Fetch job deatils
+            const jobDetails = await fetchJobDetailsById(jobId);
+      
+            //Fetch enterprise details
+            const enterprise_member=await fetchEnterpriseMemberDetails(jobDetails.enterprise_member_id)
+      
+            //Fetch job basic details
+            const basicjobDetails = await fetchJobBasicDetailsByJobId(jobDetails.job_id);
+      
+            return {
+              _id: String(`${index + 1}`),
+              job_title: basicjobDetails?.job_title || "No Title Available",
+              job_id: jobDetails?.job_id || "No ID Available",
+              enterprise_member: enterprise_member.full_name || "Unknown Recruiter",
+              location: {
+                state: basicjobDetails?.state || 'Unknown State',
+                country: basicjobDetails?.country || 'Unknown Country',
+              },
+              experience: {
+                minexp: basicjobDetails?.experience?.minexp || 'N/A',
+                maxexp: basicjobDetails?.experience?.maxexp || 'N/A',
+              },
+              job_status: jobDetails.job_status,
+              createdAt: jobDetails?.createdAt ? new Date(jobDetails.createdAt) : new Date(),
+              lastUpdated: jobDetails?.updatedAt ? new Date(jobDetails.updatedAt) : new Date()
+            };
+          })
+        );
+
+        const newFilteredRows = rows.filter((row) => {
+          const matchesSearch = row.job_title.toLowerCase().includes(searchTerm.toLowerCase());
+          const matchesStatus = filterStatus === 'All' || row.job_status === filterStatus;
+          return matchesSearch && matchesStatus;
+        });
+
+        setFilteredRows(newFilteredRows);
+
+       }catch(err){
+         console.log(err)
+         showNotification("Something went wrong while fetching data",'failure')
+       }finally{
+        setLoading(false)
+       }
+    }
+    
+    fetchData()
+    
   }, [searchTerm, filterStatus]);
 
-  // Calculate the rows to display
-  const paginatedRows = filteredRows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+  
+  
 
   return (
     <div>
+       {notification && <Notification message={notification.message} type={notification.type} onClose={() => setNotification(null)}></Notification>}
        <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} gap={2} pt={4}>
         <TextField
           label="Search..."
@@ -126,13 +159,13 @@ const AllJobData = () => {
         <p className='text-lg xl:text-2xl'>All Jobs</p>
         <div style={{ height: 600, width: '100%' }} className='pt-4'>
           <DataGrid 
-            rows={paginatedRows}
+            rows={filteredRows}
             columns={columns}
             rowHeight={80}
             onRowClick={(params) => handleRowClick(params.id)}
             getRowId={(row) => row.job_id} // Specify the custom ID field
-           
-            pageSize={rowsPerPage} 
+            pageSize={8} 
+            loading={loading}
             initialState={{ pagination: { paginationModel: { page: 0, pageSize: 10 } } }}
             pageSizeOptions={[5, 10]}
             disableSelectionOnClick 
@@ -157,22 +190,14 @@ const AllJobData = () => {
                '& .MuiDataGrid-columnHeader:focus-within': {
           outline: 'none', 
         },
-       
-             
-           
-              
-        
         '& .MuiDataGrid-columnSeparator': {
           color: 'blue',
           visibility: 'visible', 
         },
-        
-      
         '& .MuiDataGrid-cell': {
           fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem' }, 
           
         },
-        
         '& .MuiDataGrid-cellContent': {
           display: 'flex',
           alignItems: 'center', 
@@ -180,19 +205,16 @@ const AllJobData = () => {
         '& .MuiDataGrid-cell': {
           minHeight: '2.5rem', 
         },
-              '& .MuiDataGrid-cell': {
-                fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem'}, 
-                
-                
-              },
-              '& .MuiDataGrid-row': {
-                borderBottom: 'none', 
-              },
-              '& .MuiDataGrid-cell:focus': {
-                outline: 'none', 
-              },
-             
-            }}
+        '& .MuiDataGrid-cell': {
+            fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem'}, 
+         },
+        '& .MuiDataGrid-row': {
+            borderBottom: 'none', 
+         },
+        '& .MuiDataGrid-cell:focus': {
+            outline: 'none', 
+         },
+          }}
           />
         </div>
       </Card>)}
