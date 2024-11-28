@@ -496,7 +496,61 @@ function AdminJobDetails() {
     </Card>
   )}
 
-{value === 'two' && <div className="bg-white space-y-6 rounded-lg flex flex-col items-center">Company Details</div>}
+{value === 'two' &&  (<Card
+    className="mt-4 font-sans py-6"
+    sx={{
+      borderRadius: '8px',
+      boxShadow: 3,
+      backgroundColor: '#f0f0f0',
+      padding: 3,
+    }}
+  >
+    <Box sx={{ mb: 2, pb: 2, borderBottom: '4px solid white' }}>
+      <Typography
+        variant="h5"
+        fontWeight="bold"
+        className="flex items-center mb-2 pb-2"
+      >
+        <FaBuilding className="text-black" />Company Details
+      </Typography>
+
+      <Grid container spacing={2} sx={{pt:'2px'}}>
+       
+        <Grid item xs={12} sm={3}>
+          <Box
+            sx={{
+              p: 2,
+              border: '1px solid #ccc',
+              borderRadius: '8px',
+              backgroundColor: '#fff',
+            }}
+          >
+            <Typography variant="body1">
+              <strong>Company Name:</strong> oddo
+            </Typography>
+          </Box>
+        </Grid>
+
+        <Grid item xs={12} sm={9}>
+          <Box
+            sx={{
+              p: 2,
+              border: '1px solid #ccc',
+              borderRadius: '8px',
+              backgroundColor: '#fff',
+            }}
+          >
+            <Typography variant="body1">
+              <strong>Company Description:</strong> very good company
+            </Typography>
+          </Box>
+        </Grid>
+
+        
+      </Grid>
+    </Box>
+    </Card>
+)}
 
 
 {value === 'three' && (
@@ -693,41 +747,114 @@ function AdminJobDetails() {
   </Card>
 )}
 
-{value === 'four' &&  <div className="bg-white p-6 rounded-lg space-y-6 font-sans">
+{value === 'four' && (
+  <div className=" p-6 rounded-lg space-y-6 font-sans bg-gray-110 " >
     {/* Screening Questions */}
-  
-      <h2 className="text-xl  xl:text-2xl font-semibold text-gray-800 flex  gap-4 "><FaQuestionCircle className='text-black  '/>Screening Questions</h2>
-      <div className="space-y-4 mt-4">
-    
-        <div className='space-y-3'>
-          <h3 className="text-lg  xl:text-xl font-semibold text-gray-700">Question 1:</h3>
-         
-          <p className="mt-2 text-gray-600  xl:text-lg">Answer: I have 3 years of experience working with React.js, including developing and maintaining single-page applications, managing state with Redux, and integrating with REST APIs.</p>
-        </div>
+    <h2 className="text-xl xl:text-2xl font-semibold text-gray-800 flex gap-4">
+      <FaQuestionCircle className="text-black" />
+      Screening Questions
+    </h2>
 
-      
-        <div className='space-y-3'>
-          <h3 className="text-lg xl:text-xl font-semibold text-gray-700">Question 2:</h3>
-         
-          <p className="mt-2 text-gray-600 xl:text-lg">Answer: One of the most challenging projects was a large-scale e-commerce platform where I had to optimize performance for high traffic and ensure data integrity across multiple services. I implemented caching strategies and used asynchronous processing to handle large volumes of data efficiently.</p>
-        </div>
-
+    <Grid container spacing={2} sx={{pt:'2px'}}>
        
-        <div className='space-y-3'>
-          <h3 className="text-lg xl:text-xl font-semibold text-gray-700">Question 3:</h3>
-        
-          <p className="mt-2 text-gray-600 xl:text-lg">Answer: I stay updated by following industry blogs, participating in webinars, and engaging in online communities. I also regularly read technical books and attend local meetups and conferences to network with other professionals and learn about new technologies.</p>
-        </div>
+       <Grid item xs={12} sm={12}>
+         <Box
+           sx={{
+             p: 2,
+             border: '1px solid #ccc',
+             borderRadius: '8px',
+             backgroundColor: '#fff',
+           }}
+         >
+           <Typography variant="body1">
+           <div className="space-y-3">
+        <h3 className="text-lg xl:text-xl font-semibold text-gray-700">Question 1:</h3>
+        <p className="mt-2 text-gray-600 xl:text-lg">What is Your Name?</p>
+      </div>
+           </Typography>
+         </Box>
+       </Grid>
 
-      
-        <div className='space-y-3'>
-          <h3 className="text-lg xl:text-xl font-semibold text-gray-700">Question 4:</h3>
+       <Grid item xs={12} sm={12}>
+         <Box
+           sx={{
+             p: 2,
+             border: '1px solid #ccc',
+             borderRadius: '8px',
+             backgroundColor: '#fff',
+           }}
+         >
+           <Typography variant="body1">
+           <div className="space-y-3">
+        <h3 className="text-lg xl:text-xl font-semibold text-gray-700">Question 2:</h3>
+        <p className="mt-2 text-gray-600 xl:text-lg">Where are you from?</p>
+      </div>
+           </Typography>
+         </Box>
+       </Grid>
+
+       <Grid item xs={12} sm={12}>
+         <Box
+           sx={{
+             p: 2,
+             border: '1px solid #ccc',
+             borderRadius: '8px',
+             backgroundColor: '#fff',
+           }}
+         >
+           <Typography variant="body1">
+           <div className="space-y-3">
        
-          <p className="mt-2 text-gray-600 xl:text-lg">Answer: I use a combination of debugging tools, logging, and systematic troubleshooting methods. I start by reproducing the issue consistently, then use breakpoints and inspect variables to understand the root cause. I also review logs and use tools like Chrome DevTools to diagnose and resolve issues.</p>
+       <h3 className="text-lg xl:text-xl font-semibold text-gray-700">Question 3:</h3>
+       <p className="mt-2 text-gray-600 xl:text-lg">Do you have experience with state management?</p>
+       
+       
+       <div className="mt-2">
+         <label className="inline-flex items-center space-x-2">
+           
+           <span className="text-gray-700 xl:text-lg">A. Yes</span>
+         </label>
+         <label className="inline-flex items-center space-x-2 ml-4">
+           
+           <span className="text-gray-700 xl:text-lg">B. No</span>
+         </label>
+       </div>
+     </div>
+           </Typography>
+         </Box>
+       </Grid>
+       <Grid item xs={12} sm={12}>
+         <Box
+           sx={{
+             p: 2,
+             border: '1px solid #ccc',
+             borderRadius: '8px',
+             backgroundColor: '#fff',
+           }}
+         >
+           <Typography variant="body1">
+           <div className="space-y-3">
+        <h3 className="text-lg xl:text-xl font-semibold text-gray-700">Question 4:</h3>
+        <p className="mt-2 text-gray-600 xl:text-lg">Are you comfortable working in a team environment?</p>
+        <div className="mt-2">
+          <label className="inline-flex items-center space-x-2">
+           
+            <span className="text-gray-700 xl:text-lg">A. Yes</span>
+          </label>
+          <label className="inline-flex items-center space-x-2 ml-4">
+            
+            <span className="text-gray-700 xl:text-lg">B. No</span>
+          </label>
         </div>
-      
-    </div>
-  </div>}
+      </div>
+           </Typography>
+         </Box>
+       </Grid>
+     </Grid>
+ 
+  </div>
+)}
+
 
 </div>
 
