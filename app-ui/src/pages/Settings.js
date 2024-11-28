@@ -3,6 +3,8 @@ import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 import Notification from "../components/Notification";
 
+//importing icons
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
 const Settings = () => {
   const {user,dispatch}=useContext(AuthContext)
@@ -13,6 +15,8 @@ const Settings = () => {
   const [showemailbutton,setShowEmailButton]=useState(false)
   const [showpasswordbutton,setShowPasswordButton]=useState(false)
   const [emailData,setEmailData]=useState("")
+  const [openConfirmPopUp,setOpenConfirmPopUp]=useState(false)
+  const [openEmailConfirmPopUp,setEmailConfirmPopUp]=useState(false)
   
 
   const [passwordData,setPasswordData]=useState({
@@ -30,22 +34,35 @@ const Settings = () => {
 
   //for email address
   const handleEmailDataChange=(e)=>{
-     setEmailData(e.target.value.toLowerCase())
-     validateEmailAddress(e.target.value.toLowerCase())
+    const email = e.target.value.toLowerCase();
+    if (email !== emailData) {
+      setEmailData(email);
+      validateEmailAddress(email);
+    }
      setShowEmailButton(true)
   }
 
   const validateEmailAddress=(email)=>{
-    let newErrors={};
-     //regax for check email address
-     const emailreg=/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/
+    const newErrors = {};
+    const emailreg = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
 
-     if(!email)  newErrors.email="Email address is required."
-     else if(!emailreg.test(email))  newErrors.email="Email address is invalid"
-     else newErrors.email=null
+    if (!email) {
+      newErrors.email = "Email address is required.";
+    } else if (!emailreg.test(email)) {
+      newErrors.email = "Email address is invalid.";
+    } else {
+      newErrors.email = null;
+    }
 
-     setErrors(newErrors)
-     return Object.keys(newErrors).length!==0
+    // Update errors state only if it has changed
+    setErrors((prevErrors) => {
+      if (prevErrors.email !== newErrors.email) {
+        return newErrors;
+      }
+      return prevErrors;
+    });
+
+    return Object.keys(newErrors).length !== 0;
   }
 
   const emailSubmit=async ()=>{
@@ -70,7 +87,7 @@ const Settings = () => {
      setLoading(false)
   }
 
-  const checkEmailAdress=async ()=>{
+  const checkEmailAddress=async ()=>{
      try{
        setLoading(true)
        const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/enterpriseteam/checkmail/${emailData}`)
@@ -134,12 +151,24 @@ const Settings = () => {
     
   }
 
+  const handleLogout=async ()=>{
+    try{
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/auth/logout`,{},{withCredentials:true})
+      setOpenConfirmPopUp(false)
+      window.location.reload()
+    }catch(err){
+         showNotification("Something went wrong.",'failure')
+         console.log(err)
+    }
+  }
+
   const submitPasswordData=async ()=>{
     if(validatePasswordData()){
         let newErrors={}
         setPasswordLoad(true)
         try{
            await axios.post(`${process.env.REACT_APP_API_BASE_URL}/enterprise/changepassword/${user._id}`,{password:passwordData.confirm_password})
+           await handleLogout()
            setShowPasswordButton(false)
            setPasswordData({
             current_password:"",
@@ -160,6 +189,30 @@ const Settings = () => {
 
   return (
     <div className="flex flex-col gap-2 relative">
+    {
+      openConfirmPopUp &&
+      <div className='fixed inset-0 flex justify-center bg-black z-40 bg-opacity-50 backdrop-blur-md items-center'>
+        <div className='custom-div pb-4 w-[500px]'>
+            <span className='text-[14px] leading-6'><InfoOutlinedIcon style={{fontSize:'1.6rem'}} className='text-yellow-500 mr-2'></InfoOutlinedIcon> Changing your current password will log you out from the dashboard. You will need to log in again with your new password. Are you sure you want to proceed?</span>
+            <div className='flex w-full place-content-end items-center gap-2'>
+               <button onClick={()=>setOpenConfirmPopUp(false)} className='text-white hover:bg-blue-500 bg-blue-400 p-2 text-[15px] rounded-md'>Cancel</button>
+               <button onClick={checkCurrentPassword} className='text-white hover:bg-blue-500 bg-blue-400 p-2 text-[15px] rounded-md'>Proceed</button>
+            </div>
+        </div>
+    </div>
+    }
+    {
+      openEmailConfirmPopUp &&
+      <div className='fixed inset-0 flex justify-center bg-black z-40 bg-opacity-50 backdrop-blur-md items-center'>
+        <div className='custom-div pb-4 w-[500px]'>
+            <span className='text-[14px] leading-6'><InfoOutlinedIcon style={{fontSize:'1.6rem'}} className='text-yellow-500 mr-2'></InfoOutlinedIcon> Changing your Email address will log you out from the dashboard. You will need to log in again with your new Email Address. Are you sure you want to proceed?</span>
+            <div className='flex w-full place-content-end items-center gap-2'>
+               <button onClick={()=>setEmailConfirmPopUp(false)} className='text-white hover:bg-blue-500 bg-blue-400 p-2 text-[15px] rounded-md'>Cancel</button>
+               <button onClick={checkEmailAddress} className='text-white hover:bg-blue-500 bg-blue-400 p-2 text-[15px] rounded-md'>Proceed</button>
+            </div>
+        </div>
+    </div>
+    }
     {notification && <Notification message={notification.message} type={notification.type} onClose={()=>setNotification(null)}></Notification>}
       <form className="email-change-form w-1/2 custom-div">
         <p className="font-bold">Request Email Change</p>
@@ -196,7 +249,7 @@ const Settings = () => {
         </div>
         {
           showemailbutton &&  (<div className="mt-2 flex container space-x-2">
-                                 <button onClick={checkEmailAdress} disabled={(errors.email || loading)?(true):(false)} className="relative flex-1 bg-blue-500 text-white py-2 px-2 rounded disabled:bg-gray-400 disabled:cursor-not-allowed disabled:opacity-50">
+                                 <button type="button" onClick={()=>setEmailConfirmPopUp(true)} disabled={(errors.email || loading)?(true):(false)} className="relative flex-1 bg-blue-500 text-white py-2 px-2 rounded disabled:bg-gray-400 disabled:cursor-not-allowed disabled:opacity-50">
                                      {loading && (<span className="absolute inset-0 flex items-center justify-center">
                                           <svg className="w-5 h-5 text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -275,7 +328,7 @@ const Settings = () => {
 
         {
           showpasswordbutton &&  (<div className="mt-2 flex container space-x-2">
-                                 <button onClick={checkCurrentPassword} disabled={(passwordData.current_password==="" || passwordData.new_password==="" || passwordData.confirm_password==="" ||passwordError.current_password || passwordError.new_password || passwordError.confirm_password || passwordLoad)?(true):(false)} className="relative flex-1 bg-blue-500 text-white py-2 px-2 rounded disabled:bg-gray-400 disabled:cursor-not-allowed disabled:opacity-50">
+                                 <button type="button" onClick={()=>setOpenConfirmPopUp(true)} disabled={(passwordData.current_password==="" || passwordData.new_password==="" || passwordData.confirm_password==="" ||passwordError.current_password || passwordError.new_password || passwordError.confirm_password || passwordLoad)?(true):(false)} className="relative flex-1 bg-blue-500 text-white py-2 px-2 rounded disabled:bg-gray-400 disabled:cursor-not-allowed disabled:opacity-50">
                                      {passwordLoad && (<span className="absolute inset-0 flex items-center justify-center">
                                           <svg className="w-5 h-5 text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>

@@ -79,7 +79,8 @@ const Navbar = () => {
         console.log(err)
     }
     setLogoutLoader(false)
-}
+  }
+  
   return (
    <>
    {notification && <Notification message={notification.message} type={notification.type} onClose={()=>setNotification(null)}></Notification>}
