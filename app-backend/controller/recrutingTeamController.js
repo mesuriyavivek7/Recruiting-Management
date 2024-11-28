@@ -183,7 +183,8 @@ export const getRecruiterCandidateDetails=async (req,res,next)=>{
                 job_title:jobbasicdetails.job_title,
                 job_country:jobbasicdetails.country,
                 job_city:jobbasicdetails.city[0],
-                job_status:job.job_status
+                job_status:job.job_status,
+                remarks:citem.remarks
             }
           )
        }))
