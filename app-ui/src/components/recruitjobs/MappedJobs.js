@@ -1,5 +1,4 @@
-import React, { useState,useContext} from 'react'
-import { AuthContext } from '../../context/AuthContext'
+import React, { useState} from 'react'
 import MappedJobsItem from './MappedJobsItem'
 import Loader from '../../assets/blueLoader.svg'
 import axios from 'axios'
@@ -17,7 +16,6 @@ import HtmlContent from '../HtmlContent'
 import FIRE from '../../assets/asset39.png'
 
 export default function MappedJobs({jobs,loader,showNotification,fetchAcceptedJobs,fetchMappedJobs,setLoader}) {
-  const {user}=useContext(AuthContext)
 
   const getDate=(date)=>{
     let d=new Date(date)
@@ -149,7 +147,7 @@ const handleClosePreviewBox=()=>{
     <>
     {
       openPreviewBox && 
-      <div className='fixed inset-0 flex justify-center bg-black z-10 bg-opacity-50 backdrop-blur-md items-center'>
+      <div className='fixed inset-0 flex justify-center bg-black z-40 bg-opacity-50 backdrop-blur-md items-center'>
           <div className='custom-div gap-0 p-0 w-[90%] overflow-hidden'>
               <div className='relative flex w-full p-2 flex-col gap-2 bg-gradient-to-r from-cyan-100 to-blue-200'>
                 
@@ -362,7 +360,8 @@ const handleClosePreviewBox=()=>{
           <div className='flex h-full justify-center items-center pt-14'>
            <img className='h-12 w-12' src={Loader}></img>
           </div>
-         ):(
+         ):(jobs.length===0?
+          <span className='text-center mt-5 text-gray-800'>No Jobs</span>:
           jobs.map((item,index)=>(
             <MappedJobsItem
             handleOpenPreviewBox={handleOpenPreviewBox} 

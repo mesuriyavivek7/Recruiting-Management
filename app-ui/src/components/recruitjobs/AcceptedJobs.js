@@ -1,6 +1,5 @@
-import React, { useContext,useState} from 'react'
+import React, { useState} from 'react'
 import AcceptedJobItem from './AcceptedJobItem'
-import { AuthContext } from '../../context/AuthContext'
 import { useNavigate } from 'react-router-dom'
 import Loader from '../../assets/blueLoader.svg'
 import axios from 'axios'
@@ -19,7 +18,6 @@ import CopyToClipBoard from '../CopyToClipBoard'
 import FIRE from '../../assets/asset39.png'
 
 export default function AcceptedJobs({jobs,loader,showNotification,fetchAcceptedJobs,fetchFavouriteJobs,fetchMappedJobs}) {
-  const {user}=useContext(AuthContext)
   const navigate=useNavigate()
 
   const getDate=(date)=>{
@@ -210,7 +208,7 @@ const handleClosePreviewBox=()=>{
 
 {
       openPreviewBox && 
-      <div className='fixed inset-0 flex justify-center bg-black z-10 bg-opacity-50 backdrop-blur-md items-center'>
+      <div className='fixed inset-0 flex justify-center bg-black z-40 bg-opacity-50 backdrop-blur-md items-center'>
           <div className='custom-div gap-0 p-0 w-[90%] overflow-hidden'>
               <div className='relative flex w-full p-2 flex-col gap-2 bg-gradient-to-r from-cyan-100 to-blue-200'>
                 
@@ -220,7 +218,7 @@ const handleClosePreviewBox=()=>{
                      <div className='flex flex-col gap-2'>
                         <div className='flex gap-3 items-end'>
                             {
-                              jobHotMark && <img src={FIRE} className='w-6 h-6'></img>
+                              jobHotMark && <img alt='fireicon' src={FIRE} className='w-6 h-6'></img>
                             }
                             <span className='text-md font-medium'>Job Id: {jobBasicDetails && jobBasicDetails.job_id}</span>
                             <h1 className='text-xl font-medium tracking-wide'>{jobBasicDetails && jobBasicDetails.job_title}</h1>
@@ -271,7 +269,7 @@ const handleClosePreviewBox=()=>{
               {
                    (previewLoader)?(
                       <div className='flex w-full h-[600px] items-center justify-center'>
-                         <img src={WhiteLoader} className='w-10 h-10'></img>
+                         <img alt='loader' src={WhiteLoader} className='w-10 h-10'></img>
                       </div>
                    ):(
                     
@@ -522,9 +520,10 @@ const handleClosePreviewBox=()=>{
       {
          loader?(
           <div className='flex h-full justify-center items-center pt-14'>
-           <img className='h-12 w-12' src={Loader}></img>
+           <img alt='loader' className='h-12 w-12' src={Loader}></img>
           </div>
-         ):(
+         ):(jobs.length===0?
+          <span className='text-center mt-5 text-gray-800'>No Jobs</span>:
           jobs.map((item,index)=>(
             <AcceptedJobItem
              handleOpenPreviewBox={handleOpenPreviewBox}

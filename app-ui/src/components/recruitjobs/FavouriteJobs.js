@@ -208,7 +208,7 @@ const handleClosePreviewBox=()=>{
     <>
     {
       openPreviewBox && 
-      <div className='fixed inset-0 flex justify-center bg-black z-10 bg-opacity-50 backdrop-blur-md items-center'>
+      <div className='fixed inset-0 flex justify-center bg-black z-40 bg-opacity-50 backdrop-blur-md items-center'>
           <div className='custom-div gap-0 p-0 w-[90%] overflow-hidden'>
               <div className='relative flex w-full p-2 flex-col gap-2 bg-gradient-to-r from-cyan-100 to-blue-200'>
                 
@@ -522,6 +522,8 @@ const handleClosePreviewBox=()=>{
          <img className='h-12 w-12' src={Loader}></img>
         </div>
        ):(
+        jobs.length===0
+        ?<span className='text-center mt-5 text-gray-800'>No Jobs</span>:
         jobs.map((item,index)=>(
             <AcceptedJobItem 
             handleOpenPreviewBox={handleOpenPreviewBox}

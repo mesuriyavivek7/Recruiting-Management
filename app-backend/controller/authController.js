@@ -83,7 +83,7 @@ export const recruiterLogin=async (req,res,next)=>{
 
      const token=jwt.sign({id:user._id,isAdmin:user.isAdmin},process.env.JWT,{ expiresIn: '30d' })
      const {password,email_verified,isAdmin,hide_commision,...otherDetails}=user._doc
-     res.cookie("t_user",token,{expires:new Date(Date.now()+2592000000),httpOnly:true,secure: process.env.NODE_ENV === 'production',sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'}).status(200).json({details:{...otherDetails,userType}})
+     res.cookie("t_user",token,{expires:new Date(Date.now()+2592000000),httpOnly:process.env.NODE_ENV === 'production' ? true : false,secure: process.env.NODE_ENV === 'production',sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'}).status(200).json({details:{...otherDetails,userType:"recruiting"}})
 
    }catch(err){
      next(err)
