@@ -5,19 +5,16 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 
-import { useLocation, useParams } from 'react-router-dom';
-import { FaBusinessTime, FaBullseye, FaThumbsUp, FaBan, FaStar, FaQuestionCircle, FaFilePdf, FaFileAlt, FaFileAudio, FaMapMarkerAlt, FaBriefcase, FaInfoCircle, FaPaperclip, FaUsers, FaShareAlt, FaExternalLinkAlt, FaDollarSign, FaClock, FaCalendarAlt } from 'react-icons/fa'; // React Icons
+import { useLocation } from 'react-router-dom';
+import { FaBullseye, FaThumbsUp, FaBan, FaStar, FaQuestionCircle, FaFilePdf, FaFileAlt, FaFileAudio, FaMapMarkerAlt, FaBriefcase, FaInfoCircle, FaPaperclip, FaUsers, FaDollarSign, FaClock, FaCalendarAlt } from 'react-icons/fa'; // React Icons
 import { Card, Grid, Typography } from '@mui/material';
 import { FaBuilding } from "react-icons/fa";
-import { fetchCommisionDetailsByJobId, fetchJobAttachmentsByJobId, fetchJobBasicDetailsByJobId, fetchJobCompanyInfoByJobId, fetchJobSourcingByJobId, fetchSQByJobId } from '../../services/api';
+import { fetchCommissionDetailsByJobId, fetchJobAttachmentsByJobId, fetchJobBasicDetailsByJobId, fetchJobCompanyInfoByJobId, fetchJobSourcingByJobId, fetchSQByJobId } from '../../services/api';
 
 
 function AdminJobDetails() {
-  const { id } = useParams();
   const [value, setValue] = useState('one');
-  const [jobType, setJobType] = useState('contract'); // fulltime or contract
-  const [shareWithHiringManager, setShareWithHiringManager] = useState(false);
-  const [shareSalaryDetails, setShareSalaryDetails] = useState(false);
+  const [jobType] = useState('contract'); // fulltime or contract
 
   const location = useLocation();
   const job_id = location?.state?.job_id;
@@ -26,7 +23,7 @@ function AdminJobDetails() {
   const [jobSourcingDetails, setJobSourcingDetails] = useState(null);
   const [jobAttachments, setJobAttachments] = useState(null);
   const [screeningQuestions, setScreeningQuestion] = useState(null);
-  const [commissionDetails, setJobCommision] = useState(null);
+  const [commissionDetails, setJobCommission] = useState(null);
 
   const fetchJobDetails = async () => {
     try {
@@ -75,8 +72,9 @@ function AdminJobDetails() {
 
   const fetchJobCommissionDetails = async () => {
     try {
-      const response = await fetchCommisionDetailsByJobId(job_id);
-      setJobCommision(response);
+      const response = await fetchCommissionDetailsByJobId(job_id);
+      console.log(response);
+      setJobCommission(response);
     } catch (error) {
       console.error("Error while getting job commision details : ", error);
     }
@@ -200,7 +198,10 @@ function AdminJobDetails() {
                       }}
                     >
                       <Typography variant="body1">
-                        <strong>Job Description:</strong> {jobDetails?.job_description}
+                        <div>
+                          <strong>Job Description:</strong>
+                          <span dangerouslySetInnerHTML={{ __html: jobDetails?.job_description }} />
+                        </div>
                       </Typography>
                     </Box>
                   </Grid>
@@ -291,7 +292,7 @@ function AdminJobDetails() {
                 </Grid>
               </Box>
 
-              {/* Job Commision Details */}
+              {/* Job Commission Details */}
               <Box sx={{ mb: 2, pb: 2, borderBottom: 'none' }}>
                 <Typography
                   variant="h5"
@@ -300,7 +301,7 @@ function AdminJobDetails() {
                 >
                   <FaMapMarkerAlt className="mr-2 text-black" /> Job Commission Details
                 </Typography>
-                
+
                 {/* Right Section */}
                 <Grid container spacing={2} sx={{ pt: '12px' }} >
                   {jobType === 'fulltime' && (
@@ -355,7 +356,7 @@ function AdminJobDetails() {
 
                       <Grid item xs={12} sm={12}>
 
-                        <Typography variant="h6" fontWeight="bold" display="flex" alignItems="center" gap={1}>
+                        <Typography variant="h6" fontWeight="bold" display="flex" alignItems="center" gap={1} >
                           <FaInfoCircle className="text-black" />
                           Commission
                         </Typography>
@@ -410,7 +411,7 @@ function AdminJobDetails() {
                     </>
                   )}
 
-                  {jobType === 'contract' && (
+                  {commissionDetails?.work_type === 'contract' && (
                     <>
                       {/* Contract Remuneration Details */}
                       <Grid item xs={12} sm={12} sx={{ ml: '6px' }}>
@@ -439,7 +440,7 @@ function AdminJobDetails() {
                               }}
                             >
                               <Typography variant="body1">
-                                <strong>Contract Duration:</strong> 6 months
+                                <strong>Contract Duration:</strong> {commissionDetails?.work_details?.contract?.contract_duration_count} {commissionDetails?.work_details?.contract?.contract_duration_type === "weekly" ? "Week" : "Month"}
                               </Typography>
                             </Box>
                           </Grid>
@@ -453,7 +454,7 @@ function AdminJobDetails() {
                               }}
                             >
                               <Typography variant="body1">
-                                <strong>Contract Pay:</strong> $50 per hour
+                                <strong>Contract Pay:</strong> {commissionDetails?.work_details?.contract?.fix_contract_pay}  {commissionDetails?.work_details?.contract?.contract_pay_currency} {commissionDetails?.work_details?.contract?.contract_pay_rate_type}
                               </Typography>
                             </Box>
                           </Grid>
@@ -467,7 +468,7 @@ function AdminJobDetails() {
                               }}
                             >
                               <Typography variant="body1">
-                                <strong>Contract Pay Cycle:</strong> Bi-weekly
+                                <strong>Contract Pay Cycle:</strong> {commissionDetails?.work_details?.contract?.contract_pay_cycle}
                               </Typography>
                             </Box>
                           </Grid>
@@ -482,7 +483,7 @@ function AdminJobDetails() {
                               }}
                             >
                               <Typography variant="body1">
-                                <strong>Additional  Details:</strong> Overtime applicable...
+                                <strong>Additional  Details:</strong> {commissionDetails?.work_details?.contract?.additional_contract_details}
                               </Typography>
                             </Box>
                           </Grid>
@@ -528,6 +529,142 @@ function AdminJobDetails() {
                             >
                               <Typography variant="body1">
                                 <strong>Replacement Clause:</strong> value
+                              </Typography>
+                            </Box>
+                          </Grid>
+                        </Grid>
+                      </Grid>
+                    </>
+                  )}
+
+                  {commissionDetails?.work_type === 'full_time' && (
+                    <>
+                      {/* Contract Remuneration Details */}
+                      <Grid item xs={12} sm={12} sx={{ ml: '6px' }}>
+                        <Typography
+                          variant="h6"
+                          fontWeight="bold"
+                          display="flex"
+                          alignItems="center"
+                          paddingTop="8px"
+                          gap={1}
+                        >
+                          <FaClock className="text-black" />
+                          Contract Remuneration Details
+                        </Typography>
+
+                        <Grid container spacing={2} sx={{ mt: 1 }}>
+
+                          <Grid item xs={12} sm={6}>
+                            <Box
+                              sx={{
+                                p: 2,
+                                border: "1px solid #ccc",
+                                borderRadius: "8px",
+                                backgroundColor: "#fff",
+                              }}
+                            >
+                              <Typography variant="body1">
+                                <strong>Salary : </strong>
+                                {commissionDetails?.work_details?.full_time?.full_time_salary_type === "Fixed" ? (
+                                  <>
+                                    <span>{commissionDetails?.work_details?.full_time?.fixed_salary} {" "}</span>
+                                    {commissionDetails?.work_details?.full_time?.full_time_salary_currency}
+                                  </>
+                                ) : (
+                                  <>
+                                    <span>
+                                      {commissionDetails?.work_details?.full_time?.min_salary} - {" "}
+                                      {commissionDetails?.work_details?.full_time?.max_salary}
+                                    </span>
+                                    {" "}
+                                    {commissionDetails?.work_details?.full_time?.full_time_salary_currency}
+                                  </>
+                                )}
+                              </Typography>
+                            </Box>
+                          </Grid>
+
+                          <Grid item xs={12} sm={6}>
+                            <Box
+                              sx={{
+                                p: 2,
+                                border: "1px solid #ccc",
+                                borderRadius: "8px",
+                                backgroundColor: "#fff",
+                              }}
+                            >
+                              <Typography variant="body1">
+                                <strong>Additional Details:</strong> {commissionDetails?.work_details?.full_time?.additional_salary_details}
+                              </Typography>
+                            </Box>
+                          </Grid>
+                        </Grid>
+                      </Grid>
+
+                      <Grid item xs={12} sm={12}>
+                        <Typography
+                          variant="h6"
+                          fontWeight="bold"
+                          display="flex"
+                          alignItems="center"
+                          gap={1}
+                          sx={{ mt: 2 }}
+                        >
+                          <FaCalendarAlt className="text-black" />
+                          Commission
+                        </Typography>
+
+                        <Grid container spacing={2} sx={{ mt: 1 }}>
+                          <Grid item xs={12} sm={6}>
+                            <Box
+                              sx={{
+                                p: 2,
+                                border: '1px solid #ccc',
+                                borderRadius: '8px',
+                                backgroundColor: '#fff',
+                              }}
+                            >
+                              <Typography variant="body1">
+                                <strong>Payment Terms:</strong> {commissionDetails?.commission_details?.payment_tearms}
+                              </Typography>
+                            </Box>
+                          </Grid>
+                          <Grid item xs={12} sm={6}>
+                            <Box
+                              sx={{
+                                p: 2,
+                                border: '1px solid #ccc',
+                                borderRadius: '8px',
+                                backgroundColor: '#fff',
+                              }}
+                            >
+                              <Typography variant="body1">
+                                <strong>Replacement Clause:</strong>  {commissionDetails?.commission_details?.replacement_clause}
+                              </Typography>
+                            </Box>
+                          </Grid>
+
+                          <Grid item xs={12} sm={6}>
+                            <Box
+                              sx={{
+                                p: 2,
+                                border: '1px solid #ccc',
+                                borderRadius: '8px',
+                                backgroundColor: '#fff',
+                              }}
+                            >
+                              <Typography variant="body1">
+                                <strong>Commission Pay : </strong>
+                                {commissionDetails?.commission_details?.commission_type === "Fixed" ? (
+                                  <>
+                                    <span>{commissionDetails?.commission_details?.commission_fix_pay} </span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <span>{commissionDetails?.commission_details?.commission_percentage_pay} {" "} {commissionDetails?.commission_details?.commission_type === "Percentage" ? "%" : ""}</span>
+                                  </>
+                                )}
                               </Typography>
                             </Box>
                           </Grid>
@@ -582,7 +719,10 @@ function AdminJobDetails() {
                   }}
                 >
                   <Typography variant="body1">
-                    <strong>Company Description:</strong> {jobCompanyInfo?.client_description}
+                    <div>
+                      <strong>Company Description:</strong>
+                      <span dangerouslySetInnerHTML={{ __html: jobCompanyInfo?.client_description }} />
+                    </div>
                   </Typography>
                 </Box>
               </Box>
@@ -835,7 +975,6 @@ function AdminJobDetails() {
                     </Box>
                   </Grid>
                 </Grid>
-
               </Box>
             </Card>
           )}
@@ -846,66 +985,53 @@ function AdminJobDetails() {
                 <FaQuestionCircle className="text-black" />
                 Screening Questions
               </h2>
-              <Grid container spacing={2} sx={{ pt: '2px' }}>
-                {screeningQuestions.map((question, index) => (
-                  <Grid item xs={12} sm={12} key={index}>
-                    <Box
-                      sx={{
-                        p: 2,
-                        border: '1px solid #ccc',
-                        borderRadius: '8px',
-                        backgroundColor: '#fff',
-                      }}
-                    >
-                      <Typography variant="body1">
-                        <div className="space-y-3">
-                          {/* Question Title */}
-                          <h3 className="text-lg xl:text-xl font-semibold text-gray-700">
-                            {question.madantory ? (
-                              <span className="text-red-500">*</span>
-                            ) : null}
-                            {` ${index + 1}. ${question.question_title}`}
-                          </h3>
 
-                          {/* Answer Type Handling */}
-                          {question.ans_type === 'short_text' && (
-                            <textarea
-                              placeholder="Write your answer..."
-                              className="w-full mt-2 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                              maxLength={question.answer.short_text_length}
-                            ></textarea>
-                          )}
+              {screeningQuestions.length === 0 ? (
+                <Typography className="text-lg text-gray-500">No screening questions available.</Typography>
+              ) : (
+                <Grid container spacing={2} sx={{ pt: '2px' }}>
+                  {screeningQuestions.map((question, index) => (
+                    <Grid item xs={12} sm={12} key={index}>
+                      <Box
+                        sx={{
+                          p: 2,
+                          border: '1px solid #ccc',
+                          borderRadius: '8px',
+                          backgroundColor: '#fff',
+                        }}
+                      >
+                        <Typography variant="body1">
+                          <div className="space-y-3">
+                            <h3 className="text-lg xl:text-xl font-semibold text-gray-700">
+                              {question.madantory ? (
+                                <span className="text-red-500">*</span>
+                              ) : null}
+                              {` ${index + 1}. ${question.question_title} ?`}
+                            </h3>
 
-                          {(question.ans_type === 'single_select' ||
-                            question.ans_type === 'multi_select') && (
-                              <div className="flex flex-wrap items-center gap-4 mt-2">
-                                {question.answer.option.map((option, idx) => (
-                                  <div key={idx} className="flex items-center space-x-2">
-                                    <input
-                                      type={
-                                        question.ans_type === 'single_select'
-                                          ? 'radio'
-                                          : 'checkbox'
-                                      }
-                                      name={`question_${question.id}`}
-                                      value={option}
-                                      className="form-radio text-blue-600"
-                                    />
-                                    <span className="text-gray-700 xl:text-lg">{option}</span>
-                                  </div>
-                                ))}
-                              </div>
-                            )}
-                        </div>
-                      </Typography>
-                    </Box>
-                  </Grid>
-                ))}
-              </Grid>
+                            {/* Answer Type Handling */}
+                            {(question.ans_type === 'single_select' ||
+                              question.ans_type === 'multi_select') && (
+                                <div className="mt-2 flex gap-4 items-center">
+                                  {question.answer.option.map((option, idx) => (
+                                    <div key={idx} className="flex items-center gap-2">
+                                      <span className="ml-4 font-semibold text-gray-700 xl:text-lg">
+                                        {String.fromCharCode(65 + idx)}. {/* A, B, C, D */}
+                                      </span>
+                                      <span className="text-gray-700 xl:text-lg">{option}</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                          </div>
+                        </Typography>
+                      </Box>
+                    </Grid>
+                  ))}
+                </Grid>
+              )}
             </div>
           )}
-
-
         </div>
       </Box>
     </div>
