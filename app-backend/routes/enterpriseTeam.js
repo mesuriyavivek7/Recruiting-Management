@@ -47,4 +47,6 @@ router.get('/isemailverified/:enmemberid',isEnterpriseMemberEmailVerified)
 //for check email address is exist or not
 router.get('/checkmail/:email',checkEmailAddress)
 
+
+
 export default router;

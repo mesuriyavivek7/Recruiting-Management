@@ -980,3 +980,71 @@ export const getPendingJobCountForEnMember= async (req, res, next) =>{
      next(err)
    }
 }
+
+export const searchJobRecruiter=async (req,res,next)=>{
+  const {searchTearm} = req.query
+  try{
+     if(searchTearm){
+     const jobs=await JOBS.find({job_status:'Active'})
+
+     //Filter out live jobs
+     const filterJobs=filterOutLiveJobs(jobs,req.params.rememberid)
+
+     //Filter out job on query base
+     const queryFilter=await Promise.all((filterJobs.map(async (job)=>{
+           const jobBasicDetails=await JOBBASICDETAILS.findById(job.job_basic_details)
+
+           const titleMatch=searchTearm ? new RegExp(searchTearm.toLowerCase(),'i').test(jobBasicDetails.job_title.toLowerCase()) : false
+           
+           return titleMatch ? jobBasicDetails : null
+     })))
+
+     //Remove null values
+     const jobDetails=queryFilter.filter((job)=>job!==null)
+
+     res.status(200).json(jobDetails)
+    }else {
+       return res.status(200).json([])
+    }
+
+  }catch(err){
+     next(err)
+  }
+}
+
+
+export const searchJobEnterprise = async (req, res, next) =>{
+    const {searchTearm}=req.query
+    try{
+      if(searchTearm){
+        const jobs=await JOBS.find({enterprise_member_id:req.params.enmemberid})
+
+        //Filter out jobs
+        const filterJobs= await Promise.all(jobs.map(async (job)=>{
+            const basicDetails=await JOBBASICDETAILS.findById(job.job_basic_details)
+
+            const titleMatch= searchTearm ? new RegExp(searchTearm.toLowerCase(),'i').test(basicDetails.job_title.toLowerCase()) : false
+
+            if(titleMatch){
+               return {
+                job_id:basicDetails.job_id,
+                job_title:basicDetails.job_title,
+                job_status:job.job_status,
+                job_country:basicDetails.country,
+                job_state:basicDetails.state
+               }
+            }else{
+               return null
+            }
+        }))
+
+        //Remove null values
+        const jobDetails = filterJobs.filter((item)=>item!==null)
+        res.status(200).json(jobDetails)
+      }else{
+         return res.status(200).json([])
+      }
+    }catch(err){ 
+      console.log(err)
+    }
+}

@@ -500,3 +500,68 @@ export const exportDataRecruiter=async (req,res,next)=>{
      next(err)
    }
 }
+
+export const searchRecruiterCandidate=async (req,res,next)=>{
+   const {searchTearm}=req.query
+   try{
+      if(searchTearm){
+      const candidates=await CANDIDATE.find({recruiter_member_id:req.params.rememberid})
+      const filterCandidates=await Promise.all(candidates.map(async (candidate)=>{
+         const candidateBasicDetails=await CANDIDATEBASICDETAILS.findById(candidate.candidate_basic_details)
+         const candidateFullName=`${candidateBasicDetails.first_name} ${candidateBasicDetails.last_name}`
+         const nameMatch= searchTearm ? new RegExp(searchTearm.toLowerCase(),'i').test(candidateFullName.toLowerCase()) : false
+
+         return nameMatch? candidateBasicDetails : null
+      }))
+
+      const filterCandidateArray=filterCandidates.filter((item)=>item!=null)
+
+      res.status(200).json(filterCandidateArray)
+    }else {
+       return res.status(200).json([])
+    }
+
+   }catch(err){
+     next(err)
+   }
+}
+
+export const searchEnterpriseCandidate=async (req,res,next)=>{
+   const {searchTearm}=req.query
+   try{
+      if(searchTearm){
+      //For getting received candidate ids
+      const candidateIds=await axios.get(`${process.env.APP_SERVER_URL}/enterpriseteam/getcandidate/${req.params.enmemberid}`)
+
+      const candidateDetails=await Promise.all(candidateIds.data.map(async (citem)=>{
+          const candidate=await CANDIDATE.findById(citem.candidateId)
+
+          const candidateBasicDetails=await CANDIDATEBASICDETAILS.findById(candidate.candidate_basic_details)
+          const cFullName=`${candidateBasicDetails.first_name} ${candidateBasicDetails.last_name}`
+
+          const nameMatch=searchTearm ? new RegExp(searchTearm.toLowerCase(),'i').test(cFullName) : false
+
+          if(nameMatch){
+             return {
+                candidate_name:cFullName,
+                candidate_id:candidate.candidate_id,
+                candidate_status:candidate.candidate_status,
+                candidate_country:candidateBasicDetails.current_location
+             }
+          }else{
+            return null
+          }
+      }))
+
+      //Remove Null values
+      const filterCandiadte=candidateDetails.filter((item)=>item!==null)
+
+      res.status(200).json(filterCandiadte)
+
+    }else{
+      return res.status(200).json([])
+    }
+   }catch(err){
+     next(err)
+   }
+}

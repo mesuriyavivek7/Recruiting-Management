@@ -9,6 +9,8 @@ import Notification from "../Notification";
 import axios from "axios";
 import Loader from '../../assets/whiteloader.svg'
 
+import WhiteLoader from '../../assets/whiteloader.svg'
+
 //importing icons
 import SearchIcon from '@mui/icons-material/Search';
 
@@ -19,6 +21,46 @@ const Navbar = () => {
   const [openMessageBox,setOpenMessageBox]=useState(false)
   const [logoutLoader,setLogoutLoader]=useState(false)
   const [openSearchBox,setOpenSearchBox]=useState(false)
+
+  //Search States
+  const [searchTearm,setSearchTearm]=useState('')
+  const [searchResults,setSearchResults]=useState([])
+  const [loader,setLoader]=useState(false)
+  const [searchTab,setSearchTab]=useState('Candidates')
+
+  const searchCandidates=async ()=>{
+    setLoader(true)
+     try{
+        const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/candidate/search-candidate-recruiter/${user._id}?searchTearm=${searchTearm}`)
+        setSearchResults(res.data)
+     }catch(err){
+       console.log(err)
+       showNotification("Something went wrong.",'failure')
+     }finally{
+       setLoader(false)
+     }
+  }
+
+
+  const searchJobs=async () => {
+      setLoader(true)
+      try{
+         const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/job/search-job-recruiter/${user._id}?searchTearm=${searchTearm}`)
+         setSearchResults(res.data)
+      }catch(err){
+         console.log(err)
+         showNotification("Something went wrong.",'failure')
+      }finally{
+         setLoader(false)
+      }
+  }
+
+  useEffect(()=>{
+      if(searchTab==="Candidates") searchCandidates()
+      else searchJobs()
+  },[searchTearm,searchTab])
+
+
 
   const popupRef=useRef(null)
 
@@ -90,13 +132,42 @@ const Navbar = () => {
          <div ref={popupRef} className="custom-div gap-0 w-[40%] p-0 mt-[80px]">
              <div className="bg-white p-2 rounded-md overflow-hidden flex items-center gap-2 w-full">
                 <span className="text-gray-400"><SearchIcon></SearchIcon></span>
-                <input className="w-full outline-none text-[15px]" placeholder="Search Job/Candidate" type="text" ></input>
+                <input onChange={(e)=>setSearchTearm(e.target.value)} className="w-full outline-none text-[15px]" placeholder="Search Job/Candidate" type="text" ></input>
              </div>
              <div className="w-full flex items-center p-2 border-t">
-               <button className="text-[15px] rounded-l-md py-1 px-2 border">All</button>
-               <button className="text-[15px]  py-1 px-2 border">Candidates</button>
-               <button className="text-[15px] rounded-r-md py-1 px-2 border">Jobs</button>
+               <button onClick={()=>setSearchTab("Candidates")} className={`text-[15px] ${searchTab==="Candidates" && "border-blue-400 text-blue-400"} rounded-l-md py-1 px-2 border`}>Candidates</button>
+               <button onClick={()=>setSearchTab("Jobs")} className={`text-[15px] ${searchTab==="Jobs" && "border-blue-400 text-blue-400"} rounded-r-md py-1 px-2 border`}>Jobs</button>
              </div>
+             {
+                loader ? 
+                <div className="w-full py-4 flex justify-center items-center">
+                   <img src={WhiteLoader} className="w-8 h-8 " alt="loader"></img>
+                </div> :
+                <div className="flex flex-col w-full p-2 gap-2">
+                 <span>{searchResults.length} Search Results Found</span>
+                 {
+                    searchResults.length>0 && 
+                    <div className="h-[12rem] flex flex-col gap-1.5 overflow-auto w-full ">
+                      {
+                        searchTab==="Candidates" && 
+                        searchResults.map((item)=>(
+                           <span className="rounded-md border font-medium text-[15px] px-2 py-3">
+                              {`CId: ${item.candidate_id} - ${item.first_name} ${item.last_name} - ${item.current_location}`}
+                           </span>
+                        ))
+                      }
+                      {
+                        searchTab==="Jobs" && 
+                        searchResults.map((item)=>(
+                          <span className="rounded-md border font-medium text-[15px] px-2 py-3">
+                             {`Job Id: ${item.job_id} - ${item.job_title} - ${item.state} - ${item.country}`}
+                          </span>
+                        ))
+                      }
+                    </div>
+                 }
+                </div>
+             }
          </div>
     </div>
    }
