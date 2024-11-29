@@ -29,7 +29,7 @@ const AllJobData = () => {
     const id = params.id;
     const job_id = params?.row?.job_id;
     console.log(params);
-    navigate(`/account_manager/job/${id}`, { state: { job_id: job_id } });
+    navigate(`/account_manager/jobs/${id}`, { state: { job_id: job_id } });
   };
 
   const handleFilterClick = (status) => setFilterStatus(status);

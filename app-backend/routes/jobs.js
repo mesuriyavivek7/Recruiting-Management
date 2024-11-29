@@ -5,7 +5,7 @@ import multer from 'multer'
 import { fileURLToPath } from 'url';
 
 
-import { activateJob, getAllJobs, addCandidateProfileList, allotedJobToAcManager, createJobs, deleteJobDraftWithOtherDetails, downloadEvaluationForm, getAllJobDetails, getAllJobDraftDetails, getCandidateScreeningQue, getFrontAcceptedJobDetails, getFrontMappedJobDetails, getJobAttachmentsDetailsForCandidate, getJobBasicDetailsForPreview, getJobCompanyDetailsForPreview, getJobSourcingGuidelinesForPreview, getJobStatusForPreview, getJobCommissionDetailsForPreview, createJobUpdates, getJobUpdates, getJobAttachmentsDetailsForPreview, getAcManagerNameAndMail, viewJobAttachments, downloadJobAttachments, getJobAttachmentFileType, getJobHotMark, changeJobHotMark, getJobCandidatesForPreview, getLiveJobs, getFrontFavouriteJobs, unMapJob, addJobMapRequest, SearchJobByTitle, getJobScreeningQuestionsForPreview, SearchPastJobByTitleAndEnMemberId, getActiveJobCountForEnMember, getPendingJobCountForEnMember } from '../controller/jobController.js';
+import { activateJob, getAllJobs, addCandidateProfileList, allotedJobToAcManager, createJobs, deleteJobDraftWithOtherDetails, downloadEvaluationForm, getAllJobDetails, getAllJobDraftDetails, getCandidateScreeningQue, getFrontAcceptedJobDetails, getFrontMappedJobDetails, getJobAttachmentsDetailsForCandidate, getJobBasicDetailsForPreview, getJobCompanyDetailsForPreview, getJobSourcingGuidelinesForPreview, getJobStatusForPreview, getJobCommissionDetailsForPreview, createJobUpdates, getJobUpdates, getJobAttachmentsDetailsForPreview, getAcManagerNameAndMail, viewJobAttachments, downloadJobAttachments, getJobAttachmentFileType, getJobHotMark, changeJobHotMark, getJobCandidatesForPreview, getLiveJobs, getFrontFavouriteJobs, unMapJob, addJobMapRequest, SearchJobByTitle, getJobScreeningQuestionsForPreview, SearchPastJobByTitleAndEnMemberId, getActiveJobCountForEnMember, getPendingJobCountForEnMember, getPostedCandidatesByJobId } from '../controller/jobController.js';
 import { craeteJobBasicDeatils,showJobDetail, getJobBasicDetails, getJobDetailsByEnId, getJobDetailsById } from '../controller/jobBasicController.js'
 import { createJobDraft, deleteJobDraft } from '../controller/jobDraftController.js'
 import { createJobCommission,showJobCommission, getJobCommissionDetails } from '../controller/jobCommissionController.js'
@@ -226,6 +226,9 @@ router.get('/getjobattachmentfiletype/:jobid/:filetype',getJobAttachmentFileType
 
 //for getting jobs accepted candidate details for preview
 router.get('/getjobcandidatesforpreview/:jobid',getJobCandidatesForPreview)
+
+//for gettting posted candidates profile's id(s) by job_id
+router.get('/getpostedcandidates/:jobid', getPostedCandidatesByJobId)
 
 //for getting live jobs for particular recruiting member
 router.get('/getlivejobs/:rememberid',getLiveJobs)
