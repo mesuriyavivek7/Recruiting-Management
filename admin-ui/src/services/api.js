@@ -187,7 +187,7 @@ export const fetchSQByJobId = async (job_id) => {
     }
 }
 // get job commision details by job id
-export const fetchCommisionDetailsByJobId = async (job_id) => {
+export const fetchCommissionDetailsByJobId = async (job_id) => {
     try {
         const response = await axios.get(`${app_be_uri}/job/getjobcommissiondetails/${job_id}`);
         return response.data;
