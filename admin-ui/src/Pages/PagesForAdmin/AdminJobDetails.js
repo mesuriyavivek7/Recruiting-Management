@@ -881,7 +881,10 @@ function AdminJobDetails() {
                                 <span>Audio Brief</span>
                               </div>
                               <a
-                                href={jobAttachments.audio_brief.filepath}
+                                href={`http://localhost:8080/jobdocs/${jobAttachments.audio_brief.filepath.replace(
+                                  /^uploads\/jobdocs\//,
+                                  ""
+                                )}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 style={{
@@ -905,7 +908,10 @@ function AdminJobDetails() {
                                 <span>Evaluation Form</span>
                               </div>
                               <a
-                                href={`/${jobAttachments.evaluation_form.filepath}`}
+                                href={`http://localhost:8080/jobdocs/${jobAttachments.evaluation_form.filepath.replace(
+                                  /^uploads\/jobdocs\//,
+                                  ""
+                                )}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 style={{
@@ -929,7 +935,10 @@ function AdminJobDetails() {
                                 <span>Sample CV</span>
                               </div>
                               <a
-                                href={`/${jobAttachments.sample_cv.filepath}`}
+                                href={`http://localhost:8080/jobdocs/${jobAttachments.sample_cv.filepath.replace(
+                                  /^uploads\/jobdocs\//,
+                                  ""
+                                )}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 style={{
@@ -953,7 +962,10 @@ function AdminJobDetails() {
                                 <span>Other Documents</span>
                               </div>
                               <a
-                                href={`/${jobAttachments.other_docs.filepath}`}
+                                href={`http://localhost:8080/jobdocs/${jobAttachments.other_docs.filepath.replace(
+                                  /^uploads\/jobdocs\//,
+                                  ""
+                                )}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 style={{

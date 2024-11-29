@@ -20,36 +20,39 @@ const AllJobData = () => {
 
   const [notification, setNotification] = useState(null)
 
-   //for showing notification
-   const showNotification = (message, type) => {
+  //for showing notification
+  const showNotification = (message, type) => {
     setNotification({ message, type })
   }
 
-  const handleRowClick = (job_id) => {
-    navigate(`/account_manager/job/${job_id}`); 
+  const handleRowClick = async (params) => {
+    const id = params.id;
+    const job_id = params?.row?.job_id;
+    console.log(params);
+    navigate(`/account_manager/job/${id}`, { state: { job_id: job_id } });
   };
 
   const handleFilterClick = (status) => setFilterStatus(status);
 
   // Filter rows based on searchTerm and filterStatus
   useEffect(() => {
-    const fetchData=async ()=>{
-       try{
+    const fetchData = async () => {
+      try {
         setLoading(true)
         //Fetching verified job ids
         const verifiedJobsIds = await fetchVerifiedJobsByACManagerId(userData?._id);
-     
+
         const rows = await Promise.all(
           verifiedJobsIds.map(async (jobId, index) => {
             //Fetch job deatils
             const jobDetails = await fetchJobDetailsById(jobId);
-      
+
             //Fetch enterprise details
-            const enterprise_member=await fetchEnterpriseMemberDetails(jobDetails.enterprise_member_id)
-      
+            const enterprise_member = await fetchEnterpriseMemberDetails(jobDetails.enterprise_member_id)
+
             //Fetch job basic details
             const basicjobDetails = await fetchJobBasicDetailsByJobId(jobDetails.job_id);
-      
+
             return {
               _id: String(`${index + 1}`),
               job_title: basicjobDetails?.job_title || "No Title Available",
@@ -78,25 +81,25 @@ const AllJobData = () => {
 
         setFilteredRows(newFilteredRows);
 
-       }catch(err){
-         console.log(err)
-         showNotification("Something went wrong while fetching data",'failure')
-       }finally{
+      } catch (err) {
+        console.log(err)
+        showNotification("Something went wrong while fetching data", 'failure')
+      } finally {
         setLoading(false)
-       }
+      }
     }
-    
+
     fetchData()
-    
+
   }, [searchTerm, filterStatus]);
 
-  
-  
+
+
 
   return (
     <div>
-       {notification && <Notification message={notification.message} type={notification.type} onClose={() => setNotification(null)}></Notification>}
-       <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} gap={2} pt={4}>
+      {notification && <Notification message={notification.message} type={notification.type} onClose={() => setNotification(null)}></Notification>}
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} gap={2} pt={4}>
         <TextField
           label="Search..."
           variant="outlined"
@@ -150,75 +153,75 @@ const AllJobData = () => {
         </Box>
       </Box>
       {loading ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 400, color: '#315370' }}>
-            <CircularProgress />
-          </Box>
-        ) : (
-      <Card className='mt-9 font-sans'>
-      
-        <p className='text-lg xl:text-2xl'>All Jobs</p>
-        <div style={{ height: 600, width: '100%' }} className='pt-4'>
-          <DataGrid 
-            rows={filteredRows}
-            columns={columns}
-            rowHeight={80}
-            onRowClick={(params) => handleRowClick(params.id)}
-            getRowId={(row) => row.job_id} // Specify the custom ID field
-            pageSize={8} 
-            loading={loading}
-            initialState={{ pagination: { paginationModel: { page: 0, pageSize: 10 } } }}
-            pageSizeOptions={[5, 10]}
-            disableSelectionOnClick 
-            sx={{
-              '& .MuiDataGrid-root': {
-                fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.09rem' }, 
-              },
-           
-              ' [class^=MuiDataGrid]': { border: 'none' },
-              '& .MuiDataGrid-columnHeader': {
-                fontWeight: 'bold !impotant', 
-                fontSize: { xs: '0.875rem', sm: '1rem', md: '0.7rem', lg: '1.1rem' }, 
-                color: 'black', 
-               
-                 '&:focus': {
-                outline: 'none', 
-                border: 'none',  
-              },
-                backgroundColor: '#e3e6ea !important', 
-                minHeight: '60px', 
-              },
-               '& .MuiDataGrid-columnHeader:focus-within': {
-          outline: 'none', 
-        },
-        '& .MuiDataGrid-columnSeparator': {
-          color: 'blue',
-          visibility: 'visible', 
-        },
-        '& .MuiDataGrid-cell': {
-          fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem' }, 
-          
-        },
-        '& .MuiDataGrid-cellContent': {
-          display: 'flex',
-          alignItems: 'center', 
-        },
-        '& .MuiDataGrid-cell': {
-          minHeight: '2.5rem', 
-        },
-        '& .MuiDataGrid-cell': {
-            fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem'}, 
-         },
-        '& .MuiDataGrid-row': {
-            borderBottom: 'none', 
-         },
-        '& .MuiDataGrid-cell:focus': {
-            outline: 'none', 
-         },
-          }}
-          />
-        </div>
-      </Card>)}
-     
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 400, color: '#315370' }}>
+          <CircularProgress />
+        </Box>
+      ) : (
+        <Card className='mt-9 font-sans'>
+
+          <p className='text-lg xl:text-2xl'>All Jobs</p>
+          <div style={{ height: 600, width: '100%' }} className='pt-4'>
+            <DataGrid
+              rows={filteredRows}
+              columns={columns}
+              rowHeight={80}
+              onRowClick={(params) => handleRowClick(params)}
+              getRowId={(row) => row.job_id} // Specify the custom ID field
+              pageSize={8}
+              loading={loading}
+              initialState={{ pagination: { paginationModel: { page: 0, pageSize: 10 } } }}
+              pageSizeOptions={[5, 10]}
+              disableSelectionOnClick
+              sx={{
+                '& .MuiDataGrid-root': {
+                  fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.09rem' },
+                },
+
+                ' [class^=MuiDataGrid]': { border: 'none' },
+                '& .MuiDataGrid-columnHeader': {
+                  fontWeight: 'bold !impotant',
+                  fontSize: { xs: '0.875rem', sm: '1rem', md: '0.7rem', lg: '1.1rem' },
+                  color: 'black',
+
+                  '&:focus': {
+                    outline: 'none',
+                    border: 'none',
+                  },
+                  backgroundColor: '#e3e6ea !important',
+                  minHeight: '60px',
+                },
+                '& .MuiDataGrid-columnHeader:focus-within': {
+                  outline: 'none',
+                },
+                '& .MuiDataGrid-columnSeparator': {
+                  color: 'blue',
+                  visibility: 'visible',
+                },
+                '& .MuiDataGrid-cell': {
+                  fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem' },
+
+                },
+                '& .MuiDataGrid-cellContent': {
+                  display: 'flex',
+                  alignItems: 'center',
+                },
+                '& .MuiDataGrid-cell': {
+                  minHeight: '2.5rem',
+                },
+                '& .MuiDataGrid-cell': {
+                  fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem' },
+                },
+                '& .MuiDataGrid-row': {
+                  borderBottom: 'none',
+                },
+                '& .MuiDataGrid-cell:focus': {
+                  outline: 'none',
+                },
+              }}
+            />
+          </div>
+        </Card>)}
+
     </div>
   );
 };
