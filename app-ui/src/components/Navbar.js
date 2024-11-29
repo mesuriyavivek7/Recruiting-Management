@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useRef, useEffect, useState } from "react";
 import asset1 from "../assets/asset 1.png";
 import asset18 from "../assets/asset18.svg";
 import asset29 from "../assets/asset29.svg";
@@ -8,7 +8,10 @@ import { AuthContext } from "../context/AuthContext";
 import Message from "./message/Message";
 import axios from "axios";
 import Notification from "./Notification";
-import { useNavigate } from "react-router-dom";
+import { cstatus } from "./statuschange/StatusMapping";
+
+//importing icons
+import SearchIcon from '@mui/icons-material/Search';
 
 //import loader
 import Loader from '../assets/whiteloader.svg'
@@ -17,9 +20,14 @@ const Navbar = () => {
   const {user}=useContext(AuthContext)
   const [openProfile,setOpenProfile]=useState(false)
   const [openMessageBox,setOpenMessageBox]=useState(false)
-  const navigate=useNavigate()
-
+  const [openSearchBox,setOpenSearchBox]=useState(false)
   const [logoutLoader,setLogoutLoader]=useState(false)
+
+  //Search States
+  const [searchTearm,setSearchTearm]=useState('')
+  const [searchResults,setSearchResults]=useState([])
+  const [loader,setLoader]=useState(false)
+  const [searchTab,setSearchTab]=useState('Candidates')
 
   const [notification,setNotification]=useState(null)
 
@@ -47,8 +55,8 @@ const Navbar = () => {
       setLogoutLoader(true)
       try{
         await axios.post(`${process.env.REACT_APP_API_BASE_URL}/auth/logout`,{},{withCredentials:true})
-        setLogoutLoader(false)
         window.location.reload()
+        setLogoutLoader(false)
       }catch(err){
            setLogoutLoader(false)
            showNotification("Something went wrong.",'failure')
@@ -56,6 +64,62 @@ const Navbar = () => {
       }
       setLogoutLoader(false)
   }
+
+  const searchJobs=async ()=>{
+    setLoader(true)
+    try{
+        const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/job/search-job-enterprise/${user._id}?searchTearm=${searchTearm}`)
+        console.log("JOb Details---->",res.data)
+        setSearchResults(res.data)
+    }catch(err){
+        console.log(err)
+        showNotification("Something went wrong.",'failure')
+    }finally{
+      setLoader(false)
+    }
+  }
+
+  const searchCandidates=async ()=>{
+    setLoader(true)
+     try{
+       const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/candidate/search-candidate-enterprise/${user._id}?searchTearm=${searchTearm}`)
+       console.log("Candidate details----->",res.data)
+       setSearchResults(res.data)
+     }catch(err){
+       console.log(err)
+       showNotification("Something went wrong.",'failure')
+     }finally{
+       setLoader(false)
+     }
+  }
+
+
+  useEffect(()=>{
+     if(searchTab==="Candidates") searchCandidates()
+     else searchJobs()
+  },[searchTearm,searchTab])
+
+  
+
+  const popupRef=useRef(null)
+
+  useEffect(()=>{
+    const handleClickOutside = (event) => {
+      // Check if the click is outside the popup
+      if (popupRef.current && !popupRef.current.contains(event.target)) {
+        setOpenSearchBox(false); // Close the popup
+      }
+    };
+
+    // Add event listener to the document
+    document.addEventListener("mousedown", handleClickOutside);
+
+    // Cleanup on component unmount
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  },[])
+
   return (
    <>
      {notification && <Notification message={notification.message} type={notification.type} onClose={()=>setNotification(null)}></Notification>}
@@ -68,21 +132,62 @@ const Navbar = () => {
        </div>
      </div>
      }
+     {
+    openSearchBox && 
+    <div className="fixed inset-0 z-50 flex bg-black justify-center bg-opacity-50 backdrop-blur-md items-start">
+         <div ref={popupRef} className="custom-div gap-0 w-[40%] p-0 mt-[80px]">
+             <div className="bg-white p-2 rounded-md overflow-hidden flex items-center gap-2 w-full">
+                <span className="text-gray-400"><SearchIcon></SearchIcon></span>
+                <input onChange={(e)=>setSearchTearm(e.target.value)} className="w-full outline-none text-[15px]" placeholder="Search Job/Candidate" type="text" ></input>
+             </div>
+             <div className="w-full flex items-center p-2 border-t">
+               <button onClick={()=>setSearchTab("Candidates")} className={`text-[15px] ${searchTab==="Candidates" && "border-blue-400 text-blue-400"} rounded-l-md py-1 px-2 border`}>Candidates</button>
+               <button onClick={()=>setSearchTab("Jobs")} className={`text-[15px] ${searchTab==="Jobs" && "border-blue-400 text-blue-400"} rounded-r-md py-1 px-2 border`}>Jobs</button>
+             </div>
+             {
+                loader ? 
+                <div className="w-full py-4 flex justify-center items-center">
+                   <img src={Loader} className="w-8 h-8 " alt="loader"></img>
+                </div> :
+                <div className="flex flex-col w-full p-2 gap-2">
+                 <span>{searchResults.length} Search Results Found</span>
+                 {
+                    searchResults.length>0 && 
+                    <div className="h-[12rem] flex flex-col gap-1.5 overflow-auto w-full ">
+                      {
+                        searchTab==="Candidates" && 
+                        searchResults.map((item)=>(
+                           <span className="rounded-md border font-medium text-[15px] px-2 py-3">
+                              {`CId: ${item.candidate_id} - ${item.candidate_name} - ${item.candidate_country}`}
+                              <span className="bg-slate-50 p-1 border rounded-md mx-1.5 text-sm">{cstatus.get(item.candidate_status)}</span>
+                           </span>
+                        ))
+                      }
+                      {
+                        searchTab==="Jobs" && 
+                        searchResults.map((item)=>(
+                          <span className="rounded-md cursor-pointer border font-medium text-[15px] px-2 py-3">
+                             {`Job Id: ${item.job_id} - ${item.job_title} - ${item.job_state} - ${item.job_country}`}
+                             <span className={`p-1 mx-2 rounded-md text-sm text-white ${item.job_status==="Active"?"bg-green-500":"bg-red-500"} `}>{item.job_status}</span>
+                          </span>
+                        ))
+                      }
+                    </div>
+                 }
+                </div>
+             }
+         </div>
+    </div>
+   }
 
     <div className="w-full z-60 flex justify-between py-4 px-3 bg-blue-600">
       <div className="flex place-items-center gap-12">
         <div className="h-[30px] flex place-items-center overflow-hidden rounded-md">
           <img src={asset1} alt="logo" width={95} />
         </div>
-        <div className="search-input flex place-items-center gap-2 text-sm px-4 w-[600px] bg-white-400 py-[5px] rounded-md">
+        <div onClick={()=>setOpenSearchBox(true)} className="search-input flex place-items-center gap-2 text-sm px-4 w-[600px] bg-white-400 py-[5px] rounded-md">
           <img src={asset15} alt="search-icon" width={15} />
-          <input
-            type="search"
-            name="search"
-            id="search"
-            placeholder="Search"
-            className="bg-transparent w-full "
-          />
+          <span className="text-gray-500 text-sm">Search</span>
         </div>
       </div>
       <div className="flex place-items-center gap-4">
