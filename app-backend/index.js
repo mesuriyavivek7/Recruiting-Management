@@ -103,6 +103,9 @@ app.get('/',(req,res)=>{
     res.send("Bahut maja ara hai bhai🐱")
 })
 
+// Serve static files from the 'uploads/jobdocs' directory
+app.use('/jobdocs', express.static(path.join(__dirname, 'uploads/jobdocs')));
+
 // Serve static files from the 'uploads/kycdocs' directory
 app.use('/kycdocs', express.static(path.join(__dirname, 'uploads/kycdocs')));
 
