@@ -125,7 +125,7 @@ function App() {
             element: <AccountCandidateTable />,
           },
           {
-            path: "job/:id",
+            path: "jobs/:id",
             element: <Job />,
           },
           {
