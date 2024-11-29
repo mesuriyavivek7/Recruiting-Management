@@ -329,6 +329,16 @@ export const fetchPendingCandidatesByMAdminId = async (m_admin_id) => {
     }
 }
 
+export const fetchPostedCandidateProfileByJobId = async (job_id) => {
+    try {
+        const response = await axios.get(`${app_be_uri}/job/getpostedcandidates/${job_id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error while fetching the posted candidates profiles by job id ", error);
+        throw error;
+    }
+}
+
 export const fetchRecuritingAgencybyId = async (r_agency_id) => {
     try {
         const response = await axios.get(`${app_be_uri}/recruiting/${r_agency_id}`);
