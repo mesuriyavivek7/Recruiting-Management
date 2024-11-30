@@ -1,5 +1,5 @@
 import express from 'express'
-import { addJobIntoAcceptList, addJobIntoFavoutiteList, addNewCandidate, changeAccountStatus, changeCommissionFlag, changeEmailAddress, changePassword, checkCreadentials, checkEmailAddress, checkForRequestJob, checkIsAdmin, checkMobileNo, checkPassword, createteammember, getDashBoardCount, getEnterpriseTeamMember, getFavouriteJobIds, getRecruiterCandidateDetails, getRecruiterMemberById, getRecruiterProfilePageDetails, getRecuritingTeamDetails, getSubmitedCandidates, isFavouriteJob, isVerifiedMail, rejectJob, removeJobFromFavouriteList, requestMapJob, unmapJob, updateJobMappedList, updateRecruiterTeamDetails } from '../controller/recrutingTeamController.js'
+import { addJobIntoAcceptList, addJobIntoFavoutiteList, addVerifiedCandidate, changeAccountStatus, changeCommissionFlag, changeEmailAddress, changePassword, checkCreadentials, checkEmailAddress, checkForRequestJob, checkIsAdmin, checkMobileNo, checkPassword, createteammember, getDashBoardCount, getEnterpriseTeamMember, getFavouriteJobIds, getRecruiterCandidateDetails, getRecruiterMemberById, getRecruiterProfilePageDetails, getRecuritingTeamDetails, getSubmitedCandidates, isFavouriteJob, isVerifiedMail, rejectJob, removeJobFromFavouriteList, requestMapJob, unmapJob, updateJobMappedList, updateRecruiterTeamDetails } from '../controller/recrutingTeamController.js'
 
 
 
@@ -24,7 +24,7 @@ router.post('/addacceptlist/:rteamid',addJobIntoAcceptList)
 router.post('/rejectjob/:rteamid',rejectJob)
 
 //for adding candidate id and job id into submited candiadte list
-router.put('/addintocandidatelist/:rememberid',addNewCandidate)
+router.put('/addintocandidatelist/:rememberid',addVerifiedCandidate)
 
 //for getting all enterprise team id which are connecting with recruiter agency
 router.get('/getenterpriseteam/:rememberid',getEnterpriseTeamMember)

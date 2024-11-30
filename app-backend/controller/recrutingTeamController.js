@@ -90,7 +90,7 @@ export const rejectJob=async (req,res,next)=>{
     }
 }
 
-export const addNewCandidate=async (req,res,next)=>{
+export const addVerifiedCandidate=async (req,res,next)=>{
     try{
         const {candidateId,jobId}=req.body
         await RECRUITINGTEAM.findByIdAndUpdate(req.params.rememberid,{$push:{submited_candidate_profile:{candidateId,jobId}}})

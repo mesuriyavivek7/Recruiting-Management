@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { Card } from '@mui/material';
 import { columns } from './RowColDataOfNew'; // Import columns configuration
-import { fetchCandidateBasicDetailsById, fetchCandidateStatusById, fetchJobBasicDetailsByJobId, fetchPendingCandidatesByACManagerId } from '../../../services/api';
+import { fetchCandidateBasicDetailsById, fetchRecruiterMemberDetails, fetchJobMainDetails, fetchCandidateStatusById, fetchJobBasicDetailsByJobId, fetchPendingCandidatesByACManagerId } from '../../../services/api';
 
 //import Constants file
 import { cstatus } from '../../../constants/jobStatusMapping';
@@ -67,14 +67,21 @@ const NewCandidateData = () => {
       const { job_id, basic_details } = await fetchCandidateBasicDetailsById(candidateId);
       const job_basic_details = await fetchJobBasicDetailsByJobId(job_id);
       const candidate = await fetchCandidateStatusById(basic_details.candidate_id)
+      
+      //fetch recruiter member details
+      const recruiter_member=await fetchRecruiterMemberDetails(candidate.recruiter_member_id)
+
+      const job=await fetchJobMainDetails(job_id)
 
       // Get candidate status, defaulting to "Status Unavailable" if not found
       const candidateStatusKey = candidate.candidate_status || "Status Unavailable";
       const candidateStatus = cstatus.get(candidateStatusKey) || candidateStatusKey; // Map status or use original
 
       return {
+        orgjobid:job._id,
         orgcandidateid:candidate._id,
         candidate_id:basic_details.candidate_id,
+        recruiter_member:recruiter_member.full_name,
         _id: String(index + 1),
         candidate_name: {
           first_name: basic_details?.first_name || 'No First Name',
@@ -114,6 +121,7 @@ const [currentTab,setCurrentTab]=useState('candidate')
 const [openProfilePopup,setOpenProfilePopUp]=useState(false)
 
 //For candidate
+const [currentJobId,setCurrentJobId]=useState(null)
 const [currentCandidateId,setCurrentCandidateId]=useState(null)
 const [openCandidatePopUpLoader,setOpenCandidatePopUpLoader]=useState(false)
 const [candidateBasicDetails,setCandidateBasicDetails]=useState(null)
@@ -295,10 +303,11 @@ const handleFetchSourcingGuidelines=async (jobid)=>{
    }
 }
 
-const handleOpenPopUpBox=async (orgcid,cid,jobid)=>{
+const handleOpenPopUpBox=async (orgcid,orgjobid,cid,jobid)=>{
     setOpenCandidatePopUpLoader(true)
     setOpenProfilePopUp(true)
     setCurrentCandidateId(orgcid)
+    setCurrentJobId(orgjobid)
     //For candidate
     await handleSetFileName(cid)
     await handleFetchCandidateDetails(cid)
@@ -343,7 +352,7 @@ const handleClosePopUpBox= ()=>{
 }
 
 const handleApprove=async ()=>{
-  if(currentCandidateId){
+  if(currentCandidateId && currentJobId){
     setAssignLoad(true)
     try{
        //change candidate status
@@ -351,6 +360,9 @@ const handleApprove=async ()=>{
        //verify candidate into account manager 
        await axios.post(`${process.env.REACT_APP_API_BASE_URL}/accountmanager/addcandidateintoverifiedlist/${userData._id}`,{orgcid:currentCandidateId})
        //Add candidate into recruiter member posted list
+       await axios.post(`${process.env.REACT_APP_API_APP_URL}/candidate/add-candidate-reteam`,{cid:currentCandidateId,jobid:currentJobId})
+       //Add Candidate into enterprise member posted list
+       await axios.post(`${process.env.REACT_APP_API_APP_URL}/job/add-candidate-enmember`,{cid:currentCandidateId,jobid:currentJobId})
        handleClosePopUpBox()
        await fetchData()
        showNotification("Successfully Candidate profile approved.",'success')
@@ -384,7 +396,7 @@ const handleApprove=async ()=>{
                  <span className='flex items-center gap-1'><small className='text-gray-500'>Ac Manager</small>{acManagerName && acManagerName.full_name}</span>
                  <span className='p-1 px-2 bg-white text-[15px] rounded-md'>{candidateStatus && cstatus.get(candidateStatus)}</span>
                </div>
-               <button onClick={handleApprove} className='p-2 bg-blue-500 hover:bg-blue-600 text-white tracking-wide'>Approve</button>
+               <button disabled={assignLoad} onClick={handleApprove} className='p-2 bg-blue-500 disabled:bg-gray-100 hover:bg-blue-600 text-white tracking-wide'>Approve</button>
              </div>
              </div>
              <div className='flex gap-6 px-4'>
@@ -772,7 +784,7 @@ const handleApprove=async ()=>{
           columns={columns}
           rowHeight={80} 
           loading={loading}
-          onRowClick={(params) => handleOpenPopUpBox(params.row.orgcandidateid,params.row.candidate_id,params.row.job_id)}
+          onRowClick={(params) => handleOpenPopUpBox(params.row.orgcandidateid,params.row.orgjobid,params.row.candidate_id,params.row.job_id)}
           getRowId={(row) => row._id} // Specify the custom ID field
           getRowHeight={calculateRowHeight} 
           pageSize={8}
