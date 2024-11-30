@@ -1093,3 +1093,13 @@ export const addCandidateIntoEnMemberReceivedList = async (req, res, next) => {
      next(err)
    }
 }
+
+export const getMappedRecruiterMemberIds= async (req, res, next) => {
+   try{
+     const job=await JOBS.findOne({job_id:req.params.jobid})
+     if(!job) return res.status(200).json([])
+     else return res.status(200).json(job.mapped_recruiting_agency_member)
+   }catch(err){
+     next(err)
+   }
+}

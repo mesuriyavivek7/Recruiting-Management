@@ -135,6 +135,17 @@ export const fetchJobMainDetails = async (job_id) =>{
       }
 }
 
+//For getting mapped recruiter member ids by jobid
+export const fetchMappedRecruiterMemberIds = async (job_id) => {
+     try{
+        const response = await axios.get(`${app_be_uri}/job/get-mapped-recruiter/${job_id}`)
+        return response.data
+     }catch(error) {
+        console.error("Error while fetching mapped recruiter ids : ",error)
+        
+     }
+}
+
 //get the job basic details to show futher details in enterprise table
 export const fetchJobBasicDetailsByEnId = async (enterprise_id) => {
     try {
