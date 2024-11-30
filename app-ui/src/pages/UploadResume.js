@@ -14,6 +14,7 @@ export default function UploadResume() {
   
   const navigate=useNavigate()
   const location=useLocation()
+  console.log(location.state)
   const {user}=useContext(AuthContext)
   const [currentStep,setCurrentStep]=useState(1)
   const [candidateId,setCandidateId]=useState(null)
@@ -23,8 +24,6 @@ export default function UploadResume() {
     form2:{}
   })
   
-  console.log("candidate id---->",candidateId)
-  console.log("parent form data---->",formData)
 
   const createCandidateId=()=>{
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -65,6 +64,11 @@ export default function UploadResume() {
     try{
       //here submission process start
 
+      //Insure the applying for job is active or not
+      const acmanager=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/job/get-acmanager-id/${location.state.job_id}`)
+
+      if(acmanager.data){
+
       //step-1 create candidate 
       const res=await axios.post(`${process.env.REACT_APP_API_BASE_URL}/candidate/createcandidate/${candidateId}`,{
         job_id:location.state.job_id,
@@ -102,16 +106,17 @@ export default function UploadResume() {
       await axios.put(`${process.env.REACT_APP_API_BASE_URL}/candidate/markascompleted/${candidateId}`)
 
       //step-7 get alloted account manager id
-      const acmanager=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/recruiting/getacmanagerid/${user.recruiting_agency_id}`)
         
-      console.log(acmanager)
       //step-8 add candidate profile into account manager pending list
       await axios.post(`${process.env.REACT_APP_API_ADMIN_URL}/accountmanager/addpendingcandidate/${acmanager.data}`,{orgcid:res.data._id})
 
       //step-9 add accountmanager id into candidate profile
       await axios.post(`${process.env.REACT_APP_API_BASE_URL}/candidate/addacmanager/${res.data._id}`,{acmanagerid:acmanager.data})
 
-      return true
+       return true
+     }else{
+       return false
+     }
     }catch(err){
       //handeling error here
       console.log(err)
@@ -176,11 +181,11 @@ export default function UploadResume() {
            </div>
         </div>
         <div className='flex flex-col gap-4'>
-            <span className='text-sm text-gray-400'>Exp: <b className='text-gray-500'>{`${location.state.experience.minexp}-${location.state.experience.maxexp}`}</b>  yrs    Salary: <b className='text-gray-500'>{location.state.work_type==="full_time"?(`  ${location.state.full_time_salary_currency} ${location.state.full_time_salary_type==="Fixed"?(location.state.fixed_salary):(`${location.state.min_salary}-${location.state.max_salary}`)}`):(`${location.state.contract_pay_currency} ${location.state.contract_pay_rate_type==="Fixed"?(location.state.fixed_contract_pay):(`${location.state.min_contract_pay}-${location.state.max_contract_pay}`)} ${location.contract_pay_cycle.toUpperCase()}`)}</b></span>
+            <span className='text-sm text-gray-400'>Exp: <b className='text-gray-500'>{`${location.state.experience.minexp}-${location.state.experience.maxexp}`}</b>  yrs    Salary: <b className='text-gray-500'>{location.state.work_type==="full_time"?(`  ${location.state.full_time_salary_currency} ${location.state.full_time_salary_type==="Fixed"?(location.state.fixed_salary):(`${location.state.min_salary}-${location.state.max_salary}`)}`):(`${location.state.contract_pay_currency} ${location.state.contract_pay_rate_type==="Fixed"?(location.state.fixed_contract_pay):(`${location.state.min_contract_pay}-${location.state.max_contract_pay}`)} ${location.state.contract_pay_cycle.toUpperCase()}`)}</b></span>
             <span className='text-sm text-gray-400'>AC MAnager: <b className='text-gray-500'>{location.state.ac_manager}</b></span>
         </div>
     </div>
     {renderForm()}
-    </div>
+    </div> 
   )
 }

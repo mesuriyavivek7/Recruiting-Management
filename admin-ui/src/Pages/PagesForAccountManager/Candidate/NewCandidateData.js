@@ -346,8 +346,11 @@ const handleApprove=async ()=>{
   if(currentCandidateId){
     setAssignLoad(true)
     try{
+       //change candidate status
        await axios.put(`${process.env.REACT_APP_API_APP_URL}/candidate/approvecandidate/${currentCandidateId}`)
+       //verify candidate into account manager 
        await axios.post(`${process.env.REACT_APP_API_BASE_URL}/accountmanager/addcandidateintoverifiedlist/${userData._id}`,{orgcid:currentCandidateId})
+       //Add candidate into recruiter member posted list
        handleClosePopUpBox()
        await fetchData()
        showNotification("Successfully Candidate profile approved.",'success')
