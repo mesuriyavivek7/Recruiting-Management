@@ -4,12 +4,11 @@ import { useParams } from 'react-router-dom';
 
 import { Button } from '@mui/material';
 
-import AllCandidateData from './Candidate/AllCandidateData';
 import JobDetails from './JobDetails';
-import MappedCandidateData from './Candidate/MappedCandidateData ';
+import MappedRecruiterMember from './RecruitingAgency/MappedRecruiterMember';
 import RequestedCandidateData from './Candidate/RequestedCandidateData ';
 import AllCandidateDataForEachJob from './Job/AllCandidateDataForEachJob';
-import { fetchPostedCandidateProfileByJobId } from '../../services/api';
+import { fetchPostedCandidateProfileByJobId , fetchMappedRecruiterMemberIds } from '../../services/api';
 
 const Job = () => {
   const { id } = useParams();
@@ -19,15 +18,18 @@ const Job = () => {
   const [requestedRecruiterCount, setRequestedRecruiterCount] = useState(0);
 
   const handleCandidateCount = async () => {
-
     const verifiedCandiatesIds = await fetchPostedCandidateProfileByJobId(id);
     setCandidateCount(verifiedCandiatesIds?.length);
   }
 
+  const handleMappedRecruiterCount = async () =>{
+     const mappedRecruiterCount = await fetchMappedRecruiterMemberIds(id)
+     setMappedRecruiterCount(mappedRecruiterCount?.length)
+  }
+
   useEffect(() => {
-    setMappedRecruiterCount(40);
-    setRequestedRecruiterCount(20);
     handleCandidateCount();
+    handleMappedRecruiterCount()
   }, []);
 
   const handleTabChange = (tab) => {
@@ -133,7 +135,7 @@ const Job = () => {
           )}
           {activeTab === 'mRecruiter' && (
             <div className='pt-9 '>
-              <MappedCandidateData />
+              <MappedRecruiterMember jobId={id}></MappedRecruiterMember>
             </div>
           )}
           {activeTab === 'rRecruiter' && (
