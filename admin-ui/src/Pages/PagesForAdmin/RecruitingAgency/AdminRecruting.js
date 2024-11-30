@@ -19,7 +19,7 @@ const AdminRecruiting = () => {
   const r_agency_id = location.state?.r_agency_id;
   const [ragencyDetails, setRAgencyDetails] = useState({});
 
-  const [activeTab, setActiveTab] = useState('Enterprise Details');
+  const [activeTab, setActiveTab] = useState('Recruiting Details');
   const [accountStatus, setAccountStatus] = useState('Active')
   const [openpopup, setOpenpopup] = useState(false);
   const [reason, setReason] = useState('');
@@ -108,8 +108,8 @@ const AdminRecruiting = () => {
               variant="contained"
               disableElevation
               style={{
-                backgroundColor: activeTab === 'Enterprise Details' ? '#315370' : '#e0e0e0',
-                color: activeTab === 'Enterprise Details' ? 'white' : '#000',
+                backgroundColor: activeTab === 'Recruiting Details' ? '#315370' : '#e0e0e0',
+                color: activeTab === 'Recruiting Details' ? 'white' : '#000',
                 fontSize: '20px',
                 height: '50px',
                 textTransform: 'none',
@@ -119,7 +119,7 @@ const AdminRecruiting = () => {
                 marginRight: '-1px',
                 whiteSpace: 'nowrap'
               }}
-              onClick={() => handleTabChange('Enterprise Details')}
+              onClick={() => handleTabChange('Recruiting Details')}
             >
               Recruiting Details
             </Button>
@@ -148,8 +148,8 @@ const AdminRecruiting = () => {
               aria-haspopup="true"
               disableElevation
               style={{
-                backgroundColor: activeTab === 'Jobs' ? '#315370' : '#e0e0e0',
-                color: activeTab === 'Jobs' ? 'white' : '#000',
+                backgroundColor: activeTab === 'Candidate' ? '#315370' : '#e0e0e0',
+                color: activeTab === 'Candidate' ? 'white' : '#000',
                 border: '2px solid white',
                 fontSize: '20px',
                 textTransform: 'none',
@@ -157,7 +157,7 @@ const AdminRecruiting = () => {
                 borderRadius: '0 20px 20px 0',  // Rounded right side
                 width: 'auto',
               }}
-              onClick={() => handleTabChange('Jobs')}
+              onClick={() => handleTabChange('Candidate')}
             >
               Candidate
             </Button>
@@ -167,12 +167,12 @@ const AdminRecruiting = () => {
             {accountStatus === "Active" ? "Inactivate" : "Activate"}
           </button>
 
-          {/* Dialog for inactivating an enterprise */}
+          {/* Dialog for inactivating an recruiting agency */}
           <Dialog open={openpopup} onClose={handleCloseInactivateButton}>
             <DialogTitle>Reason for Inactivating</DialogTitle>
             <DialogContent>
               <DialogContentText>
-                Provide a reason for inactivating this enterprise:
+                Provide a reason for inactivating this recruiting agency:
               </DialogContentText>
               <TextField
                 autoFocus
@@ -194,17 +194,17 @@ const AdminRecruiting = () => {
           </Dialog>
         </div>
         <div>
-          {activeTab === 'Enterprise Details' && (
+          {activeTab === 'Recruiting Details' && (
             <div className='pt-9'>
               <AdminRecruitingDetails recuritingAgenciesDetails={ragencyDetails} />
             </div>
           )}
-          {activeTab === 'Jobs' && (
+          {activeTab === 'Team' && (
             <div className='pt-9 '>
               <RecruitingTeam recuritingAgenciesDetails={ragencyDetails} />
             </div>
           )}
-          {activeTab === 'Team' && (
+          {activeTab === 'Candidate' && (
             <div className='pt-9 '>
               <AdminCandidate recuritingAgenciesDetails={ragencyDetails} />
             </div>
