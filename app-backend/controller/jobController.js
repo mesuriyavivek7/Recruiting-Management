@@ -1061,3 +1061,13 @@ export const getPendingJobCountForEnMember = async (req, res, next) => {
     next(err)
   }
 }
+
+export const getAllotedAcManagerId= async (req, res, next) => {
+    try{
+       const job= await JOBS.findOne({job_id:req.params.jobId,job_status:"Active"})
+       if(!job) return res.status(200).json(null)
+       else return res.status(200).json(job.alloted_account_manager)
+    }catch (err){
+       next(err)
+    }
+}
