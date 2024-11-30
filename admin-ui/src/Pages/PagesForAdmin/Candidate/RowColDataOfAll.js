@@ -1,15 +1,15 @@
-import { fetchCandidateBasicDetailsById, fetchCandidateStatusById, fetchJobBasicDetailsByJobId, fetchVerifiedCandidatesByMAdminId } from '../../../services/api';
-import { cstatus } from '../../../constants/jobStatusMapping';
 import { format, formatDistanceToNowStrict } from 'date-fns';
+import { fetchCandidateBasicDetailsById, fetchCandidateStatusById, fetchJobBasicDetailsByJobId, fetchVerifiedCandidatesByACManagerId } from '../../../services/api';
+import { cstatus } from '../../../constants/jobStatusMapping';
 import { store } from '../../../State/Store';
 
 // columns.js
-export const columns = [
+export const columns = (candiadteStatusChange, handleRowClick) => [
   {
     field: '_id',
-    headerName: 'ID',
+    headerName: 'Sr No.',
     flex: 1,
-    minWidth: 90,
+    minWidth: 80,
     headerAlign: 'left',
     align: 'left',
   },
@@ -24,8 +24,11 @@ export const columns = [
       const first_name = params.row?.candidate_name?.first_name || 'No First Name';
       const last_name = params.row?.candidate_name?.last_name || 'No Last Name';
       return (
-        <div>
-          {first_name} {last_name}
+        <div onClick={() => handleRowClick(params.row._id)} className='cursor-pointer hover:text-blue-500' style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%', padding: '8px 0' }}>
+          <p style={{ margin: 0, lineHeight: 1.5 }}>
+            <span className='hover:underline-offset-1	'>{first_name} {last_name}</span>
+          </p>
+          <p style={{ margin: 0, color: 'gray', lineHeight: 1.5 }}>{params.row.candidate_id}</p>
         </div>
       );
     },
@@ -51,19 +54,44 @@ export const columns = [
     },
   },
   {
-    field: 'email',
-    headerName: 'Email',
-    flex: 2,
+    field: 'candidate_status',
+    headerName: 'Candidate Status',
+    flex: 1,
     minWidth: 200,
     headerAlign: 'left',
     align: 'left',
     renderCell: (params) => (
-      <div>
-        {params.row.email.length > 15
-          ? `${params.row.email.slice(0, 15)}...`
-          : params.row.email}
-      </div>
-    ),
+      <select
+        className='input-field'
+        value={params.row.candidate_status}
+        onChange={(e) => candiadteStatusChange(e, params.row.orgcandidateid)}
+      >
+        <option value='newresume'>New Resume</option>
+        <option value='rs-cc'>Resume Select - Client Recruiter</option>
+        <option value='rs-hm'>Resume Select - Hiring Manager</option>
+        <option value='test-process'>Test in Process</option>
+        <option value='interview-process'>Interview in Process</option>
+        <option value='no-show'>No Show</option>
+        <option value='candidate-not-ins'>Candidate Not Interested</option>
+        <option value='candidate-not-reach'>Candidate Not Reachable</option>
+        <option value='rr-cc'>Resume Reject - Client Recruiter</option>
+        <option value='rr-hm'>Resume Reject - Hiring Manager</option>
+        <option value='r-test'>Resueme in Test</option>
+        <option value='rjt-tech-itw'>Resume Reject in Tech Interview</option>
+        <option value='rjt-hr-itw'>Rejected in HR Interview</option>
+        <option value='s-f-itw'>Selected in Final Interview</option>
+        <option value='s-not-offer'>Selected - Won't be Offered</option>
+        <option value='o-released'>Offer Released</option>
+        <option value='o-accepted'>Offer Accepted</option>
+        <option value='o-rejected'>Offer Rejected</option>
+        <option value='c-not-joine'>Candidate Not Joined</option>
+        <option value='c-joine'>Candidate Joined</option>
+        <option value='quit-after-joine'>Quit After Joining</option>
+        <option value='on-hold'>On Hold</option>
+        <option value='no-action'>No Further Action</option>
+        <option value='use-later'>Use Later</option>
+      </select>
+    )
   },
   {
     field: 'mobile',
@@ -74,34 +102,17 @@ export const columns = [
     align: 'left',
     renderCell: (params) => (
       <div>
-       +{params.row.mobile}
+        +{params.row.mobile}
       </div>
     ),
   },
   {
-    field: 'candidate_status',
-    headerName: 'Candidate Status',
-    flex: 1,
+    field: 'email',
+    headerName: 'Email',
+    flex: 2,
     minWidth: 200,
     headerAlign: 'left',
     align: 'left',
-    renderCell : (params) =>(
-      <span className='p-2 bg-slate-50 text-[16px] rounded-md border'>{params.row.candidate_status}</span>
-    )
-  },
-  {
-    field: 'recruiter_member',
-    headerName: 'Recruiter',
-    flex: 1,
-    minWidth: 200,
-    headerAlign: 'left',
-    align: 'left',
-    renderCell:(params) =>(
-      <div className='w-full h-full flex gap-2 items-center'>
-        <span className='h-8 w-8 text-white bg-blue-500 rounded-full flex justify-center items-center'>{params.row.recruiter_member.charAt(0).toUpperCase()}</span>
-        <span>{params.row.recruiter_member}</span>
-      </div>
-    )
   },
   {
     field: 'notice_period',
@@ -115,20 +126,6 @@ export const columns = [
         {params.row.notice_period} Days
       </div>
     ),
-  },
-  { 
-    field: 'account_manager',
-    headerName: 'Account Manager',
-    flex: 1,
-    minWidth: 180,
-    headerAlign: 'left',
-    align: 'left',
-    renderCell: (params) => (
-      <div className='w-full h-full flex gap-2 items-center'>
-         <span className='w-8 h-8 text-white rounded-full flex justify-center bg-orange-400 items-center'>{params.row.account_manager.charAt(0).toUpperCase()}</span>
-         <span>{params.row.account_manager}</span>
-      </div>
-    )
   },
   {
     field: 'submitted',
@@ -174,9 +171,8 @@ export const columns = [
       );
     },
   },
-  
-  
 ];
+
 
 
 const selectUserData = (state) => state?.admin?.userData;
@@ -185,8 +181,8 @@ const userData = selectUserData(store?.getState());
 // Proceed only if userData.admin_type is 'account_manager'
 let rows = [];
 
-if (userData?.admin_type === "master_admin") {
-  const verifiedCandiatesIds = await fetchVerifiedCandidatesByMAdminId(userData._id);
+if (userData?.admin_type === "account_manager") {
+  const verifiedCandiatesIds = await fetchVerifiedCandidatesByACManagerId(userData._id);
 
   rows = await Promise.all(
     verifiedCandiatesIds.map(async (candidateId, index) => {
