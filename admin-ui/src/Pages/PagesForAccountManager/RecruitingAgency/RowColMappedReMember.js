@@ -2,7 +2,7 @@ export const columns = [
     {
         field: 'id',
         headerName: 'Sr No.',
-        minWidth: 100,
+        minWidth: 120,
         flex: 0.1,
         align: 'left',
         headerAlign: 'left',

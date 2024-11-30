@@ -48,14 +48,14 @@ export const getAllJobs = async (req, res) => {
   }
 };
 
-export const getMainJobDetails = async (req,res,next) =>{
-    try{
-      const job=await JOBS.findOne({job_id:req.params.jobId})
-      if(job) return res.status(200).json(job)
-      else return res.status(200).json(null)
-    }catch(err){
-       next(err)
-    }
+export const getMainJobDetails = async (req, res, next) => {
+  try {
+    const job = await JOBS.findOne({ job_id: req.params.jobId })
+    if (job) return res.status(200).json(job)
+    else return res.status(200).json(null)
+  } catch (err) {
+    next(err)
+  }
 }
 
 
@@ -995,72 +995,72 @@ export const getActiveJobCountForEnMember = async (req, res, next) => {
 }
 
 
-export const searchJobRecruiter=async (req,res,next)=>{
-  const {searchTearm} = req.query
-  try{
-     if(searchTearm){
-     const jobs=await JOBS.find({job_status:'Active'})
+export const searchJobRecruiter = async (req, res, next) => {
+  const { searchTearm } = req.query
+  try {
+    if (searchTearm) {
+      const jobs = await JOBS.find({ job_status: 'Active' })
 
-     //Filter out live jobs
-     const filterJobs=filterOutLiveJobs(jobs,req.params.rememberid)
+      //Filter out live jobs
+      const filterJobs = filterOutLiveJobs(jobs, req.params.rememberid)
 
-     //Filter out job on query base
-     const queryFilter=await Promise.all((filterJobs.map(async (job)=>{
-           const jobBasicDetails=await JOBBASICDETAILS.findById(job.job_basic_details)
+      //Filter out job on query base
+      const queryFilter = await Promise.all((filterJobs.map(async (job) => {
+        const jobBasicDetails = await JOBBASICDETAILS.findById(job.job_basic_details)
 
-           const titleMatch=searchTearm ? new RegExp(searchTearm.toLowerCase(),'i').test(jobBasicDetails.job_title.toLowerCase()) : false
-           
-           return titleMatch ? jobBasicDetails : null
-     })))
+        const titleMatch = searchTearm ? new RegExp(searchTearm.toLowerCase(), 'i').test(jobBasicDetails.job_title.toLowerCase()) : false
 
-     //Remove null values
-     const jobDetails=queryFilter.filter((job)=>job!==null)
+        return titleMatch ? jobBasicDetails : null
+      })))
 
-     res.status(200).json(jobDetails)
-    }else {
-       return res.status(200).json([])
+      //Remove null values
+      const jobDetails = queryFilter.filter((job) => job !== null)
+
+      res.status(200).json(jobDetails)
+    } else {
+      return res.status(200).json([])
     }
 
-  }catch(err){
-     next(err)
+  } catch (err) {
+    next(err)
   }
 }
 
 
-export const searchJobEnterprise = async (req, res, next) =>{
-    const {searchTearm}=req.query
-    try{
-      if(searchTearm){
-        const jobs=await JOBS.find({enterprise_member_id:req.params.enmemberid})
+export const searchJobEnterprise = async (req, res, next) => {
+  const { searchTearm } = req.query
+  try {
+    if (searchTearm) {
+      const jobs = await JOBS.find({ enterprise_member_id: req.params.enmemberid })
 
-        //Filter out jobs
-        const filterJobs= await Promise.all(jobs.map(async (job)=>{
-            const basicDetails=await JOBBASICDETAILS.findById(job.job_basic_details)
+      //Filter out jobs
+      const filterJobs = await Promise.all(jobs.map(async (job) => {
+        const basicDetails = await JOBBASICDETAILS.findById(job.job_basic_details)
 
-            const titleMatch= searchTearm ? new RegExp(searchTearm.toLowerCase(),'i').test(basicDetails.job_title.toLowerCase()) : false
+        const titleMatch = searchTearm ? new RegExp(searchTearm.toLowerCase(), 'i').test(basicDetails.job_title.toLowerCase()) : false
 
-            if(titleMatch){
-               return {
-                job_id:basicDetails.job_id,
-                job_title:basicDetails.job_title,
-                job_status:job.job_status,
-                job_country:basicDetails.country,
-                job_state:basicDetails.state
-               }
-            }else{
-               return null
-            }
-        }))
+        if (titleMatch) {
+          return {
+            job_id: basicDetails.job_id,
+            job_title: basicDetails.job_title,
+            job_status: job.job_status,
+            job_country: basicDetails.country,
+            job_state: basicDetails.state
+          }
+        } else {
+          return null
+        }
+      }))
 
-        //Remove null values
-        const jobDetails = filterJobs.filter((item)=>item!==null)
-        res.status(200).json(jobDetails)
-      }else{
-         return res.status(200).json([])
-      }
-    }catch(err){ 
-      console.log(err)
+      //Remove null values
+      const jobDetails = filterJobs.filter((item) => item !== null)
+      res.status(200).json(jobDetails)
+    } else {
+      return res.status(200).json([])
     }
+  } catch (err) {
+    console.log(err)
+  }
 }
 
 export const getPendingJobCountForEnMember = async (req, res, next) => {
@@ -1072,34 +1072,45 @@ export const getPendingJobCountForEnMember = async (req, res, next) => {
   }
 }
 
-export const getAllotedAcManagerId= async (req, res, next) => {
-    try{
-       const job= await JOBS.findOne({job_id:req.params.jobId,job_status:"Active"})
-       if(!job) return res.status(200).json(null)
-       else return res.status(200).json(job.alloted_account_manager)
-    }catch (err){
-       next(err)
-    }
+export const getAllotedAcManagerId = async (req, res, next) => {
+  try {
+    const job = await JOBS.findOne({ job_id: req.params.jobId, job_status: "Active" })
+    if (!job) return res.status(200).json(null)
+    else return res.status(200).json(job.alloted_account_manager)
+  } catch (err) {
+    next(err)
+  }
 }
 
 export const addCandidateIntoEnMemberReceivedList = async (req, res, next) => {
-   try{
-     const job=await JOBS.findById(req.body.jobid)
-     
-     //For adding candidate id and jobid into enterprise received list
-     await axios.put(`${process.env.APP_SERVER_URL}/enterpriseteam/addintocandidatelist/${job.enterprise_member_id}`,{candidateId:req.body.cid,jobId:req.body.jobid})
-     res.status(200).json("Candidate added into received list")
-   }catch(err){
-     next(err)
-   }
+  try {
+    const job = await JOBS.findById(req.body.jobid)
+
+    //For adding candidate id and jobid into enterprise received list
+    await axios.put(`${process.env.APP_SERVER_URL}/enterpriseteam/addintocandidatelist/${job.enterprise_member_id}`, { candidateId: req.body.cid, jobId: req.body.jobid })
+    res.status(200).json("Candidate added into received list")
+  } catch (err) {
+    next(err)
+  }
 }
 
-export const getMappedRecruiterMemberIds= async (req, res, next) => {
-   try{
-     const job=await JOBS.findOne({job_id:req.params.jobid})
-     if(!job) return res.status(200).json([])
-     else return res.status(200).json(job.mapped_recruiting_agency_member)
-   }catch(err){
-     next(err)
-   }
+export const getMappedRecruiterMemberIds = async (req, res, next) => {
+  try {
+    const job = await JOBS.findOne({ job_id: req.params.jobid })
+    if (!job) return res.status(200).json([])
+    else return res.status(200).json(job.mapped_recruiting_agency_member)
+  } catch (err) {
+    next(err)
+  }
+}
+
+export const getRequestedRecruiterIds = async (req, res, next) => {
+  try {
+    const job = await JOBS.findOne({ job_id: req.params.jobid });
+    if (!job) return res.status(200).json([]);
+    else
+      return res.status(200).json(job?.job_request);
+  } catch (error) {
+    next(error);
+  }
 }
