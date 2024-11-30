@@ -48,6 +48,16 @@ export const getAllJobs = async (req, res) => {
   }
 };
 
+export const getMainJobDetails = async (req,res,next) =>{
+    try{
+      const job=await JOBS.findOne({job_id:req.params.jobId})
+      if(job) return res.status(200).json(job)
+      else return res.status(200).json(null)
+    }catch(err){
+       next(err)
+    }
+}
+
 
 export const allotedJobToAcManager = async (req, res, next) => {
   try {
@@ -1070,4 +1080,16 @@ export const getAllotedAcManagerId= async (req, res, next) => {
     }catch (err){
        next(err)
     }
+}
+
+export const addCandidateIntoEnMemberReceivedList = async (req, res, next) => {
+   try{
+     const job=await JOBS.findById(req.body.jobid)
+     
+     //For adding candidate id and jobid into enterprise received list
+     await axios.put(`${process.env.APP_SERVER_URL}/enterpriseteam/addintocandidatelist/${job.enterprise_member_id}`,{candidateId:req.body.cid,jobId:req.body.jobid})
+     res.status(200).json("Candidate added into received list")
+   }catch(err){
+     next(err)
+   }
 }

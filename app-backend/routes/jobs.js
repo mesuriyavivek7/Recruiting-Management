@@ -5,7 +5,7 @@ import multer from 'multer'
 import { fileURLToPath } from 'url';
 
 
-import { activateJob, getAllJobs, addCandidateProfileList, allotedJobToAcManager, createJobs, deleteJobDraftWithOtherDetails, downloadEvaluationForm, getAllJobDetails, getAllJobDraftDetails, getCandidateScreeningQue, getFrontAcceptedJobDetails, getFrontMappedJobDetails, getJobAttachmentsDetailsForCandidate, getJobBasicDetailsForPreview, getJobCompanyDetailsForPreview, getJobSourcingGuidelinesForPreview, getJobStatusForPreview, getJobCommissionDetailsForPreview, createJobUpdates, getJobUpdates, getJobAttachmentsDetailsForPreview, getAcManagerNameAndMail, viewJobAttachments, downloadJobAttachments, getJobAttachmentFileType, getJobHotMark, changeJobHotMark, getJobCandidatesForPreview, getLiveJobs, getFrontFavouriteJobs, unMapJob, addJobMapRequest, SearchJobByTitle, getJobScreeningQuestionsForPreview, SearchPastJobByTitleAndEnMemberId, getActiveJobCountForEnMember, getPendingJobCountForEnMember, searchJobRecruiter, searchJobEnterprise, getPostedCandidatesByJobId, getAllotedAcManagerId } from '../controller/jobController.js';
+import { activateJob, getAllJobs, addCandidateProfileList, allotedJobToAcManager, createJobs, deleteJobDraftWithOtherDetails, downloadEvaluationForm, getAllJobDetails, getAllJobDraftDetails, getCandidateScreeningQue, getFrontAcceptedJobDetails, getFrontMappedJobDetails, getJobAttachmentsDetailsForCandidate, getJobBasicDetailsForPreview, getJobCompanyDetailsForPreview, getJobSourcingGuidelinesForPreview, getJobStatusForPreview, getJobCommissionDetailsForPreview, createJobUpdates, getJobUpdates, getJobAttachmentsDetailsForPreview, getAcManagerNameAndMail, viewJobAttachments, downloadJobAttachments, getJobAttachmentFileType, getJobHotMark, changeJobHotMark, getJobCandidatesForPreview, getLiveJobs, getFrontFavouriteJobs, unMapJob, addJobMapRequest, SearchJobByTitle, getJobScreeningQuestionsForPreview, SearchPastJobByTitleAndEnMemberId, getActiveJobCountForEnMember, getPendingJobCountForEnMember, searchJobRecruiter, searchJobEnterprise, getPostedCandidatesByJobId, getAllotedAcManagerId, getMainJobDetails, addCandidateIntoEnMemberReceivedList } from '../controller/jobController.js';
 import { craeteJobBasicDeatils,showJobDetail, getJobBasicDetails, getJobDetailsByEnId, getJobDetailsById } from '../controller/jobBasicController.js'
 import { createJobDraft, deleteJobDraft } from '../controller/jobDraftController.js'
 import { createJobCommission,showJobCommission, getJobCommissionDetails } from '../controller/jobCommissionController.js'
@@ -66,6 +66,8 @@ router.post('/',createJobs)
 router.post('/basicjob/:orgjobid',craeteJobBasicDeatils)
 router.get('/showjob/:id',showJobDetail);
 
+//For getting main job details by job_id
+router.get('/main-job/:jobId',getMainJobDetails)
 
 
 //for creating job commission details
@@ -259,5 +261,8 @@ router.get('/search-job-enterprise/:enmemberid',searchJobEnterprise)
 
 //Get allocated Ac manager ids
 router.get('/get-acmanager-id/:jobId',getAllotedAcManagerId)
+
+//Adding CandidateId and jobId into enterprise member 
+router.post('/add-candidate-enmember',addCandidateIntoEnMemberReceivedList)
 
 export default router

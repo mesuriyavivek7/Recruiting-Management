@@ -68,7 +68,7 @@ export const columns = [
     field: 'email',
     headerName: 'Email',
     flex: 2,
-    minWidth: 230,
+    minWidth: 250,
     headerAlign: 'left',
     align: 'left',
     renderCell: (params) => (
@@ -102,6 +102,20 @@ export const columns = [
         {params.row.notice_period} Days
       </div>
     ),
+  },
+  {
+    field: 'recruiter_member',
+    headerName: 'Recruiter Member',
+    flex: 1,
+    minWidth: 200,
+    headerAlign: 'left',
+    align: 'left',
+    renderCell: (params) => (
+      <div className='w-full h-full flex gap-1 items-center'>
+         <span className='w-8 h-8 bg-blue-500 text-white rounded-full flex justify-center items-center'>{params.row.recruiter_member.charAt(0).toUpperCase()}</span>
+         <span>{params.row.recruiter_member}</span>
+      </div>
+    )
   },
   {
     field: 'submitted',

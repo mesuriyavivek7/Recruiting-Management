@@ -126,6 +126,15 @@ export const fetchJobDetailsById = async (job_id) => {
     }
 }
 
+export const fetchJobMainDetails = async (job_id) =>{
+      try {
+        const response = await axios.get(`${app_be_uri}/job/main-job/${job_id}`)
+        return response.data
+      } catch(error) {
+        console.error("Error while fetching the job main details : ",error)
+      }
+}
+
 //get the job basic details to show futher details in enterprise table
 export const fetchJobBasicDetailsByEnId = async (enterprise_id) => {
     try {

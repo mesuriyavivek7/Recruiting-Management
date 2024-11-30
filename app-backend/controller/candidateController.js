@@ -565,3 +565,17 @@ export const searchEnterpriseCandidate=async (req,res,next)=>{
      next(err)
    }
 }
+
+export const addCandidateIntoRecruiterSubmitList= async (req , res, next)=>{
+    try{
+       const candidate=await CANDIDATE.findById(req.body.cid)
+       //Adding candidate id into recruiter member submit list
+       await axios.put(`${process.env.APP_SERVER_URL}/recruitingteam/addintocandidatelist/${candidate.recruiter_member_id}`,{candidateId:req.body.cid,jobId:req.body.jobid})
+       
+       res.status(200).json("Candidate added into recruiter team submited list")
+
+    }catch(err){ 
+      console.log(err)
+      next(err)
+    }
+}

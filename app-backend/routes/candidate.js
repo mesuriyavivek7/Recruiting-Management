@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url';
 
 
 import { cancelProcess, checkParseDetails, createAndParseResume, downloadResumeDocs, getResumeFileName, getResumeFilePath, marksAsCompleted, removeResumeFile} from '../controller/resumeController.js';
-import { addAcManager, approveCandidate, changeCandidateStatus, changeMultipleCandidateStatus, createCandidate, downloadCandidateAttachments, exportDataEnterprise, exportDataRecruiter, getAcManagerName, getAllCandidates, getCandidate, getCandidateAllDetails, getCandidateAttachmentFileType, getCandidateBasicDetailsById, getCandidateForMultipleAction, getCandidateStatusById, getJobBasicDetails, getJobCandidateForPreview, getJobResumeSubmitCount, getRecruiterMemberIds, searchEnterpriseCandidate, searchRecruiterCandidate, updateCandidateRemarks, viewCandidateAttachments } from '../controller/candidateController.js';
+import { addAcManager, addCandidateIntoRecruiterSubmitList, approveCandidate, changeCandidateStatus, changeMultipleCandidateStatus, createCandidate, downloadCandidateAttachments, exportDataEnterprise, exportDataRecruiter, getAcManagerName, getAllCandidates, getCandidate, getCandidateAllDetails, getCandidateAttachmentFileType, getCandidateBasicDetailsById, getCandidateForMultipleAction, getCandidateStatusById, getJobBasicDetails, getJobCandidateForPreview, getJobResumeSubmitCount, getRecruiterMemberIds, searchEnterpriseCandidate, searchRecruiterCandidate, updateCandidateRemarks, viewCandidateAttachments } from '../controller/candidateController.js';
 import { checkEmailAndMobile, createCandidateBasicDetails, getAllCandidateBasicDetails, getCandidateBasicDetailsByRecruiterId } from '../controller/candidateBasicController.js';
 import { uploadCandidateAttachments } from '../controller/candidateAttachmentsController.js';
 import { uploadCandidateConsetProof } from '../controller/candidateConsetController.js';
@@ -182,6 +182,10 @@ router.get('/search-candidate-recruiter/:rememberid',searchRecruiterCandidate)
 
 //For search Candidate profiles on Enterprise side
 router.get('/search-candidate-enterprise/:enmemberid',searchEnterpriseCandidate)
+
+//For Adding particuler candidate into recruiter team member submited candidate list
+router.post('/add-candidate-reteam',addCandidateIntoRecruiterSubmitList)
+
 
 export default router
 
