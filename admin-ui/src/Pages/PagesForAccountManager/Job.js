@@ -1,14 +1,11 @@
-
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom';
-
 import { Button } from '@mui/material';
-
 import JobDetails from './JobDetails';
 import MappedRecruiterMember from './RecruitingAgency/MappedRecruiterMember';
-import RequestedCandidateData from './Candidate/RequestedCandidateData ';
 import AllCandidateDataForEachJob from './Job/AllCandidateDataForEachJob';
-import { fetchPostedCandidateProfileByJobId , fetchMappedRecruiterMemberIds } from '../../services/api';
+import { fetchPostedCandidateProfileByJobId, fetchMappedRecruiterMemberIds, fetchRequestedRecruiterIds } from '../../services/api';
+import RequestedRecruiter from './RecruitingAgency/RequestedRecruiter';
 
 const Job = () => {
   const { id } = useParams();
@@ -22,14 +19,20 @@ const Job = () => {
     setCandidateCount(verifiedCandiatesIds?.length);
   }
 
-  const handleMappedRecruiterCount = async () =>{
-     const mappedRecruiterCount = await fetchMappedRecruiterMemberIds(id)
-     setMappedRecruiterCount(mappedRecruiterCount?.length)
+  const handleMappedRecruiterCount = async () => {
+    const mappedRecruiterCount = await fetchMappedRecruiterMemberIds(id)
+    setMappedRecruiterCount(mappedRecruiterCount?.length)
+  }
+
+  const handleRequestedRecruiterCount = async () => {
+    const recruiterMemberIds = await fetchRequestedRecruiterIds(id);
+    setRequestedRecruiterCount(recruiterMemberIds.length)
   }
 
   useEffect(() => {
     handleCandidateCount();
-    handleMappedRecruiterCount()
+    handleMappedRecruiterCount();
+    handleRequestedRecruiterCount();
   }, []);
 
   const handleTabChange = (tab) => {
@@ -42,7 +45,6 @@ const Job = () => {
       <div className='pt-6'>
 
         <div className="flex gap-0">
-
           <Button
             id="demo-customized-button"
             aria-haspopup="true"
@@ -61,7 +63,7 @@ const Job = () => {
             }}
             onClick={() => handleTabChange('Job')}
           >
-             Job Details
+            Job Details
           </Button>
 
           {/* Candidate Button */}
@@ -140,7 +142,7 @@ const Job = () => {
           )}
           {activeTab === 'rRecruiter' && (
             <div className='pt-9 '>
-              <RequestedCandidateData />
+              <RequestedRecruiter jobId={id} />
             </div>
           )}
         </div>

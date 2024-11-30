@@ -126,24 +126,35 @@ export const fetchJobDetailsById = async (job_id) => {
     }
 }
 
-export const fetchJobMainDetails = async (job_id) =>{
-      try {
+export const fetchJobMainDetails = async (job_id) => {
+    try {
         const response = await axios.get(`${app_be_uri}/job/main-job/${job_id}`)
         return response.data
-      } catch(error) {
-        console.error("Error while fetching the job main details : ",error)
-      }
+    } catch (error) {
+        console.error("Error while fetching the job main details : ", error)
+    }
 }
 
 //For getting mapped recruiter member ids by jobid
 export const fetchMappedRecruiterMemberIds = async (job_id) => {
-     try{
+    try {
         const response = await axios.get(`${app_be_uri}/job/get-mapped-recruiter/${job_id}`)
         return response.data
-     }catch(error) {
-        console.error("Error while fetching mapped recruiter ids : ",error)
-        
-     }
+    } catch (error) {
+        console.error("Error while fetching mapped recruiter ids : ", error)
+
+    }
+}
+
+//for getting requested recruiter id's by jobid
+export const fetchRequestedRecruiterIds = async (job_id) => {
+    try {
+        const response = await axios.get(`${app_be_uri}/job/get-requested-recruiter/${job_id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error while fetching requested recruiters ids : ", error);
+        throw error;
+    }
 }
 
 //get the job basic details to show futher details in enterprise table
