@@ -6,7 +6,7 @@ import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 
 import { useParams } from 'react-router-dom';
-import { FaBusinessTime,FaBullseye,FaThumbsUp,FaBan,FaStar,FaQuestionCircle ,FaFilePdf,FaFileAlt,FaFileAudio, FaMapMarkerAlt, FaBriefcase, FaInfoCircle,FaPaperclip, FaUsers,FaShareAlt,FaExternalLinkAlt,FaDollarSign,FaClock,FaCalendarAlt } from 'react-icons/fa'; // React Icons
+import {  FaBriefcase, FaInfoCircle,FaPaperclip, } from 'react-icons/fa'; // React Icons
 import { Button, Card, Divider, Grid, Typography } from '@mui/material';
 import { FaBuilding } from "react-icons/fa";
 
