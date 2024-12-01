@@ -1,13 +1,11 @@
-
-
 import { useState } from 'react'; 
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 
-import { useParams } from 'react-router-dom';
-import { FaBusinessTime,FaBullseye,FaThumbsUp,FaBan,FaStar,FaQuestionCircle ,FaFilePdf,FaFileAlt,FaFileAudio, FaMapMarkerAlt, FaBriefcase, FaInfoCircle,FaPaperclip, FaUsers,FaShareAlt,FaExternalLinkAlt,FaDollarSign,FaClock,FaCalendarAlt } from 'react-icons/fa'; // React Icons
-import { Button, Card, Divider, Grid, Typography } from '@mui/material';
+
+import { FaBriefcase, FaInfoCircle } from 'react-icons/fa'; // React Icons
+import { Button, Divider, Grid, Typography } from '@mui/material';
 import { FaBuilding } from "react-icons/fa";
 
 
@@ -57,18 +55,15 @@ function AdminCandidateDetails() {
       >
         <Tab value="one" label="Candidate Details" icon={<FaBriefcase className="text-lg" />} />
         <Tab value="two" label="Attachments" icon={<FaBuilding className="text-lg" />} />
-       
-
-
         <Tab value="three" label="Screening Questions" icon={<FaInfoCircle className="text-lg" />} />
       </Tabs>
       <div className="mt-6">
         {value==='one' && (
           <div>
       {/* Candidate Basic Details */}
-      <Grid container spacing={2} sx={{ pt: "15px", mb: 2 }}>
+      <div container spacing={2} sx={{ pt: "15px", mb: 2 }}>
   <Grid item xs={12} sm={4}>
-    <Typography variant="h6" sx={{ fontSize: "24px" }}>
+    <Typography variant="h6" sx={{ fontSize: "24px", mb:1 }}>
       Candidate Basic Details
     </Typography>
   </Grid>
@@ -114,7 +109,7 @@ function AdminCandidateDetails() {
           </Box>
         </Grid>
 
-        {/* Gender */}
+        {/* Country */}
         <Grid item xs={12} sm={6}>
           <Box
             sx={{
@@ -125,13 +120,13 @@ function AdminCandidateDetails() {
             }}
           >
             <Typography variant="body1">
-              <strong>Gender:</strong> Male
+              <strong>Country: </strong> India
             </Typography>
           </Box>
         </Grid>
 
-        {/* Date of Birth */}
-        <Grid item xs={12} sm={6}>
+         {/* Current Location */}
+         <Grid item xs={12} sm={6}>
           <Box
             sx={{
               border: "1px solid #ccc",
@@ -141,182 +136,22 @@ function AdminCandidateDetails() {
             }}
           >
             <Typography variant="body1">
-              <strong>Date of Birth:</strong> 15th August 1990
+              <strong>Current Location: </strong> Ahmedabad
             </Typography>
           </Box>
         </Grid>
+        
 
-        {/* Nationality */}
-        <Grid item xs={12} sm={6}>
-          <Box
-            sx={{
-              border: "1px solid #ccc",
-              borderRadius: "4px",
-              padding: "8px",
-              backgroundColor: "#fff",
-            }}
-          >
-            <Typography variant="body1">
-              <strong>Nationality:</strong> Indian
-            </Typography>
-          </Box>
-        </Grid>
-
-        {/* Marital Status */}
-        <Grid item xs={12} sm={6}>
-          <Box
-            sx={{
-              border: "1px solid #ccc",
-              borderRadius: "4px",
-              padding: "8px",
-              backgroundColor: "#fff",
-            }}
-          >
-            <Typography variant="body1">
-              <strong>Marital Status:</strong> Married
-            </Typography>
-          </Box>
-        </Grid>
-
-        {/* Edelweiss Relative 1 */}
-        <Grid item xs={12}>
-        <Typography variant="body1">
-      <strong>Edelweiss Relative 1:</strong>
-    </Typography>
-  <Box
-    sx={{
-      border: "1px solid #ccc",
-      borderRadius: "4px",
-      padding: "8px",
-      backgroundColor: "#fff",
-      marginTop: "16px",
-    }}
-  >
-    
-
-    <Grid container spacing={4} >
-      <Grid item xs={12} sm={6}>
-      <Box
-            sx={{
-              border: "1px solid #ccc",
-              borderRadius: "4px",
-              padding: "8px",
-              backgroundColor: "#fff",
-               }}
-          >
-        <Typography variant="body1">
-          <strong>Name:</strong> Alice Doe
-        </Typography></Box>
-      </Grid>
-
-      <Grid item xs={12} sm={6}>
-      <Box
-            sx={{
-              border: "1px solid #ccc",
-              borderRadius: "4px",
-              padding: "8px",
-              backgroundColor: "#fff",
-            }}
-          >
-        <Typography variant="body1">
-          <strong>Relationship:</strong> Sister
-        </Typography>
-        </Box>
-      </Grid>
-
-      <Grid item xs={12} sm={6}>
-      <Box
-            sx={{
-              border: "1px solid #ccc",
-              borderRadius: "4px",
-              padding: "8px",
-              backgroundColor: "#fff",
-            }}
-          >
-        <Typography variant="body1">
-          <strong>Employee ID:</strong> 123456
-        </Typography>
-        </Box>
-      </Grid>
-    </Grid>
-  </Box>
-</Grid>
-
-        {/* Edelweiss Relative 2 */}
-        <Grid item xs={12}>
-          
-        <Typography variant="body1">
-      <strong>Edelweiss Relative 2:</strong>
-    </Typography>
-  <Box
-    sx={{
-      border: "1px solid #ccc",
-      borderRadius: "4px",
-      padding: "8px",
-      backgroundColor: "#fff",
-      marginTop: "16px",
-    }}
-  >
-    
-
-    <Grid container spacing={4} >
-      <Grid item xs={12} sm={6}>
-      <Box
-            sx={{
-              border: "1px solid #ccc",
-              borderRadius: "4px",
-              padding: "8px",
-              backgroundColor: "#fff",
-               }}
-          >
-        <Typography variant="body1">
-          <strong>Name:</strong> Alice Doe
-        </Typography></Box>
-      </Grid>
-
-      <Grid item xs={12} sm={6}>
-      <Box
-            sx={{
-              border: "1px solid #ccc",
-              borderRadius: "4px",
-              padding: "8px",
-              backgroundColor: "#fff",
-            }}
-          >
-        <Typography variant="body1">
-          <strong>Relationship:</strong> Sister
-        </Typography>
-        </Box>
-      </Grid>
-
-      <Grid item xs={12} sm={6}>
-      <Box
-            sx={{
-              border: "1px solid #ccc",
-              borderRadius: "4px",
-              padding: "8px",
-              backgroundColor: "#fff",
-            }}
-          >
-        <Typography variant="body1">
-          <strong>Employee ID:</strong> 123456
-        </Typography>
-        </Box>
-      </Grid>
-    </Grid>
-  </Box>
-</Grid>
       </Grid>
     </Box>
   </Grid>
-</Grid>
-
+</div>
       <Divider sx={{ mb: 2,pt:2 }} />
 
-      {/* Contact Details */}
-      <Grid container spacing={2} sx={{ pt: "15px", mb: 2 }}>
+       {/* Contact Details */}
+       <div container spacing={2} sx={{ pt: "15px", mb: 2 }}>
         <Grid item xs={12} sm={4}>
-          <Typography variant="h6" sx={{ fontSize: "24px" }}>
+          <Typography variant="h6" sx={{ fontSize: "24px", mb:1 }}>
             Contact Details
           </Typography>
         </Grid>
@@ -329,6 +164,7 @@ function AdminCandidateDetails() {
               boxShadow: 3,
             }}
           >
+          {/* Primary Email addres */}
             <Grid container spacing={4}>
               <Grid item xs={12} sm={6}>
                 <Box
@@ -340,10 +176,12 @@ function AdminCandidateDetails() {
                   }}
                 >
                   <Typography variant="body1">
-                    <strong>Email:</strong> john.doe@example.com
+                    <strong>Primary Email:</strong> john.doe@example.com
                   </Typography>
                 </Box>
               </Grid>
+              
+              {/* Additional Email Address */}
               <Grid item xs={12} sm={6}>
                 <Box
                   sx={{
@@ -354,10 +192,12 @@ function AdminCandidateDetails() {
                   }}
                 >
                   <Typography variant="body1">
-                    <strong>Contry Code:</strong> +91
+                    <strong>Additional Email:</strong> vivekmesuriya6@gmail.com
                   </Typography>
                 </Box>
               </Grid>
+
+              {/* Primary Contact No */}
               <Grid item xs={12} sm={6}>
                 <Box
                   sx={{
@@ -368,260 +208,192 @@ function AdminCandidateDetails() {
                   }}
                 >
                   <Typography variant="body1">
-                    <strong>Phone:</strong> +9876543210
+                    <strong>Primary Contact No:</strong> +9876543210
                   </Typography>
                 </Box>
               </Grid>
+
+               {/* Additional Contact No */}
+               <Grid item xs={12} sm={6}>
+                <Box
+                  sx={{
+                    border: "1px solid #ccc",
+                    borderRadius: "4px",
+                    padding: "8px",
+                    backgroundColor: "#fff",
+                  }}
+                >
+                  <Typography variant="body1">
+                    <strong>Additional Contact No:</strong> +9876543210
+                  </Typography>
+                </Box>
+              </Grid>
+
             </Grid>
           </Box>
         </Grid>
-      </Grid>
-      <Divider sx={{ mb: 2,pt:2 }} />
-
-      {/* Address Details */}
-      <Grid container spacing={2} sx={{ pt: "15px", mb: 2 }}>
-  <Grid item xs={12} sm={4}>
-    <Typography variant="h6" sx={{ fontSize: "24px" }}>
-      Address Details
-    </Typography>
-  </Grid>
-  <Grid item xs={12} sm={8}>
-    <Box
-      sx={{
-        backgroundColor: "white",
-        borderRadius: "8px",
-        padding: 2,
-        boxShadow: 3,
-      }}
-    >
-      
-      <Grid container spacing={4}>
-        {/* Current Address */}
-        <Grid item xs={12}>
-  <Typography variant="body1" sx={{ fontWeight: "bold" }}>
-    <strong>Current Address</strong>
-  </Typography>
-  <Box
-    sx={{
-      border: "1px solid #ccc",
-      borderRadius: "4px",
-      padding: "8px",
-      backgroundColor: "#fff",
-      marginTop: "16px",
-    }}
-  >
-    <Grid container spacing={4}>
-      <Grid item xs={12} sm={6}>
-        <Box
-          sx={{
-            border: "1px solid #ccc",
-            borderRadius: "4px",
-            padding: "8px",
-            backgroundColor: "#fff",
-          }}
-        >
-          <Typography variant="body1">
-            <strong>Flat/House/Wing Number:</strong> ddd
-          </Typography>
-        </Box>
-      </Grid>
-
-      <Grid item xs={12} sm={6}>
-        <Box
-          sx={{
-            border: "1px solid #ccc",
-            borderRadius: "4px",
-            padding: "8px",
-            backgroundColor: "#fff",
-          }}
-        >
-          <Typography variant="body1">
-            <strong>Street/Locality/Area:</strong> Name
-          </Typography>
-        </Box>
-      </Grid>
-
-      <Grid item xs={12} sm={6}>
-        <Box
-          sx={{
-            border: "1px solid #ccc",
-            borderRadius: "4px",
-            padding: "8px",
-            backgroundColor: "#fff",
-          }}
-        >
-          <Typography variant="body1">
-            <strong>Landmark:</strong> Na
-          </Typography>
-        </Box>
-      </Grid>
-
-      <Grid item xs={12} sm={6}>
-        <Box
-          sx={{
-            border: "1px solid #ccc",
-            borderRadius: "4px",
-            padding: "8px",
-            backgroundColor: "#fff",
-          }}
-        >
-          <Typography variant="body1">
-            <strong>Pincode:</strong> na
-          </Typography>
-        </Box>
-      </Grid>
-
-      <Grid item xs={12} sm={6}>
-        <Box
-          sx={{
-            border: "1px solid #ccc",
-            borderRadius: "4px",
-            padding: "8px",
-            backgroundColor: "#fff",
-          }}
-        >
-          <Typography variant="body1">
-            <strong>Country:</strong> na
-          </Typography>
-        </Box>
-      </Grid>
-    </Grid>
-  </Box>
-</Grid>
-
-
-        {/* Permanent Address */}
-        {!userData.address?.permanent?.sameAsCurrent && (
-         <Grid item xs={12}>
-         <Typography variant="body1" sx={{ fontWeight: "bold" }}>
-           <strong>Permanent Address</strong>
-         </Typography>
-         <Box
-           sx={{
-             border: "1px solid #ccc",
-             borderRadius: "4px",
-             padding: "8px",
-             backgroundColor: "#fff",
-             marginTop: "16px",
-           }}
-         >
-           <Grid container spacing={4}>
-             <Grid item xs={12} sm={6}>
-               <Box
-                 sx={{
-                   border: "1px solid #ccc",
-                   borderRadius: "4px",
-                   padding: "8px",
-                   backgroundColor: "#fff",
-                 }}
-               >
-                 <Typography variant="body1">
-                   <strong>Flat/House/Wing Number:</strong> ddd
-                 </Typography>
-               </Box>
-             </Grid>
-       
-             <Grid item xs={12} sm={6}>
-               <Box
-                 sx={{
-                   border: "1px solid #ccc",
-                   borderRadius: "4px",
-                   padding: "8px",
-                   backgroundColor: "#fff",
-                 }}
-               >
-                 <Typography variant="body1">
-                   <strong>Street/Locality/Area:</strong> Name
-                 </Typography>
-               </Box>
-             </Grid>
-       
-             <Grid item xs={12} sm={6}>
-               <Box
-                 sx={{
-                   border: "1px solid #ccc",
-                   borderRadius: "4px",
-                   padding: "8px",
-                   backgroundColor: "#fff",
-                 }}
-               >
-                 <Typography variant="body1">
-                   <strong>Landmark:</strong> Na
-                 </Typography>
-               </Box>
-             </Grid>
-       
-             <Grid item xs={12} sm={6}>
-               <Box
-                 sx={{
-                   border: "1px solid #ccc",
-                   borderRadius: "4px",
-                   padding: "8px",
-                   backgroundColor: "#fff",
-                 }}
-               >
-                 <Typography variant="body1">
-                   <strong>Pincode:</strong> na
-                 </Typography>
-               </Box>
-             </Grid>
-       
-             <Grid item xs={12} sm={6}>
-               <Box
-                 sx={{
-                   border: "1px solid #ccc",
-                   borderRadius: "4px",
-                   padding: "8px",
-                   backgroundColor: "#fff",
-                 }}
-               >
-           <Typography variant="body1">
-             <strong>Country:</strong> na
-                 </Typography>
-           </Box>       </Grid>
-           <Grid item xs={12} sm={6}>
-               <Box
-                 sx={{
-                   border: "1px solid #ccc",
-                   borderRadius: "4px",
-                   padding: "8px",
-                   backgroundColor: "#fff",
-                 }}
-               >
-           <Typography variant="body1">
-             <strong>State:</strong> na
-                 </Typography>
-           </Box>       </Grid>
-           <Grid item xs={12} sm={6}>
-               <Box
-                 sx={{
-                   border: "1px solid #ccc",
-                   borderRadius: "4px",
-                   padding: "8px",
-                   backgroundColor: "#fff",
-                 }}
-               >
-           <Typography variant="body1">
-             <strong>City:</strong> na
-                 </Typography>
-           </Box>       </Grid>
-           </Grid>
-         </Box>
-       </Grid>
-       
-                )}
-  </Grid>
-    </Box>
-  </Grid>
-</Grid>
+      </div>
 
       <Divider sx={{ mb: 2,pt:2 }} />
 
-      {/* Work Experience */}
-      <Grid container spacing={2} sx={{ pt: "15px", mb: 2 }}>
+    {/* Employment Details */}
+    <div container spacing={2} sx={{ pt: "15px", mb: 2 }}>
+        <Grid item xs={12} sm={4}>
+          <Typography variant="h6" sx={{ fontSize: "24px", mb:1 }}>
+            Employment Details
+          </Typography>
+        </Grid>
+        <Grid item xs={12} sm={8}>
+          <Box
+            sx={{
+              backgroundColor: "white",
+              borderRadius: "8px",
+              padding: 2,
+              boxShadow: 3,
+            }}
+          >
+          {/* Primary Email addres */}
+            <Grid container spacing={4}>
+              <Grid item xs={12} sm={6}>
+                <Box
+                  sx={{
+                    border: "1px solid #ccc",
+                    borderRadius: "4px",
+                    padding: "8px",
+                    backgroundColor: "#fff",
+                  }}
+                >
+                  <Typography variant="body1">
+                    <strong>Current Company: </strong> None
+                  </Typography>
+                </Box>
+              </Grid>
+              
+              {/* Additional Email Address */}
+              <Grid item xs={12} sm={6}>
+                <Box
+                  sx={{
+                    border: "1px solid #ccc",
+                    borderRadius: "4px",
+                    padding: "8px",
+                    backgroundColor: "#fff",
+                  }}
+                >
+                  <Typography variant="body1">
+                    <strong>Current Designation: </strong> CEO
+                  </Typography>
+                </Box>
+              </Grid>
+
+              {/* Experience Contact No */}
+              <Grid item xs={12} sm={6}>
+                <Box
+                  sx={{
+                    border: "1px solid #ccc",
+                    borderRadius: "4px",
+                    padding: "8px",
+                    backgroundColor: "#fff",
+                  }}
+                >
+                  <Typography variant="body1">
+                    <strong>Experience: </strong> 4
+                  </Typography>
+                </Box>
+              </Grid>
+
+               {/* Relevent Experience */}
+               <Grid item xs={12} sm={6}>
+                <Box
+                  sx={{
+                    border: "1px solid #ccc",
+                    borderRadius: "4px",
+                    padding: "8px",
+                    backgroundColor: "#fff",
+                  }}
+                >
+                  <Typography variant="body1">
+                    <strong>Relavent Experience: </strong> 5
+                  </Typography>
+                </Box>
+              </Grid>
+
+              {/* Current Annual Salary */}
+              <Grid item xs={12} sm={6}>
+                <Box
+                  sx={{
+                    border: "1px solid #ccc",
+                    borderRadius: "4px",
+                    padding: "8px",
+                    backgroundColor: "#fff",
+                  }}
+                >
+                  <Typography variant="body1">
+                    <strong>Current Annual Salary: </strong> 5
+                  </Typography>
+                </Box>
+              </Grid>
+
+               {/* Expected Annual Salary */}
+               <Grid item xs={12} sm={6}>
+                <Box
+                  sx={{
+                    border: "1px solid #ccc",
+                    borderRadius: "4px",
+                    padding: "8px",
+                    backgroundColor: "#fff",
+                  }}
+                >
+                  <Typography variant="body1">
+                    <strong>Expected Annual Salary: </strong> 5
+                  </Typography>
+                </Box>
+              </Grid>
+
+              {/* Notice Peroid */}
+              <Grid item xs={12} sm={6}>
+                <Box
+                  sx={{
+                    border: "1px solid #ccc",
+                    borderRadius: "4px",
+                    padding: "8px",
+                    backgroundColor: "#fff",
+                  }}
+                >
+                  <Typography variant="body1">
+                    <strong>Notice Period: </strong> 5
+                  </Typography>
+                </Box>
+              </Grid>
+
+              {/* Salary Remarks */}
+              <Grid item xs={12} sm={6}>
+                <Box
+                  sx={{
+                    border: "1px solid #ccc",
+                    borderRadius: "4px",
+                    padding: "8px",
+                    backgroundColor: "#fff",
+                  }}
+                >
+                  <Typography variant="body1">
+                    <strong>Salary Remarks: </strong> 5
+                  </Typography>
+                </Box>
+              </Grid>
+
+
+            </Grid>
+          </Box>
+        </Grid>
+      </div>
+
+      <Divider sx={{ mb: 2,pt:2 }} />
+
+          {/* Education */}
+          <div container spacing={2} sx={{ pt: "15px", mb: 2 }}>
   <Grid item xs={12} sm={4}>
     <Typography variant="h6" sx={{ fontSize: "24px" }}>
-      Work Experience
+      Education Details
     </Typography>
   </Grid>
   <Grid item xs={12} sm={8}>
@@ -634,7 +406,8 @@ function AdminCandidateDetails() {
     }}
   >
     <Grid container spacing={4}>
-      <Grid item xs={12} sm={6}>
+      {/* Education Qualification */}
+      <Grid item xs={12} sm={12}>
         <Box
           sx={{
             border: "1px solid #ccc",
@@ -644,393 +417,32 @@ function AdminCandidateDetails() {
           }}
         >
           <Typography variant="body1">
-            <strong>Company:</strong> XYZ Pvt. Ltd.
+            <strong>Education Qualification:</strong> Undergraduate
+          </Typography>
+        </Box>
+      </Grid>
+       
+       {/* Candidate Summary  */}
+      <Grid item xs={12} sm={12}>
+        <Box
+          sx={{
+            border: "1px solid #ccc",
+            borderRadius: "4px",
+            padding: "8px",
+            backgroundColor: "#fff",
+          }}
+        >
+          <Typography variant="body1">
+            <strong>Candidate Summary / Cover Note:</strong> Bachelor of Technology in IT
           </Typography>
         </Box>
       </Grid>
 
-      <Grid item xs={12} sm={6}>
-        <Box
-          sx={{
-            border: "1px solid #ccc",
-            borderRadius: "4px",
-            padding: "8px",
-            backgroundColor: "#fff",
-          }}
-        >
-          <Typography variant="body1">
-            <strong>Job Title:</strong> Software Engineer
-          </Typography>
-        </Box>
-      </Grid>
-
-      <Grid item xs={12} sm={6}>
-        <Box
-          sx={{
-            border: "1px solid #ccc",
-            borderRadius: "4px",
-            padding: "8px",
-            backgroundColor: "#fff",
-          }}
-        >
-          <Typography variant="body1">
-            <strong>Job Location:</strong> Mumbai, India
-          </Typography>
-        </Box>
-      </Grid>
-
-      <Grid item xs={12} sm={6}>
-        <Box
-          sx={{
-            border: "1px solid #ccc",
-            borderRadius: "4px",
-            padding: "8px",
-            backgroundColor: "#fff",
-          }}
-        >
-          <Typography variant="body1">
-            <strong>From Date:</strong> January 2020
-          </Typography>
-        </Box>
-      </Grid>
-    </Grid>
+     </Grid>
   </Box>
 </Grid>
 
-</Grid>
-
-      <Divider sx={{ mb: 2,pt:2 }} />
-
-      {/* References */}
-      <Grid container spacing={2} sx={{ pt: "15px", mb: 2 }}>
-  <Grid item xs={12} sm={4}>
-    <Typography variant="h6" sx={{ fontSize: "24px" }}>
-      References
-    </Typography>
-  </Grid>
-  <Grid item xs={12} sm={8}>
-  <Box
-    sx={{
-      backgroundColor: "white",
-      borderRadius: "8px",
-      padding: 2,
-      boxShadow: 3,
-    }}
-  >
-    <Grid container spacing={4}>
-      <Grid item xs={12} sm={6}>
-        <Box
-          sx={{
-            border: "1px solid #ccc",
-            borderRadius: "4px",
-            padding: "8px",
-            backgroundColor: "#fff",
-          }}
-        >
-          <Typography variant="body1">
-            <strong>Reference Name:</strong> Mr. ABC
-          </Typography>
-        </Box>
-      </Grid>
-
-      <Grid item xs={12} sm={6}>
-        <Box
-          sx={{
-            border: "1px solid #ccc",
-            borderRadius: "4px",
-            padding: "8px",
-            backgroundColor: "#fff",
-          }}
-        >
-          <Typography variant="body1">
-            <strong>Company:</strong> ABC Corp.
-          </Typography>
-        </Box>
-      </Grid>
-
-      <Grid item xs={12} sm={6}>
-        <Box
-          sx={{
-            border: "1px solid #ccc",
-            borderRadius: "4px",
-            padding: "8px",
-            backgroundColor: "#fff",
-          }}
-        >
-          <Typography variant="body1">
-            <strong>Designation:</strong> Senior Manager
-          </Typography>
-        </Box>
-      </Grid>
-
-      <Grid item xs={12} sm={6}>
-        <Box
-          sx={{
-            border: "1px solid #ccc",
-            borderRadius: "4px",
-            padding: "8px",
-            backgroundColor: "#fff",
-          }}
-        >
-          <Typography variant="body1">
-            <strong>Phone Country Code:</strong> +91
-          </Typography>
-        </Box>
-      </Grid>
-
-      <Grid item xs={12} sm={6}>
-        <Box
-          sx={{
-            border: "1px solid #ccc",
-            borderRadius: "4px",
-            padding: "8px",
-            backgroundColor: "#fff",
-          }}
-        >
-          <Typography variant="body1">
-            <strong>Phone:</strong> 1234567890
-          </Typography>
-        </Box>
-      </Grid>
-
-      <Grid item xs={12} sm={6}>
-        <Box
-          sx={{
-            border: "1px solid #ccc",
-            borderRadius: "4px",
-            padding: "8px",
-            backgroundColor: "#fff",
-          }}
-        >
-          <Typography variant="body1">
-            <strong>Email:</strong> abc@company.com
-          </Typography>
-        </Box>
-      </Grid>
-
-      <Grid item xs={12} sm={6}>
-        <Box
-          sx={{
-            border: "1px solid #ccc",
-            borderRadius: "4px",
-            padding: "8px",
-            backgroundColor: "#fff",
-          }}
-        >
-          <Typography variant="body1">
-            <strong>Relationship:</strong> Professional Mentor
-          </Typography>
-        </Box>
-      </Grid>
-    </Grid>
-  </Box>
-</Grid>
-
-</Grid>
-
-      <Divider sx={{ mb: 2,pt:2 }} />
-
-      {/* Education */}
-      <Grid container spacing={2} sx={{ pt: "15px", mb: 2 }}>
-  <Grid item xs={12} sm={4}>
-    <Typography variant="h6" sx={{ fontSize: "24px" }}>
-      Education
-    </Typography>
-  </Grid>
-  <Grid item xs={12} sm={8}>
-  <Box
-    sx={{
-      backgroundColor: "white",
-      borderRadius: "8px",
-      padding: 2,
-      boxShadow: 3,
-    }}
-  >
-    <Grid container spacing={4}>
-      <Grid item xs={12} sm={6}>
-        <Box
-          sx={{
-            border: "1px solid #ccc",
-            borderRadius: "4px",
-            padding: "8px",
-            backgroundColor: "#fff",
-          }}
-        >
-          <Typography variant="body1">
-            <strong>Education Category:</strong> Undergraduate
-          </Typography>
-        </Box>
-      </Grid>
-
-      <Grid item xs={12} sm={6}>
-        <Box
-          sx={{
-            border: "1px solid #ccc",
-            borderRadius: "4px",
-            padding: "8px",
-            backgroundColor: "#fff",
-          }}
-        >
-          <Typography variant="body1">
-            <strong>Degree:</strong> Bachelor of Technology in IT
-          </Typography>
-        </Box>
-      </Grid>
-
-      <Grid item xs={12} sm={6}>
-        <Box
-          sx={{
-            border: "1px solid #ccc",
-            borderRadius: "4px",
-            padding: "8px",
-            backgroundColor: "#fff",
-          }}
-        >
-          <Typography variant="body1">
-            <strong>Field of Specialisation:</strong> Information Technology
-          </Typography>
-        </Box>
-      </Grid>
-
-      <Grid item xs={12} sm={6}>
-        <Box
-          sx={{
-            border: "1px solid #ccc",
-            borderRadius: "4px",
-            padding: "8px",
-            backgroundColor: "#fff",
-          }}
-        >
-          <Typography variant="body1">
-            <strong>Course:</strong> B.Tech in IT
-          </Typography>
-        </Box>
-      </Grid>
-
-      <Grid item xs={12} sm={6}>
-        <Box
-          sx={{
-            border: "1px solid #ccc",
-            borderRadius: "4px",
-            padding: "8px",
-            backgroundColor: "#fff",
-          }}
-        >
-          <Typography variant="body1">
-            <strong>GPA/Percentage:</strong> 8.5/10
-          </Typography>
-        </Box>
-      </Grid>
-
-      <Grid item xs={12} sm={6}>
-        <Box
-          sx={{
-            border: "1px solid #ccc",
-            borderRadius: "4px",
-            padding: "8px",
-            backgroundColor: "#fff",
-          }}
-        >
-          <Typography variant="body1">
-            <strong>Currently Student:</strong> Yes
-          </Typography>
-        </Box>
-      </Grid>
-
-      <Grid item xs={12} sm={6}>
-        <Box
-          sx={{
-            border: "1px solid #ccc",
-            borderRadius: "4px",
-            padding: "8px",
-            backgroundColor: "#fff",
-          }}
-        >
-          <Typography variant="body1">
-            <strong>Start Date:</strong> 2019-08-01
-          </Typography>
-        </Box>
-      </Grid>
-
-      <Grid item xs={12} sm={6}>
-        <Box
-          sx={{
-            border: "1px solid #ccc",
-            borderRadius: "4px",
-            padding: "8px",
-            backgroundColor: "#fff",
-          }}
-        >
-          <Typography variant="body1">
-            <strong>Completion Date:</strong> 2023-05-31
-          </Typography>
-        </Box>
-      </Grid>
-
-      <Grid item xs={12} sm={6}>
-        <Box
-          sx={{
-            border: "1px solid #ccc",
-            borderRadius: "4px",
-            padding: "8px",
-            backgroundColor: "#fff",
-          }}
-        >
-          <Typography variant="body1">
-            <strong>Institute:</strong> XYZ Institute of Technology
-          </Typography>
-        </Box>
-      </Grid>
-
-      <Grid item xs={12} sm={6}>
-        <Box
-          sx={{
-            border: "1px solid #ccc",
-            borderRadius: "4px",
-            padding: "8px",
-            backgroundColor: "#fff",
-          }}
-        >
-          <Typography variant="body1">
-            <strong>University:</strong> ABC University
-          </Typography>
-        </Box>
-      </Grid>
-
-      <Grid item xs={12} sm={6}>
-        <Box
-          sx={{
-            border: "1px solid #ccc",
-            borderRadius: "4px",
-            padding: "8px",
-            backgroundColor: "#fff",
-          }}
-        >
-          <Typography variant="body1">
-            <strong>Education Document Proof:</strong> Transcript Available
-          </Typography>
-        </Box>
-      </Grid>
-
-      <Grid item xs={12} sm={6}>
-        <Box
-          sx={{
-            border: "1px solid #ccc",
-            borderRadius: "4px",
-            padding: "8px",
-            backgroundColor: "#fff",
-          }}
-        >
-          <Typography variant="body1">
-            <strong>Highest Qualification:</strong> Yes
-          </Typography>
-        </Box>
-      </Grid>
-    </Grid>
-  </Box>
-</Grid>
-
-</Grid>
+</div>
 
     </div>
         )}
@@ -1040,9 +452,9 @@ function AdminCandidateDetails() {
    {value === 'two' && (<>
 
 
-<Grid container spacing={2} sx={{ pt: "15px", mb: 2 }}>
+<div container spacing={2} sx={{ pt: "15px", mb: 2 }}>
 <Grid item xs={12} sm={4}>
-  <Typography variant="h6" sx={{ fontSize: "24px" }}>
+  <Typography variant="h6" sx={{ fontSize: "24px", mb:2 }}>
     Attachments
   </Typography>
 </Grid>
@@ -1221,22 +633,16 @@ function AdminCandidateDetails() {
 </Box>
 </Grid>
 
-</Grid>
+</div>
   </>
 )}
 
-
-
-
-
-
 {value === 'three' && (
 
-<Grid container spacing={2} sx={{ pt: "15px", mb: 2 }}>
+<div container spacing={2} sx={{ pt: "15px", mb: 2 }}>
 <Grid item xs={12} sm={4}>
   <Typography variant="h6" sx={{ fontSize: "24px" }}>
-  
-  Screening Questions
+    Screening Questions
   </Typography>
 </Grid>
 <Grid item xs={12} sm={8}>
@@ -1348,7 +754,7 @@ function AdminCandidateDetails() {
 
 </Grid>
 
-</Grid>
+</div>
   
 )}
 
