@@ -11,6 +11,8 @@ import { fileURLToPath } from 'url';
 import fs from 'fs'
 import exceljs from 'exceljs'
 import { cstatus } from "../helper/candidateStatusMapping.js";
+import RESUMEDOCS from "../models/RESUMEDOCS.js";
+import { requestResetPassword } from "./mailController.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -34,8 +36,8 @@ export const addAcManager = async (req, res, next) => {
 }
 
 export const approveCandidate = async (req, res, next) => {
-  try{
-    await CANDIDATE.findByIdAndUpdate(req.params.orgcid, { $set: {candidate_status: "newresume"}})
+  try {
+    await CANDIDATE.findByIdAndUpdate(req.params.orgcid, { $set: { candidate_status: "newresume" } })
     res.status(200).json("Candidate Approve.")
   } catch (err) {
     next(err)
@@ -54,29 +56,29 @@ export const getCandidate = async (req, res, next) => {
 export const changeCandidateStatus = async (req, res, next) => {
   try {
     await CANDIDATE.findByIdAndUpdate(req.params.orgcid, { $set: { candidate_status: req.body.status } })
-    const candidateInvoice=await INVOICE.findOne({candidate_id:req.params.orgcid})
-    if(req.body.status==="o-accepted"){
-      if(!candidateInvoice){
-         const candidate = await CANDIDATE.findById(req.params.orgcid)
-         const candidateBasicDetails=await CANDIDATEBASICDETAILS.findOne({candidate_id:candidate.candidate_id})
-         const jobBasicDetails=await JOBBASICDETAILS.findOne({job_id:candidate.job_id})
-         const invoice=new INVOICE({
-           candidate_id:candidate._id,
-           c_id:candidate.candidate_id,
-           candidate_name:`${candidateBasicDetails.first_name} ${candidateBasicDetails.last_name}`,
-           candidate_email:candidateBasicDetails.primary_email_id,
-           candidate_mobile_no:candidateBasicDetails.primary_contact_number,
-           job_id:candidate.job_id,
-           job_name:jobBasicDetails.job_title,
-           submited_recruiter_member_id:candidate.recruiter_member_id
-          })
+    const candidateInvoice = await INVOICE.findOne({ candidate_id: req.params.orgcid })
+    if (req.body.status === "o-accepted") {
+      if (!candidateInvoice) {
+        const candidate = await CANDIDATE.findById(req.params.orgcid)
+        const candidateBasicDetails = await CANDIDATEBASICDETAILS.findOne({ candidate_id: candidate.candidate_id })
+        const jobBasicDetails = await JOBBASICDETAILS.findOne({ job_id: candidate.job_id })
+        const invoice = new INVOICE({
+          candidate_id: candidate._id,
+          c_id: candidate.candidate_id,
+          candidate_name: `${candidateBasicDetails.first_name} ${candidateBasicDetails.last_name}`,
+          candidate_email: candidateBasicDetails.primary_email_id,
+          candidate_mobile_no: candidateBasicDetails.primary_contact_number,
+          job_id: candidate.job_id,
+          job_name: jobBasicDetails.job_title,
+          submited_recruiter_member_id: candidate.recruiter_member_id
+        })
 
-          await invoice.save()
+        await invoice.save()
       }
-    }else{
-       if(candidateInvoice){
-         await INVOICE.findOneAndDelete({candidate_id:req.params.orgcid})
-       }
+    } else {
+      if (candidateInvoice) {
+        await INVOICE.findOneAndDelete({ candidate_id: req.params.orgcid })
+      }
     }
     res.status(200).json("Candidate status changed.")
   } catch (err) {
@@ -126,30 +128,30 @@ export const changeMultipleCandidateStatus = async (req, res, next) => {
 
     await Promise.all(candidateIds.map(async id => {
       await CANDIDATE.findByIdAndUpdate(id, { candidate_status: status })
-      const candidateInvoice=await INVOICE.findOne({candidate_id:req.params.orgcid})
-      if(req.body.status==="o-accepted"){
-        if(!candidateInvoice){
+      const candidateInvoice = await INVOICE.findOne({ candidate_id: req.params.orgcid })
+      if (req.body.status === "o-accepted") {
+        if (!candidateInvoice) {
           const candidate = await CANDIDATE.findById(req.params.orgcid)
-          const candidateBasicDetails=await CANDIDATEBASICDETAILS.findOne({candidate_id:candidate.candidate_id})
-          const jobBasicDetails=await JOBBASICDETAILS.findOne({job_id:candidate.job_id})
-          const invoice=new INVOICE({
-            candidate_id:candidate._id,
-            c_id:candidate.candidate_id,
-            candidate_name:`${candidateBasicDetails.first_name} ${candidateBasicDetails.last_name}`,
-            candidate_email:candidateBasicDetails.primary_email_id,
-            candidate_mobile_no:candidateBasicDetails.primary_contact_number,
-            job_id:candidate.job_id,
-            job_name:jobBasicDetails.job_title,
-            submited_recruiter_member_id:candidate.recruiter_member_id
-           })
+          const candidateBasicDetails = await CANDIDATEBASICDETAILS.findOne({ candidate_id: candidate.candidate_id })
+          const jobBasicDetails = await JOBBASICDETAILS.findOne({ job_id: candidate.job_id })
+          const invoice = new INVOICE({
+            candidate_id: candidate._id,
+            c_id: candidate.candidate_id,
+            candidate_name: `${candidateBasicDetails.first_name} ${candidateBasicDetails.last_name}`,
+            candidate_email: candidateBasicDetails.primary_email_id,
+            candidate_mobile_no: candidateBasicDetails.primary_contact_number,
+            job_id: candidate.job_id,
+            job_name: jobBasicDetails.job_title,
+            submited_recruiter_member_id: candidate.recruiter_member_id
+          })
 
-           await invoice.save()
-       }
-     }else{
-        if(candidateInvoice){
-          await INVOICE.findOneAndDelete({candidate_id:req.params.orgcid})
+          await invoice.save()
         }
-     }
+      } else {
+        if (candidateInvoice) {
+          await INVOICE.findOneAndDelete({ candidate_id: req.params.orgcid })
+        }
+      }
     }))
 
     res.status(200).json("all candidate status changed.")
@@ -378,85 +380,24 @@ export const getJobResumeSubmitCount = async (req, res, next) => {
 }
 
 
-export const exportDataEnterprise=async (req,res,next)=>{
-    try{
-      const candidate=await axios.get(`${process.env.APP_SERVER_URL}/enterpriseteam/getcandidate/${req.params.enmemberid}`)
-      const candidateData=await Promise.all(candidate.data.map(async (cd)=>{
-          const candidateBasic=await CANDIDATE.findById(cd.candidateId)
-          const candidateBasicDetails=await CANDIDATEBASICDETAILS.findById(candidateBasic.candidate_basic_details)
-          return {
-            candidate_id:candidateBasic.candidate_id,
-            candidate_name:`${candidateBasicDetails.first_name} ${candidateBasicDetails.last_name}`,
-            mobile_no:candidateBasicDetails.primary_contact_number,
-            email_address:candidateBasicDetails.primary_email_id,
-            education_qualificaiton:candidateBasicDetails.education_qualification,
-            experience:candidateBasicDetails.experience,
-            relevent_experience:candidateBasicDetails.relevant_experience,
-            notice_period:candidateBasicDetails.notice_period,
-            candidate_status:cstatus.get(candidateBasic.candidate_status),
-            submited:candidateBasic.createdAt
-          }
-      }))
-
-      const workbook = new exceljs.Workbook();
-      const worksheet = workbook.addWorksheet("Data");
-
-      //Add headers
-      worksheet.columns = [
-        {header:"C_ID",key:"candidate_id",width:30},
-        {header:"NAME",key:"candidate_name",width:30},
-        {header:"MOBILE NO",key:"mobile_no",width:30},
-        {header:"EMAIL",key:"email_address",width:30},
-        {header:"EDUCATION",key:"education_qualificaiton",width:30},
-        {header:"EXPERIENCE",key:"experience",width:30},
-        {header:"RELEVENT EXPERIENCE",key:"relevent_experience",width:50},
-        {header:"NOTICE PERIOD",key:"notice_period",width:50},
-        {header:"C STATUS",key:"candidate_status",width:40},
-        {header:"SUBMITED",key:"submited",width:30},
-      ]
-
-      //Add rows
-      candidateData.forEach((item)=>{
-        worksheet.addRow(item)
-      })
-
-       // Set response headers
-       res.setHeader(
-          "Content-Type",
-          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-       );
-       res.setHeader(
-           "Content-Disposition",
-        "attachment; filename=data.xlsx"
-       );
-
-      // Write the workbook to the response
-      await workbook.xlsx.write(res);
-      res.status(200).end();
-
-    }catch(err){
-       next(err)
-    }
-}
-
-export const exportDataRecruiter=async (req,res,next)=>{
-   try{
-      const candidates=await CANDIDATE.find({recruiter_member_id:req.params.rememberid})
-      
-      const candidateData=await Promise.all(candidates.map(async (candidate)=>{
-        const candidateBasicDetails=await CANDIDATEBASICDETAILS.findById(candidate.candidate_basic_details)
-        return {
-          candidate_id:candidate.candidate_id,
-          candidate_name:`${candidateBasicDetails.first_name} ${candidateBasicDetails.last_name}`,
-          mobile_no:candidateBasicDetails.primary_contact_number,
-          email_address:candidateBasicDetails.primary_email_id,
-          education_qualificaiton:candidateBasicDetails.education_qualification,
-          experience:candidateBasicDetails.experience,
-          relevent_experience:candidateBasicDetails.relevant_experience,
-          notice_period:candidateBasicDetails.notice_period,
-          candidate_status:cstatus.get(candidate.candidate_status),
-          submited:candidate.createdAt
-        }
+export const exportDataEnterprise = async (req, res, next) => {
+  try {
+    const candidate = await axios.get(`${process.env.APP_SERVER_URL}/enterpriseteam/getcandidate/${req.params.enmemberid}`)
+    const candidateData = await Promise.all(candidate.data.map(async (cd) => {
+      const candidateBasic = await CANDIDATE.findById(cd.candidateId)
+      const candidateBasicDetails = await CANDIDATEBASICDETAILS.findById(candidateBasic.candidate_basic_details)
+      return {
+        candidate_id: candidateBasic.candidate_id,
+        candidate_name: `${candidateBasicDetails.first_name} ${candidateBasicDetails.last_name}`,
+        mobile_no: candidateBasicDetails.primary_contact_number,
+        email_address: candidateBasicDetails.primary_email_id,
+        education_qualificaiton: candidateBasicDetails.education_qualification,
+        experience: candidateBasicDetails.experience,
+        relevent_experience: candidateBasicDetails.relevant_experience,
+        notice_period: candidateBasicDetails.notice_period,
+        candidate_status: cstatus.get(candidateBasic.candidate_status),
+        submited: candidateBasic.createdAt
+      }
     }))
 
     const workbook = new exceljs.Workbook();
@@ -464,118 +405,224 @@ export const exportDataRecruiter=async (req,res,next)=>{
 
     //Add headers
     worksheet.columns = [
-      {header:"C_ID",key:"candidate_id",width:30},
-      {header:"NAME",key:"candidate_name",width:30},
-      {header:"MOBILE NO",key:"mobile_no",width:30},
-      {header:"EMAIL",key:"email_address",width:30},
-      {header:"EDUCATION",key:"education_qualificaiton",width:30},
-      {header:"EXPERIENCE",key:"experience",width:30},
-      {header:"RELEVENT EXPERIENCE",key:"relevent_experience",width:50},
-      {header:"NOTICE PERIOD",key:"notice_period",width:50},
-      {header:"C STATUS",key:"candidate_status",width:40},
-      {header:"SUBMITED",key:"submited",width:30},
+      { header: "C_ID", key: "candidate_id", width: 30 },
+      { header: "NAME", key: "candidate_name", width: 30 },
+      { header: "MOBILE NO", key: "mobile_no", width: 30 },
+      { header: "EMAIL", key: "email_address", width: 30 },
+      { header: "EDUCATION", key: "education_qualificaiton", width: 30 },
+      { header: "EXPERIENCE", key: "experience", width: 30 },
+      { header: "RELEVENT EXPERIENCE", key: "relevent_experience", width: 50 },
+      { header: "NOTICE PERIOD", key: "notice_period", width: 50 },
+      { header: "C STATUS", key: "candidate_status", width: 40 },
+      { header: "SUBMITED", key: "submited", width: 30 },
     ]
 
     //Add rows
-    candidateData.forEach((item)=>{
+    candidateData.forEach((item) => {
       worksheet.addRow(item)
     })
 
-     // Set response headers
-     res.setHeader(
-        "Content-Type",
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-     );
-     res.setHeader(
-         "Content-Disposition",
+    // Set response headers
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+    res.setHeader(
+      "Content-Disposition",
       "attachment; filename=data.xlsx"
-     );
+    );
 
     // Write the workbook to the response
     await workbook.xlsx.write(res);
     res.status(200).end();
 
-      
-   }catch(err){
-     next(err)
-   }
+  } catch (err) {
+    next(err)
+  }
 }
 
-export const searchRecruiterCandidate=async (req,res,next)=>{
-   const {searchTearm}=req.query
-   try{
-      if(searchTearm){
-      const candidates=await CANDIDATE.find({recruiter_member_id:req.params.rememberid})
-      const filterCandidates=await Promise.all(candidates.map(async (candidate)=>{
-         const candidateBasicDetails=await CANDIDATEBASICDETAILS.findById(candidate.candidate_basic_details)
-         const candidateFullName=`${candidateBasicDetails.first_name} ${candidateBasicDetails.last_name}`
-         const nameMatch= searchTearm ? new RegExp(searchTearm.toLowerCase(),'i').test(candidateFullName.toLowerCase()) : false
+export const exportDataRecruiter = async (req, res, next) => {
+  try {
+    const candidates = await CANDIDATE.find({ recruiter_member_id: req.params.rememberid })
 
-         return nameMatch? candidateBasicDetails : null
+    const candidateData = await Promise.all(candidates.map(async (candidate) => {
+      const candidateBasicDetails = await CANDIDATEBASICDETAILS.findById(candidate.candidate_basic_details)
+      return {
+        candidate_id: candidate.candidate_id,
+        candidate_name: `${candidateBasicDetails.first_name} ${candidateBasicDetails.last_name}`,
+        mobile_no: candidateBasicDetails.primary_contact_number,
+        email_address: candidateBasicDetails.primary_email_id,
+        education_qualificaiton: candidateBasicDetails.education_qualification,
+        experience: candidateBasicDetails.experience,
+        relevent_experience: candidateBasicDetails.relevant_experience,
+        notice_period: candidateBasicDetails.notice_period,
+        candidate_status: cstatus.get(candidate.candidate_status),
+        submited: candidate.createdAt
+      }
+    }))
+
+    const workbook = new exceljs.Workbook();
+    const worksheet = workbook.addWorksheet("Data");
+
+    //Add headers
+    worksheet.columns = [
+      { header: "C_ID", key: "candidate_id", width: 30 },
+      { header: "NAME", key: "candidate_name", width: 30 },
+      { header: "MOBILE NO", key: "mobile_no", width: 30 },
+      { header: "EMAIL", key: "email_address", width: 30 },
+      { header: "EDUCATION", key: "education_qualificaiton", width: 30 },
+      { header: "EXPERIENCE", key: "experience", width: 30 },
+      { header: "RELEVENT EXPERIENCE", key: "relevent_experience", width: 50 },
+      { header: "NOTICE PERIOD", key: "notice_period", width: 50 },
+      { header: "C STATUS", key: "candidate_status", width: 40 },
+      { header: "SUBMITED", key: "submited", width: 30 },
+    ]
+
+    //Add rows
+    candidateData.forEach((item) => {
+      worksheet.addRow(item)
+    })
+
+    // Set response headers
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+    res.setHeader(
+      "Content-Disposition",
+      "attachment; filename=data.xlsx"
+    );
+
+    // Write the workbook to the response
+    await workbook.xlsx.write(res);
+    res.status(200).end();
+
+
+  } catch (err) {
+    next(err)
+  }
+}
+
+export const searchRecruiterCandidate = async (req, res, next) => {
+  const { searchTearm } = req.query
+  try {
+    if (searchTearm) {
+      const candidates = await CANDIDATE.find({ recruiter_member_id: req.params.rememberid })
+      const filterCandidates = await Promise.all(candidates.map(async (candidate) => {
+        const candidateBasicDetails = await CANDIDATEBASICDETAILS.findById(candidate.candidate_basic_details)
+        const candidateFullName = `${candidateBasicDetails.first_name} ${candidateBasicDetails.last_name}`
+        const nameMatch = searchTearm ? new RegExp(searchTearm.toLowerCase(), 'i').test(candidateFullName.toLowerCase()) : false
+
+        return nameMatch ? candidateBasicDetails : null
       }))
 
-      const filterCandidateArray=filterCandidates.filter((item)=>item!=null)
+      const filterCandidateArray = filterCandidates.filter((item) => item != null)
 
       res.status(200).json(filterCandidateArray)
-    }else {
-       return res.status(200).json([])
+    } else {
+      return res.status(200).json([])
     }
 
-   }catch(err){
-     next(err)
-   }
+  } catch (err) {
+    next(err)
+  }
 }
 
-export const searchEnterpriseCandidate=async (req,res,next)=>{
-   const {searchTearm}=req.query
-   try{
-      if(searchTearm){
+export const searchEnterpriseCandidate = async (req, res, next) => {
+  const { searchTearm } = req.query
+  try {
+    if (searchTearm) {
       //For getting received candidate ids
-      const candidateIds=await axios.get(`${process.env.APP_SERVER_URL}/enterpriseteam/getcandidate/${req.params.enmemberid}`)
+      const candidateIds = await axios.get(`${process.env.APP_SERVER_URL}/enterpriseteam/getcandidate/${req.params.enmemberid}`)
 
-      const candidateDetails=await Promise.all(candidateIds.data.map(async (citem)=>{
-          const candidate=await CANDIDATE.findById(citem.candidateId)
+      const candidateDetails = await Promise.all(candidateIds.data.map(async (citem) => {
+        const candidate = await CANDIDATE.findById(citem.candidateId)
 
-          const candidateBasicDetails=await CANDIDATEBASICDETAILS.findById(candidate.candidate_basic_details)
-          const cFullName=`${candidateBasicDetails.first_name} ${candidateBasicDetails.last_name}`
+        const candidateBasicDetails = await CANDIDATEBASICDETAILS.findById(candidate.candidate_basic_details)
+        const cFullName = `${candidateBasicDetails.first_name} ${candidateBasicDetails.last_name}`
 
-          const nameMatch=searchTearm ? new RegExp(searchTearm.toLowerCase(),'i').test(cFullName) : false
+        const nameMatch = searchTearm ? new RegExp(searchTearm.toLowerCase(), 'i').test(cFullName) : false
 
-          if(nameMatch){
-             return {
-                candidate_name:cFullName,
-                candidate_id:candidate.candidate_id,
-                candidate_status:candidate.candidate_status,
-                candidate_country:candidateBasicDetails.current_location
-             }
-          }else{
-            return null
+        if (nameMatch) {
+          return {
+            candidate_name: cFullName,
+            candidate_id: candidate.candidate_id,
+            candidate_status: candidate.candidate_status,
+            candidate_country: candidateBasicDetails.current_location
           }
+        } else {
+          return null
+        }
       }))
 
       //Remove Null values
-      const filterCandiadte=candidateDetails.filter((item)=>item!==null)
+      const filterCandiadte = candidateDetails.filter((item) => item !== null)
 
       res.status(200).json(filterCandiadte)
 
-    }else{
+    } else {
       return res.status(200).json([])
     }
-   }catch(err){
-     next(err)
-   }
+  } catch (err) {
+    next(err)
+  }
 }
 
-export const addCandidateIntoRecruiterSubmitList= async (req , res, next)=>{
-    try{
-       const candidate=await CANDIDATE.findById(req.body.cid)
-       //Adding candidate id into recruiter member submit list
-       await axios.put(`${process.env.APP_SERVER_URL}/recruitingteam/addintocandidatelist/${candidate.recruiter_member_id}`,{candidateId:req.body.cid,jobId:req.body.jobid})
-       
-       res.status(200).json("Candidate added into recruiter team submited list")
+export const addCandidateIntoRecruiterSubmitList = async (req, res, next) => {
+  try {
+    const candidate = await CANDIDATE.findById(req.body.cid)
+    //Adding candidate id into recruiter member submit list
+    await axios.put(`${process.env.APP_SERVER_URL}/recruitingteam/addintocandidatelist/${candidate.recruiter_member_id}`, { candidateId: req.body.cid, jobId: req.body.jobid })
 
-    }catch(err){ 
-      console.log(err)
-      next(err)
-    }
+    res.status(200).json("Candidate added into recruiter team submited list")
+
+  } catch (err) {
+    console.log(err)
+    next(err)
+  }
+}
+
+export const getCandidateAttachments = async (req, res, next) => {
+  try {
+    const candidateattachment = await CANDIDATEATTACHMENT.findOne({ folder_name: req.params.candidate_id }, { _id: 0, createdAt: 0, updatedAt: 0, folder_name: 0 })
+    res.status(200).json(candidateattachment)
+  } catch (err) {
+    next(err)
+  }
+}
+
+export const getCandidateResumes = async (req, res, next) => {
+  try {
+    const candidateResumes = await RESUMEDOCS.findOne({ candidate_id: req.params.candidate_id });
+    if (!candidateResumes)
+      return res.status(200).json([]);
+    else
+      return res.status(200).json(candidateResumes);
+  } catch (error) {
+    next(error);
+  }
+}
+
+export const getCandidateConsentProofs = async (req, res, next) => {
+  try {
+    const consentproof = await CANDIDATECONSETPROOF.findOne({ candidate_id: req.params.candidate_id });
+    if (!consentproof)
+      return res.status(200).json([]);
+    else
+      return res.status(200).json(consentproof);
+  } catch (error) {
+    next(error);
+  }
+}
+
+export const getScreeingQuesionsAnswers = async (req, res, next) => {
+  try {
+    const SQAnswers = await CANDIDATESQANSWER.findOne({ candidate_id: req.params.candidate_id });
+    if (!SQAnswers)
+      return res.status(200).json([]);
+    else
+      return res.status(200).json(SQAnswers);
+  } catch (error) {
+    next(error);
+  }
 }

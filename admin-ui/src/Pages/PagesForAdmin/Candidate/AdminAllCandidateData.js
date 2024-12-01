@@ -21,9 +21,9 @@ const AdminAllCandidateData = () => {
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredRows, setFilteredRows] = useState([]);
-  const [candidateStatusLoader,setCandidateStatusLoader]=useState(false)
+  const [candidateStatusLoader, setCandidateStatusLoader] = useState(false)
 
-  
+
   const selectUserData = (state) => state?.admin?.userData;
   const userData = selectUserData(store?.getState());
 
@@ -33,95 +33,96 @@ const AdminAllCandidateData = () => {
     setNotification({ message, type });
   };
 
-  const fetchData=async ()=>{
-    try{
-       setLoading(true)
-       //Fetch verified candidate ids
-       const verifiedCandiatesIds = await fetchVerifiedCandidatesByMAdminId(userData._id);
+  const fetchData = async () => {
+    try {
+      setLoading(true)
+      //Fetch verified candidate ids
+      const verifiedCandiatesIds = await fetchVerifiedCandidatesByMAdminId(userData._id);
 
-       const rows = await Promise.all(verifiedCandiatesIds.map(async (candidateId, index) => {
-    
-          const { job_id, basic_details } = await fetchCandidateBasicDetailsById(candidateId);
-          const job_basic_details = await fetchJobBasicDetailsByJobId(job_id);
-          const candidate = await fetchCandidateStatusById(basic_details.candidate_id)
-    
-          // Get candidate status, defaulting to "Status Unavailable" if not found
-          const candidateStatus = candidate.candidate_status || "Status Unavailable"
+      const rows = await Promise.all(verifiedCandiatesIds.map(async (candidateId, index) => {
 
-          // Fetch account manager
-          const accountManager=await fetchAccountManager(candidate?.alloted_account_manager)
+        const { job_id, basic_details } = await fetchCandidateBasicDetailsById(candidateId);
+        const job_basic_details = await fetchJobBasicDetailsByJobId(job_id);
+        const candidate = await fetchCandidateStatusById(basic_details.candidate_id)
 
-          //Fetch recruiter member id
-          const recruiterMember=await fetchRecruiterMemberDetails(candidate?.recruiter_member_id)
-    
-          return {
-            _id: String(index + 1),
-            candidate_name: {
-              first_name: basic_details?.first_name || 'No First Name',
-              last_name: basic_details?.last_name || 'No Last Name',
-            },
-            job_title: job_basic_details?.job_title || "No Job Title",
-            job_id: job_basic_details?.job_id || "No Job Id",
-            candidate_status: candidateStatus,
-            submitted: basic_details?.createdAt || "No Submission Date",
-            lastUpdated: basic_details?.updatedAt || "No Update Date",
-            notice_period: basic_details?.notice_period || "N/A",
-            email: basic_details?.primary_email_id || "No Email",
-            mobile: basic_details?.primary_contact_number || "No Contact Number",
-            account_manager: accountManager ? `${accountManager.full_name}` : null,
-            recruiter_member: recruiterMember?.full_name
-          };
-        }));
+        // Get candidate status, defaulting to "Status Unavailable" if not found
+        const candidateStatus = candidate.candidate_status || "Status Unavailable"
+
+        // Fetch account manager
+        const accountManager = await fetchAccountManager(candidate?.alloted_account_manager)
+
+        //Fetch recruiter member id
+        const recruiterMember = await fetchRecruiterMemberDetails(candidate?.recruiter_member_id)
+
+        return {
+          _id: String(index + 1),
+          id : candidate._id,
+          candidate_name: {
+            first_name: basic_details?.first_name || 'No First Name',
+            last_name: basic_details?.last_name || 'No Last Name',
+          },
+          job_title: job_basic_details?.job_title || "No Job Title",
+          job_id: job_basic_details?.job_id || "No Job Id",
+          candidate_status: candidateStatus,
+          submitted: basic_details?.createdAt || "No Submission Date",
+          lastUpdated: basic_details?.updatedAt || "No Update Date",
+          notice_period: basic_details?.notice_period || "N/A",
+          email: basic_details?.primary_email_id || "No Email",
+          mobile: basic_details?.primary_contact_number || "No Contact Number",
+          account_manager: accountManager ? `${accountManager.full_name}` : null,
+          recruiter_member: recruiterMember?.full_name
+        };
+      }));
 
       const newFilteredRows = rows.filter((row) => {
         const fullName = `${row.candidate_name.first_name} ${row.candidate_name.last_name}`.toLowerCase();
         const matchesSearch = fullName.includes(searchTerm.toLowerCase());
-        return matchesSearch ;
-     });
+        return matchesSearch;
+      });
 
-     setFilteredRows(newFilteredRows);
-    }catch(err){
+      setFilteredRows(newFilteredRows);
+    } catch (err) {
       console.log(err)
-      showNotification("Something went wrong while fetching data",'failure')
-    } finally{
+      showNotification("Something went wrong while fetching data", 'failure')
+    } finally {
       setLoading(false)
     }
-}
+  }
 
   useEffect(() => {
     fetchData()
   }, [searchTerm]);
 
-  const handleRowClick = (id) => {
-    navigate(`/master_admin/candidate/${id}`);
+  const handleRowClick = (params) => {
+    navigate(`/master_admin/candidate/${params._id}`, { state: { candidate_id: params.id } });
   };
 
-  const candiadteStatusChange=async (e,id)=>{
-    try{
+  const candiadteStatusChange = async (e, id) => {
+    try {
       setCandidateStatusLoader(true)
-      await axios.post(`${process.env.REACT_APP_API_APP_URL}/candidate/changecandidatestatus/${id}`,{status:e.target.value})
+      await axios.post(`${process.env.REACT_APP_API_APP_URL}/candidate/changecandidatestatus/${id}`, { status: e.target.value })
       await fetchData()
-      showNotification("Successfully candidate status changed.",'success')
-    }catch(err){
+      showNotification("Successfully candidate status changed.", 'success')
+    } catch (err) {
       setCandidateStatusLoader(false)
-      showNotification("Something wrong while changeing candidate status.","failure")
+      showNotification("Something wrong while changeing candidate status.", "failure")
       console.log(err)
     }
     setCandidateStatusLoader(false)
-}
+  }
 
   return (
     <div>
-    {
-      candidateStatusLoader && 
-       <div className='fixed inset-0 flex justify-center bg-black z-50 bg-opacity-50 backdrop-blur-md items-center'>
-         <div className='custom-div w-[450px] p-4 items-center'>
+      {
+        candidateStatusLoader &&
+        <div className='fixed inset-0 flex justify-center bg-black z-50 bg-opacity-50 backdrop-blur-md items-center'>
+          <div className='custom-div w-[450px] p-4 items-center'>
             <img className='h-10 w-10' alt='' src={WhiteLoader}></img>
             <p>Please wait till we update resume status.</p>
-         </div>
-       </div>
-     }
-    {notification && (
+          </div>
+        </div>
+      }
+      {notification && (
         <Notification
           open={true}
           message={notification.message}
@@ -172,9 +173,9 @@ const AdminAllCandidateData = () => {
           <div style={{ height: 600, width: '100%' }} className="pt-4">
             <DataGrid
               rows={filteredRows}
-              columns={columns(candiadteStatusChange,handleRowClick)}
+              columns={columns(candiadteStatusChange, handleRowClick)}
               rowHeight={80}
-              // onRowClick={(params) => handleRowClick(params.id)}
+              onRowClick={(params) => handleRowClick(params.row)}
               getRowId={(row) => row._id}
               getRowHeight={calculateRowHeight}
               pageSize={8}
