@@ -63,7 +63,6 @@ function AdminJobDetails() {
   const fetchJobScreeningQuestion = async () => {
     try {
       const response = await fetchSQByJobId(job_id);
-      console.log(response.screening_questions);
       setScreeningQuestion(response?.screening_questions);
     } catch (error) {
       console.error("Error while getting the screeing questions : ", error);
@@ -73,7 +72,6 @@ function AdminJobDetails() {
   const fetchJobCommissionDetails = async () => {
     try {
       const response = await fetchCommissionDetailsByJobId(job_id);
-      console.log(response);
       setJobCommission(response);
     } catch (error) {
       console.error("Error while getting job commision details : ", error);

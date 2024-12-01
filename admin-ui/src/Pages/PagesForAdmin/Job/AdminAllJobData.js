@@ -24,6 +24,7 @@ const AdminAllJobData = () => {
   const handleRowClick = async (params) => {
     const id = params.id;
     const job_id = params?.row?.job_id;
+    console.log(params);
     navigate(`/master_admin/job/${id}`, { state: { job_id: job_id } });
   };
 
