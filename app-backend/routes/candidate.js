@@ -5,8 +5,8 @@ import fs from 'fs'
 import { fileURLToPath } from 'url';
 
 
-import { cancelProcess, checkParseDetails, createAndParseResume, downloadResumeDocs, getResumeFileName, getResumeFilePath, marksAsCompleted, removeResumeFile} from '../controller/resumeController.js';
-import { addAcManager, addCandidateIntoRecruiterSubmitList, approveCandidate, changeCandidateStatus, changeMultipleCandidateStatus, createCandidate, downloadCandidateAttachments, exportDataEnterprise, exportDataRecruiter, getAcManagerName, getAllCandidates, getCandidate, getCandidateAllDetails, getCandidateAttachmentFileType, getCandidateBasicDetailsById, getCandidateForMultipleAction, getCandidateStatusById, getJobBasicDetails, getJobCandidateForPreview, getJobResumeSubmitCount, getRecruiterMemberIds, searchEnterpriseCandidate, searchRecruiterCandidate, updateCandidateRemarks, viewCandidateAttachments } from '../controller/candidateController.js';
+import { cancelProcess, checkParseDetails, createAndParseResume, downloadResumeDocs, getResumeFileName, getResumeFilePath, marksAsCompleted, removeResumeFile } from '../controller/resumeController.js';
+import { addAcManager, addCandidateIntoRecruiterSubmitList, approveCandidate, changeCandidateStatus, changeMultipleCandidateStatus, createCandidate, downloadCandidateAttachments, exportDataEnterprise, exportDataRecruiter, getAcManagerName, getAllCandidates, getCandidate, getCandidateAllDetails, getCandidateAttachmentFileType, getCandidateAttachments, getCandidateBasicDetailsById, getCandidateConsentProofs, getCandidateForMultipleAction, getCandidateResumes, getCandidateStatusById, getJobBasicDetails, getJobCandidateForPreview, getJobResumeSubmitCount, getRecruiterMemberIds, getScreeingQuesionsAnswers, searchEnterpriseCandidate, searchRecruiterCandidate, updateCandidateRemarks, viewCandidateAttachments } from '../controller/candidateController.js';
 import { checkEmailAndMobile, createCandidateBasicDetails, getAllCandidateBasicDetails, getCandidateBasicDetailsByRecruiterId } from '../controller/candidateBasicController.js';
 import { uploadCandidateAttachments } from '../controller/candidateAttachmentsController.js';
 import { uploadCandidateConsetProof } from '../controller/candidateConsetController.js';
@@ -107,7 +107,7 @@ router.post('/createsqanswer/:orgcid', createSqAnswers)
 router.post('/addacmanager/:orgcid', addAcManager)
 
 //Approve Candidate (Changing status from Under Review To New Resume)
-router.put('/approvecandidate/:orgcid',approveCandidate)
+router.put('/approvecandidate/:orgcid', approveCandidate)
 
 //change candidate status
 router.post('/changecandidatestatus/:orgcid', changeCandidateStatus)
@@ -119,7 +119,7 @@ router.get('/getresumefilename/:cid', getResumeFileName)
 router.get('/downloadresumedocs/:cid', downloadResumeDocs)
 
 //For check resume file type
-router.get('/resumefilepath/:cid',getResumeFilePath)
+router.get('/resumefilepath/:cid', getResumeFilePath)
 
 
 //updating candidate remarks
@@ -136,7 +136,7 @@ router.post('/getrecruitermemberids', getRecruiterMemberIds)
 
 router.get('/details/', getAllCandidateBasicDetails);
 
-router.get('/getbasicdetails/:recruiter_id', getCandidateBasicDetailsByRecruiterId)  
+router.get('/getbasicdetails/:recruiter_id', getCandidateBasicDetailsByRecruiterId)
 
 router.get('/allcandidates', getAllCandidates);
 
@@ -145,47 +145,58 @@ router.get('/getcandidatestatus/:candidate_id', getCandidateStatusById);
 router.get('/getdetails/:id', getCandidateBasicDetailsById)
 
 //Get particluer candidate by id
-router.get('/getcandidatealldetails/:cid',getCandidateAllDetails)
+router.get('/getcandidatealldetails/:cid', getCandidateAllDetails)
 
 //Get job basic details using candidate id
-router.get('/getjobbasicdetails/:cid',getJobBasicDetails)
+router.get('/getjobbasicdetails/:cid', getJobBasicDetails)
 
 //Get allocated candidate account manager
-router.get('/getacmanagername/:cid',getAcManagerName)
+router.get('/getacmanagername/:cid', getAcManagerName)
 
 //For downloading candidate attachments 
-router.post('/downloadcandidateattachments',downloadCandidateAttachments)
+router.post('/downloadcandidateattachments', downloadCandidateAttachments)
 
 //For view candidate attachments
-router.get('/viewcandidateattachments/:candidateId/:fileName',viewCandidateAttachments)
+router.get('/viewcandidateattachments/:candidateId/:fileName', viewCandidateAttachments)
 
 //For get candidate details for job preview
-router.get('/getcandidatejobpreview/:cid',getJobCandidateForPreview)
+router.get('/getcandidatejobpreview/:cid', getJobCandidateForPreview)
 
 //for get the one candidate by its id
-router.get('/:cid',getCandidate)
+router.get('/:cid', getCandidate)
 
 //for get candidate attachment file type
-router.get('/getcandidateattachmentfiletype/:cid/:filetype',getCandidateAttachmentFileType)
+router.get('/getcandidateattachmentfiletype/:cid/:filetype', getCandidateAttachmentFileType)
 
 //for getting count of resume submited into particuler job
-router.get('/jobresumesubmitcount/:jobid/:rememberid',getJobResumeSubmitCount)
+router.get('/jobresumesubmitcount/:jobid/:rememberid', getJobResumeSubmitCount)
 
 //for export data of enterprise candidate into excel form
-router.get('/export-data-enterprise/:enmemberid',exportDataEnterprise)
+router.get('/export-data-enterprise/:enmemberid', exportDataEnterprise)
 
 //for export data of recruiter candidate into excel form
-router.get('/export-data-recruiter/:rememberid',exportDataRecruiter)
+router.get('/export-data-recruiter/:rememberid', exportDataRecruiter)
 
 //For search Candidate profiles on Recruiter side
-router.get('/search-candidate-recruiter/:rememberid',searchRecruiterCandidate)
+router.get('/search-candidate-recruiter/:rememberid', searchRecruiterCandidate)
 
 //For search Candidate profiles on Enterprise side
-router.get('/search-candidate-enterprise/:enmemberid',searchEnterpriseCandidate)
+router.get('/search-candidate-enterprise/:enmemberid', searchEnterpriseCandidate)
 
 //For Adding particuler candidate into recruiter team member submited candidate list
-router.post('/add-candidate-reteam',addCandidateIntoRecruiterSubmitList)
+router.post('/add-candidate-reteam', addCandidateIntoRecruiterSubmitList)
 
+//for getting all candidate attachments by candidate id
+router.get('/getattachments/:candidate_id', getCandidateAttachments);
+
+//for getting resumes of candidates by id
+router.get('/getresumes/:candidate_id', getCandidateResumes);
+
+//for getting const proof of candidates by id
+router.get('/getconsentproof/:candidate_id', getCandidateConsentProofs)
+
+//for getting screening question ans answers by candidate id
+router.get('/getsqanswers/:candidate_id', getScreeingQuesionsAnswers);
 
 export default router
 

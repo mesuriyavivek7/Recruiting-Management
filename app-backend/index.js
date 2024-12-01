@@ -29,16 +29,16 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 //app configure
-const port=process.env.PORT || 8080
+const port = process.env.PORT || 8080
 
 
-const app=express()
+const app = express()
 dotenv.config()
 
 //cors settings
-const corsOptions={
-    origin:(origin,callback)=>{
-        const allowedOrigins=[
+const corsOptions = {
+    origin: (origin, callback) => {
+        const allowedOrigins = [
             "http://localhost:3000",
             "https://app-ui-tiyf.onrender.com",
             "https://app-backend-jna4.onrender.com",
@@ -69,37 +69,37 @@ app.use(express.urlencoded({ extended: true }));
 
 //connecting with mongodb atlas
 
-const connect=async ()=>{
-    try{
+const connect = async () => {
+    try {
         await mongoose.connect(process.env.MONGO)
         console.log("connected to mongodb!")
-    }catch(err){
+    } catch (err) {
         throw err
     }
 }
-mongoose.connection.on("disconnected",()=>{
-   console.log("mongodb disconnected")
+mongoose.connection.on("disconnected", () => {
+    console.log("mongodb disconnected")
 })
-mongoose.connection.on("connected",()=>{
+mongoose.connection.on("connected", () => {
     console.log("mongodb connected")
 })
 
 //middleware
 
-app.use('/api/authrecruiting',authRecruitingRoute)
-app.use('/api/mail',mailRoute)
-app.use('/api/authenterprise',authEnterpriseRoute)
-app.use('/api/recruiting',recruitingRoutes)
-app.use('/api/recruitingteam',recruitingTeam)
-app.use('/api/auth',authRoute)
-app.use('/api/enterprise',enterpriseRoute)
-app.use('/api/enterpriseteam',enterpriseTeamRoute)
-app.use('/api/job',jobRoute)
-app.use('/api/candidate',candidateRoute)
-app.use('/api/message',messageRoute)
-app.use('/api/invoice',invoiceRoute)
+app.use('/api/authrecruiting', authRecruitingRoute)
+app.use('/api/mail', mailRoute)
+app.use('/api/authenterprise', authEnterpriseRoute)
+app.use('/api/recruiting', recruitingRoutes)
+app.use('/api/recruitingteam', recruitingTeam)
+app.use('/api/auth', authRoute)
+app.use('/api/enterprise', enterpriseRoute)
+app.use('/api/enterpriseteam', enterpriseTeamRoute)
+app.use('/api/job', jobRoute)
+app.use('/api/candidate', candidateRoute)
+app.use('/api/message', messageRoute)
+app.use('/api/invoice', invoiceRoute)
 
-app.get('/',(req,res)=>{
+app.get('/', (req, res) => {
     res.send("Bahut maja ara hai bhai🐱")
 })
 
@@ -110,26 +110,32 @@ app.use('/jobdocs', express.static(path.join(__dirname, 'uploads/jobdocs')));
 app.use('/kycdocs', express.static(path.join(__dirname, 'uploads/kycdocs')));
 
 // Serve static files from the 'uploads/resumedocs' directory
-app.use('/resumedocs',express.static(path.join(__dirname,'uploads/resumedocs')));
+app.use('/resumedocs', express.static(path.join(__dirname, 'uploads/resumedocs')));
 
 //Server static file from the 'uploads/invoice' directory
-app.use('/invoicedocs',express.static(path.join(__dirname,'uploads/invoice')));
+app.use('/invoicedocs', express.static(path.join(__dirname, 'uploads/invoice')));
+
+//Server static file from the 'uploads/candidatedocs' directory
+app.use('/candidatedocs', express.static(path.join(__dirname, 'uploads/candidatedocs')));
+
+//Server static file from the 'uploads/consetproof' directory
+app.use('/consetproof', express.static(path.join(__dirname, 'uploads/consetproof')));
 
 //middleware for error handeling
-app.use((err,req,res,next)=>{
-    const errStatus=err.status || 500
-    const errmsg=err.message || "Something went wrong"
+app.use((err, req, res, next) => {
+    const errStatus = err.status || 500
+    const errmsg = err.message || "Something went wrong"
     return res.status(errStatus).json({
-        success:false,
-        status:errStatus,
-        message:errmsg,
-        stack:err.stack
+        success: false,
+        status: errStatus,
+        message: errmsg,
+        stack: err.stack
 
     })
 })
 
 
-app.listen(port,()=>{
+app.listen(port, () => {
     connect()
     console.log("connected on port:8080 to backend!")
 })

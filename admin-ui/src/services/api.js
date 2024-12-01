@@ -370,6 +370,46 @@ export const fetchPostedCandidateProfileByJobId = async (job_id) => {
     }
 }
 
+export const fetchCandidateAttachmentsById = async (candidate_id) => {
+    try {
+        const response = await axios.get(`${app_be_uri}/candidate/getattachments/${candidate_id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error while fetching candidate attachmaents by id : ", error);
+        throw error;
+    }
+}
+
+export const fetchCandidateResumesById = async(candidate_id) => {
+    try {
+        const response = await axios.get(`${app_be_uri}/candidate/getresumes/${candidate_id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error while fetching candidate resumes by id :", error);
+        throw error;
+    }
+}
+
+export const fetchconsentProofByCId = async (candidate_id) => {
+    try {
+        const response = await axios.get(`${app_be_uri}/candidate/getconsentproof/${candidate_id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error while fethcing consent proof by candidate id : ", error);
+        throw error;
+    }    
+}
+
+export const fetchSQAnswersByCid = async (candidate_id) => {
+    try {
+        const response = await axios.get(`${app_be_uri}/candidate/getsqanswers/${candidate_id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error while fetching screening question ans answers by candidate id : ", error);
+        throw error;
+    }
+}
+
 export const fetchRecuritingAgencybyId = async (r_agency_id) => {
     try {
         const response = await axios.get(`${app_be_uri}/recruiting/${r_agency_id}`);
@@ -457,6 +497,7 @@ export const fetchCandidateStatusById = async (candidate_id) => {
     try {
         const response = await axios.get(`${app_be_uri}/candidate/getcandidatestatus/${candidate_id}`);
         return response.data;
+
     } catch (error) {
         console.error("Error while fetching candidate status:", error);
         throw error;
