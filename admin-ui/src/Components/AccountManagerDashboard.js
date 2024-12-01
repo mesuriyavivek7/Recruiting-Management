@@ -4,6 +4,9 @@ import React from 'react'
 
 import User from '../Pages/PagesForAccountManager/User'
 import Add from '../Pages/PagesForAccountManager/Add'
+import Chart from '../Pages/PagesForAccountManager/chart'
+
+
 
 const AccountManagerDashboard= () => {
   return (
@@ -13,6 +16,7 @@ const AccountManagerDashboard= () => {
       <div className="grid grid-cols-1  gap-9 ">
           <Add/>
           <User/>
+       <Chart/>
         </div>
       </div>
     </div>
