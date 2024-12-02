@@ -1114,3 +1114,13 @@ export const getRequestedRecruiterIds = async (req, res, next) => {
     next(error);
   }
 }
+
+export const getAcceptedRecruiterIds = async (req, res, next) => {
+    try{
+       const job = await JOBS.findOne({job_id: req.params.jobid})
+       if(!job) return res.status(200).json([])
+       else return res.status(200).json(job?.accepted_recruiting_agency)
+    }catch(err){
+      next(err)
+    }
+}

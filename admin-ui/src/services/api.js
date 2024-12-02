@@ -146,6 +146,16 @@ export const fetchMappedRecruiterMemberIds = async (job_id) => {
     }
 }
 
+//For getting accepted recruiter member ids by jobid
+export const fetchAcceptedRecruiterMemberIds = async (job_id) => {
+    try{
+        const response = await axios.get(`${app_be_uri}/job/get-accepted-recruiter/${job_id}`)
+        return response.data
+    } catch(error) {
+        console.log("Error while fetching accepted recruiter ids : ",error)
+    }
+}
+
 //for getting requested recruiter id's by jobid
 export const fetchRequestedRecruiterIds = async (job_id) => {
     try {

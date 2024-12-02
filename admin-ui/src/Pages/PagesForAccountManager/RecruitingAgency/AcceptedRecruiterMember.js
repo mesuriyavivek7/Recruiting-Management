@@ -1,13 +1,13 @@
 import React, {useState, useEffect} from 'react'
 import { DataGrid } from '@mui/x-data-grid';
 import Box from '@mui/material/Box';
-import { fetchMappedRecruiterMemberIds, fetchRecruiterMemberDetails } from '../../../services/api';
+import { fetchAcceptedRecruiterMemberIds, fetchRecruiterMemberDetails } from '../../../services/api';
 import { Button, IconButton, InputAdornment, TextField } from '@mui/material';
 import { FaSearch } from 'react-icons/fa';
 import Notification from '../../../Components/Notification';
 import { columns } from './RowColMappedReMember';
 
-export default function MappedRecruiterMember({jobId}) {
+export default function AcceptedRecruiterMember({jobId}) {
 
  const [recruiterData,setRecruiterData]=useState([])
  const [loader,setLoader]=useState(false)
@@ -22,7 +22,7 @@ export default function MappedRecruiterMember({jobId}) {
     setLoader(true)
      try{
        //Fetch mapped recruiter member ids
-       const recruiterMemberIds=await fetchMappedRecruiterMemberIds(jobId)
+       const recruiterMemberIds=await fetchAcceptedRecruiterMemberIds(jobId)
 
        const recruiterMemberDetails=await Promise.all(recruiterMemberIds.map(async (rememberid)=>{
            const recruiter=await fetchRecruiterMemberDetails(rememberid)
@@ -70,7 +70,6 @@ export default function MappedRecruiterMember({jobId}) {
   return (
     <>
     {notification && <Notification message={notification.message} type={notification.type} onClose={() => setNotification(null)} />}
-
     <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} gap={2}>
     {/* Search Bar */}
     <TextField
@@ -109,9 +108,6 @@ export default function MappedRecruiterMember({jobId}) {
       }}
     />
 
-    <div className='flex flex-col items-end gap-2'>
-     <button className='bg-blue-230 w-44 p-2 rounded-md text-white'>+  Add Recruiter</button>
-
     {/* Filter Buttons */}
     <Box display="flex" gap={0}>
       {['All', 'Active', 'Inactive'].map((status) => (
@@ -138,9 +134,7 @@ export default function MappedRecruiterMember({jobId}) {
         </Button>
       ))}
     </Box>
-    </div>
   </Box>
-  
 
 
   <div className='mt-8'>
