@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { LineChart } from '@mui/x-charts/LineChart';
+import { LineChart } from '@mui/x-charts';
 
 export default function DashboardChart() {
   return (
@@ -11,9 +11,7 @@ export default function DashboardChart() {
           xAxis={[
             {
               data: [1, 2, 3, 5, 8, 10],
-           
             },
-          
           ]}
           series={[
             {

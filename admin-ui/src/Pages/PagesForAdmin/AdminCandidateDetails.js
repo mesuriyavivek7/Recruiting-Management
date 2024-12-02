@@ -10,7 +10,6 @@ import { fetchCandidateAttachmentsById, fetchCandidateBasicDetailsById, fetchCan
 
 
 function AdminCandidateDetails() {
-
   const location = useLocation();
   const candidate_id = location.state?.candidate_id;
 
