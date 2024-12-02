@@ -70,6 +70,7 @@ export default function MappedRecruiterMember({jobId}) {
   return (
     <>
     {notification && <Notification message={notification.message} type={notification.type} onClose={() => setNotification(null)} />}
+
     <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} gap={2}>
     {/* Search Bar */}
     <TextField
@@ -108,6 +109,9 @@ export default function MappedRecruiterMember({jobId}) {
       }}
     />
 
+    <div className='flex flex-col items-end gap-2'>
+     <button className='bg-blue-230 w-44 p-2 rounded-md text-white'>+  Add Recruiter</button>
+
     {/* Filter Buttons */}
     <Box display="flex" gap={0}>
       {['All', 'Active', 'Inactive'].map((status) => (
@@ -134,7 +138,9 @@ export default function MappedRecruiterMember({jobId}) {
         </Button>
       ))}
     </Box>
+    </div>
   </Box>
+  
 
 
   <div className='mt-8'>
