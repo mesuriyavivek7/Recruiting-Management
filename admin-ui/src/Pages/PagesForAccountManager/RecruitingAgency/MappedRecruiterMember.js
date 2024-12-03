@@ -1,13 +1,19 @@
 import React, {useState, useEffect} from 'react'
 import { DataGrid } from '@mui/x-data-grid';
 import Box from '@mui/material/Box';
-import { fetchMappedRecruiterMemberIds, fetchRecruiterMemberDetails } from '../../../services/api';
+import { fetchMappedRecruiterMemberIds,fetchRecuritingAgencybyId, fetchAcceptedRecruiterMemberIds, fetchRecruiterMemberDetailsByRagencyId, fetchVerifiedRAgenciesByACmanagerId, fetchRecruiterMemberDetails } from '../../../services/api';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { Button, IconButton, InputAdornment, TextField } from '@mui/material';
 import { FaSearch } from 'react-icons/fa';
 import Notification from '../../../Components/Notification';
 import { columns } from './RowColMappedReMember';
+import { store } from '../../../State/Store';
+import axios from 'axios'
+import WhiteLoader from '../../../assets/whiteloader.svg'
 
-export default function MappedRecruiterMember({jobId}) {
+export default function MappedRecruiterMember({jobId,handleMappedRecruiterCount,handleRequestedRecruiterCount}) {
+ const selectUserData = (state) => state?.admin?.userData;
+ const userData = selectUserData(store?.getState());
 
  const [recruiterData,setRecruiterData]=useState([])
  const [loader,setLoader]=useState(false)
@@ -16,6 +22,74 @@ export default function MappedRecruiterMember({jobId}) {
  const [filterStatus, setFilterStatus] = useState('All');
 
  const [notification, setNotification] = React.useState(null);
+
+ const [verifiedLoading,setVerifiedLoading] = useState(false)
+ const [addMemberLoading,setAddMemberLoading]=useState(false)
+ const [removeMemberLoading,setRemoveMemberLoading] = useState(false)
+ const [openAddPopUp, setOpenAddPopUp]=React.useState(false)
+ const [selectedMember,setSelectedMember]=React.useState([])
+ const [verifiedRecruiterMember,setVerifiedRecruiterMember]= React.useState([])
+
+ const handleChangeSelectedMember = (id) =>{
+    if(selectedMember.includes(id)){
+       setSelectedMember((prevData)=>prevData.filter((item)=>item!==id))
+    }else{
+       setSelectedMember((prevData)=>[...prevData,id])
+    }
+ }
+
+ const handleClosePopUp = () =>{
+     setOpenAddPopUp(false)
+     setSelectedMember([])
+ }
+
+
+ const fetchVerifiedRecruiter=async ()=>{
+  setVerifiedLoading(true)
+  try{
+    //Fetching verified recruiter agencyies id
+    const data = await fetchVerifiedRAgenciesByACmanagerId(userData?._id);
+    
+    //Fetch Recruiter Member upon recruiter agency id
+    const recruiterMembers=await Promise.all(data.map(async (ragencyid)=>{
+          const recruiterMemberDetails=await fetchRecruiterMemberDetailsByRagencyId(ragencyid)
+          return recruiterMemberDetails
+    }))
+
+    const flateRecruiterMembers = recruiterMembers.flat()
+
+    const mappedRecruiterMemberIds= await fetchMappedRecruiterMemberIds(jobId)
+
+    const acceptedRecruiterMemberIds = await fetchAcceptedRecruiterMemberIds(jobId)
+    
+    //Filter member details 
+    const filterRecruiterMemberDetails = flateRecruiterMembers.filter((member) => {
+      return !mappedRecruiterMemberIds.includes(member._id) && !acceptedRecruiterMemberIds.includes(member._id);
+    });
+
+
+    //Get Recruiter Agency Name 
+    const allRecruiterMemberDetails = await Promise.all(filterRecruiterMemberDetails.map(async (details)=>{
+           const recruiterAgency = await fetchRecuritingAgencybyId(details.recruiting_agency_id)
+           return (
+             {
+              ...details,
+              agency_name: recruiterAgency ? recruiterAgency.full_name : "None"
+             }
+           )
+    }))
+
+    console.log(allRecruiterMemberDetails)
+
+      setVerifiedRecruiterMember(allRecruiterMemberDetails)
+    }catch(err){
+        showNotification("Something went wrong.",'failure')
+        console.log(err)
+    }finally{
+      setVerifiedLoading(false)
+    }
+
+  }
 
 
  const fetchData=async () =>{
@@ -51,15 +125,51 @@ export default function MappedRecruiterMember({jobId}) {
      }
  }
 
+ const handleAddMemberData= async () =>{
+    setAddMemberLoading(true)
+    try{
+        await axios.post(`${process.env.REACT_APP_API_APP_URL}/job/addremembermappedlist/${jobId}`,{reMemberIds:selectedMember})
+        await axios.post(`${process.env.REACT_APP_API_APP_URL}/job/convert-request-mapped/${jobId}`,{reMemberIds:selectedMember})
+        await fetchVerifiedRecruiter()
+        await fetchData()
+        await handleMappedRecruiterCount()
+        await handleRequestedRecruiterCount()
+        setOpenAddPopUp(false)
+        showNotification("Successfully Recruiter member added into mapped list.",'success')
+    }catch(err){
+       showNotification("Something went wrong while adding recruiter member",'failure')
+       console.log(err)
+    }finally{
+      setAddMemberLoading(false)
+    }
+ }
+
+ const handleRemoveMemberData= async (rememberid)=>{
+     setRemoveMemberLoading(true)
+     try{
+       //Remove the mapped jobs from the recruiter team and job
+       await axios.put(`${process.env.REACT_APP_API_APP_URL}/job/remove-remember-mapped/${jobId}/${rememberid}`)
+       await fetchData()
+       await fetchVerifiedRecruiter()
+       await handleMappedRecruiterCount()
+       showNotification("Successfully Recruiter member remove from mapped list.",'success')
+     }catch(err){
+       console.log(err)
+       showNotification("Something went wrong while remove recruiter member",'failure')
+     }finally{
+       setRemoveMemberLoading(false)
+     }
+ }
+
  useEffect(()=>{
      fetchData()
+     fetchVerifiedRecruiter()
  },[searchTerm,filterStatus])
 
     
  const showNotification = (message, type) => {
       setNotification({ message, type });
  };
-  
 
 
   const calculateRowHeight = (params) => {
@@ -70,6 +180,54 @@ export default function MappedRecruiterMember({jobId}) {
   return (
     <>
     {notification && <Notification message={notification.message} type={notification.type} onClose={() => setNotification(null)} />}
+    {
+      removeMemberLoading && 
+      <div className='fixed inset-0 flex justify-center bg-black z-50 bg-opacity-50 backdrop-blur-md items-center'>
+        <div className='shadow bg-white rounded-md flex items-center flex-col gap-2 p-3 w-[350px]'>
+           <img src={WhiteLoader} alt='loader' className='w-8 h-8'></img>
+           <span>Please wait while we remove member...</span>
+        </div>
+     </div>
+    }
+    {openAddPopUp && 
+      <div className='fixed inset-0 flex justify-center bg-black z-50 bg-opacity-50 backdrop-blur-md items-center'>
+         <div className='shadow flex flex-col gap-2 w-2/3 p-4 z-40 rounded-md bg-white'>
+             <h2 className='text-xl'><span className='cursor-pointer' onClick={handleClosePopUp}><ArrowBackIosIcon style={{fontSize:"1.2rem"}}></ArrowBackIosIcon></span> Add Recruiter Member</h2>
+             <div className='mt-3 overflow-auto h-72 flex flex-col gap-2'>
+                 {
+                  verifiedRecruiterMember.map((data,index)=>(
+                    <div key={index} className='flex gap-8 p-3 rounded-md bg-gray-50 items-center border'>
+                     <input className='cursor-pointer' onChange={()=>handleChangeSelectedMember(data._id)} checked={selectedMember.includes(data._id)} type='checkbox'></input>
+                     <div className='w-full flex items-center gap-6'>
+                        <div className='flex gap-1 items-center'>
+                            <span>Full Name:</span>
+                            <span className='text-gray-600'>{data.full_name}</span>
+                        </div>
+                        <div className='flex gap-1 items-center'>
+                            <span>Agency Owner:</span>
+                            <span className='text-gray-600'>{data.agency_name}</span>
+                        </div>
+                        <div className='flex gap-2 items-center'>
+                           <span>Role:</span>
+                           <span className='text-gray-600'>{data.isAdmin?"Admin":"Member"}</span>
+                        </div>
+                        <div className='flex gap-2 items-center'>
+                           <span>Status:</span>
+                           <span className='text-gray-600'>{data.account_status}</span>
+                        </div>
+                     </div>
+                   </div>
+                  ))
+                 }
+                
+             </div>
+             <div className='flex mt-3 place-content-end'>
+                <button onClick={()=>handleAddMemberData()} disabled={selectedMember.length===0 || addMemberLoading || verifiedLoading} className='bg-blue-500 disabled:bg-gray-400 disabled:cursor-not-allowed p-2 rounded-md text-white'>Add Member</button>
+             </div>
+         </div>
+    </div>
+    }
+   
 
     <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} gap={2}>
     {/* Search Bar */}
@@ -110,7 +268,7 @@ export default function MappedRecruiterMember({jobId}) {
     />
 
     <div className='flex flex-col items-end gap-2'>
-     <button className='bg-blue-230 w-44 p-2 rounded-md text-white'>+  Add Recruiter</button>
+     <button onClick={()=>setOpenAddPopUp(true)} className='bg-blue-230 w-44 p-2 rounded-md text-white'>+  Add Recruiter</button>
 
     {/* Filter Buttons */}
     <Box display="flex" gap={0}>
@@ -148,7 +306,7 @@ export default function MappedRecruiterMember({jobId}) {
       <Box sx={{ height: 600, width: '100%', paddingTop: '19px' }}>
         <DataGrid
           rows={recruiterData}
-          columns={columns}
+          columns={columns(handleRemoveMemberData)}
           rowHeight={80}
           getRowHeight={calculateRowHeight}
           pageSize={8}

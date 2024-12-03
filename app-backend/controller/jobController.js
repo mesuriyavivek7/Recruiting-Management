@@ -1124,3 +1124,58 @@ export const getAcceptedRecruiterIds = async (req, res, next) => {
       next(err)
     }
 }
+
+export const addRecruiterMemberIntoMappedList = async (req, res, next) => {
+   try{
+     const {reMemberIds}=req.body
+     
+     const job=await JOBS.findOneAndUpdate({job_id:req.params.jobid},{$push:{mapped_recruiting_agency_member:{$each: reMemberIds}}},{new:true})
+
+     await Promise.all(reMemberIds.map(async (reid)=>{
+        await axios.put(`${process.env.APP_SERVER_URL}/recruitingteam/addjobmappedlist/${reid}/${job._id}`)
+     }))
+
+     res.status(200).json("New Recruiter Member Ids added")
+
+   }catch(err){
+     next(err)
+   }
+}
+
+export const convertFromRequestedToMapped = async (req, res, next) => {
+   try{
+     const {reMemberIds} = req.body
+     const {jobid} = req.params
+     
+     const job = await JOBS.findOne({job_id:jobid})
+
+     if(job){
+         const requestedMembers = job.job_request
+         
+        //Update requested members
+        const filterRequestMembers = requestedMembers.filter((item)=>{
+             return !reMemberIds.includes(item)
+        })
+
+        //Update job requested member list
+        await JOBS.updateOne({job_id:jobid},{$set:{job_request:filterRequestMembers}})
+     }
+
+     res.status(200).json("Successfully recruiter member ids change into requested sections")
+     
+   }catch(err){
+     next(err)
+   }
+}
+
+export const removeRememberFromMappedList = async (req, res, next) =>{
+    try{
+      const {rememberid,jobid} = req.params
+      const job=await JOBS.findOneAndUpdate({job_id:jobid},{$pull:{mapped_recruiting_agency_member:rememberid}},{new:true})
+      //Remove jobid from the recruiter member mapped list
+      await axios.put(`${process.env.APP_SERVER_URL}/recruitingteam/removejobmappedlist/${rememberid}/${job._id}`)
+      res.status(200).json("Successfully job removed")
+    }catch(err){
+      next(err)
+    }
+}

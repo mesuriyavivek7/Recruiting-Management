@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { useNavigate } from 'react-router-dom';
 import { colsTeam } from './RowColData';
 import {
-  Card, TablePagination, Button, Box, Typography, Dialog, DialogTitle,
+  Card, Button, Box, Dialog, DialogTitle,
   DialogContent, DialogActions, CircularProgress
 } from '@mui/material';
 import {
@@ -16,8 +15,6 @@ const EnterpriseTeam = ({ enterpriseDetails }) => {
   const [selectedRow, setSelectedRow] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   // Map enterprise details to rows
   const generateRowsFromDetails = async (details) => {
@@ -62,18 +59,6 @@ const EnterpriseTeam = ({ enterpriseDetails }) => {
     setDialogOpen(true);
   };
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
-  // Safeguard `rows` with optional chaining
-  const paginatedRows = rows?.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) || [];
-
   const handleClose = () => {
     setDialogOpen(false);
     setSelectedRow(null);
@@ -89,15 +74,16 @@ const EnterpriseTeam = ({ enterpriseDetails }) => {
         ) : (
           <div style={{ height: 600, width: '100%' }} className="pt-4">
             <DataGrid
-              rows={paginatedRows}
+              rows={rows}
               columns={colsTeam}
               rowHeight={80}
               onRowClick={(params) => handleRowClick(params.row)}
               getRowId={(row) => row._id}
-              pageSize={rowsPerPage}
-              paginationMode="server"
-              onPageChange={handleChangePage}
-              onPageSizeChange={handleChangeRowsPerPage}
+              pageSize={8}
+              pageSizeOptions={[5, 10]}
+              initialState={{
+                pagination: { paginationModel: { page: 0, pageSize: 5 } },
+              }}
               disableSelectionOnClick
               sx={{
                 '& .MuiDataGrid-root': { fontSize: { xs: '0.75rem', lg: '1.09rem' } },
@@ -130,7 +116,7 @@ const EnterpriseTeam = ({ enterpriseDetails }) => {
                 <MemberInfo label="Email" icon={<FaEnvelope />} value="a@gmail.com" />
                 <div className="flex items-center text-gray-700 text-xl">
                   <span className="font-medium text-gray-600">Account Status:</span>
-                  <span className={`ml-2 font-semibold ${selectedRow.status === 'active' ? 'text-green-600' : 'text-red-600'}`}>
+                  <span className={`ml-2 font-semibold ${selectedRow.status === 'Active' ? 'text-green-600' : 'text-red-600'}`}>
                     {selectedRow.status}
                   </span>
                 </div>

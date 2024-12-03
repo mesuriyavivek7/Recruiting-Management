@@ -421,3 +421,50 @@ export const checkPassword=async (req, res, next)=>{
         next(err)
     }
  }
+
+ export const getRecruiterMemberByRAgencyId= async (req, res, next)=>{
+     try{  
+        const {ragencyid}= req.params
+
+        const recruiterMembers=await RECRUITINGTEAM.find({recruiting_agency_id:ragencyid})
+
+        res.status(200).json(recruiterMembers)
+
+     }catch(err){
+        next(err)
+     }
+ }
+
+ export const addJobIntoMappedList = async (req, res, next)=>{
+     try{
+        const {rememberid,orgjobid} = req.params
+        const recruiterMember= await RECRUITINGTEAM.findById(rememberid)
+
+        if(recruiterMember){
+             const RequestedJobs = recruiterMember.requested_jobs
+
+             const filterRequestedJobs=RequestedJobs.filter((item)=>item!==orgjobid)
+
+             await RECRUITINGTEAM.findByIdAndUpdate(rememberid,{$set:{requested_jobs:filterRequestedJobs},$push:{mapped_jobs:orgjobid}})
+
+             return res.status(200).json("New job added into mapped list")
+        }else{
+            return res.status(200).json("Recruiter member not found")
+        }
+
+     }catch(err){
+         next(err)
+     }
+ }
+
+ export const removeJobFromMappedList = async (req, res, next)=>{
+     try{
+        const {rememberid,orgjobid} = req.params
+        
+        await RECRUITINGTEAM.findByIdAndUpdate(rememberid,{$pull:{mapped_jobs:orgjobid}})
+
+        res.status(200).json("Removed job from mapped job list")
+     }catch(err){
+         next(err)
+     }
+ }

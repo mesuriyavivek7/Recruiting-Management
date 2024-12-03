@@ -1,4 +1,4 @@
-export const columns = [
+export const columns= (handleRemoveMemberData)=> [
     {
         field: 'id',
         headerName: 'Sr No.',
@@ -58,6 +58,18 @@ export const columns = [
           <div className='flex items-center w-full h-full'>
             <span className={`${params.row.account_status==="Active"?"bg-green-400":"bg-red-400"} text-white h-10 w-28 p-2 flex justify-center items-center rounded-md`}>{params.row.account_status}</span>
           </div>
+        )
+    },
+    {
+        headerName: "Action",
+        flex: 2,
+        minWidth: 250,
+        align: 'left',
+        headerAlign: 'left',
+        renderCell: (params) =>(
+            <div onClick={()=>handleRemoveMemberData(params.row._id)} className="h-full w-full flex items-center">
+                 <button className="bg-red-400 h-10 hover:bg-red-500 flex justify-center items-center p-2 rounded-md text-white">Remove</button>
+            </div>
         )
     }
 
