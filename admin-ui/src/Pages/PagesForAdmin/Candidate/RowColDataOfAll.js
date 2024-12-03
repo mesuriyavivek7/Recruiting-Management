@@ -1,7 +1,4 @@
 import { format, formatDistanceToNowStrict } from 'date-fns';
-import { fetchCandidateBasicDetailsById, fetchCandidateStatusById, fetchJobBasicDetailsByJobId, fetchVerifiedCandidatesByACManagerId } from '../../../services/api';
-import { cstatus } from '../../../constants/jobStatusMapping';
-import { store } from '../../../State/Store';
 
 // columns.js
 export const columns = (candiadteStatusChange, handleRowClick) => [
@@ -174,44 +171,3 @@ export const columns = (candiadteStatusChange, handleRowClick) => [
 ];
 
 
-
-const selectUserData = (state) => state?.admin?.userData;
-const userData = selectUserData(store?.getState());
-
-// Proceed only if userData.admin_type is 'account_manager'
-let rows = [];
-
-if (userData?.admin_type === "account_manager") {
-  const verifiedCandiatesIds = await fetchVerifiedCandidatesByACManagerId(userData._id);
-
-  rows = await Promise.all(
-    verifiedCandiatesIds.map(async (candidateId, index) => {
-
-      const { job_id, basic_details } = await fetchCandidateBasicDetailsById(candidateId);
-      const job_basic_details = await fetchJobBasicDetailsByJobId(job_id);
-      const candidate = await fetchCandidateStatusById(basic_details.candidate_id)
-
-      // Get candidate status, defaulting to "Status Unavailable" if not found
-      const candidateStatusKey = candidate.candidate_status || "Status Unavailable";
-      const candidateStatus = cstatus.get(candidateStatusKey) || candidateStatusKey; // Map status or use original
-
-      return {
-        _id: String(index + 1),
-        candidate_name: {
-          first_name: basic_details?.first_name || 'No First Name',
-          last_name: basic_details?.last_name || 'No Last Name',
-        },
-        job_title: job_basic_details?.job_title || "No Job Title",
-        job_id: job_basic_details?.job_id || "No Job Id",
-        candidate_status: candidateStatus,
-        submitted: basic_details?.createdAt || "No Submission Date",
-        lastUpdated: basic_details?.updatedAt || "No Update Date",
-        notice_period: basic_details?.notice_period || "N/A",
-        email: basic_details?.primary_email_id || "No Email",
-        mobile: basic_details?.primary_contact_number || "No Contact Number"
-      };
-    })
-  );
-}
-
-export { rows };

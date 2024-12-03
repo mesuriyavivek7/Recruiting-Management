@@ -5,7 +5,7 @@ import { Button, IconButton, InputAdornment, TextField } from '@mui/material';
 import { FaSearch } from 'react-icons/fa';
 import { fetchMappedRecruiterMemberIds, fetchRecruiterMemberDetails } from '../../../services/api';
 import Notification from '../../../Components/Notification';
-import { columns } from '../Candidate/RowColDataOfAll';
+import { columns } from './RowColMappedReMember';
 
 
 export default function MappedRecruiterMember({ jobId }) {
