@@ -3,11 +3,13 @@ import logo from "../assets/logo.jpeg"
 import asset15 from "../assets/asset15.svg";
 import { Link, useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, Button, TextField, Box, DialogActions, InputAdornment } from "@mui/material";
-import { MdPerson, MdEmail, MdVerifiedUser, MdBusinessCenter, MdBusiness, MdWork } from 'react-icons/md';
+import { MdPerson, MdEmail, MdVerifiedUser, MdBusinessCenter } from 'react-icons/md';
 import { BiSearch } from "react-icons/bi";
 import { MdLogout } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import Cookies from 'js-cookie';
+import { fetchVerifedEntepreiseByACId , fetchEnterpriseById, fetchAccountManager, fetchVerifiedRAgenciesByACmanagerId, fetchRecuritingAgencybyId } from "../services/api";
+import WhiteLoader from '../assets/whiteloader.svg'
 
 const AcNavbar = () => {
   const ACManagerData = useSelector((state) => state.admin?.userData);
@@ -16,10 +18,12 @@ const AcNavbar = () => {
   const profileRef = useRef(null);
   const [popupSearchTerm, setPopupSearchTerm] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
-  const enterpriseData = ['e', 'b'];
-  const recruiterData = ['rr', 'gh'];
-  const [showEnterpriseData, setShowEnterpriseData] = useState(true); // State to toggle between enterprise and recruiter data
+  const [searchTab,setSearchTab] = useState('enterprise')
   const [showLogoutDialog, setShowLogoutDialog] = useState(false); // State for logout confirmation dialog
+
+  const [enterpriseData,setEnterpriseData]= useState([])
+  const [recruiterData,setRecruiterData] = useState([])
+  const [loading,setLoading] = useState([])
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -75,13 +79,100 @@ const AcNavbar = () => {
       if (document.activeElement) document.activeElement.blur();
     }, 100); // Adjust timeout if needed
   };
-  // Filter data based on search term
-  const filteredEnterpriseData = enterpriseData.filter((item) =>
-    item?.full_name?.toLowerCase().includes(popupSearchTerm.toLowerCase())
-  );
-  const filteredRecruiterData = recruiterData.filter((item) =>
-    item?.full_name?.toLowerCase().includes(popupSearchTerm.toLowerCase())
-  );
+
+  //Fetch Enterprise Data 
+  const fetchEnterpriseData = async ()=>{
+     setLoading(true)
+     try{
+       const data= await fetchVerifedEntepreiseByACId(ACManagerData?._id)
+
+       const rows = await Promise.all(
+        data.map(async (enterprise, index) => {
+          // Fetch complete enterprise details
+          const enterpriseData = await fetchEnterpriseById(enterprise);
+
+          // Fetch account manager details
+          const accountManager = await fetchAccountManager(
+            enterpriseData?.allocated_account_manager
+          );
+
+          // Combine the fetched data
+          return {
+            id: enterpriseData._id || `enterprise-${index}`, // Ensure a unique id
+            full_name: enterpriseData.full_name || `User ${index + 1}`,
+            email: enterpriseData.email || `user${index + 1}@example.com`,
+            account_status: enterpriseData.account_status || {
+              status: "Inactive",
+              remark: "",
+              admin_id: "",
+            },
+            account_manager_verified:
+              enterpriseData.account_manager_verified || false,
+            account_manager: accountManager
+              ? `${accountManager.full_name}`
+              : null,
+          };
+        })
+      );
+
+      const filteredEnterpriseData = rows.filter((item) =>
+        item?.full_name?.toLowerCase().includes(popupSearchTerm.toLowerCase())
+      );
+
+      setEnterpriseData(filteredEnterpriseData)
+
+     }catch(err){
+       console.log(err)
+     }finally{
+       setLoading(false)
+     }
+  }
+
+  //Fetch Recruiter Data
+  const fetchRecruiterData = async ()=>{
+     setLoading(true)
+     try{
+      //fetch Ids of verified recruiter agencys
+      const data = await fetchVerifiedRAgenciesByACmanagerId(ACManagerData?._id)
+
+       //fetch more details about recruiter agency
+       const rows = await Promise.all(
+        data.map(async (agency_id, index) => {
+          const agency = await fetchRecuritingAgencybyId(agency_id);
+
+          //Fetch account manager of particuler recruiter agency
+          const acmanager = await fetchAccountManager(
+            agency?.alloted_account_manager
+          );
+
+          return {
+            _id: agency._id,
+            full_name: agency.full_name || `User ${index + 1}`,
+            email: agency.email || `user${index + 1}@example.com`,
+            account_status: agency.account_status.status,
+            account_manager: acmanager ? acmanager.full_name : null,
+          };
+        })
+      );
+
+      const filteredRecruiterData = rows.filter((item) =>
+        item.full_name.toLowerCase().includes(popupSearchTerm.toLowerCase())
+      );
+
+      setRecruiterData(filteredRecruiterData);
+
+     }catch(err){
+       console.log(err)
+     }finally{
+      setLoading(false)
+     }
+  }
+
+  useEffect(() => {
+    if (searchTab === "enterprise") fetchEnterpriseData();
+    else fetchRecruiterData();
+  }, [popupSearchTerm, searchTab]);
+  
 
   return (
     <div className="w-full flex justify-between py-4 px-3 bg-blue-230">
@@ -165,8 +256,8 @@ const AcNavbar = () => {
               variant="contained"
               size="small"
               style={{
-                backgroundColor: showEnterpriseData ? '#315370' : '#e0e0e0',
-                color: showEnterpriseData ? 'white' : '#000',
+                backgroundColor: searchTab==="enterprise" ? '#315370' : '#e0e0e0',
+                color: searchTab==="enterprise" ? 'white' : '#000',
                 fontSize: '20px',
                 textTransform: 'none',
                 height: '40px',
@@ -174,7 +265,7 @@ const AcNavbar = () => {
                 borderRadius: '20px 0 0 20px',
                 width: 'auto',
               }}
-              onClick={() => setShowEnterpriseData(true)}
+              onClick={() => setSearchTab('enterprise')}
             >
               Enterprise
             </Button>
@@ -182,8 +273,8 @@ const AcNavbar = () => {
               variant="contained"
               size="small"
               style={{
-                backgroundColor: !showEnterpriseData ? '#315370' : '#e0e0e0',
-                color: !showEnterpriseData ? 'white' : '#000',
+                backgroundColor: searchTab==="recruiter" ? '#315370' : '#e0e0e0',
+                color: searchTab==="recruiter" ? 'white' : '#000',
                 fontSize: '20px',
                 height: '40px',
                 textTransform: 'none',
@@ -193,19 +284,25 @@ const AcNavbar = () => {
                 marginRight: '-1px',
                 whiteSpace: 'nowrap'
               }}
-              onClick={() => setShowEnterpriseData(false)}
+              onClick={() => setSearchTab('recruiter')}
             >
               Recruiter
             </Button>
           </div>
-          <div className="border-t pt-4 mt-2 max-h-[300px] overflow-y-auto">
+          {
+            loading ? (
+              <div className="mt-4 w-full flex justify-center items-center">
+                <img src={WhiteLoader} alt="loader" className="w-8 h-8"></img>
+              </div>
+            ) : (
+              <div className="border-t pt-4 mt-2 max-h-[300px] overflow-y-auto">
             {popupSearchTerm && (
               <>
-                {showEnterpriseData ? (
+                {searchTab==="enterprise" ? (
                   <>
                     <h4 className="font-semibold text-xl">Enterprise Results:</h4>
-                    {filteredEnterpriseData.length > 0 ? (
-                      filteredEnterpriseData.map((item, index) => (
+                    {enterpriseData.length > 0 ? (
+                      enterpriseData.map((item, index) => (
 
                         <Box
                           key={index}
@@ -245,8 +342,8 @@ const AcNavbar = () => {
                 ) : (
                   <>
                     <h4 className="font-semibold text-xl">Recruiter Results:</h4>
-                    {filteredRecruiterData.length > 0 ? (
-                      filteredRecruiterData.map((item, index) => (
+                    {recruiterData.length > 0 ? (
+                      recruiterData.map((item, index) => (
                         <Box
                           key={index}
                           className="p-6 my-4 bg-white border border-gray-200 hover:shadow-lg rounded-lg shadow-sm transition duration-300"
@@ -264,15 +361,15 @@ const AcNavbar = () => {
                           </div>
 
                           <div className="mb-3 flex items-center space-x-3">
-                            <MdWork className="text-black text-xl" />
-                            <p className="font-semibold text-lg text-gray-800">Designation:</p>
-                            <p className="text-gray-700 text-lg">{item.designation}</p>
+                          <MdVerifiedUser className="text-black text-xl" />
+                            <p className="font-semibold text-lg text-gray-800">Account Status:</p>
+                            <p className={`${item.account_status==="Active"?"text-green-500":"text-red-500"} text-lg`}>{item.account_status}</p>
                           </div>
 
                           <div className="flex items-center space-x-3">
-                            <MdBusiness className="text-black text-xl" />
-                            <p className="font-semibold text-lg text-gray-800">Company Name:</p>
-                            <p className="text-gray-700 text-lg">{item.company_name}</p>
+                          <MdBusinessCenter className="text-black text-xl" />
+                            <p className="font-semibold text-lg text-gray-800">Account Manager:</p>
+                            <p className="text-gray-700 text-lg">{item.account_manager}</p>
                           </div>
                         </Box>
                       ))
@@ -284,6 +381,10 @@ const AcNavbar = () => {
               </>
             )}
           </div>
+
+            )
+          }
+
         </DialogContent>
         <DialogActions className="bg-gray-100 px-6 py-6">
           <button

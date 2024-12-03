@@ -6,7 +6,7 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { Button, IconButton, InputAdornment, TextField } from '@mui/material';
 import { FaSearch } from 'react-icons/fa';
 import Notification from '../../../Components/Notification';
-import { columns } from './RowColMappedReMember';
+import { mappedColumns } from './RowColMappedReMember';
 import { store } from '../../../State/Store';
 import axios from 'axios'
 import WhiteLoader from '../../../assets/whiteloader.svg'
@@ -306,7 +306,7 @@ export default function MappedRecruiterMember({jobId,handleMappedRecruiterCount,
       <Box sx={{ height: 600, width: '100%', paddingTop: '19px' }}>
         <DataGrid
           rows={recruiterData}
-          columns={columns(handleRemoveMemberData)}
+          columns={mappedColumns(handleRemoveMemberData)}
           rowHeight={80}
           getRowHeight={calculateRowHeight}
           pageSize={8}

@@ -4,7 +4,8 @@ import { Button } from '@mui/material';
 import AllCandidateDataForEachJob from './Job/AllCandidateDataForEachJob';
 import MappedRecruiterMember from './RecruitingAgency/MappedRecruiterMember';
 import RequestedRecruiter from './RecruitingAgency/RequestedRecruiter';
-import { fetchMappedRecruiterMemberIds, fetchPostedCandidateProfileByJobId, fetchRequestedRecruiterIds } from '../../services/api';
+import AcceptedRecruiterMember from './RecruitingAgency/AcceptedRecruiterMember';
+import { fetchMappedRecruiterMemberIds, fetchPostedCandidateProfileByJobId,fetchAcceptedRecruiterMemberIds, fetchRequestedRecruiterIds } from '../../services/api';
 import AdminJobDetails from './AdminJobDetails';
 
 
@@ -16,6 +17,7 @@ const AdminJob = () => {
   const [candidateCount, setCandidateCount] = useState(0);
   const [mappedRecruiterCount, setMappedRecruiterCount] = useState(0);
   const [requestedRecruiterCount, setRequestedRecruiterCount] = useState(0);
+  const [acceptedRecruiterCount,setAcceptedRecruiterCount] = useState(0)
 
   const handleCandidateCount = async () => {
     const verifiedCandiatesIds = await fetchPostedCandidateProfileByJobId(job_id);
@@ -32,10 +34,16 @@ const AdminJob = () => {
     setRequestedRecruiterCount(recruiterMemberIds.length)
   }
 
+  const handleAcceptedRecruiterCount = async () =>{
+    const recruiterMemberIds = await fetchAcceptedRecruiterMemberIds(id)
+    setAcceptedRecruiterCount(recruiterMemberIds.length)
+  }
+
   useEffect(() => {
     handleCandidateCount();
     handleMappedRecruiterCount();
     handleRequestedRecruiterCount();
+    handleAcceptedRecruiterCount()
   }, []);
 
   const handleTabChange = (tab) => {
@@ -88,6 +96,27 @@ const AdminJob = () => {
           >
             {candidateCount} Candidate
           </Button>
+
+           {/* Accepted Recriuter Member */}
+           <Button
+            id="demo-customized-button"
+            aria-haspopup="true"
+            disableElevation
+            style={{
+              backgroundColor: activeTab === 'acceptedRe' ? '#315370' : '#e0e0e0',
+              color: activeTab === 'acceptedRe' ? 'white' : '#000',
+              fontSize: '16px',
+              textTransform: 'none',
+              height: '50px',
+              border: '2px solid white',
+              borderRadius: '0 0 0 0',  // Rounded right side
+              width: 'auto',
+            }}
+            onClick={() => handleTabChange('acceptedRe')}
+          >
+            {acceptedRecruiterCount} Accepted Recruiter
+          </Button>
+
           {/* mapped Candidate Button */}
           <Button
             id="demo-customized-button"
@@ -107,6 +136,7 @@ const AdminJob = () => {
           >
             {mappedRecruiterCount} Mapped Recruiter
           </Button>
+
           {/* Requested Candidate Button */}
           <Button
             id="demo-customized-button"
@@ -136,6 +166,11 @@ const AdminJob = () => {
           {activeTab === 'Candidate' && (
             <div className='pt-9 '>
               <AllCandidateDataForEachJob jobId={job_id} setCandidateCount={setCandidateCount} />
+            </div>
+          )}
+          {activeTab === 'acceptedRe' && (
+            <div className='pt-9 '>
+               <AcceptedRecruiterMember jobId={id}></AcceptedRecruiterMember>
             </div>
           )}
           {activeTab === 'mRecruiter' && (
