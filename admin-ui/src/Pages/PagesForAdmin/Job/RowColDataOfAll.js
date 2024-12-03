@@ -1,7 +1,5 @@
 import { format, formatDistanceToNowStrict } from 'date-fns';
 import React from 'react';
-import { fetchVerifiedJobsByAdminId, fetchJobBasicDetailsByJobId, fetchRecruiterByEId, fetchJobDetailsById } from '../../../services/api';
-import { store } from '../../../State/Store';
 
 export const columns = [
   {
@@ -144,43 +142,3 @@ export const columns = [
   },
 ];
 
-
-const selectUserData = (state) => state?.admin?.userData;
-const userData = selectUserData(store?.getState());
-
-// Proceed only if userData.admin_type is 'master_admin'
-let rows = [];
-if (userData?.admin_type === "master_admin") {
-  const verifiedJobsIds = await fetchVerifiedJobsByAdminId(userData?._id);
-
-  rows = await Promise.all(
-    verifiedJobsIds.map(async (jobId, index) => {
-      const jobDetails = await fetchJobDetailsById(jobId);
-
-      // Fetch recruiter asynchronously
-      const recruiter = await fetchRecruiterByEId(jobDetails.enterprise_id);
-
-      const basicjobDetails = await fetchJobBasicDetailsByJobId(jobDetails.job_id);
-
-      return {
-        _id: String(`${index + 1}`),
-        job_title: basicjobDetails?.job_title || "No Title Available",
-        job_id: jobDetails?.job_id || "No ID Available",
-        recruiter: recruiter || "Unknown Recruiter",
-        location: {
-          state: basicjobDetails?.state || 'Unknown State',
-          country: basicjobDetails?.country || 'Unknown Country',
-        },
-        experience: {
-          minexp: basicjobDetails?.experience?.minexp || 'N/A',
-          maxexp: basicjobDetails?.experience?.maxexp || 'N/A',
-        },
-        job_status: jobDetails.job_status,
-        createdAt: jobDetails?.createdAt ? new Date(jobDetails.createdAt) : new Date(),
-        lastUpdated: jobDetails?.updatedAt ? new Date(jobDetails.updatedAt) : new Date()
-      };
-    })
-  );
-}
-
-export { rows };
