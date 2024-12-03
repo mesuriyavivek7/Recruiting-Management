@@ -1,7 +1,5 @@
 import { format, formatDistanceToNowStrict } from 'date-fns';
 import React from 'react';
-import { fetchJobBasicDetailsByJobId, fetchJobDetailsById, fetchPendingJobsByACManagerId, fetchRecruiterByEId } from '../../../services/api';
-import { store } from '../../../State/Store';
 
 // Column definitions
 export const columns = [
@@ -111,36 +109,4 @@ export const columns = [
 ];
 
 
-const selectUserData = (state) => state?.admin?.userData;
-const userData = selectUserData(store?.getState());
 
-// Proceed only if userData.admin_type is 'account_manager'
-let rows = [];
-if (userData?.admin_type === "account_manager") {
-  const verifiedJobsIds = await fetchPendingJobsByACManagerId(userData?._id);
-
-  rows = await Promise.all(
-    verifiedJobsIds.map(async (jobId, index) => {
-      const jobDetails = await fetchJobDetailsById(jobId);
-
-      // Fetch recruiter asynchronously
-      const recruiter = await fetchRecruiterByEId(jobDetails.enterprise_id);
-
-      const basicjobDetails = await fetchJobBasicDetailsByJobId(jobDetails.job_id);
-
-      return {
-        _id: String(`${index + 1}`),
-        job_title: basicjobDetails?.job_title || "No Title Available",
-        job_id: jobDetails?.job_id || "No ID Available",
-        recruiter: recruiter || "Unknown Recruiter",
-        location: {
-          state: basicjobDetails?.state || 'Unknown State',
-          country: basicjobDetails?.country || 'Unknown Country',
-        },
-        createdAt: jobDetails?.createdAt ? new Date(jobDetails.createdAt) : new Date(),
-      };
-    })
-  );
-}
-
-export { rows };
