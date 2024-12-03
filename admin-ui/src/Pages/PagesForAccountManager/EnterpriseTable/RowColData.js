@@ -1,6 +1,4 @@
 import Button from '@mui/material/Button';
-import { fetchEnterpriseById, fetchVerifedEntepreiseByACId } from '../../../services/api';
-import { store } from '../../../State/Store';
 import { format, formatDistanceToNowStrict } from 'date-fns';
 import React from 'react';
 
@@ -84,45 +82,8 @@ export const columns = [
 
 ];
 
-const selectUserData = (state) => state?.admin?.userData;
-const userData = selectUserData(store?.getState());
 
-let rows = [];
-
-// Proceed only if userData.admin_type is 'account_manager'
-if (userData?.admin_type === "account_manager") {
-  // Fetch verified enterprise IDs by account manager ID
-  const verifiedEnterprisesId = await fetchVerifedEntepreiseByACId(userData?._id);
- 
-
-
-  // Fetch enterprise details for each ID
-  rows = await Promise.all(
-    verifiedEnterprisesId.map(async (enterpriseId, index) => {
-      const enterprise = await fetchEnterpriseById(enterpriseId);
-
-      return {
-        id: index + 1,
-        full_name: enterprise.full_name || `User ${index + 1}`,
-        email: enterprise.email || `user${index + 1}@example.com`,
-        designation: enterprise.designation || "Not Provided",
-        company_name: enterprise.company_name || "Unknown",
-        country: enterprise.country || "Unknown",
-        city: enterprise.city || "Unknown",
-        email_verification: enterprise.isEmailVerified ? "yes" : "no",
-      };
-    })
-  );
- 
-
-} else {
-  console.log("User is not an account manager, skipping enterprise data fetch.");
-}
-
-export { rows };
-
-
-
+//Columns for Job
 export const colsJob = [
     {
       field: '_id',
@@ -214,6 +175,8 @@ export const colsJob = [
       },
     },
   ];
+
+  //Coulmns For Team
   export const colsTeam = [
     {
       field: '_id',
@@ -226,25 +189,13 @@ export const colsJob = [
     {
       field: 'en_name',
       headerName: 'Enterprise Name',
-      minWidth: 230,
+      minWidth: 300,
       headerAlign: 'left',
       align: 'left',
       renderCell: (params) => (
-        <div style={{ display: 'flex', alignItems: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'center' , gap: '1rem' }}>
           {/* Rounded Circle for the first letter of the recruiter's email */}
-          <div
-            style={{
-              width: 32,
-              height: 32,
-              borderRadius: '50%',
-              backgroundColor: '#3f51b5',
-              color: '#fff',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginRight: 8,
-            }}
-          >
+          <div className='bg-blue-500 text-white w-8 h-8 rounded-full flex justify-center items-center'>
             {params.row.en_name.charAt(0).toUpperCase()}
           </div>
           {/* Display the recruiter's full email */}
@@ -324,11 +275,13 @@ export const colsJob = [
         const timeAgo = formatDistanceToNowStrict(createdOnDate, { addSuffix: true }); // Get "X days ago"
   
         return (
-          <div>
-            <span>{formattedDate}</span>
-            <span style={{ fontSize: '0.9em', color: '#888', paddingLeft: '8px' }}>
-              ({timeAgo})
-            </span>
+          <div className='flex w-full h-full items-center'>
+            <div className='flex flex-col gap-1'>
+              <span className=' text-sm'>{formattedDate}</span>
+              <span className=' text-sm' style={{ fontSize: '0.9em', color: '#888'}}>
+                ({timeAgo})
+              </span>
+            </div>
           </div>
         );
       },
