@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Box, Card, CircularProgress, TablePagination } from '@mui/material';
+import { Box, Card, CircularProgress } from '@mui/material';
 import { RcCandidatecols } from './RowColData';
 import { fetchCandidateDetailsByRecruiterId, fetchCandidateStatusById, fetchJobBasicDetailsByJobId } from '../../../services/api';
 import { cstatus } from '../../../constants/jobStatusMapping';
@@ -14,9 +14,6 @@ const AcCandidate = ({ recuritingAgenciesDetails }) => {
   const [RcCandidaterow, setRcCandidaterow] = useState([]);
   const [selectedRowId, setSelectedRowId] = useState(null);
   const [loading, setLoading] = useState(false);
-
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const generateRowsFromDetails = async (details) => {
     const data = await fetchCandidateDetailsByRecruiterId(details._id);
@@ -65,16 +62,6 @@ const AcCandidate = ({ recuritingAgenciesDetails }) => {
     setSelectedRowId(id);
   };
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
-  const paginatedRows = RcCandidaterow.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   return (
     <div>
@@ -86,13 +73,13 @@ const AcCandidate = ({ recuritingAgenciesDetails }) => {
         <Card className='mt-9 font-sans px-4'>
           <div style={{ height: 600, width: '100%' }} className='pt-4'>
             <DataGrid
-              rows={paginatedRows}
+              rows={RcCandidaterow}
               columns={RcCandidatecols}
               rowHeight={80}
               onRowClick={(params) => handleRowClick(params.id)}
               getRowId={(row) => row._id}
               getRowHeight={calculateRowHeight}
-              pageSize={rowsPerPage}
+              pageSize={8}
               initialState={{
                 pagination: {
                   paginationModel: { page: 0, pageSize: 10 },

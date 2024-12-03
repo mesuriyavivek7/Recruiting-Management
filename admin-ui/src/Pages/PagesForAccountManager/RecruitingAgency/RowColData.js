@@ -1,7 +1,5 @@
 import Button from '@mui/material/Button';
-import { fetchRecuritingAgencybyId, fetchVerifiedRAgenciesByACmanagerId } from '../../../services/api';
 import { format, formatDistanceToNowStrict } from 'date-fns';
-import { store } from '../../../State/Store';
 
 export const columns = [
   {
@@ -97,59 +95,8 @@ export const columns = [
   },
 ];
 
-const selectUserData = (state) => state?.admin?.userData;
-const userData = selectUserData(store?.getState());
-// Fetch and map data
-let rows = [];
-let rowsr = [];
 
-if (userData?.admin_type === 'account_manager') {
-  const data = await fetchVerifiedRAgenciesByACmanagerId(userData?._id);
-  rows = data
-    ? await Promise.all(
-      data.map(async (agency_id, index) => {
-        const agency = await fetchRecuritingAgencybyId(agency_id);
-        return {
-          _id: agency._id,
-          displayIndex: index + 1,
-          full_name: agency.full_name || `User ${index + 1}`,
-          email: agency.email || `user${index + 1}@example.com`,
-          designation: agency.designation || "Not Provided",
-          company_name: agency.company_name || "Unknown",
-          country: agency.country || "Unknown",
-          city: agency.city || "Unknown",
-          domains: Array.isArray(agency.domains) ? agency.domains : [], // Ensure it's an array
-          firm_type: Array.isArray(agency.firm_type) ? agency.firm_type : [], // Ensure it's an array
-          linkedin_url: agency.linkedin_url || "Not Provided", // Fallback if not provided
-          email_verified: agency.email_verified ? "Yes" : "No",
-        };
-      })
-    )
-    : [];
-
-
-  rowsr = Array.isArray(data)
-    ? data.map((agency, index) => ({
-      _id: index + 1,
-      full_name: agency.full_name || `User ${index + 1}`,
-      email: agency.email || `user${index + 1}@example.com`,
-      designation: agency.designation || "Not Provided",
-      company_name: agency.company_name || "Unknown",
-      country: agency.country || "Unknown",
-      city: agency.city || "Unknown",
-      domains: Array.isArray(agency.domains) ? agency.domains : [], // Ensure it's an array
-      firm_type: Array.isArray(agency.firm_type) ? agency.firm_type : [], // Ensure it's an array
-      linkedin_url: agency.linkedin_url || "Not Provided", // Fallback if not provided
-      email_verified: agency.email_verified ? "Yes" : "No",
-    }))
-    : [];
-}
-
-
-export { rows, rowsr };
-
-
-
+//columns for recruiter team
 
 export const RcTeamCols = [
   {
@@ -220,7 +167,7 @@ export const RcTeamCols = [
 
 ];
 
-
+//coumns for candidate
 export const RcCandidatecols = [
   {
     field: '_id',
@@ -274,6 +221,39 @@ export const RcCandidatecols = [
     minWidth: 200,
     headerAlign: 'left',
     align: 'left',
+    renderCell: (params) =>(
+       <div className='flex h-full w-full items-center'>
+          <span className='bg-slate-50 text-[15px] flex items-center justify-center rounded-md p-2 w-32 h-8 border border-blue-400'>{params.value}</span>
+       </div>
+    )
+  },
+  {
+    field: 'email',
+    headerName: 'Email',
+    flex: 2,
+    minWidth: 200,
+    headerAlign: 'left',
+    align: 'left',
+    renderCell: (params) => (
+      <div>
+        {params.row.email.length > 15
+          ? `${params.row.email.slice(0, 15)}...`
+          : params.row.email}
+      </div>
+    ),
+  },
+  {
+    field: 'mobile',
+    headerName: 'Contact',
+    flex: 2,
+    minWidth: 200,
+    headerAlign: 'left',
+    align: 'left',
+    renderCell: (params) => (
+      <div>
+        +{params.row.mobile}
+      </div>
+    ),
   },
   {
     field: 'submitted',
@@ -332,32 +312,5 @@ export const RcCandidatecols = [
       </div>
     ),
   },
-  {
-    field: 'email',
-    headerName: 'Email',
-    flex: 2,
-    minWidth: 200,
-    headerAlign: 'left',
-    align: 'left',
-    renderCell: (params) => (
-      <div>
-        {params.row.email.length > 15
-          ? `${params.row.email.slice(0, 15)}...`
-          : params.row.email}
-      </div>
-    ),
-  },
-  {
-    field: 'mobile',
-    headerName: 'Contact',
-    flex: 2,
-    minWidth: 200,
-    headerAlign: 'left',
-    align: 'left',
-    renderCell: (params) => (
-      <div>
-        {params.row.mobile}
-      </div>
-    ),
-  },
+  
 ];

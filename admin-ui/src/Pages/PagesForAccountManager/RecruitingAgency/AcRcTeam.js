@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Card, TablePagination, Box, Dialog, DialogTitle, DialogContent, DialogActions, CircularProgress } from '@mui/material';
+import { Card, Box, Dialog, DialogTitle, DialogContent, DialogActions, CircularProgress } from '@mui/material';
 import { RcTeamCols } from './RowColData'; // Import columns configuration
 import { FaPhone, FaEnvelope, FaUserCheck, FaBriefcase } from 'react-icons/fa'; // Import all required icons
 import { fetchRecuritingTeam } from '../../../services/api';
@@ -10,8 +10,6 @@ const AcRcTeam = ({ recuritingAgenciesDetails }) => {
   const [selectedRow, setSelectedRow] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [loading, setLoading] = useState(false); // Loader state
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   // Function to map enterpriseDetails to rows
   const generateRowsFromDetails = async (details) => {
@@ -44,17 +42,6 @@ const AcRcTeam = ({ recuritingAgenciesDetails }) => {
     setDialogOpen(true);
   };
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
-  const paginatedRows = RcTeamrows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
-
   const handleClose = () => {
     setDialogOpen(false);
     setSelectedRow(null);
@@ -75,13 +62,14 @@ const AcRcTeam = ({ recuritingAgenciesDetails }) => {
         ) : (
           <div style={{ height: 600, width: '100%' }} className="pt-4">
             <DataGrid
-              rows={paginatedRows}
+              rows={RcTeamrows}
               columns={RcTeamCols}
               rowHeight={80}
               onRowClick={(params) => handleRowClick(params.row)}
               getRowId={(row) => row._id}
               getRowHeight={calculateRowHeight}
-              pageSize={rowsPerPage}
+              loading={loading}
+              pageSize={8}
               initialState={{
                 pagination: { paginationModel: { page: 0, pageSize: 10 } },
               }}

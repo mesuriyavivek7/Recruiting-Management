@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
-import { rows, columns } from './RowColData';
+import { columns } from './RowColData';
 import { Button, CircularProgress, IconButton, InputAdornment, TextField } from '@mui/material';
 import { FaSearch } from 'react-icons/fa';
 import { fetchRecuritingAgencybyId, fetchVerifiedRAgenciesByACmanagerId } from '../../../services/api';
@@ -21,7 +21,7 @@ export default function AllRecruitingAgencyData() {
 
   const [searchTerm, setSearchTerm] = React.useState('');
   const [filterStatus, setFilterStatus] = React.useState('All');
-  const [filteredRows, setFilteredRows] = React.useState(rows);
+  const [filteredRows, setFilteredRows] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
   const navigate=useNavigate();
 
@@ -63,6 +63,7 @@ export default function AllRecruitingAgencyData() {
           const matchesStatus = filterStatus === 'All' || row.account_status === filterStatus;
           return matchesSearch && matchesStatus;
         });
+        
         setFilteredRows(newFilteredRows)
 
       }catch(err){
