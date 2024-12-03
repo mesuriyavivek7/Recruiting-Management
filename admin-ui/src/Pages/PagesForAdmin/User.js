@@ -3,26 +3,40 @@ import { ReactComponent as JobsIcon } from "../../assets/asset21.svg";
 import { ReactComponent as ActionIcon } from "../../assets/asset23.svg";
 import { Link } from "react-router-dom";
 import AccountManagerTable from "./AccountManager/AccountManagerTable";
-
-import { useRows as enterprise_rows } from "./EnterpriseTable/RowColData";
-import { rows as r_agency_rows } from "./RecruitingAgency/RowColData";
-import { rows as job_rows } from "./Job/RowColDataOfAll";
-import { rows as candidate_rows } from "./Candidate/RowColDataOfAll";
+import { fetchVerifiedCandidatesByMAdminId, fetchEnterpriseVerifiedData, fetchVerifiedJobsByAdminId, fetchVerifiedRAgenciesByAdminId } from "../../services/api";
+import { useSelector } from "react-redux";
 
 const User = () => {
-  const [enterpriseCount, setEnterpriseCount] = useState(0);
 
-  const getEnterpriseRows = enterprise_rows();
+ const userData = useSelector((state) => state.admin?.userData);
+ const [enterpriseCount,setEnterpriseCount] = useState(0)
+ const [recruiterCount,setRecruiterCount] = useState(0)
+ const [jobCount,setJobCount] = useState(0)
+ const [candidateCount,setCandidateCount] = useState(0)
 
-  useEffect(() => {
-    const fetchRowCount = async () => {
-      const en_count = await getEnterpriseRows();
-      setEnterpriseCount(en_count.length);
+ const handleFetchDashboardCount = async ()=>{
+    try{
+      const enCount = await fetchEnterpriseVerifiedData(userData?._id)
+      if(enCount) setEnterpriseCount(enCount.length)
+
+      const reCount = await fetchVerifiedRAgenciesByAdminId(userData?._id)
+      if(reCount) setRecruiterCount(reCount.length)
+
+      const caCount = await fetchVerifiedCandidatesByMAdminId(userData?._id)
+      if(caCount) setCandidateCount(caCount.length)
+
+      const jbCount = await fetchVerifiedJobsByAdminId(userData?._id)
+      if(jbCount) setJobCount(jbCount.length)
+
+    }catch(err){
+       console.log(err)
     }
-    fetchRowCount();
-  }, []);
+ }
 
-
+ useEffect(()=>{
+    handleFetchDashboardCount()
+ },[])
+  
   return (
 
     <div>
@@ -50,7 +64,7 @@ const User = () => {
               <h2 className="text-sm xl:text-xl font-semibold text-gray-600 mb-2">Recruiter Agency</h2>
               <p className="font-bold text-green-700 lg:pt-2">^6%</p>
             </div>
-            <p className="text-gray-700 mb-4 font-bold pt-3 xl:pt-6 text-xl xl:text-2xl">{r_agency_rows?.length}</p>
+            <p className="text-gray-700 mb-4 font-bold pt-3 xl:pt-6 text-xl xl:text-2xl">{recruiterCount}</p>
             <div className="flex justify-between items-center space-x-10 pt-8">
 
               <Link to="/master_admin/recruiting-agency" className="inline-block  bg-blue-230 text-white py-2 px-4 rounded hover:bg-gray-400 text-xs xl:text-lg">see all</Link>
@@ -69,7 +83,7 @@ const User = () => {
 
               <p className="font-bold text-green-700 xl:pt-2">^4%</p>
             </div>
-            <p className="text-gray-700 mb-4 font-bold pt-3 xl:pt-6 text-xl xl:text-2xl">{candidate_rows?.length}</p>
+            <p className="text-gray-700 mb-4 font-bold pt-3 xl:pt-6 text-xl xl:text-2xl">{candidateCount}</p>
             <div className="flex justify-between items-center space-x-10 pt-8">
               <Link to="/master_admin/candidates" className="inline-block  bg-blue-230 text-white py-2 px-4 rounded hover:bg-gray-400 text-xs xl:text-lg">see all</Link>
 
@@ -88,7 +102,7 @@ const User = () => {
               <h2 className="text-sm xl:text-xl font-semibold text-gray-600 mb-2">Jobs</h2>
               <p className="font-bold text-green-700 xl:pt-2">^4%</p>
             </div>
-            <p className="text-gray-700 mb-4 font-bold pt-3 xl:pt-6 text-xl xl:text-2xl">{job_rows?.length}</p>
+            <p className="text-gray-700 mb-4 font-bold pt-3 xl:pt-6 text-xl xl:text-2xl">{jobCount}</p>
             <div className="flex justify-between items-center space-x-10 pt-8">
               <Link to="/master_admin/jobs" className="inline-block  bg-blue-230 text-white py-2 px-4 rounded hover:bg-gray-400 text-xs xl:text-lg">see all</Link>
 

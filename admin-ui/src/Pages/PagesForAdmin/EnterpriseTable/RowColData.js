@@ -1,7 +1,4 @@
 import Button from '@mui/material/Button';
-import { fetchAccountManager, fetchEnterpriseById, fetchEnterpriseVerifiedData } from '../../../services/api';
-import { useSelector } from 'react-redux';
-import { useMemo } from 'react';
 
 // Column configuration for the DataGrid
 export const columns = [
@@ -112,42 +109,3 @@ export const columns = [
     },
 ];
 
-export const useRows = () => {
-    const userData = useSelector((state) => state.admin.userData);
-    const admin_id = userData._id;
-    const getRows = useMemo(() => {
-        return async () => {
-            const data = await fetchEnterpriseVerifiedData(admin_id);
-
-            const rows = await Promise.all(
-                data.map(async (enterprise, index) => {
-                    // Fetch complete enterprise details
-                    const enterpriseData = await fetchEnterpriseById(enterprise);
-
-                    // Fetch account manager details
-                    const accountManager = await fetchAccountManager(enterpriseData?.allocated_account_manager);
-
-                    // Combine the fetched data
-                    return {
-                        id: enterpriseData._id || `enterprise-${index}`, // Ensure a unique id
-                        displayIndex: index + 1,
-                        full_name: enterpriseData.full_name || `User ${index + 1}`,
-                        email: enterpriseData.email || `user${index + 1}@example.com`,
-                        designation: enterpriseData.designation || "Not Provided",
-                        company_name: enterpriseData.company_name || "Unknown",
-                        country: enterpriseData.country || "Unknown",
-                        city: enterpriseData.city || "Unknown",
-                        email_verification: enterpriseData.email_verified ? "yes" : "no",
-                        account_status: enterpriseData.account_status || { status: 'Inactive', remark: '', admin_id: '' },
-                        account_manager_verified: enterpriseData.account_manager_verified || false,
-                        account_manager: accountManager ? `${accountManager.full_name}` : null,
-                    };
-                })
-            );
-
-            return rows; // Return the rows array
-        };
-    }, [userData]); // Add dependencies if necessary
-
-    return getRows;
-};
