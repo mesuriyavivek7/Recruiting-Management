@@ -5,7 +5,7 @@ import multer from 'multer'
 import { fileURLToPath } from 'url';
 
 
-import { activateJob, getAllJobs, addCandidateProfileList, allotedJobToAcManager, createJobs, deleteJobDraftWithOtherDetails, downloadEvaluationForm, getAllJobDetails, getAllJobDraftDetails, getCandidateScreeningQue, getFrontAcceptedJobDetails, getFrontMappedJobDetails, getJobAttachmentsDetailsForCandidate, getJobBasicDetailsForPreview, getJobCompanyDetailsForPreview, getJobSourcingGuidelinesForPreview, getJobStatusForPreview, getJobCommissionDetailsForPreview, createJobUpdates, getJobUpdates, getJobAttachmentsDetailsForPreview, getAcManagerNameAndMail, viewJobAttachments, downloadJobAttachments, getJobAttachmentFileType, getJobHotMark, changeJobHotMark, getJobCandidatesForPreview, getLiveJobs, getFrontFavouriteJobs, unMapJob, addJobMapRequest, SearchJobByTitle, getJobScreeningQuestionsForPreview, SearchPastJobByTitleAndEnMemberId, getActiveJobCountForEnMember, getPendingJobCountForEnMember, searchJobRecruiter, searchJobEnterprise, getPostedCandidatesByJobId, getAllotedAcManagerId, getMainJobDetails, addCandidateIntoEnMemberReceivedList, getMappedRecruiterMemberIds, getRequestedRecruiterIds, getAcceptedRecruiterIds } from '../controller/jobController.js';
+import { activateJob, getAllJobs, addCandidateProfileList, allotedJobToAcManager, createJobs, deleteJobDraftWithOtherDetails, downloadEvaluationForm, getAllJobDetails, getAllJobDraftDetails, getCandidateScreeningQue, getFrontAcceptedJobDetails, getFrontMappedJobDetails, getJobAttachmentsDetailsForCandidate, getJobBasicDetailsForPreview, getJobCompanyDetailsForPreview, getJobSourcingGuidelinesForPreview, getJobStatusForPreview, getJobCommissionDetailsForPreview, createJobUpdates, getJobUpdates, getJobAttachmentsDetailsForPreview, getAcManagerNameAndMail, viewJobAttachments, downloadJobAttachments, getJobAttachmentFileType, getJobHotMark, changeJobHotMark, getJobCandidatesForPreview, getLiveJobs, getFrontFavouriteJobs, unMapJob, addJobMapRequest, SearchJobByTitle, getJobScreeningQuestionsForPreview, SearchPastJobByTitleAndEnMemberId, getActiveJobCountForEnMember, getPendingJobCountForEnMember, searchJobRecruiter, searchJobEnterprise, getPostedCandidatesByJobId, getAllotedAcManagerId, getMainJobDetails, addCandidateIntoEnMemberReceivedList, getMappedRecruiterMemberIds, getRequestedRecruiterIds, getAcceptedRecruiterIds, addRecruiterMemberIntoMappedList, convertFromRequestedToMapped, removeRememberFromMappedList } from '../controller/jobController.js';
 import { craeteJobBasicDeatils, showJobDetail, getJobBasicDetails, getJobDetailsByEnId, getJobDetailsById } from '../controller/jobBasicController.js'
 import { createJobDraft, deleteJobDraft } from '../controller/jobDraftController.js'
 import { createJobCommission, showJobCommission, getJobCommissionDetails } from '../controller/jobCommissionController.js'
@@ -273,5 +273,14 @@ router.get('/get-requested-recruiter/:jobid', getRequestedRecruiterIds)
 
 //For getting accepted recruiter member ids
 router.get('/get-accepted-recruiter/:jobid',getAcceptedRecruiterIds)
+
+//For adding recruiter member ids into mapped list
+router.post('/addremembermappedlist/:jobid',addRecruiterMemberIntoMappedList)
+
+//Convert recruiter from requested to mapped
+router.post('/convert-request-mapped/:jobid/',convertFromRequestedToMapped)
+
+//Handle Remove recruiter member id form mapped list
+router.put('/remove-remember-mapped/:jobid/:rememberid',removeRememberFromMappedList)
 
 export default router

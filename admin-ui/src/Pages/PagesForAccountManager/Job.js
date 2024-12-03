@@ -171,7 +171,7 @@ const Job = () => {
           )}
           {activeTab === 'mRecruiter' && (
             <div className='pt-9 '>
-              <MappedRecruiterMember jobId={id}></MappedRecruiterMember>
+              <MappedRecruiterMember jobId={id} handleMappedRecruiterCount={handleMappedRecruiterCount} handleRequestedRecruiterCount={handleRequestedRecruiterCount}></MappedRecruiterMember>
             </div>
           )}
           {activeTab === 'rRecruiter' && (
