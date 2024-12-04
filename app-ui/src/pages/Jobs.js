@@ -135,7 +135,6 @@ export default function Jobs() {
    try{
       setLiveLoader(true)
       const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/job/getlivejobs/${user._id}?searchTearm=${searchTearm}&locations=${selectedLocations.join(',')}&domains=${selectedDomains.join(',')}&jobType=${jobType}`)
-      console.log(res.data)
       setLiveJobs(res.data)
    }catch(err){
      showNotification("Something went wrong.",'failure')
@@ -150,7 +149,6 @@ export default function Jobs() {
    try{
       setMappedLoader(true)
       const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/job/frontmappedjobs/${user._id}?searchTearm=${searchTearm}&locations=${selectedLocations.join(',')}&domains=${selectedDomains.join(',')}&jobType=${jobType}`)
-      console.log(res.data)
       setMappedJobs(res.data)
    }catch(err){
       showNotification("Something went wrong.",'failure')
@@ -165,7 +163,6 @@ export default function Jobs() {
    try{
      setAcceptedLoader(true)
      const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/job/frontacceptedjobs/${user._id}?searchTearm=${searchTearm}&locations=${selectedLocations.join(',')}&domains=${selectedDomains.join(',')}&jobType=${jobType}`)
-     console.log('accepted jobs---->',res.data)
      setAcceptedJobs(res.data)
    }catch(err){
      setAcceptedLoader(false)
@@ -180,7 +177,6 @@ export default function Jobs() {
    try{
      setFavouriteLoader(true)
      const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/job/frontfavouritejobs/${user._id}?searchTearm=${searchTearm}&locations=${selectedLocations.join(',')}&domains=${selectedDomains.join(',')}&jobType=${jobType}`)
-     console.log('favourite jobs--->',res.data)
      setFavouriteJobs(res.data)
    }catch(err){
      setFavouriteLoader(false)
