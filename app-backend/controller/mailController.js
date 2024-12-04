@@ -305,9 +305,9 @@ export const sendMail=async (req,res)=>{
                     color: #333333;
                 }
                 .container {
-                    width: 100%;
+                    width: 90%;
                     max-width: 600px;
-                    margin: 0 auto;
+                    margin: 20px auto;
                     background-color: #ffffff;
                     padding: 20px;
                     border-radius: 8px;
@@ -315,7 +315,7 @@ export const sendMail=async (req,res)=>{
                 }
                 .header {
                     background-color: #4CAF50;
-                    padding: 10px;
+                    padding: 15px;
                     text-align: center;
                     color: #ffffff;
                     border-top-left-radius: 8px;
@@ -326,22 +326,42 @@ export const sendMail=async (req,res)=>{
                 }
                 .content h1 {
                     color: #4CAF50;
+                    font-size: 1.8rem;
                 }
                 .content p {
                     line-height: 1.6;
-                    font-size: 16px;
+                    font-size: 1rem;
                 }
-                .cred-data{
+                .cred-data {
                     display: flex;
                     flex-direction: column;
-                    gap:.3rem;
-                    margin-bottom:.5rem;
+                    gap: 0.3rem;
+                    margin-bottom: 0.5rem;
+                }
+                .cred-data span {
+                    word-wrap: break-word;
                 }
                 .footer {
                     text-align: center;
-                    padding: 20px;
-                    font-size: 12px;
+                    padding: 15px;
+                    font-size: 0.8rem;
                     color: #888888;
+                }
+        
+                /* Responsive styles */
+                @media (max-width: 480px) {
+                    .content h1 {
+                        font-size: 1.5rem;
+                    }
+                    .content p {
+                        font-size: 0.9rem;
+                    }
+                    .header {
+                        padding: 10px;
+                    }
+                    .footer {
+                        font-size: 0.7rem;
+                    }
                 }
             </style>
         </head>
@@ -354,19 +374,18 @@ export const sendMail=async (req,res)=>{
                     <h1>Welcome to UPHIRE,</h1>
                     <p>Dear ${mailpreq.name},</p>
                     <p>Thank you for registering with us. Your account has been created successfully.</p>
-                    <p>You are now a part of the fastest-growing network of Recruiting firms in the world.
+                    <p>You are now a part of the fastest-growing network of recruiting firms in the world.
                         Your credentials for accessing the UPHIRE platform are given below.</p>
                     <div>
-                       <div class="cred-data">
-                         <span>Username:</span>
-                         <span style="color:blue;">${mailpreq.to}</span>
-                       </div>
-                       <div class="cred-data">
-                         <span>Password:</span>
-                         <span>uphire</span>
-                       </div>
+                        <div class="cred-data">
+                            <span>Username:</span>
+                            <span style="color:blue;">${mailpreq.to}</span>
+                        </div>
+                        <div class="cred-data">
+                            <span>Password:</span>
+                            <span>uphire</span>
+                        </div>
                     </div>
-                    
                     <p>The Uphire Team</p>
                 </div>
                 <div class="footer">
@@ -417,9 +436,9 @@ export const sendTeamMemberNotifyMail=async (req,res)=>{
                     color: #333333;
                 }
                 .container {
-                    width: 100%;
+                    width: 90%;
                     max-width: 600px;
-                    margin: 0 auto;
+                    margin: 20px auto;
                     background-color: #ffffff;
                     padding: 20px;
                     border-radius: 8px;
@@ -427,7 +446,7 @@ export const sendTeamMemberNotifyMail=async (req,res)=>{
                 }
                 .header {
                     background-color: #4CAF50;
-                    padding: 10px;
+                    padding: 15px;
                     text-align: center;
                     color: #ffffff;
                     border-top-left-radius: 8px;
@@ -438,22 +457,44 @@ export const sendTeamMemberNotifyMail=async (req,res)=>{
                 }
                 .content h1 {
                     color: #4CAF50;
+                    font-size: 1.8rem;
+                    margin-bottom: 10px;
                 }
                 .content p {
                     line-height: 1.6;
-                    font-size: 16px;
+                    font-size: 1rem;
+                    margin-bottom: 15px;
                 }
-                .cred-data{
+                .cred-data {
                     display: flex;
                     flex-direction: column;
-                    gap:.3rem;
-                    margin-bottom:.5rem;
+                    gap: 0.3rem;
+                    margin-bottom: 1rem;
+                }
+                .cred-data span {
+                    word-wrap: break-word;
                 }
                 .footer {
                     text-align: center;
-                    padding: 20px;
-                    font-size: 12px;
+                    padding: 15px;
+                    font-size: 0.8rem;
                     color: #888888;
+                }
+        
+                /* Responsive styles */
+                @media (max-width: 480px) {
+                    .content h1 {
+                        font-size: 1.5rem;
+                    }
+                    .content p {
+                        font-size: 0.9rem;
+                    }
+                    .header {
+                        padding: 10px;
+                    }
+                    .footer {
+                        font-size: 0.75rem;
+                    }
                 }
             </style>
         </head>
@@ -465,20 +506,18 @@ export const sendTeamMemberNotifyMail=async (req,res)=>{
                 <div class="content">
                     <h1>Welcome to UPHIRE,</h1>
                     <p>Dear ${mailpreq.name},</p>
-                    <p>You are invited to uphire by your friend ${mailpreq.inviter_name}. Your account has been created successfully.</p>
-                    <p>You are now a part of the fastest-growing network of Recruiting firms in the world.
-                        Your credentials for accessing the UPHIRE platform are given below.</p>
+                    <p>You are invited to UPHIRE by your friend ${mailpreq.inviter_name}. Your account has been created successfully.</p>
+                    <p>You are now a part of the fastest-growing network of recruiting firms in the world. Your credentials for accessing the UPHIRE platform are given below:</p>
                     <div>
-                       <div class="cred-data">
-                         <span>Username:</span>
-                         <span style="color:blue;">${mailpreq.to}</span>
-                       </div>
-                       <div class="cred-data">
-                         <span>Password:</span>
-                         <span>uphire</span>
-                       </div>
+                        <div class="cred-data">
+                            <span>Username:</span>
+                            <span style="color:blue;">${mailpreq.to}</span>
+                        </div>
+                        <div class="cred-data">
+                            <span>Password:</span>
+                            <span>uphire</span>
+                        </div>
                     </div>
-                    
                     <p>The Uphire Team</p>
                 </div>
                 <div class="footer">
@@ -486,7 +525,7 @@ export const sendTeamMemberNotifyMail=async (req,res)=>{
                 </div>
             </div>
         </body>
-        </html>
+        </html>        
         `
     }
 
@@ -528,9 +567,9 @@ export const sendVerificationMailEnterprise=async (req,res,next)=>{
                    color: #333;
                }
                .container {
-                   width: 100%;
+                   width: 90%;
                    max-width: 600px;
-                   margin: 0 auto;
+                   margin: 20px auto;
                    padding: 20px;
                    background-color: #ffffff;
                    border-radius: 8px;
@@ -545,19 +584,22 @@ export const sendVerificationMailEnterprise=async (req,res,next)=>{
                    width: 80px;
                }
                .content {
-                   padding: 20px 0;
+                   padding: 20px;
                    text-align: center;
                }
                .content h1 {
                    color: #333;
+                   font-size: 1.8rem;
                }
                .content p {
                    color: #555;
+                   font-size: 1rem;
+                   margin-bottom: 20px;
                }
                .verify-button {
                    display: inline-block;
                    padding: 10px 20px;
-                   font-size: 16px;
+                   font-size: 1rem;
                    color: #ffffff;
                    background-color: #007bff;
                    border-radius: 5px;
@@ -566,12 +608,30 @@ export const sendVerificationMailEnterprise=async (req,res,next)=>{
                }
                .footer {
                    text-align: center;
-                   padding: 20px 0;
+                   padding: 20px;
                    border-top: 1px solid #eeeeee;
                    color: #aaa;
                }
                .footer p {
-                   font-size: 12px;
+                   font-size: 0.9rem;
+                   line-height: 1.6;
+               }
+       
+               /* Responsive Styles */
+               @media (max-width: 480px) {
+                   .content h1 {
+                       font-size: 1.5rem;
+                   }
+                   .content p {
+                       font-size: 0.9rem;
+                   }
+                   .verify-button {
+                       padding: 12px 18px;
+                       font-size: 0.95rem;
+                   }
+                   .footer p {
+                       font-size: 0.8rem;
+                   }
                }
            </style>
        </head>
@@ -592,7 +652,7 @@ export const sendVerificationMailEnterprise=async (req,res,next)=>{
                </div>
            </div>
        </body>
-       </html>
+       </html>       
        `
     }
     
@@ -679,6 +739,39 @@ export const sendVerificationMailEnterpriseTeam=async (req,res,next)=>{
                .footer p {
                    font-size: 12px;
                }
+       
+               /* Media Queries for Responsiveness */
+               @media only screen and (max-width: 600px) {
+                   .container {
+                       padding: 15px;
+                   }
+                   .content h1 {
+                       font-size: 22px;
+                   }
+                   .content p {
+                       font-size: 14px;
+                   }
+                   .verify-button {
+                       padding: 10px 15px;
+                       font-size: 14px;
+                   }
+                   .header img {
+                       width: 60px;
+                   }
+               }
+       
+               @media only screen and (max-width: 400px) {
+                   .content h1 {
+                       font-size: 18px;
+                   }
+                   .content p {
+                       font-size: 12px;
+                   }
+                   .verify-button {
+                       padding: 8px 12px;
+                       font-size: 12px;
+                   }
+               }
            </style>
        </head>
        <body>
@@ -689,7 +782,7 @@ export const sendVerificationMailEnterpriseTeam=async (req,res,next)=>{
                <div class="content">
                    <h1>Email Verification</h1>
                    <p>Hi ${req.body.name},</p>
-                   <p>You are invited to uphire platform. Please click the button below to verify your email address:</p>
+                   <p>You are invited to Uphire platform. Please click the button below to verify your email address:</p>
                    <a href="${process.env.APP_SERVER_URL}/mail/enterpriseteamverifymail/${token}" class="verify-button">Verify Your Email</a>
                </div>
                <div class="footer">
@@ -698,7 +791,7 @@ export const sendVerificationMailEnterpriseTeam=async (req,res,next)=>{
                </div>
            </div>
        </body>
-       </html>
+       </html>       
        `
     }
     
@@ -761,9 +854,12 @@ export const sendVerificationMailRecruiting=async (req,res,next)=>{
                }
                .content h1 {
                    color: #333;
+                   font-size: 24px;
                }
                .content p {
                    color: #555;
+                   font-size: 16px;
+                   margin: 10px 0;
                }
                .verify-button {
                    display: inline-block;
@@ -783,6 +879,22 @@ export const sendVerificationMailRecruiting=async (req,res,next)=>{
                }
                .footer p {
                    font-size: 12px;
+               }
+               /* Responsive styles */
+               @media only screen and (max-width: 600px) {
+                   .container {
+                       padding: 15px;
+                   }
+                   .content h1 {
+                       font-size: 20px;
+                   }
+                   .content p {
+                       font-size: 14px;
+                   }
+                   .verify-button {
+                       font-size: 14px;
+                       padding: 8px 16px;
+                   }
                }
            </style>
        </head>
@@ -1079,9 +1191,12 @@ export const sendEmailUpdateVerificaitonRecruiting=async (req,res,next)=>{
                }
                .content h1 {
                    color: #333;
+                   font-size: 24px;
                }
                .content p {
                    color: #555;
+                   font-size: 16px;
+                   margin: 10px 0;
                }
                .verify-button {
                    display: inline-block;
@@ -1102,6 +1217,22 @@ export const sendEmailUpdateVerificaitonRecruiting=async (req,res,next)=>{
                .footer p {
                    font-size: 12px;
                }
+               /* Responsive styles */
+               @media only screen and (max-width: 600px) {
+                   .container {
+                       padding: 15px;
+                   }
+                   .content h1 {
+                       font-size: 20px;
+                   }
+                   .content p {
+                       font-size: 14px;
+                   }
+                   .verify-button {
+                       font-size: 14px;
+                       padding: 8px 16px;
+                   }
+               }
            </style>
        </head>
        <body>
@@ -1121,7 +1252,7 @@ export const sendEmailUpdateVerificaitonRecruiting=async (req,res,next)=>{
                </div>
            </div>
        </body>
-       </html>
+       </html>       
        `
     }
     try{
