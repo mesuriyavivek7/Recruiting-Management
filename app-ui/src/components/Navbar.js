@@ -56,13 +56,13 @@ const Navbar = () => {
       try{
         await axios.post(`${process.env.REACT_APP_API_BASE_URL}/auth/logout`,{},{withCredentials:true})
         window.location.reload()
-        setLogoutLoader(false)
       }catch(err){
-           setLogoutLoader(false)
            showNotification("Something went wrong.",'failure')
           console.log(err)
+      }finally{
+        setLogoutLoader(false)
       }
-      setLogoutLoader(false)
+      
   }
 
   const searchJobs=async ()=>{
