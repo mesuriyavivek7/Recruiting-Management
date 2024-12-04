@@ -52,8 +52,8 @@ export const enterpriseLogin=async (req,res,next)=>{
 
         const enterprise=await ENTERPRISE.findById(user.enterprise_id)
 
-        if(user.account_status!=="Active") return res.status(404).json({message:"Your account is inactivated by team leader,",type:"failure"})
-        if(enterprise.account_status.status!=="Active") return res.status(404).json({message:"Your enterprise is inactivated by admin",type:"failure"})
+        if(user.account_status!=="Active") return res.status(404).json({message:"Your account is inactivated by team leader.",type:"failure"})
+        if(enterprise.account_status.status!=="Active") return res.status(404).json({message:"Your enterprise is inactivated by admin.",type:"failure"})
 
         const isPasswordCorrect=await bcrypt.compare(req.body.password,user.password)
 

@@ -3,7 +3,7 @@ import multer from "multer"
 import path from 'path'
 
 
-import { acVerified, allocatedAcManager, changeAccountStatus, checkAndRemoveCoiFile, checkIsVerifiedRecruiter, exportMemberData, getAcmanager, getAgencyDetailsForProfilePage, getAllPendingAcmanagerRecruiting, getAllPendingMadminVerifyRAgency, getRecruitingAgencies, getRecruitingAgencyById, getTeamMember, kycDetailsSubmission, kycDocsSubmission, updateAgencyDetails, uploadCoiCertificate } from "../controller/recruitingController.js";
+import { acVerified, allocatedAcManager, changeAccountStatus, checkAndRemoveCoiFile, checkIsVerifiedRecruiter, checkKycDetails, exportMemberData, getAcmanager, getAgencyDetailsForProfilePage, getAllPendingAcmanagerRecruiting, getAllPendingMadminVerifyRAgency, getRecruitingAgencies, getRecruitingAgencyById, getTeamMember, kycDetailsSubmission, kycDocsSubmission, updateAgencyDetails, uploadCoiCertificate } from "../controller/recruitingController.js";
 
 
 const router=express.Router()
@@ -39,6 +39,8 @@ router.post('/kycdetails/:id',kycDetailsSubmission)
 //router for upload kyc document
 router.post('/kycdocs/:id',upload.single('file'),kycDocsSubmission)
 
+//router for check kyc details are submited or not
+router.get('/check-kyc/:recruitingid',checkKycDetails)
 
 //get all pending master admin verification recruiting agency
 router.get('/adminpending',getAllPendingMadminVerifyRAgency)
