@@ -77,7 +77,7 @@ const recruitingagencySchema=new mongoose.Schema({
         default:false
     },
     kyc_verified:{
-        type:String,
+        type:Boolean,
         default:false
     },
     kyc_details:{

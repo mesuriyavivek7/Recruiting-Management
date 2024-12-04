@@ -37,7 +37,20 @@ export const kycDocsSubmission = async (req, res, next) => {
     }
 }
 
+export const checkKycDetails = async (req, res, next) => {
+    try{
+       const {recruitingid} = req.params
+       const recruiter = await RECRUITING.findById(recruitingid)
 
+       if(!recruiter) return res.status(404).json({message:"User not found"})
+
+       if(recruiter.kyc_details.entity_type && recruiter.kyc_documents.filename) return res.status(200).json(true)
+       else return res.status(200).json(false)
+
+    }catch(err){ 
+        next(err)
+    }
+}
 
 export const getAllPendingMadminVerifyRAgency = async (req, res, next) => {
     try {
