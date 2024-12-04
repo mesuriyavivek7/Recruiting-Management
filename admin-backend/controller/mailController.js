@@ -60,22 +60,41 @@ export const sendMail = async (req, res) => {
                 }
                 .content h1 {
                     color: #4CAF50;
+                    font-size: 24px;
                 }
                 .content p {
                     line-height: 1.6;
                     font-size: 16px;
+                    margin: 10px 0;
                 }
-                .cred-data{
+                .cred-data {
                     display: flex;
                     flex-direction: column;
-                    gap:.3rem;
-                    margin-bottom:.5rem;
+                    gap: 0.3rem;
+                    margin-bottom: 0.5rem;
+                }
+                .cred-data span {
+                    display: inline-block;
                 }
                 .footer {
                     text-align: center;
                     padding: 20px;
                     font-size: 12px;
                     color: #888888;
+                }
+                @media only screen and (max-width: 600px) {
+                    .container {
+                        padding: 15px;
+                    }
+                    .content h1 {
+                        font-size: 20px;
+                    }
+                    .content p {
+                        font-size: 14px;
+                    }
+                    .cred-data {
+                        gap: 0.2rem;
+                    }
                 }
             </style>
         </head>
@@ -88,9 +107,9 @@ export const sendMail = async (req, res) => {
                     <h1>Welcome to UPHIRE,</h1>
                     <p>Dear ${fullName},</p>
                     <p>I hope this message finds you well. Your account has been created successfully.</p>
-                    <p>I am pleased to invite you to join our team at Uphire as an Account Manager. Your skills and experience make you an excellent fit for this role, and we are excited about the value you will bring to our organization..</p>
+                    <p>I am pleased to invite you to join our team at Uphire as an Account Manager. Your skills and experience make you an excellent fit for this role, and we are excited about the value you will bring to our organization.</p>
                     <div>
-                       <p>Credentials For Uphire Dashboard.</p>
+                       <p>Credentials For Uphire Dashboard:</p>
                        <div class="cred-data">
                          <span>Email:</span>
                          <span style="color:blue;">${email}</span>
@@ -100,7 +119,6 @@ export const sendMail = async (req, res) => {
                          <span>${password}</span>
                        </div>
                     </div>
-
                     <p>The Uphire Team</p>
                 </div>
                 <div class="footer">
@@ -108,7 +126,7 @@ export const sendMail = async (req, res) => {
                 </div>
             </div>
         </body>
-        </html>
+        </html>        
         `
     }
 
