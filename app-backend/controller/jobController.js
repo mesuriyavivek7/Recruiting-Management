@@ -873,11 +873,15 @@ export const getLiveJobs = async (req, res, next) => {
     const { searchTearm, locations, domains, jobType } = req.query
     const jobs = await JOBS.find({ job_status: 'Active' })
 
+    console.log("JObs ----->",jobs)
+
     const domainsArray = domains ? domains.split(",") : null
     const locationArray = locations ? locations.split(",") : null
 
     //Filter out live jobs
     const filterJobs = filterOutLiveJobs(jobs, req.params.rememberid)
+
+    console.log("Filter jobs----->",filterJobs)
 
     //Filter out jobs on query base
     const queryFilterJobs = await Promise.all(filterJobs.map(async (job) => {
@@ -920,6 +924,7 @@ export const getLiveJobs = async (req, res, next) => {
     res.status(200).json(removeTrashValue)
 
   } catch (err) {
+    console.log(err)
     next(err)
   }
 }

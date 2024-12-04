@@ -47,9 +47,8 @@ export default function ReumeUploadPopUp({onNext,jobId,candidateId,parentFormDat
           },
           },
          )
-         console.log(res.data)
          setParseFileData(res.data)
-         console.log("file upload successfully",res)
+         console.log("file upload successfully",res.data)
         }catch(err){
           console.log(err)
           let newErrors={}
