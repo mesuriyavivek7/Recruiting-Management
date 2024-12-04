@@ -122,6 +122,7 @@ const NewEnterpriseData = () => {
   };
 
   const fetchAcManager = async () => {
+    setLoading(true)
     try {
       if (myValue.userData?.admin_type === 'master_admin') {
         const acmanagerdata = await fetchAccountManagerMasterAdmin(myValue.userData._id);
@@ -132,12 +133,15 @@ const NewEnterpriseData = () => {
       }
     } catch (err) {
       showNotification("Something went wrong while fetching account manager.", 'failure');
+    } finally{
+       setLoading(false)
     }
   };
 
 
 
   const fetchEnterprise = async () => {
+    setLoading(true)
     try {
       const enterpriseIdArray = await fetchPendingEnterpriseData(myValue.userData._id);
 
@@ -154,6 +158,8 @@ const NewEnterpriseData = () => {
       }
     } catch (err) {
       showNotification('Error fetching enterprises!', 'failure');
+    } finally{
+       setLoading(false)
     }
   };
 
