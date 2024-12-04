@@ -113,14 +113,14 @@ const Navbar = () => {
     setLogoutLoader(true)
     try{
       await axios.post(`${process.env.REACT_APP_API_BASE_URL}/auth/logout`,{},{withCredentials:true})
-      setLogoutLoader(false)
       window.location.reload()
     }catch(err){
-         setLogoutLoader(false)
-         showNotification("Something went wrong.",'failure')
-        console.log(err)
+      showNotification("Something went wrong.",'failure')
+      console.log(err)
+    }finally{
+      setLogoutLoader(false)
     }
-    setLogoutLoader(false)
+    
   }
   
   return (
