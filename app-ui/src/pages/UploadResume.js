@@ -60,6 +60,9 @@ export default function UploadResume() {
     }))
   }
 
+  console.log("Candidate id---->",candidateId)
+  console.log("parent form data----->",formData)
+
   const handleSubmit=async ()=>{
     try{
       //here submission process start

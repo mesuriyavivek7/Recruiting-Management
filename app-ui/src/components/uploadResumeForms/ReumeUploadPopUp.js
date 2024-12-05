@@ -321,7 +321,7 @@ export default function ReumeUploadPopUp({onNext,jobId,candidateId,parentFormDat
             {/* <span className='text-sm text-gray-400'>24988 - Field Service Engineer - Atlanta</span> */}
             <span className='text-gray-500'><VideocamOutlinedIcon style={{fontSize:"1.4rem"}}></VideocamOutlinedIcon></span>
          </div>
-         <span className='text-gray-400 text-sm'>24988 - Field Service Engineer - Atlanta</span>
+         {/* <span className='text-gray-400 text-sm'>24988 - Field Service Engineer - Atlanta</span> */}
          {
           renderUi()
          }

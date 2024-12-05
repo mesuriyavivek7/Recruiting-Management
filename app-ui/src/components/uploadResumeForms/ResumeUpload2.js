@@ -145,12 +145,29 @@ export default function ResumeUpload2({jobObj,parentFormData,candidateId,parentF
     onPrev()
   }
 
-  console.log("answer--->",answer)
+  const [openDiscardProcess,setDiscardProcess]=useState(false)
+  const [discardLoader,setDiscardLoader]= useState(false)
+
+   //for discard the whole process
+   const handleCancelProcess=async ()=>{
+    setDiscardLoader(true)
+    try{
+         await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/candidate/cancelprocess`,{data:{
+          filepath:parentFormData.form0.filepath,
+          cid:candidateId
+         }})
+         navigate('/recruiter/jobs')
+    } catch(err){
+      setDiscardLoader(false)
+      console.log(err)
+      showNotification("Something went wrong.",'failure')
+    }
+}  
 
   return (
     <>
     {notification && <Notification message={notification.message} type={notification.type} onClose={()=>setNotification(null)}></Notification>}
-
+    
     {openPopUp && 
       <div className='fixed inset-0 flex justify-center bg-black z-50 bg-opacity-50 backdrop-blur-md items-center'>
       
@@ -177,6 +194,19 @@ export default function ResumeUpload2({jobObj,parentFormData,candidateId,parentF
         }
       `}</style>
       </div>
+     </div>
+    }
+    {
+      openDiscardProcess && 
+      <div className='fixed inset-0 flex justify-center bg-black z-50 bg-opacity-40 backdrop-blur-md items-center'>
+        <div className='custom-div pb-3 w-3/12 gap-0'>
+            <h1 className='text-xl'>Confirmation</h1>
+            <span>Are you sure for discrad the process?</span>
+            <div className='flex mt-3 items-center gap-3'>
+               <button onClick={()=>setDiscardProcess(false)} className='bg-blue-500 rounded-md text-white text-sm px-4 p-2'>No</button>
+               <button disabled={discardLoader} onClick={handleCancelProcess} className='bg-red-400 disabled:bg-gray-400 disabled:cursor-not-allowed rounded-md text-white text-sm px-4 p-2'>Yes</button>
+            </div>
+        </div>
      </div>
     }
     <div className='custom-div p-8 px-6'>
@@ -233,7 +263,7 @@ export default function ResumeUpload2({jobObj,parentFormData,candidateId,parentF
        </div>
        <div className='shadow rounded-md flex w-[1300px] place-content-end fixed bottom-0 bg-white px-6 py-2'>
           <div className='flex gap-2'>
-            <button className='py-1 px-4 text-base hover:bg-slate-100 transition-all rounded-sm text-black'>Cancel</button>
+            <button onClick={()=>setDiscardProcess(true)} className='py-1 px-4 text-base hover:bg-slate-100 transition-all rounded-sm text-black'>Cancel</button>
             <button onClick={handlePrev} className='py-1 px-4 text-base hover:bg-slate-100 transition-all rounded-sm text-black'>Previous</button>
             <button onClick={()=>setSubmit(true)} className='py-1 px-4 text-base hover:bg-blue-400 bg-blue-500 rounded-sm text-white'>Submit</button>
           </div>
