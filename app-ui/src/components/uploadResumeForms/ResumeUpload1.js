@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
-
+import { useNavigate } from 'react-router-dom';
 import Notification from '../Notification';
 import axios from 'axios'
 import { AuthContext } from '../../context/AuthContext';
@@ -14,6 +14,7 @@ import InsertDriveFileOutlinedIcon from '@mui/icons-material/InsertDriveFileOutl
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 
 export default function ResumeUpload1({jobObj,parentFormData,candidateId,parentFormDataChange,onNext}) {
+  const navigate=useNavigate()
   const {user}=useContext(AuthContext)
   const [formData,setFormData]=useState({
         firstname:(Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.basicDetails.first_name):((Object.keys(parentFormData.form0).length>0)?(parentFormData.form0.firstName):("")),
@@ -37,6 +38,8 @@ export default function ResumeUpload1({jobObj,parentFormData,candidateId,parentF
         candidateSummary:(Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.basicDetails.candidate_summary):(""),
         candidatetoc:false
   })
+
+  console.log("Form1 data----->",formData)
 
   const [attachments,setAttachments]=useState({
     candidate_evaluation_form:(Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.candidateattachments.evaluation_form):(""),
@@ -149,7 +152,7 @@ export default function ResumeUpload1({jobObj,parentFormData,candidateId,parentF
   const checkCreadential=async ()=>{
     try{
         const res=await axios.post(`${process.env.REACT_APP_API_BASE_URL}/candidate/checkmobileandemail`,{email:formData.primaryEmailId,mobileno:formData.primaryContactNumber})
-        if(res.data) showNotification("Email address or Mobile number is alredy exist.","failure")
+        if(res.data) showNotification("Email address or Mobile number is already exist.","failure")
         else handleNext()
     }catch(err){
       console.log(err)
@@ -219,9 +222,38 @@ export default function ResumeUpload1({jobObj,parentFormData,candidateId,parentF
      getCountries()
   },[])
 
+  const [openDiscardProcess,setDiscardProcess]=useState(false)
+
+  //for discard the whole process
+  const handleCancelProcess=async ()=>{
+    try{
+         await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/candidate/cancelprocess`,{data:{
+          filepath:parentFormData.form0.filepath,
+          cid:candidateId
+         }})
+         navigate('/recruiter/jobs')
+    } catch(err){
+       console.log(err)
+       showNotification("Something went wrong.",'failure')
+    }
+}  
+
   return (
     <>
     {notification && <Notification message={notification.message} type={notification.type} onClose={()=>setNotification(null)}></Notification>}
+    {
+      openDiscardProcess && 
+      <div className='fixed inset-0 flex justify-center bg-black z-50 bg-opacity-40 backdrop-blur-md items-center'>
+        <div className='custom-div pb-3 w-3/12 gap-0'>
+            <h1 className='text-xl'>Confirmation</h1>
+            <span>Are you sure for discrad the process?</span>
+            <div className='flex mt-3 items-center gap-3'>
+               <button onClick={()=>setDiscardProcess(false)} className='bg-blue-500 rounded-md text-white text-sm px-4 p-2'>No</button>
+               <button onClick={handleCancelProcess} className='bg-red-400 rounded-md text-white text-sm px-4 p-2'>Yes</button>
+            </div>
+        </div>
+    </div>
+    }
     <div className='w-full bg-white-500 rounded-md gap-4 flex flex-col p-2'>
         <div className='flex gap-4 items-start w-full px-5 py-4'>
           <div className='flex w-[32%] py-2 gap-0.5 flex-col '>
@@ -313,6 +345,7 @@ export default function ResumeUpload1({jobObj,parentFormData,candidateId,parentF
                     <label className='input-label' htmlFor='additionalemail'>Additonal Email ID </label>
                     <input
                     value={formData.additionalEmailId}
+                    onChange={handleFormData}
                     id='additionalemail'
                     name='additionalEmailId'
                     type='text'
@@ -919,7 +952,7 @@ export default function ResumeUpload1({jobObj,parentFormData,candidateId,parentF
 
         <div className='shadow rounded-md flex w-[1300px] place-content-end fixed bottom-0 bg-white px-6 py-2'>
           <div className='flex gap-2'>
-            <button className='py-1 px-4 text-base hover:bg-slate-100 transition-all rounded-sm text-black'>Cancel</button>
+            <button onClick={()=>setDiscardProcess(true)} className='py-1 px-4 text-base hover:bg-slate-100 transition-all rounded-sm text-black'>Cancel</button>
             <button onClick={checkCreadential} className='py-1 px-4 text-base hover:bg-blue-400 bg-blue-500 rounded-sm text-white'>Next</button>
           </div>
         </div>
