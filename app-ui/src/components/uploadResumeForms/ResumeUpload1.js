@@ -14,6 +14,7 @@ import InsertDriveFileOutlinedIcon from '@mui/icons-material/InsertDriveFileOutl
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 
 export default function ResumeUpload1({jobObj,parentFormData,candidateId,parentFormDataChange,onNext}) {
+  
   const navigate=useNavigate()
   const {user}=useContext(AuthContext)
   const [formData,setFormData]=useState({
@@ -378,7 +379,7 @@ export default function ResumeUpload1({jobObj,parentFormData,candidateId,parentF
                     onChange={(phone) =>
                     setFormData((prevData) => ({
                       ...prevData,
-                      additionalContactNumbe: phone,
+                      additionalContactNumber: phone,
                     }))
                    }
                    containerStyle={{ width: "100%" }}
@@ -449,8 +450,8 @@ export default function ResumeUpload1({jobObj,parentFormData,candidateId,parentF
                <div className='flex flex-1 flex-col gap-2'>
                     <label className='input-label' htmlFor='annualsalary'>Current Annual Salary</label>
                     <div className='flex gap-2 items-center'>
-                    <select name="fullTimeSalaryCurrency" id="currency" disabled={true} className="input-field w-20 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:opacity-50">
-                    <option value="USD">USD</option>
+                    <select value={jobObj.work_type==="full_time"?(jobObj.full_time_salary_currency):(jobObj.contract_pay_currency)} name="fullTimeSalaryCurrency" id="currency" disabled={true} className="input-field w-20 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:opacity-50">
+                    <option value={"USD"}>USD</option>
   <option value="EUR">EUR</option>
   <option value="JPY">JPY</option>
   <option value="GBP">GBP</option>
@@ -608,7 +609,7 @@ export default function ResumeUpload1({jobObj,parentFormData,candidateId,parentF
                 <div className='flex flex-1 flex-col gap-2'>
                     <label className='input-label' htmlFor='expectedsalary'>Expected Annual Salary <span className='text-red-500'>*</span></label>
                     <div className='flex gap-2 items-center'>
-                    <select name="fullTimeSalaryCurrency" id="currency" disabled={true} className="input-field w-20 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:opacity-50">
+                    <select value={jobObj.work_type==="full_time"?(jobObj.full_time_salary_currency):(jobObj.contract_pay_currency)} name="fullTimeSalaryCurrency" id="currency" disabled={true} className="input-field w-20 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:opacity-50">
                     <option value="USD">USD</option>
   <option value="EUR">EUR</option>
   <option value="JPY">JPY</option>
