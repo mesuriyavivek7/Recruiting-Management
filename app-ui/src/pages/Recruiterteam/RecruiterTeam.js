@@ -21,7 +21,7 @@ import "react-phone-input-2/lib/style.css";
 
 export default function RecruiterTeam() {
   const [recruitingMember,setRecruitingMember]=useState([])
-  const {user}=useContext(AuthContext)
+  const {user,isVerified}=useContext(AuthContext)
   const [loader,setLoader]=useState(false)
 
   const [teamFormData,setTeamFormData]=useState({
@@ -195,6 +195,11 @@ const checkCreadentials=async ()=>{
      }
   }
 
+  const handleOpenTeamPopUp=()=>{
+    if(isVerified) setOpenPopUp(true)
+    else showNotification("You have not access for adding new team member.",'warning')
+  }
+
   
 
   //creating recruiting team col
@@ -300,7 +305,7 @@ const checkCreadentials=async ()=>{
                     <div className='custom-div flex-row'>
                         {
                           recruiterDetails.profile_picture?(
-                             <img src={recruiterDetails.profile_picture} className='h-14 w-14 rounded-full'></img>
+                             <img alt='profilepicture' src={recruiterDetails.profile_picture} className='h-14 w-14 rounded-full'></img>
                           ):(
                             <span className='h-10 w-10 flex justify-center items-center rounded-full bg-blue-400 text-white'>{getShortText(recruiterDetails.full_name)}</span>
                           )
@@ -425,7 +430,7 @@ const checkCreadentials=async ()=>{
                  <span><BackupTableOutlinedIcon></BackupTableOutlinedIcon></span>
                  <span>Export</span>
               </button>
-              <button onClick={()=>setOpenPopUp(true)} className='text-gray-600 cursor-pointer flex gap-2 items-center'>
+              <button onClick={handleOpenTeamPopUp} className='text-gray-600 cursor-pointer flex gap-2 items-center'>
                  <span><AddIcon></AddIcon></span>
                  <span>Add Member</span>
               </button>
