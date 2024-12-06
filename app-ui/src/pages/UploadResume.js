@@ -23,6 +23,8 @@ export default function UploadResume() {
     form1:{},
     form2:{}
   })
+
+  console.log('location---->',location.state)
   
 
   const createCandidateId=()=>{
@@ -184,7 +186,7 @@ export default function UploadResume() {
            </div>
         </div>
         <div className='flex flex-col gap-4'>
-            <span className='text-sm text-gray-400'>Exp: <b className='text-gray-500'>{`${location.state.experience.minexp}-${location.state.experience.maxexp}`}</b>  yrs    Salary: <b className='text-gray-500'>{location.state.work_type==="full_time"?(`  ${location.state.full_time_salary_currency} ${location.state.full_time_salary_type==="Fixed"?(location.state.fixed_salary):(`${location.state.min_salary}-${location.state.max_salary}`)}`):(`${location.state.contract_pay_currency} ${location.state.contract_pay_rate_type==="Fixed"?(location.state.fixed_contract_pay):(`${location.state.min_contract_pay}-${location.state.max_contract_pay}`)} ${location.state.contract_pay_cycle.toUpperCase()}`)}</b></span>
+            <span className='text-sm text-gray-400'>Exp: <b className='text-gray-500'>{`${location.state.experience.minexp}-${location.state.experience.maxexp}`}</b>  yrs    Salary: <b className='text-gray-500'>{location.state.work_type==="full_time"?(`  ${location.state.full_time_salary_currency} ${location.state.full_time_salary_type==="Fixed"?(location.state.fixed_salary):(`${location.state.min_salary}-${location.state.max_salary}`)}`):(`${location.state.contract_pay_currency} ${location.state.contract_pay_rate_type==="Fixed"?(location.state.fix_contract_pay):(`${location.state.min_contract_pay}-${location.state.max_contract_pay}`)} ${location.state.contract_pay_cycle.toUpperCase()}`)}</b></span>
             <span className='text-sm text-gray-400'>AC MAnager: <b className='text-gray-500'>{location.state.ac_manager}</b></span>
         </div>
     </div>

@@ -302,7 +302,7 @@ const NewEnterpriseData = () => {
                   <FaPhone className="mr-2 text-black text-xl xl:text-2xl" />
                   <div className="flex gap-2 text-xl">
                     <span className="block font-medium">Mobile No:</span>
-                    <span>{selectedRow?.mobileno}</span>
+                    <span>+{selectedRow?.mobileno}</span>
                   </div>
                 </div>
 
