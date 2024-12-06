@@ -14,6 +14,7 @@ const NewEnterpriseData = () => {
   const myValue = useSelector((state) => state.admin);
   const [notification, setNotification] = useState(null);
   const [inactivateLoad, setInactivateLoad] = useState(false);
+  const [approveLoad,setApproveLoad] = useState(false)
   const [loader,setLoader]=useState(false)
   const [open, setOpen] = useState(false);
   const [newEnterprise, setNewEnterprise] = useState([]);
@@ -59,6 +60,7 @@ const NewEnterpriseData = () => {
   };
 
   const handleCloseInactivateButton = () => {
+    setReason('')
     setSelectInactive(null);
     setOpenpopup(false);
   };
@@ -111,6 +113,7 @@ const NewEnterpriseData = () => {
   };
 
   const handleApprove = async () => {
+    setApproveLoad(true)
     try {
       //get verified enterprise to account manager
       await axios.post(`${process.env.REACT_APP_API_APP_URL}/enterprise/acverified`, { id: selectedRow._id })
@@ -122,6 +125,8 @@ const NewEnterpriseData = () => {
       showNotification("Successfully enterprise account verified", "success")
     } catch (err) {
       showNotification("There is something wrong....!", "failure")
+    } finally{
+      setApproveLoad(false)
     }
   }
 
@@ -323,19 +328,33 @@ const NewEnterpriseData = () => {
           {
             (selectedRow?.account_status.status === "Active") && (
               <DialogActions>
-                <Button
-                  variant="contained"
+              <Button onClick={handleApprove}
+              disabled={approveLoad}
+              sx={{
+              fontSize: { xs: "12px", sm: "14px", xl: "17px" },
+              width: { xl: "120px", sm: "100px" },
+              height: {xl: "40px", sm:"35px"},
+              //height:"30px",
+              color: 'white',
+              backgroundColor:
+                "#315370",
+              "&:hover": {
+                backgroundColor: "gray"
+             },
+              textTransform: "none",
 
-                  onClick={handleApprove}
-                  sx={{
-                    backgroundColor: '#315370', color: 'white',
-                    '&:hover': {
-                      backgroundColor: 'gray',
-                    },
-                  }}
-                >
-                  Approve
-                </Button>
+            }}>
+              {approveLoad &&
+              <span className="absolute inset-0 flex items-center justify-center">
+                <svg className="w-5 h-5 text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l5.6-3.2a10 10 0 00-10.4 0L4 12z"></path>
+                </svg>
+              </span>
+             }
+
+             {!approveLoad && <span>Approve</span>}
+             </Button>
               </DialogActions>
             )
           }

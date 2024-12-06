@@ -2,7 +2,7 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
 import { columns } from './RowColData';
-import { Button, Card, CircularProgress, IconButton, InputAdornment, TextField } from '@mui/material';
+import { Button, Card, IconButton, InputAdornment, TextField } from '@mui/material';
 import { FaSearch } from 'react-icons/fa';
 import { fetchEnterpriseById, fetchVerifedEntepreiseByACId } from '../../../services/api';
 import { useNavigate } from 'react-router-dom';
@@ -32,12 +32,6 @@ export default function AllEnterPriseData() {
     setNotification({ message, type })
   }
 
-  React.useEffect(() => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-    }, 1000);
-  }, []);
 
   React.useEffect(() => {
     const fetchData = async () => {
@@ -161,11 +155,7 @@ export default function AllEnterPriseData() {
         </Box>
 
       </Box>
-      {loading ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 400, color: '#315370' }}>
-          <CircularProgress />
-        </Box>
-      ) : (
+   
         <Card>
           <p className='text-lg xl:text-2xl'>All Enterprise</p>
           <Box sx={{ height: 600, width: '100%', paddingTop: '19px' }} >
@@ -174,6 +164,7 @@ export default function AllEnterPriseData() {
               rows={filteredRows}
               columns={columns}
               rowHeight={80}
+              loading={loading}
               getRowHeight={calculateRowHeight}
               onRowClick={handleRowClick}
               pageSize={8}
@@ -231,7 +222,7 @@ export default function AllEnterPriseData() {
             />
           </Box>
         </Card>
-      )}
+      
 
     </>
   );
