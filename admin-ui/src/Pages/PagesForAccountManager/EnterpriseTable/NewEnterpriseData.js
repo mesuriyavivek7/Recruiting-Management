@@ -2,11 +2,9 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
-import Box from '@mui/material/Box';
 import {
-  Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, TextField, MenuItem,
+  Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, TextField,
   TablePagination,
-  CircularProgress
 } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import Notification from '../../../Components/Notification';
@@ -52,6 +50,7 @@ const NewEnterpriseData = () => {
       try {
         await axios.post(`${process.env.REACT_APP_API_APP_URL}/enterprise/changestatus`, { id: item._id, status: item.account_status.status, reason, admin_id: myValue.userData._id });
         fetchEnterprise();
+        setReason('')
         showNotification('Successfully account status changed.', 'success');
       } catch (err) {
         showNotification('Something went wrong in changing account status..!', 'failure');
@@ -70,6 +69,7 @@ const NewEnterpriseData = () => {
       setInactivateLoad(true);
       await axios.post(`${process.env.REACT_APP_API_APP_URL}/enterprise/changestatus`, { id: selectInactive._id, status: selectInactive.account_status.status, reason, admin_id: myValue.userData._id });
       fetchEnterprise();
+      setReason('')
       setOpenpopup(false);
       showNotification('Successfully account status changed.', 'success');
     } catch (err) {
@@ -101,7 +101,6 @@ const NewEnterpriseData = () => {
         id: item._id, // Assuming `_id` is unique
         displayIndex: index + 1
       }));
-      console.log("rows with ids---->",rowsWithIds)
       setNewEnterprise(rowsWithIds);
     } catch (err) {
       console.log(err)
@@ -137,11 +136,7 @@ const NewEnterpriseData = () => {
     <>
       <p className='text-lg xl:text-2xl'>New Enterprise</p>
       {
-        loader?(
-          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 400, color: '#315370' }}>
-             <CircularProgress />
-          </Box>
-        ):(
+     
           <div style={{ height: 600, width: '100%', paddingTop: '19px' }}>
           <DataGrid
            getRowId={(rows) => rows._id} // Specify the custom ID field
@@ -193,7 +188,7 @@ const NewEnterpriseData = () => {
           }}
         />
        </div>
-        )
+        
       }
       
 
@@ -227,6 +222,7 @@ const NewEnterpriseData = () => {
           <Button onClick={handleCloseInactivateButton} sx={{
             fontSize: { xs: "12px", sm: "14px", xl: "17px" },
             width: { xl: "80px", sm: "40px" },
+            height: {xl: "40px", sm:"35px"},
             color: 'white',
             backgroundColor:
               "#315370",
@@ -237,9 +233,11 @@ const NewEnterpriseData = () => {
           }}>
             Cancel
           </Button>
-          <Button onClick={handleSubmitButton} sx={{
+          <Button onClick={handleSubmitButton}
+            sx={{
             fontSize: { xs: "12px", sm: "14px", xl: "17px" },
             width: { xl: "100px", sm: "50px" },
+            height: {xl: "40px", sm:"35px"},
             //height:"30px",
             color: 'white',
             backgroundColor:

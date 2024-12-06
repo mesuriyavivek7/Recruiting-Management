@@ -44,7 +44,7 @@ const EnterpriseDetails = ({enterpriseDetails}) => {
           </Grid>
           <Grid item xs={12} sm={6}>
             <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '8px', backgroundColor: '#fff' }}>
-              <Typography variant="body1"><strong>Mobile Number:</strong>{enterpriseDetails?.mobileno}</Typography>
+              <Typography variant="body1"><strong>Mobile Number:</strong>+{enterpriseDetails?.mobileno}</Typography>
             </Box>
           </Grid>
           <Grid item xs={12} sm={6}>
