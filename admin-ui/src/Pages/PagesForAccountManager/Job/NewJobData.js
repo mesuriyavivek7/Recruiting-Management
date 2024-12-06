@@ -20,15 +20,16 @@ import WhiteLoader from '../../../assets/whiteloader.svg'
 import CopyToClipBoard from '../../../constants/CopyToClipBoard';
 import HtmlContent from '../../../constants/HtmlContent';
 
-const selectUserData = (state) => state?.admin?.userData;
-const userData = selectUserData(store?.getState());
-
 const calculateRowHeight = (params) => {
   // const contentHeight = params.row ? params.row.content.length / 10 : 50; 
   return Math.max(80); 
 };
 
 const NewJobData = () => {
+
+  const selectUserData = (state) => state?.admin?.userData;
+  const userData = selectUserData(store?.getState());
+
   const [loading,setLoading]=useState(false)
   const [pendingJobs,setPendingJobs]=useState([])
   const [notification, setNotification] = React.useState(null)
@@ -44,7 +45,7 @@ const NewJobData = () => {
     setLoading(true)
     try{
       //Fetching verified job ids
-      const verifiedJobsIds = await fetchPendingJobsByACManagerId(userData?._id);
+      const verifiedJobsIds = await fetchPendingJobsByACManagerId(userData._id);
 
       const rows = await Promise.all(
         verifiedJobsIds.map(async (jobId, index) => {
