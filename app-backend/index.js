@@ -35,7 +35,7 @@ const port = process.env.PORT || 8080
 const app = express()
 dotenv.config()
 
-//cors settings
+// CORS options
 const corsOptions = {
     origin: (origin, callback) => {
         const allowedOrigins = [
@@ -45,13 +45,20 @@ const corsOptions = {
             "https://admin-ui-l3vq.onrender.com",
             "https://admin-backend-1vl2.onrender.com",
         ];
-        const isAllowed = allowedOrigins.includes(origin);
-        callback(null, isAllowed ? origin : false);
+        // Allow requests with no origin (like mobile apps or CURL)
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error("Not allowed by CORS"));
+        }
     },
-    methods: "GET, POST, PUT, DELETE, PATCH, HEAD",
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"], // Add OPTIONS
     credentials: true,
-}
+};
 
+
+// Preflight request handling for OPTIONS
+app.options("*", cors(corsOptions)); // Allow OPTIONS for all routes
 
 //middleware for using cors
 app.use(cors(corsOptions));
