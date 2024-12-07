@@ -13,6 +13,7 @@ import authRoute from './routes/auth.js'
 import masteradminRoute from './routes/masteradmin.js'
 import accountmanagerRoute from './routes/accountmanger.js'
 import mailRoute from './routes/mail.js'
+import superadminRoute from './routes/superadmin.js'
 
 //app configure 
 const port = process.env.PORT || 8000
@@ -70,6 +71,7 @@ app.use('/api/auth',authRoute)
 app.use('/api/masteradmin',masteradminRoute)
 app.use('/api/accountmanager',accountmanagerRoute)
 app.use('/api/mail',mailRoute)
+app.use('/api/superadmin', superadminRoute);
 
 
 //middleware for error handeling

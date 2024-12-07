@@ -635,3 +635,13 @@ export const getPendingJobCountEnMember = async (en_member_id) => {
     }
 }
 
+//for getting all verified enterprise of super admin
+export const getAllVerifiedEnterprisesSuperAdmin = async () => {
+    try {
+        const response = await axios.get(`${admin_be_uri}/superadmin/getenterprise`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching all enterprises for super admin: ", error);
+        throw error;
+    }
+}
