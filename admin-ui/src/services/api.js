@@ -481,9 +481,9 @@ export const fetchRecruiterMemberDetailsByRagencyId = async (r_agency_id)=>{
     }
 }
 
-export const fetchAllCandidateDetails = async () => {
+export const fetchCandidateDetailsById = async (candidate_id) => {
     try {
-        const response = await axios.get(`${app_be_uri}/candidate/details`)
+        const response = await axios.get(`${app_be_uri}/candidate/details/${candidate_id}`)
         return response.data;
     } catch (error) {
         console.error("Error whilte fetching all candidates basic details : ", error);
@@ -505,7 +505,6 @@ export const fetchCandidateBasicDetailsById = async (candidate_id) => {
     try {
         const response = await axios.get(`${app_be_uri}/candidate/getdetails/${candidate_id}`);
         const { job_id, basic_details } = response.data;
-
         return { job_id, basic_details };
     } catch (error) {
         console.error("Error while fetching candidate details:", error);
@@ -661,6 +660,16 @@ export const getAllVerifiedJobsSuperAdmin = async () => {
         return response.data;
     } catch (error) {
         console.error("Error fetching all jobs for super admin: ", error);
+        throw error;
+    }
+}
+
+export const getAllVerifiedCandidatesSuperAdmin = async () => {
+    try {
+        const response = await axios.get(`${admin_be_uri}/superadmin/getcandidates`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching all candidates for super admin: ", error);
         throw error;
     }
 }

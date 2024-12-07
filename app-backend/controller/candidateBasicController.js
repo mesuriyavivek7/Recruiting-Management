@@ -24,11 +24,11 @@ export const checkEmailAndMobile = async (req, res, next) => {
   }
 }
 
-export const getAllCandidateBasicDetails = async (req, res, next) => {
+export const getCandidateDetailsById = async (req, res, next) => {
   try {
-    const candidates = await CANDIDATEBASICDETAILS.find();
+    const candidates = await CANDIDATE.findOne({ _id: req.params.id });
     if (!candidates) {
-      return res.status(404).json({ message: "Error getting all candidates" });
+      return res.status(404).json({ message: "Error getting the candidate details" });
     }
     res.status(200).json(candidates);
   } catch (error) {

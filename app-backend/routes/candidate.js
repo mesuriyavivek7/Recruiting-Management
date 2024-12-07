@@ -7,7 +7,7 @@ import { fileURLToPath } from 'url';
 
 import { cancelProcess, checkParseDetails, createAndParseResume, downloadResumeDocs, getResumeFileName, getResumeFilePath, marksAsCompleted, removeResumeFile } from '../controller/resumeController.js';
 import { addAcManager, addCandidateIntoRecruiterSubmitList, approveCandidate, changeCandidateStatus, changeMultipleCandidateStatus, createCandidate, downloadCandidateAttachments, exportDataEnterprise, exportDataRecruiter, getAcManagerName, getAllCandidates, getCandidate, getCandidateAllDetails, getCandidateAttachmentFileType, getCandidateAttachments, getCandidateBasicDetailsById, getCandidateConsentProofs, getCandidateForMultipleAction, getCandidateResumes, getCandidateStatusById, getJobBasicDetails, getJobCandidateForPreview, getJobResumeSubmitCount, getRecruiterMemberIds, getScreeingQuesionsAnswers, searchEnterpriseCandidate, searchRecruiterCandidate, updateCandidateRemarks, viewCandidateAttachments } from '../controller/candidateController.js';
-import { checkEmailAndMobile, createCandidateBasicDetails, getAllCandidateBasicDetails, getCandidateBasicDetailsByRecruiterId } from '../controller/candidateBasicController.js';
+import { checkEmailAndMobile, createCandidateBasicDetails, getCandidateBasicDetailsByRecruiterId, getCandidateDetailsById } from '../controller/candidateBasicController.js';
 import { uploadCandidateAttachments } from '../controller/candidateAttachmentsController.js';
 import { uploadCandidateConsetProof } from '../controller/candidateConsetController.js';
 import { createSqAnswers } from '../controller/candidateSqController.js';
@@ -134,7 +134,7 @@ router.put('/changemultiplecandidatestatus', changeMultipleCandidateStatus)
 //fetch recruiter member id for particluer the given array of candidate ids
 router.post('/getrecruitermemberids', getRecruiterMemberIds)
 
-router.get('/details/', getAllCandidateBasicDetails);
+router.get('/details/:id', getCandidateDetailsById);
 
 router.get('/getbasicdetails/:recruiter_id', getCandidateBasicDetailsByRecruiterId)
 

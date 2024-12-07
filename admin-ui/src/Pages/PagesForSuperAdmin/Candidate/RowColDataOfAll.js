@@ -1,6 +1,3 @@
-
-import { fetchAllCandidateDetails, fetchCandidateStatusById, fetchJobBasicDetailsByJobId } from '../../../services/api';
-import { cstatus } from '../../../constants/jobStatusMapping';
 import { format, formatDistanceToNowStrict } from 'date-fns';
 
 // columns.js
@@ -144,35 +141,3 @@ export const columns = [
     ),
   },
 ];
-
-export const data = await fetchAllCandidateDetails();
-
-
-export const rows = await Promise.all(
-  data.map(async (candidateDetails, index) => {
-    const c_id = candidateDetails.candidate_id;
-
-    const candidate = await fetchCandidateStatusById(c_id);
-    const job_basic_details = await fetchJobBasicDetailsByJobId(candidate.job_id);
-
-    // Get candidate status, defaulting to "Status Unavailable" if not found
-    const candidateStatusKey = candidate.candidate_status || "Status Unavailable";
-    const candidateStatus = cstatus.get(candidateStatusKey) || candidateStatusKey; // Map status or use original
-
-    return {
-      _id: String(index + 1),
-      candidate_name: {
-        first_name: candidateDetails?.first_name || 'No First Name',
-        last_name: candidateDetails?.last_name || 'No Last Name',
-      },
-      job_title: job_basic_details?.job_title || "No Job Title",
-      job_id: job_basic_details?.job_id || "No Job Id",
-      candidate_status: candidateStatus,
-      submitted: candidateDetails?.createdAt || "No Submission Date",
-      lastUpdated: candidateDetails?.updatedAt || "No Update Date", 
-      notice_period: candidateDetails?.notice_period || "N/A", 
-      email: candidateDetails?.primary_email_id || "No Email", 
-      mobile: candidateDetails?.primary_contact_number || "No Contact Number"
-    };
-  })
-);
