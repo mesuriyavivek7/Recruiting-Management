@@ -21,22 +21,30 @@ const port = process.env.PORT || 8000
 const app=express()
 dotenv.config()
 
-//cors settings
-const corsOptions={
-    origin:(origin,callback)=>{
-        const allowedOrigins=[
+// CORS options
+const corsOptions = {
+    origin: (origin, callback) => {
+        const allowedOrigins = [
             "http://localhost:3000",
             "https://app-ui-tiyf.onrender.com",
             "https://app-backend-jna4.onrender.com",
             "https://admin-ui-l3vq.onrender.com",
             "https://admin-backend-1vl2.onrender.com",
         ];
-        const isAllowed = allowedOrigins.includes(origin);
-        callback(null, isAllowed ? origin : false);
+        // Allow requests with no origin (like mobile apps or CURL)
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error("Not allowed by CORS"));
+        }
     },
-    methods: "GET, POST, PUT, DELETE, PATCH, HEAD",
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"], // Add OPTIONS
     credentials: true,
-}
+};
+
+
+// Preflight request handling for OPTIONS
+app.options("*", cors(corsOptions)); // Allow OPTIONS for all routes
 
 
 //middleware for using cors
