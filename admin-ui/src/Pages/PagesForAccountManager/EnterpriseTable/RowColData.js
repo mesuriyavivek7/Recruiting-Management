@@ -82,6 +82,11 @@ export const columns = [
 
 ];
 
+const getJobStatusColor = (jobStatus) =>{
+    if(jobStatus==="Active") return "bg-green-500"
+    else if(jobStatus==="Pending") return "bg-red-500"
+    else "bg-gray-500"
+}
 
 //Columns for Job
 export const colsJob = [
@@ -165,8 +170,7 @@ export const colsJob = [
     
         return (
           <span
-            className={`px-4 py-2 rounded-2xl text-md text-white ${
-              status === 'Active' ? 'bg-green-600' : 'bg-gray-500'
+            className={`px-4 py-2 rounded-2xl text-md text-white ${getJobStatusColor(status)}'
             }`}
           >
             {status}

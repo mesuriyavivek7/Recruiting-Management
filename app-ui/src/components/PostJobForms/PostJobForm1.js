@@ -46,6 +46,8 @@ const PostJobForm1 = ({ onNext, onFormDataChange,jobId,handleDraftSave,parentFor
   
   const [actionMode,setActionMode]=useState({next:false,draft:false})
 
+  const [draftSaveLoader,setDraftSaveLoader] = useState(false)
+
   const [notification,setNotification]=useState(null)
 
    //for showing notification
@@ -264,7 +266,9 @@ const PostJobForm1 = ({ onNext, onFormDataChange,jobId,handleDraftSave,parentFor
   };
 
   const handleDraft=async ()=>{
+       setDraftSaveLoader(true)
        const saved=await handleDraftSave()
+       setDraftSaveLoader(false)
        if(saved) showNotification("Job Draft Saved Sucessfully","success")
        else showNotification("There is something wrong in save draft","failure")
   }
@@ -558,11 +562,23 @@ const PostJobForm1 = ({ onNext, onFormDataChange,jobId,handleDraftSave,parentFor
       <div className="custom-div place-items-end pb-2">
         <div className="flex gap-4">
          <button 
-         onClick={()=>setActionMode({next:false,draft:true})}
-         className="text-gray-400 py-1 px-4 border-gray-200 hover:bg-gray-100 border-2">
-         Save As Draft</button>
+          disabled={draftSaveLoader}
+          onClick={()=>setActionMode({next:false,draft:true})}
+          className="text-white py-1.5 w-36 bg-black flex justify-center items-center px-4 disabled:cursor-not-allowed border-gray-200 hover:bg-gray-600 border-2">
+                 {
+                  draftSaveLoader ? (
+                    <svg className="w-5 h-5  text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l5.6-3.2a10 10 0 00-10.4 0L4 12z"></path>
+                     </svg> 
+                  ) : (
+                    "Save As Draft"
+                  )
+                 }
+                 
+         </button>
          <button
-          className="py-1 px-4 text-base bg-blue-400 rounded-sm text-white"
+          className="py-1.5 px-4 text-base bg-blue-400 rounded-sm text-white"
           onClick={()=>setActionMode({next:true,draft:false})}
          >
            Next

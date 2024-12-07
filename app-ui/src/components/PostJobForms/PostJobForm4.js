@@ -251,16 +251,26 @@ const PostJobForm4 = ({ onNext,onPrev,onFormDataChange,jobid,handleDraftSave,par
            <button 
              disabled={load}
              onClick={()=>setAction({next:false,draft:true})}
-             className="text-gray-400 disabled:cursor-not-allowed disabled:opacity:50 py-1 px-4 border-gray-200 hover:bg-gray-100 border-2">
-             Save As Draft</button>
+             className="text-white w-36 bg-black flex justify-center items-center disabled:cursor-not-allowed disabled:opacity:50 py-1.5 px-4 border-gray-200 hover:bg-gray-600 border-2">
+             {
+              load ? (
+                <svg className="w-5 h-5  text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l5.6-3.2a10 10 0 00-10.4 0L4 12z"></path>
+                </svg> 
+              ) : (
+                "Save As Draft"
+              )
+             }
+          </button>
           <button 
            disabled={load}
-           className="py-1 px-4 text-gray-400 hover:bg-gray-100 rounded-sm border"
+           className="py-1.5 px-4 text-gray-400 hover:bg-gray-100 rounded-sm border"
            onClick={handlePrev}
           >previous</button>
           <button
             disabled={load}
-            className="py-1 px-4 text-base bg-blue-400 rounded-sm text-white"
+            className="py-1.5 px-4 text-base bg-blue-400 rounded-sm text-white"
             onClick={()=>setAction({next:true,draft:false})}
           >
             Next

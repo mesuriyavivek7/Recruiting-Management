@@ -75,11 +75,6 @@ const PostJob = () => {
         //fetch job screening questions
         const jobsq=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/job/getscreeningquestions/${oldjobid}`)
         
-        console.log("basicdetails----->",basicdetails.data)
-        console.log("commissiondetails---->",commissiondetails.data)
-        console.log("companydetails---->",companydetails.data)
-        console.log("job sourcing guidelines---->",sourcingdetails.data)
-        console.log("jobattachments----->",jobattachment.data)
         console.log("screening questions----->",jobsq.data)
         console.log("jobattach------>",jobattach)
         
@@ -137,13 +132,13 @@ const PostJob = () => {
       if(Object.keys(formData.form1).length>0) await axios.post(`${process.env.REACT_APP_API_BASE_URL}/job/basicjob/${res.data._id}`,formData.form1)
          
       //step-3 create job commission details
-      if(Object.keys(formData.form2).length>0) await axios.post(`${process.env.REACT_APP_API_BASE_URL}/job/jobcommission/${res.data._id}`,formData.form2)
+      if(Object.keys(formData.form2.commission_details).length>0) await axios.post(`${process.env.REACT_APP_API_BASE_URL}/job/jobcommission/${res.data._id}`,formData.form2)
 
       //step-4 craete job company details
       if(Object.keys(formData.form3).length>0) await axios.post(`${process.env.REACT_APP_API_BASE_URL}/job/company/${res.data._id}`,formData.form3)
 
       //step-5 craete sourcing guidelines
-      if(Object.keys(formData.form4).length>0){
+      if(formData.form4.must_haves){
            let {enterprise_id,job_id,must_haves,poach_clients,nice_to_haves,target_companies,additional_guidelines}=formData.form4
            const sourcing={enterprise_id,job_id,must_haves,poach_clients,...((nice_to_haves!=="")?({nice_to_haves}):({})),...((target_companies!=="")?({target_companies}):({})),...((additional_guidelines!=="")?({additional_guidelines}):({}))}
            await axios.post(`${process.env.REACT_APP_API_BASE_URL}/job/sourcing/${res.data._id}`,sourcing)

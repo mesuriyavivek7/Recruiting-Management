@@ -1,6 +1,7 @@
 import JOBATTACHEMENT from "../models/JOBATTACHEMENT.js";
 import JOBS from "../models/JOBS.js";
 import fs from 'fs'
+import path from 'path'
 
 
 export const createJobAttachment=async (req,res,next)=>{
