@@ -23,7 +23,6 @@ export const fetchEnterpriseVerifiedData = async (admin_id) => {
     }
 }
 
-
 export const fetchPendingEnterpriseData = async (admin_id) => {
     try {
         const response = await axios.get(`${admin_be_uri}/masteradmin/getpendingenterprises/${admin_id}`);
@@ -642,6 +641,16 @@ export const getAllVerifiedEnterprisesSuperAdmin = async () => {
         return response.data;
     } catch (error) {
         console.error("Error fetching all enterprises for super admin: ", error);
+        throw error;
+    }
+}
+
+export const getAllVerifiedRecruitingAgenciesSuperAdmin = async () => {
+    try {
+        const response = await axios.get(`${admin_be_uri}/superadmin/getrecruitingagencies`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching all recruiting agencies for super admin: ", error);
         throw error;
     }
 }
