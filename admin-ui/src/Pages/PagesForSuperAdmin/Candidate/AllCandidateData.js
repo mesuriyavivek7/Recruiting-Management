@@ -1,42 +1,36 @@
-
 import React, { useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Card, TablePagination } from '@mui/material';
+import { Card } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { columns } from './RowColDataOfAll'; // Import columns configuration
-import { fetchCandidateBasicDetailsById,  fetchCandidateStatusById, fetchJobBasicDetailsByJobId, getAllVerifiedCandidatesSuperAdmin } from '../../../services/api';
+import { fetchCandidateBasicDetailsById,  fetchCandidateStatusById, fetchJobBasicDetailsByJobId,fetchAccountManager, getAllVerifiedCandidatesSuperAdmin, fetchRecruiterMemberDetails } from '../../../services/api';
 import { cstatus } from '../../../constants/jobStatusMapping';
+import Notification from '../../../Components/Notification';
 
 const calculateRowHeight = (params) => {
-
   const contentHeight = params.row ? params.row.content.length / 10 : 50;
   return Math.max(80, contentHeight);
 };
+
 const AllCandidateData = () => {
-  const [selectedRowId, setSelectedRowId] = useState(null);
   const navigate = useNavigate();
 
-  const handleRowClick = (id) => {
-    setSelectedRowId(id);
-    navigate(`/super_admin/candidate/${id}`);
+  const handleRowClick = (params) => {
+    navigate(`/super_admin/candidate/${params._id}`,{state: {candidate_id: params.orgcandidateid}});
   };
+  const [loader,setLoader] =  useState(false)
 
-  // State for pagination
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [notification, setNotification] = useState(null)
+
+  //for showing notification
+  const showNotification = (message, type) => {
+    setNotification({ message, type })
+  }
+
   const [rows, setRows] = useState([]);
 
-  // Handle pagination change
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
   const fetchAllCandidateData = async () => {
+    setLoader(true)
     try {
       const candidateIds = await getAllVerifiedCandidatesSuperAdmin();
       const response = await Promise.all(
@@ -52,7 +46,14 @@ const AllCandidateData = () => {
           const candidateStatusKey = candidate.candidate_status || "Status Unavailable";
           const candidateStatus = cstatus.get(candidateStatusKey) || candidateStatusKey;
 
+          //Fetch Account manager details
+          const acmanager = await fetchAccountManager(candidate.alloted_account_manager)
+
+          //Get Recruiter member details
+          const recruiter_name = await fetchRecruiterMemberDetails(candidate.recruiter_member_id)
+
           return {
+            orgcandidateid:candidate._id,
             _id: String(index + 1),
             candidate_name: {
               first_name: basic_details?.first_name || 'No First Name',
@@ -65,37 +66,44 @@ const AllCandidateData = () => {
             lastUpdated: basic_details?.updatedAt || "No Update Date", 
             notice_period: basic_details?.notice_period || "N/A", 
             email: basic_details?.primary_email_id || "No Email", 
-            mobile: basic_details?.primary_contact_number || "No Contact Number"
+            mobile: basic_details?.primary_contact_number || "No Contact Number",
+            recruiter_member:recruiter_name.full_name || "No Recruiter",
+            acmanager: acmanager.full_name || "No Acmanager"
           };
         })
       );
       setRows(response);
     } catch (error) {
+      showNotification("Something went wrong while fetching data.",'failure')
       console.error("Error fetching candidate details: ", error);
+    } finally{
+      setLoader(false)
     }
+     
   };
 
   React.useEffect(() => {
     fetchAllCandidateData();
-  }, [rows]);
-
-  // Calculate the rows to display
-  const paginatedRows = rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+  }, []);
 
   return (
     <div>
+    {notification && <Notification message={notification.message} type={notification.type} onClose={() => setNotification(null)}></Notification>}
       <Card className='font-sans'>
         <div style={{ height: 600, width: '100%' }}>
           <DataGrid
-            rows={paginatedRows}
+            rows={rows}
             columns={columns}
             rowHeight={80}
-            onRowClick={(params) => handleRowClick(params.id)}
+            onRowClick={(params) => handleRowClick(params.row)}
             getRowId={(row) => row._id} // Specify the custom ID field
             getRowHeight={calculateRowHeight}
-            pagination={false}
-            pageSize={rowsPerPage}
-            hideFooterPagination={true}
+            loading={loader}
+            pageSize={8}
+            pageSizeOptions={[5, 10]}
+              initialState={{
+                pagination: { paginationModel: { page: 0, pageSize: 10 } },
+            }}
             disableSelectionOnClick
             sx={{
               '& .MuiDataGrid-root': {
@@ -118,11 +126,6 @@ const AllCandidateData = () => {
               '& .MuiDataGrid-columnHeader:focus-within': {
                 outline: 'none',
               },
-
-
-
-
-
               '& .MuiDataGrid-columnSeparator': {
                 color: 'blue',
                 visibility: 'visible',
@@ -157,16 +160,6 @@ const AllCandidateData = () => {
           />
         </div>
       </Card>
-      <TablePagination
-        component="div"
-        count={rows.length}
-        page={page}
-        onPageChange={handleChangePage}
-        rowsPerPage={rowsPerPage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
-        rowsPerPageOptions={[5, 10, 25]}
-        labelRowsPerPage="Rows per page"
-      />
     </div>
   );
 };
