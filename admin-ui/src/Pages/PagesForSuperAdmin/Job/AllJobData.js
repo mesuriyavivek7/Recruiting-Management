@@ -1,22 +1,23 @@
-
 import React, { useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { Card, TablePagination } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { columns ,rows} from './RowColDataOfAll'; // Import columns configuration
+import { columns } from './RowColDataOfAll';
+import { fetchJobBasicDetailsByJobId, fetchJobDetailsById, fetchRecruiterByEId, getAllVerifiedJobsSuperAdmin } from '../../../services/api';
 
 const calculateRowHeight = (params) => {
-
-  // const contentHeight = params.row ? params.row.content.length / 10 : 50; 
-  return Math.max(80); 
+  return Math.max(80);
 };
+
 const AllJobData = () => {
   const [selectedRowId, setSelectedRowId] = useState(null);
+  const [rows, setRows] = useState([]);
+
   const navigate = useNavigate();
 
   const handleRowClick = (id) => {
     setSelectedRowId(id);
-    navigate(`/super_admin/job/${id}`); 
+    navigate(`/super_admin/job/${id}`);
   };
 
   // State for pagination
@@ -33,85 +34,104 @@ const AllJobData = () => {
     setPage(0);
   };
 
+  const fetchAllJobData = async () => {
+    try {
+      const jobIds = await getAllVerifiedJobsSuperAdmin();
+      const response = await Promise.all(
+        jobIds.data.map(async (jobId, index) => {
+          const jobs = await fetchJobDetailsById(jobId);
+          const jobDetails = await fetchJobBasicDetailsByJobId(jobs.job_id);
+
+          const recruiter = await fetchRecruiterByEId(jobs.enterprise_id);
+          return {
+            _id: String(`${index + 1}`),
+            job_title: jobDetails?.job_title || "No Title Available",
+            job_id: jobDetails?.job_id || "No ID Available",
+            recruiter: recruiter || "Unknown Recruiter",
+            location: {
+              state: jobDetails?.state || 'Unknown State',
+              country: jobDetails?.country || 'Unknown Country',
+            },
+            experience: {
+              minexp: jobDetails?.experience?.minexp || 'N/A',
+              maxexp: jobDetails?.experience?.maxexp || 'N/A',
+            },
+            job_status: jobs?.job_status,
+            createdAt: jobDetails?.createdAt ? new Date(jobDetails.createdAt) : new Date(),
+            lastUpdated: jobDetails?.updatedAt ? new Date(jobDetails.updatedAt) : new Date()
+          };
+        })
+      );
+      setRows(response);
+    } catch (error) {
+      console.error("Error fetching all jobs: ", error);
+    }
+  };
+
+  React.useEffect(() => {
+    fetchAllJobData();
+  }, [rows]);
+
   // Calculate the rows to display
   const paginatedRows = rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   return (
     <div>
-      <Card className='mt-9 font-sans'>
-        <p className='text-lg xl:text-2xl'>All Jobs</p>
-        <div style={{ height: 600, width: '100%' }} className='pt-4'>
-         
-          <DataGrid 
-          rows={paginatedRows}
-          columns={columns}
-          rowHeight={80}
-          onRowClick={(params) => handleRowClick(params.id)}
-          getRowId={(row) => row._id} // Specify the custom ID field
-          getRowHeight={calculateRowHeight} 
-          pagination={false} 
-          pageSize={rowsPerPage} 
-          
-          hideFooterPagination={true} 
-          disableSelectionOnClick 
-           sx={{
-            '& .MuiDataGrid-root': {
-              fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.09rem' }, 
-            },
-         
-            ' [class^=MuiDataGrid]': { border: 'none' },
-            '& .MuiDataGrid-columnHeader': {
-              fontWeight: 'bold !impotant', 
-              fontSize: { xs: '0.875rem', sm: '1rem', md: '0.7rem', lg: '1.1rem' }, 
-              color: 'black', 
-             
-               '&:focus': {
-              outline: 'none', 
-              border: 'none',  
-            },
-              backgroundColor: '#e3e6ea !important', 
-              minHeight: '60px', 
-            },
-             '& .MuiDataGrid-columnHeader:focus-within': {
-        outline: 'none', 
-      },
-     
-           
-         
-            
-      
-      '& .MuiDataGrid-columnSeparator': {
-        color: 'blue',
-        visibility: 'visible', 
-      },
-      
-    
-      '& .MuiDataGrid-cell': {
-        fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem' }, 
-        
-      },
-      
-      '& .MuiDataGrid-cellContent': {
-        display: 'flex',
-        alignItems: 'center', 
-      },
-      '& .MuiDataGrid-cell': {
-        minHeight: '2.5rem', 
-      },
-            '& .MuiDataGrid-cell': {
-              fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem'}, 
-              
-              
-            },
-            '& .MuiDataGrid-row': {
-              borderBottom: 'none', 
-            },
-            '& .MuiDataGrid-cell:focus': {
-              outline: 'none', 
-            },
-           
-          }}
-        />
+      <Card className='font-sans'>
+        <div style={{ height: 600, width: '100%' }}>
+          <DataGrid
+            rows={paginatedRows}
+            columns={columns}
+            rowHeight={80}
+            onRowClick={(params) => handleRowClick(params.id)}
+            getRowId={(row) => row._id} // Specify the custom ID field
+            getRowHeight={calculateRowHeight}
+            pagination={false}
+            pageSize={rowsPerPage}
+            hideFooterPagination={true}
+            disableSelectionOnClick
+            sx={{
+              '& .MuiDataGrid-root': {
+                fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.09rem' },
+              },
+
+              ' [class^=MuiDataGrid]': { border: 'none' },
+              '& .MuiDataGrid-columnHeader': {
+                fontWeight: 'bold !impotant',
+                fontSize: { xs: '0.875rem', sm: '1rem', md: '0.7rem', lg: '1.1rem' },
+                color: 'black',
+
+                '&:focus': {
+                  outline: 'none',
+                  border: 'none',
+                },
+                backgroundColor: '#e3e6ea !important',
+                minHeight: '60px',
+              },
+              '& .MuiDataGrid-columnHeader:focus-within': {
+                outline: 'none',
+              },
+              '& .MuiDataGrid-columnSeparator': {
+                color: 'blue',
+                visibility: 'visible',
+              },
+              '& .MuiDataGrid-cell': {
+                fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem' },
+                minHeight: '2.5rem',
+              },
+
+              '& .MuiDataGrid-cellContent': {
+                display: 'flex',
+                alignItems: 'center',
+              },
+              '& .MuiDataGrid-row': {
+                borderBottom: 'none',
+              },
+              '& .MuiDataGrid-cell:focus': {
+                outline: 'none',
+              },
+            }}
+          />
         </div>
       </Card>
       <TablePagination

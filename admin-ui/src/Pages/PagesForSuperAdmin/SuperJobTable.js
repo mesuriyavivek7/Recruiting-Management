@@ -1,82 +1,28 @@
-
-import React, { useState } from 'react';
-import {  Button } from '@mui/material';
-
-
-import NewJobData from './Job/NewJobData';
-import AllJobData from './Job/AllJobData';
-
-
+import React from "react";
+import AllJobData from "./Job/AllJobData";
 
 const SuperJobTable = () => {
-
- 
-
-
-  const [activeTab, setActiveTab] = useState('all');
-
- 
-  const handleTabChange = (tab) => {
-    setActiveTab(tab);
-  };
   return (
-    <div className=''>
-      <div className='flex '>
-      <Button
-  className='bg-blue-230'
-  id="demo-customized-button"
-  aria-haspopup="true"
-  variant="contained"
-  style={{
-    backgroundColor: activeTab === 'all' ? '#315370' : '#e0e0e0',
-    color: activeTab === 'all' ? 'white' : '#000',
-    fontSize: '16px',
-    height:'45px',
-    textTransform: 'none',
-    borderRadius: '20px 0 0 20px',  // Fully rounded left side
-    width: '120px',
-    marginRight: '-1px',  // To connect buttons in the middle
-  }}
-  onClick={() => handleTabChange('all')}
->
-  All
-</Button>
-
-
-<Button
-  id="demo-customized-button"
-  aria-haspopup="true"
-  disableElevation
-  style={{
-    backgroundColor: activeTab === 'new' ? '#315370' : '#e0e0e0',
-    color: activeTab === 'new' ? 'white' : '#000',
-    fontSize: '16px',
-    height:'45px',
-    textTransform: 'none',
-    borderRadius: '0 20px 20px 0',
-    whiteSpace:'nowrap',  // Fully rounded right side
-    width: 'auto',
-  }}
-  onClick={() => handleTabChange('new')}
->
-  Pending Verification
-</Button>
-
+    <div className="">
+      <div className="flex gap-6">
+        <span
+          style={{
+            backgroundColor: "#315370",
+            color: "white",
+            fontSize: "16px",
+            textTransform: "none",
+            borderRadius: "10px",
+            padding: "10px 20px",
+            width: "120px",
+            textAlign: "center",
+          }}
+        >
+          All Jobs
+        </span>
       </div>
-      <div>
-        {activeTab === 'all' && (
-          <div>
-          <AllJobData/>
-          </div>
-        )}
-        {activeTab === 'new' && (
-          <div>
-          <NewJobData/>
-          </div>
-        )}
+      <div className="pt-8">
+        <AllJobData />
       </div>
-    
-
     </div>
   );
 };

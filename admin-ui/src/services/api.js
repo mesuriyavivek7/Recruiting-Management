@@ -654,3 +654,13 @@ export const getAllVerifiedRecruitingAgenciesSuperAdmin = async () => {
         throw error;
     }
 }
+
+export const getAllVerifiedJobsSuperAdmin = async () => {
+    try {
+        const response = await axios.get(`${admin_be_uri}/superadmin/getjobs`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching all jobs for super admin: ", error);
+        throw error;
+    }
+}

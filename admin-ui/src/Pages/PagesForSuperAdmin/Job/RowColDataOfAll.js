@@ -201,7 +201,7 @@ export const rows = await Promise.all(
       },
       job_status: jobDetails.job_status,
       createdAt: jobDetails?.createdAt ? new Date(jobDetails.createdAt) : new Date(),
-      lastUpdated : jobDetails?.updatedAt ? new Date(jobDetails.updatedAt) : new Date()
+      lastUpdated: jobDetails?.updatedAt ? new Date(jobDetails.updatedAt) : new Date()
     };
   })
 );

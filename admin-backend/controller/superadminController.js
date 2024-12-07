@@ -44,3 +44,27 @@ export const getAllVerifiedRecruitingAgencies = async (req, res, next) => {
         next(error);
     }
 }
+
+export const getAllVerifiedJobs = async (req, res, next) => {
+    try {
+        // Fetch all account managers
+        const accountManagers = await ACCOUNTMANAGER.find({ admin_type: "account_manager" });
+
+       // merge all 'verified_jobs' arrays
+        const mergedJobs = accountManagers
+            .map(manager => manager.verified_jobs) // Extract `verified_jobs` arrays
+            .flat(); // Merge into a single array
+
+        // Remove duplicates
+        const uniqueJobs = [...new Set(mergedJobs)];
+
+        res.status(200).json({
+            success: true,
+            data: uniqueJobs
+        });
+    }
+    catch (error) {
+        next(error);
+    }
+}
+   
