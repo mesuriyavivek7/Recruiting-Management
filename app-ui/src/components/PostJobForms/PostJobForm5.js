@@ -17,18 +17,23 @@ import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutli
 
 export default function PostJobForm5({onPrev,onSubmit,onFormDataChange,jobid,handleDraftSave,parentFormData}) {
   const {user}=useContext(AuthContext)
-  const [questions,setQuestions]=useState([])
+  const [questions,setQuestions]=useState(Object.keys(parentFormData.form5).length>0?parentFormData.form5.screening_questions:[])
   const [action,setAction]=useState({post:false,draft:false})
   const [openPopUp,setOpenPopUp]=useState(false)
   const [openSubmitPopUp,setOpenSubmitPopUp]=useState(false)
   const [jobSubmitLoad,setJobSubmitLoad]=useState(false)
   const navigate=useNavigate()
 
+  console.log("Received Form Data----->",parentFormData)
+
+  console.log("Custom question----->",questions)
+
   //custome box stiling
   const boxStyle = {
     animation: 'colorChange 5s infinite',
   };
   
+  const [draftSaveLoader,setDraftSaveLoader] = useState(false)
 
    //for showing notification
    const [notification,setNotification]=useState(null)
@@ -84,7 +89,9 @@ export default function PostJobForm5({onPrev,onSubmit,onFormDataChange,jobid,han
   }
 
   const handleDraft=async ()=>{
+    setDraftSaveLoader(true)
     const saved=await handleDraftSave()
+    setDraftSaveLoader(false)
     if(saved) showNotification("Job Draft Saved Sucessfully","success")
     else showNotification("There is somthing wrong in saving draft...!","failure")
   }
@@ -200,7 +207,7 @@ export default function PostJobForm5({onPrev,onSubmit,onFormDataChange,jobid,han
        <div className='flex flex-col gap-2'>
          {
           questions.map((item)=>(
-            <ScreeningQue key={item.id} questionValueChange={handleQuestionChange} id={item.id} type={item.type} addQuestion={handleAddQuestions} removeQuestion={handleRemoveQuestions}></ScreeningQue>
+            <ScreeningQue key={item.id} question={item} questionValueChange={handleQuestionChange} id={item.id} type={item.type} addQuestion={handleAddQuestions} removeQuestion={handleRemoveQuestions}></ScreeningQue>
           ))
          }
        </div>
@@ -213,17 +220,29 @@ export default function PostJobForm5({onPrev,onSubmit,onFormDataChange,jobid,han
     </div>
      <div className='shadow rounded-md flex w-[1300px] place-content-end fixed bottom-0 bg-white px-4 py-2'>
          <div className='flex gap-4'>
-         <button 
-             onClick={()=>setAction({post:false,draft:true})}
-             className="text-gray-400 py-1 px-4 border-gray-200 hover:bg-gray-100 border-2">
-             Save As Draft</button>
           <button 
-           className="py-1 px-4 text-gray-400 hover:bg-gray-100 rounded-sm border"
+             disabled={draftSaveLoader}
+             onClick={()=>setAction({post:false,draft:true})}
+             className="text-white bg-black w-36 flex justify-center items-center disabled:cursor-not-allowed py-1.5 px-4 border-gray-200 hover:bg-gray-600 border-2">
+             {
+              draftSaveLoader ? (
+                <svg className="w-5 h-5  text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l5.6-3.2a10 10 0 00-10.4 0L4 12z"></path>
+                </svg>
+              ) :
+              (
+                "Save As Draft"
+              )
+             }
+          </button>
+          <button 
+           className="py-1.5 px-4 text-gray-400 hover:bg-gray-100 rounded-sm border"
            onClick={handlePrev}
           >previous</button>
           <button
             onClick={()=>setAction({post:true,draft:false})}
-            className="py-1 px-4 text-base bg-blue-400 rounded-sm text-white"
+            className="py-1.5 px-4 text-base bg-blue-400 rounded-sm text-white"
           >
             Post a Job
           </button>

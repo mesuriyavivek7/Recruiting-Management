@@ -7,11 +7,11 @@ import CheckIcon from '@mui/icons-material/Check';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 
-export default function ScreeningQue({id,type,addQuestion,questionValueChange,removeQuestion}) {
-    const [ansType,setAnsType]=useState("option")
+export default function ScreeningQue({id,question,type,addQuestion,questionValueChange,removeQuestion}) {
+    const [ansType,setAnsType]=useState(question.ans_type==="short_text"?("shorttext"):("option"))
     const [isOpen, setIsOpen] = useState(false);
     const [selectedOption, setSelectedOption] = useState({label:"Single Select",value:'single_select'});
-    const [madantoryOn,setMandatoryOn]=useState(true)
+    const [madantoryOn,setMandatoryOn]=useState(question.madantory)
     const [ansOptions,setAnsOptions]=useState([{id:1,label:"Choise 1",value:"Yes",delete:false},{id:2,label:"Choise 2",value:"No",delete:false}])
     const [shortTextLength,setShortTextLength]=useState(300)
     const [questionTitle,setQuestionTitle]=useState("")
@@ -20,6 +20,13 @@ export default function ScreeningQue({id,type,addQuestion,questionValueChange,re
     const toggleSwitch = () => {
         setMandatoryOn(!madantoryOn);
     };
+
+    //change option value corresponding to question ans_type
+    useEffect(()=>{
+       if(question.ans_type==="short_text") setSelectedOption({label:"Short Text",value:'short_text'})
+       else if(question.ans_type==="single_select") setSelectedOption({label:'Single Select',value:'single_select'})
+       else if(question.ans_type==="multi_select") setSelectedOption({label:'Multi Select',value:'multi_select'})
+    },[])
 
     //change into parent
     useEffect(()=>{ 

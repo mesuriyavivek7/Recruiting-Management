@@ -8,6 +8,7 @@ const PostJobForm2 = ({ onNext,onPrev,onFormDataChange,jobid,handleDraftSave,par
 
   //for showing notification
   const [notification,setNotification]=useState(null)
+  const [draftSaveLoader,setDraftSaveLoader] = useState(false)
 
    //for showing notification
    const showNotification=(message,type)=>{
@@ -268,7 +269,9 @@ const PostJobForm2 = ({ onNext,onPrev,onFormDataChange,jobid,handleDraftSave,par
   };
 
   const handleDraft=async ()=>{
-     const saved=handleDraftSave()
+     setDraftSaveLoader(true)
+     const saved=await handleDraftSave()
+     setDraftSaveLoader(false)
      if(saved) showNotification("Job Draft Saved Sucessfully","success")
      else showNotification("There is something wrong for draft save","failure")
     // console.log("handle drfat method trigger")
@@ -1205,8 +1208,18 @@ const PostJobForm2 = ({ onNext,onPrev,onFormDataChange,jobid,handleDraftSave,par
         <div className="flex gap-2">
           <button 
            onClick={()=>setActionMode({next:false,draft:true})}
-           className="text-gray-400 py-1 px-4 border-gray-200 hover:bg-gray-100 border-2">
-           Save As Draft</button>
+           className="text-white bg-black w-36 flex justify-center items-center py-1.5 px-4 border-gray-200 hover:bg-gray-600 border-2">
+            {
+              draftSaveLoader ? (
+                <svg className="w-5 h-5  text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l5.6-3.2a10 10 0 00-10.4 0L4 12z"></path>
+                </svg>
+              ) : (
+                "Save As Draft"
+              ) 
+            }
+           </button>
           <button 
            className="py-1 px-4 text-gray-400 hover:bg-gray-100 rounded-sm border"
            onClick={handlePrev}
