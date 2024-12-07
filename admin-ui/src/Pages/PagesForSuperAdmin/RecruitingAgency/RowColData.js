@@ -1,5 +1,5 @@
 import Button from '@mui/material/Button';
-import { fetchRecuritingAgencies } from '../../../services/api';
+
 export const columns = [
   {
     field: 'id',
@@ -80,23 +80,3 @@ export const columns = [
     ),
   },
 ];
-
-// Fetch and map data
-const data = await fetchRecuritingAgencies();
-
-export const rows = data.map((agency, index) => {
-  return {
-    id: index + 1,
-    full_name: agency.full_name || `User ${index + 1}`,
-    email: agency.email || `user${index + 1}@example.com`,
-    designation: agency.designation || "Not Provided",
-    company_name: agency.company_name || "Unknown",
-    country: agency.country || "Unknown",
-    city: agency.city || "Unknown",
-    domains: Array.isArray(agency.domains) ? agency.domains : [], // Ensure it's an array
-    firm_type: Array.isArray(agency.firm_type) ? agency.firm_type : [], // Ensure it's an array
-    linkedin_url: agency.linkedin_url || "Not Provided", // Fallback if not provided
-    email_verified: agency.email_verified ? "Yes" : "No",
-  };
-});
-

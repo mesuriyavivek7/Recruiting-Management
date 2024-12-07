@@ -1,60 +1,27 @@
-
-import React, { useState } from 'react';
-import {  Button } from '@mui/material';
-
-
 import AllRecruitingAgencyData from './RecruitingAgency/AllRecruitingAgencyData';
 
-
-
-
 const SuperRecruitingAgencyTable = () => {
-
- 
-
-
-  const [activeTab, setActiveTab] = useState('all');
-
- 
-  const handleTabChange = (tab) => {
-    setActiveTab(tab);
-  };
   return (
-    <div className=''>
-      <div className='flex gap-6'>
-        <Button
-          className='bg-blue-230 '
-          id="demo-customized-button"
-          aria-haspopup="true"
-          variant="contained"
-          
-        
-         style={{
-          backgroundColor: activeTab === 'all' ? '#315370' : '#e0e0e0', 
-          color: activeTab === 'all' ? 'white' : '#000', 
-          fontSize: '16px',
-          textTransform: 'none',
-          borderRadius: '15px',
-          width: '120px',
-          marginRight: '10px',
-          
-        }}
-        onClick={() => handleTabChange('all')}
+    <div className="">
+      <div className="flex gap-6">
+        <span
+          style={{
+            backgroundColor: "#315370",
+            color: "white",
+            fontSize: "16px",
+            textTransform: "none",
+            borderRadius: "10px",
+            padding: "10px 20px",
+            width: "200px",
+            textAlign: "center",
+          }}
         >
-          All
-        </Button>
-      
+          All Recruiting Agency
+        </span>
       </div>
-      <div>
-        {activeTab === 'all' && (
-          <div className='pt-10'>
-          <AllRecruitingAgencyData/>
-          </div>
-        )}
-       
+      <div className="pt-8">
+        <AllRecruitingAgencyData />
       </div>
-    
-
     </div>
   );
 };

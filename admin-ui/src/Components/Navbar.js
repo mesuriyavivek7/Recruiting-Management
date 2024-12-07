@@ -108,43 +108,45 @@ const Navbar = () => {
   const fetchEnterpriseData = async () => {
     setLoading(true);
     try {
-      const data = await fetchEnterpriseVerifiedData(userData?._id);
+      if (userData?.admin_type === "master_admin") {
+        const data = await fetchEnterpriseVerifiedData(userData?._id);
 
-      const rows = await Promise.all(
-        data.map(async (enterprise, index) => {
-          // Fetch complete enterprise details
-          const enterpriseData = await fetchEnterpriseById(enterprise);
+        const rows = await Promise.all(
+          data.map(async (enterprise, index) => {
+            // Fetch complete enterprise details
+            const enterpriseData = await fetchEnterpriseById(enterprise);
 
-          // Fetch account manager details
-          const accountManager = await fetchAccountManager(
-            enterpriseData?.allocated_account_manager
-          );
+            // Fetch account manager details
+            const accountManager = await fetchAccountManager(
+              enterpriseData?.allocated_account_manager
+            );
 
-          // Combine the fetched data
-          return {
-            id: enterpriseData._id || `enterprise-${index}`, // Ensure a unique id
-            full_name: enterpriseData.full_name || `User ${index + 1}`,
-            email: enterpriseData.email || `user${index + 1}@example.com`,
-            account_status: enterpriseData.account_status || {
-              status: "Inactive",
-              remark: "",
-              admin_id: "",
-            },
-            account_manager_verified:
-              enterpriseData.account_manager_verified || false,
-            account_manager: accountManager
-              ? `${accountManager.full_name}`
-              : null,
-          };
-        })
-      );
+            // Combine the fetched data
+            return {
+              id: enterpriseData._id || `enterprise-${index}`, // Ensure a unique id
+              full_name: enterpriseData.full_name || `User ${index + 1}`,
+              email: enterpriseData.email || `user${index + 1}@example.com`,
+              account_status: enterpriseData.account_status || {
+                status: "Inactive",
+                remark: "",
+                admin_id: "",
+              },
+              account_manager_verified:
+                enterpriseData.account_manager_verified || false,
+              account_manager: accountManager
+                ? `${accountManager.full_name}`
+                : null,
+            };
+          })
+        );
 
-      //Filter Based on Search Results
-      const filteredEnterpriseData = rows.filter((item) =>
-        item.full_name.toLowerCase().includes(popupSearchTerm.toLowerCase())
-      );
+        //Filter Based on Search Results
+        const filteredEnterpriseData = rows.filter((item) =>
+          item.full_name.toLowerCase().includes(popupSearchTerm.toLowerCase())
+        );
 
-      setEnterpriseData(filteredEnterpriseData);
+        setEnterpriseData(filteredEnterpriseData);
+      }
     } catch (err) {
       console.log(err);
     } finally {
@@ -234,8 +236,8 @@ const Navbar = () => {
             {adminType === "domestic"
               ? "D"
               : adminType === "international"
-              ? "I"
-              : "AD"}
+                ? "I"
+                : "AD"}
           </p>
         </div>
       </div>

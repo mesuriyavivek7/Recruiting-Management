@@ -1,20 +1,19 @@
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import { DataGrid } from '@mui/x-data-grid';
-import TablePagination from '@mui/material/TablePagination';
-import { rows, columns } from './RowColData';
-
-
+import * as React from "react";
+import Box from "@mui/material/Box";
+import { DataGrid } from "@mui/x-data-grid";
+import TablePagination from "@mui/material/TablePagination";
+import { columns } from "./RowColData";
+import { fetchEnterpriseById, getAllVerifiedEnterprisesSuperAdmin } from "../../../services/api";
 
 const calculateRowHeight = (params) => {
-
   const contentHeight = params.row ? params.row.content.length / 10 : 50;
   return Math.max(80, contentHeight);
 };
 
-export default function AllEnterPriseData() {
+export default function AllEnterpriseData() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rows, setRows] = React.useState([]);
 
   // Pagination handlers
   const handleChangePage = (event, newPage) => {
@@ -26,11 +25,43 @@ export default function AllEnterPriseData() {
     setPage(0); // Reset page to 0 when rows per page changes
   };
 
+  const fetchAllEnterpriseData = async () => {
+    try {
+      const enterpriseIds = await getAllVerifiedEnterprisesSuperAdmin();
+
+      const response = await Promise.all(
+        enterpriseIds.data.map(async (enterpriseId, index) => {
+          const enterprise = await fetchEnterpriseById(enterpriseId);
+
+          return {
+            id: index + 1,
+            _id: enterprise._id,
+            full_name: enterprise.full_name || `User ${index + 1}`,
+            email: enterprise.email || `user${index + 1}@example.com`,
+            designation: enterprise.designation || "Not Provided",
+            company_name: enterprise.company_name || "Unknown",
+            country: enterprise.country || "Unknown",
+            city: enterprise.city || "Unknown",
+            email_verification: enterprise.isEmailVerified ? "yes" : "no",
+            account_status: enterprise.account_status.status,
+          };
+        })
+      );
+      setRows(response);
+    } catch (error) {
+      console.error("Error fetching enterprise details: ", error);
+    }
+  };
+
+  React.useEffect(() => {
+    fetchAllEnterpriseData();
+  }, []);
+
   return (
     <>
-      <Box sx={{ height: 600, width: '100%' }}>
+      <Box sx={{ height: 600, width: "100%" }}>
         <DataGrid
-          getRowId={(rows) => rows.id} // Specify the custom ID field
+          getRowId={(row) => row.id} // Specify the custom ID field
           rows={rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
           columns={columns}
           rowHeight={80}
@@ -40,61 +71,41 @@ export default function AllEnterPriseData() {
           hideFooterPagination={true}
           disableSelectionOnClick
           sx={{
-            '& .MuiDataGrid-root': {
-              fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.09rem' },
+            "& .MuiDataGrid-root": {
+              fontSize: { xs: "0.75rem", sm: "0.875rem", md: "0.7rem", lg: "1.09rem" },
             },
-
-            ' [class^=MuiDataGrid]': { border: 'none' },
-            '& .MuiDataGrid-columnHeader': {
-              fontWeight: 'bold !impotant',
-              fontSize: { xs: '0.875rem', sm: '1rem', md: '0.7rem', lg: '1.1rem' },
-              color: 'black',
-
-              '&:focus': {
-                outline: 'none',
-                border: 'none',
+            " [class^=MuiDataGrid]": { border: "none" },
+            "& .MuiDataGrid-columnHeader": {
+              fontWeight: "bold !important",
+              fontSize: { xs: "0.875rem", sm: "1rem", md: "0.7rem", lg: "1.1rem" },
+              color: "black",
+              "&:focus": {
+                outline: "none",
+                border: "none",
               },
-              backgroundColor: '#e3e6ea !important',
-              minHeight: '60px',
+              backgroundColor: "#e3e6ea !important",
+              minHeight: "60px",
             },
-            '& .MuiDataGrid-columnHeader:focus-within': {
-              outline: 'none',
+            "& .MuiDataGrid-columnHeader:focus-within": {
+              outline: "none",
             },
-
-
-
-
-
-            '& .MuiDataGrid-columnSeparator': {
-              color: 'blue',
-              visibility: 'visible',
+            "& .MuiDataGrid-columnSeparator": {
+              color: "blue",
+              visibility: "visible",
             },
-
-
-            '& .MuiDataGrid-cell': {
-              fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem' },
-
+            "& .MuiDataGrid-cell": {
+              fontSize: { xs: "0.75rem", sm: "0.875rem", md: "0.7rem", lg: "1.1rem" },
             },
-
-            '& .MuiDataGrid-cellContent': {
-              display: 'flex',
-              alignItems: 'center',
+            "& .MuiDataGrid-cellContent": {
+              display: "flex",
+              alignItems: "center",
             },
-            '& .MuiDataGrid-cell': {
-              minHeight: '2.5rem',
+            "& .MuiDataGrid-row": {
+              borderBottom: "none",
             },
-            '& .MuiDataGrid-cell': {
-              fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem' },
-
-
+            "& .MuiDataGrid-cell:focus": {
+              outline: "none",
             },
-            '& .MuiDataGrid-row': {
-              borderBottom: 'none',
-            },
-            '& .MuiDataGrid-cell:focus': {
-              outline: 'none',
-            },
-
           }}
         />
       </Box>
@@ -111,6 +122,3 @@ export default function AllEnterPriseData() {
     </>
   );
 }
-
-
-

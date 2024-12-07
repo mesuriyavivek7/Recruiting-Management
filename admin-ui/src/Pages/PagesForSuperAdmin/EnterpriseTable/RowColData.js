@@ -1,19 +1,18 @@
 import Button from '@mui/material/Button';
-import { fetchEnterpriseData } from '../../../services/api';
 
 // Column configuration for the DataGrid
 export const columns = [
     {
         field: 'id',
         headerName: 'Sr No.',
-        minWidth: 100,
+        minWidth: 90,
         flex: 1
     },
     {
         field: 'full_name',
         headerName: 'Full Name',
         flex: 1,
-        minWidth: 150,
+        minWidth: 200,
     },
     {
         field: 'email',
@@ -42,8 +41,19 @@ export const columns = [
     {
         field: 'city',
         headerName: 'City',
-        flex: 1,
-        minWidth: 150,
+        flex: 1, // Flexible width
+        minWidth: 150, // Minimum width
+    },
+    {
+        field: 'account_status',
+        headerName: 'Account Status',
+        flex: 1, // Flexible width
+        minWidth: 180, // Minimum width
+        renderCell: (params) =>(
+          <div className='w-full h-full flex items-center'>
+           <span className={`${params.row.account_status==="Active"?"bg-green-500":"bg-red-500"} text-white h-8 w-28 flex rounded-md justify-center items-center`}>{params.row.account_status}</span>
+          </div>
+        )
     },
     {
         field: 'email_verification',
@@ -69,17 +79,3 @@ export const columns = [
     }
 
 ];
-
-
-const data = await fetchEnterpriseData();
-
-export const rows = data.map((enterprise, index) => ({
-    id: index + 1,
-    full_name: enterprise.full_name || `User ${index + 1}`,
-    email: enterprise.email || `user${index + 1}@example.com`,
-    designation: enterprise.designation || "Not Provided",
-    company_name: enterprise.company_name || "Unknown",
-    country: enterprise.country || "Unknown",
-    city: enterprise.city || "Unknown",
-    email_verification: enterprise.isEmailVerified ? "yes" : "no",
-}));
