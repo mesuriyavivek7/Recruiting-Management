@@ -85,7 +85,7 @@ export const columns = [
 const getJobStatusColor = (jobStatus) =>{
     if(jobStatus==="Active") return "bg-green-500"
     else if(jobStatus==="Pending") return "bg-red-500"
-    else "bg-gray-500"
+    else return "bg-gray-500"
 }
 
 //Columns for Job
