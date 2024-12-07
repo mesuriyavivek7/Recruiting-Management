@@ -4,7 +4,7 @@ import { format, formatDistanceToNowStrict } from 'date-fns';
 export const columns = [
   {
     field: '_id',
-    headerName: 'ID',
+    headerName: 'Sr No.',
     flex: 1,
     minWidth: 100,
     headerAlign: 'left',
@@ -48,10 +48,74 @@ export const columns = [
     },
   },
   {
+    field: 'email',
+    headerName: 'Email',
+    flex: 2,
+    minWidth: 200,
+    headerAlign: 'left',
+    align: 'left',
+    renderCell: (params) => (
+      <div>
+        {params.row.email.length > 15 
+          ? `${params.row.email.slice(0, 15)}...` 
+          : params.row.email}
+      </div>
+    ),
+  },  
+  {
+    field: 'mobile',
+    headerName: 'Contact',
+    flex: 2,
+    minWidth: 200,
+    headerAlign: 'left',
+    align: 'left',
+    renderCell: (params) => (
+      <div>
+        +{params.row.mobile}
+      </div>
+    ),
+  },
+  {
     field: 'candidate_status',
     headerName: 'Candidate Status',
     flex: 1,
     minWidth: 200,
+    headerAlign: 'left',
+    align: 'left',
+    renderCell : (params) =>(
+       <div className='flex w-full h-full items-center'>
+         <span className='h-8 bg-slate-50 border border-blue-400 p-2 rounded-md flex justify-center items-center'>
+           {params.row.candidate_status}
+         </span>
+       </div>
+    )
+  },
+  {
+    field: 'notice_period',
+    headerName: 'Notice Period',
+    flex: 1,
+    minWidth: 150,
+    headerAlign: 'left',
+    align: 'left',
+    renderCell: (params) => (
+      <div>
+        {params.row.notice_period} Days
+      </div>
+    ),
+  },
+  {
+    field: 'recruiter_member',
+    headerName: 'Recruiter Member',
+    flex: 1,
+    minWidth: 180,
+    headerAlign: 'left',
+    align: 'left',
+  },
+  {
+    field: 'acmanager',
+    headerName: 'Account Manager',
+    flex: 1,
+    minWidth: 180,
     headerAlign: 'left',
     align: 'left',
   },
@@ -99,45 +163,6 @@ export const columns = [
       );
     },
   },
-  {
-    field: 'notice_period',
-    headerName: 'Notice Period',
-    flex: 1,
-    minWidth: 150,
-    headerAlign: 'left',
-    align: 'left',
-    renderCell: (params) => (
-      <div>
-        {params.row.notice_period} Days
-      </div>
-    ),
-  },
-  {
-    field: 'email',
-    headerName: 'Email',
-    flex: 2,
-    minWidth: 200,
-    headerAlign: 'left',
-    align: 'left',
-    renderCell: (params) => (
-      <div>
-        {params.row.email.length > 15 
-          ? `${params.row.email.slice(0, 15)}...` 
-          : params.row.email}
-      </div>
-    ),
-  },  
-  {
-    field: 'mobile',
-    headerName: 'Contact',
-    flex: 2,
-    minWidth: 200,
-    headerAlign: 'left',
-    align: 'left',
-    renderCell: (params) => (
-      <div>
-        {params.row.mobile}
-      </div>
-    ),
-  },
+
+
 ];
