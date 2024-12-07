@@ -1,34 +1,32 @@
-
-
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
-import TablePagination from '@mui/material/TablePagination';
 import { columns } from './RowColData';
-import { fetchRecuritingAgencybyId, getAllVerifiedRecruitingAgenciesSuperAdmin } from '../../../services/api';
-
+import { fetchRecuritingAgencybyId, getAllVerifiedRecruitingAgenciesSuperAdmin, fetchAccountManager } from '../../../services/api';
+import { useNavigate } from 'react-router-dom';
+import Notification from '../../../Components/Notification';
+  
 const calculateRowHeight = (params) => {
 
-  const contentHeight = params.row ? params.row.content.length / 10 : 50;
-  return Math.max(80, contentHeight);
-};
+   const contentHeight = params.row ? params.row.content.length / 10 : 50;
+   return Math.max(80, contentHeight);
+ };
 
 export default function AllRecruitingAgencyData() {
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [rows, setRows] = React.useState([]);
+  const navigate=useNavigate()
+  const [rows, setRows] = React.useState([]);  
 
-  // Pagination handlers
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
+
+  const [notification, setNotification] = React.useState(null);
+
+  const showNotification = (message, type) => {
+    setNotification({ message, type });
   };
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0); // Reset page to 0 when rows per page changes
-  };
+  const [loader,setLoader]= React.useState(false)
 
   const fetchAllRecruitingAgencyData = async () => {
+    setLoader(true)
     try {
       const recruitingAgencyIds = await getAllVerifiedRecruitingAgenciesSuperAdmin();
 
@@ -36,9 +34,13 @@ export default function AllRecruitingAgencyData() {
         recruitingAgencyIds.data.map(async (recruitingAgencyId, index) => {
           const agency = await fetchRecuritingAgencybyId(recruitingAgencyId);
 
+          const account_manager = await fetchAccountManager(agency.alloted_account_manager)
+
           return {
+            _id: agency._id,
             id: index + 1,
             full_name: agency.full_name || `User ${index + 1}`,
+            mobileno: agency.mobileno || "none",
             email: agency.email || `user${index + 1}@example.com`,
             designation: agency.designation || "Not Provided",
             company_name: agency.company_name || "Unknown",
@@ -48,14 +50,24 @@ export default function AllRecruitingAgencyData() {
             firm_type: Array.isArray(agency.firm_type) ? agency.firm_type : [],
             linkedin_url: agency.linkedin_url || "Not Provided",
             email_verified: agency.email_verified ? "Yes" : "No",
+            account_manager: account_manager.full_name || "None"
           };
         })
       );
       setRows(response);
     } catch (error) {
+      showNotification("Something went wrong while fetching data",'failure')
       console.error("Error fetching recruiting agency details: ", error);
+    } finally{
+       setLoader(false)
     }
   };
+
+  //for navigate
+  const handleRowClick = async (params) =>{
+      const id = params.row._id
+      navigate(`/super_admin/recruiting-agency/${id}` , {state : {r_agency_id: id}})
+  } 
 
   React.useEffect(() => {
     fetchAllRecruitingAgencyData();
@@ -63,16 +75,27 @@ export default function AllRecruitingAgencyData() {
 
   return (
     <>
+      {notification && (
+        <Notification
+          open={true}
+          message={notification.message}
+          type={notification.type}
+          onClose={() => setNotification(null)}
+        />
+      )}
       <Box sx={{ height: 600, width: '100%' }}>
         <DataGrid
           getRowId={(rows) => rows.id} // Specify the custom ID field
-          rows={rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
+          rows={rows}
           columns={columns}
           rowHeight={80}
+          loading={loader}
+          onRowClick={(params)=>handleRowClick(params)}
           getRowHeight={calculateRowHeight}
           pagination={false}
-          pageSize={rowsPerPage}
-          hideFooterPagination={true}
+          initialState={{ pagination: { paginationModel: { page: 0, pageSize: 10 } } }}
+          pageSize={8}
+          pageSizeOptions={[5, 10]}
           disableSelectionOnClick
           sx={{
             '& .MuiDataGrid-root': {
@@ -95,22 +118,13 @@ export default function AllRecruitingAgencyData() {
             '& .MuiDataGrid-columnHeader:focus-within': {
               outline: 'none',
             },
-
-
-
-
-
             '& .MuiDataGrid-columnSeparator': {
               color: 'blue',
               visibility: 'visible',
             },
-
-
             '& .MuiDataGrid-cell': {
               fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem' },
-
             },
-
             '& .MuiDataGrid-cellContent': {
               display: 'flex',
               alignItems: 'center',
@@ -120,8 +134,6 @@ export default function AllRecruitingAgencyData() {
             },
             '& .MuiDataGrid-cell': {
               fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.1rem' },
-
-
             },
             '& .MuiDataGrid-row': {
               borderBottom: 'none',
@@ -134,22 +146,6 @@ export default function AllRecruitingAgencyData() {
         />
       </Box>
 
-
-
-
-
-
-
-      <TablePagination
-        component="div"
-        count={rows.length} // Total number of rows
-        page={page} // Current page number
-        onPageChange={handleChangePage} // Handler for changing page
-        rowsPerPage={rowsPerPage} // Rows per page number
-        onRowsPerPageChange={handleChangeRowsPerPage} // Handler for changing rows per page
-        rowsPerPageOptions={[5, 10, 25]} // Rows per page options
-        labelRowsPerPage="Rows per page" // Label
-      />
     </>
   );
 }
