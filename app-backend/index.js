@@ -23,6 +23,7 @@ import jobRoute from './routes/jobs.js'
 import candidateRoute from './routes/candidate.js'
 import messageRoute from './routes/message.js'
 import invoiceRoute from './routes/invoice.js'
+import supportRoute from './routes/support.js'
 
 // Get the directory name
 const __filename = fileURLToPath(import.meta.url);
@@ -105,6 +106,7 @@ app.use('/api/job', jobRoute)
 app.use('/api/candidate', candidateRoute)
 app.use('/api/message', messageRoute)
 app.use('/api/invoice', invoiceRoute)
+app.use('/api/support',supportRoute)
 
 app.get('/', (req, res) => {
     res.send("Bahut maja ara hai bhai🐱")
