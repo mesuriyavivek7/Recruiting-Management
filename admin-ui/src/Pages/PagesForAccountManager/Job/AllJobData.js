@@ -6,10 +6,10 @@ import { columns } from './RowColDataOfAll'; // Import columns configuration
 import { FaSearch } from 'react-icons/fa';
 import { fetchJobBasicDetailsByJobId, fetchJobDetailsById, fetchEnterpriseMemberDetails, fetchVerifiedJobsByACManagerId } from '../../../services/api';
 import Notification from '../../../Components/Notification';
-
 import { store } from '../../../State/Store';
 
 const AllJobData = () => {
+
   const selectUserData = (state) => state?.admin?.userData;
   const userData = selectUserData(store?.getState());
   const navigate = useNavigate();
@@ -28,7 +28,6 @@ const AllJobData = () => {
   const handleRowClick = async (params) => {
     const id = params.id;
     const job_id = params?.row?.job_id;
-    console.log(params);
     navigate(`/account_manager/jobs/${id}`, { state: { job_id: job_id } });
   };
 
@@ -89,12 +88,9 @@ const AllJobData = () => {
       }
     }
 
-    fetchData()
+    fetchData();
 
   }, [searchTerm, filterStatus]);
-
-
-
 
   return (
     <div>
@@ -158,7 +154,6 @@ const AllJobData = () => {
         </Box>
       ) : (
         <Card className='mt-9 font-sans'>
-
           <p className='text-lg xl:text-2xl'>All Jobs</p>
           <div style={{ height: 600, width: '100%' }} className='pt-4'>
             <DataGrid
