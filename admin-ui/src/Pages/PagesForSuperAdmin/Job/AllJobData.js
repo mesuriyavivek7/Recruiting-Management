@@ -3,7 +3,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import { Card, TablePagination } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { columns } from './RowColDataOfAll';
-import { fetchJobBasicDetailsByJobId, fetchJobDetailsById, fetchRecruiterByEId, getAllVerifiedJobsSuperAdmin } from '../../../services/api';
+import { fetchAccountManager, fetchJobBasicDetailsByJobId, fetchJobDetailsById, fetchRecruiterByEId, getAllVerifiedJobsSuperAdmin } from '../../../services/api';
 
 const calculateRowHeight = (params) => {
   return Math.max(80);
@@ -47,6 +47,7 @@ const AllJobData = () => {
           const jobs = await fetchJobDetailsById(jobId);
           const jobDetails = await fetchJobBasicDetailsByJobId(jobs.job_id);
           const recruiter = await fetchRecruiterByEId(jobs.enterprise_id);
+          const account_manager = await fetchAccountManager(jobs.alloted_account_manager)
 
           return {
             _id: String(`${index + 1}`),
@@ -64,6 +65,7 @@ const AllJobData = () => {
             job_status: jobs?.job_status,
             createdAt: jobs?.createdAt,
             lastUpdated: jobs?.updatedAt,
+            account_manager : account_manager.full_name,
           };
         })
       );
