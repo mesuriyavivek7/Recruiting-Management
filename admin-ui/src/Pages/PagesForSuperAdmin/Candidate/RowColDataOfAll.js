@@ -1,4 +1,5 @@
 import { format, formatDistanceToNowStrict } from 'date-fns';
+import { Box, Skeleton } from '@mui/material';
 
 // columns.js
 export const columns = [
@@ -166,3 +167,55 @@ export const columns = [
 
 
 ];
+
+
+export const TableSkeleton = ({ rowsPerPage = 5 }) => {
+  const columnWidths = columns.map(() => '180px').join(' '); // Uniform column widths
+
+  return (
+    <Box sx={{ width: '100%', p: 2 }}>
+      {/* Table Header Skeleton */}
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: columnWidths,
+          gap: 1,
+          mb: 2,
+        }}
+      >
+        {columns.map((col, index) => (
+          <Skeleton
+            key={`header-${index}`}
+            variant="rectangular"
+            height={40}
+            animation="wave"
+            sx={{ bgcolor: 'grey.300' }}
+          />
+        ))}
+      </Box>
+
+      {/* Table Rows Skeleton */}
+      {Array.from({ length: rowsPerPage }).map((_, rowIndex) => (
+        <Box
+          key={`row-${rowIndex}`}
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: columnWidths,
+            gap: 1,
+            mb: 1,
+          }}
+        >
+          {columns.map((_, colIndex) => (
+            <Skeleton
+              key={`row-${rowIndex}-col-${colIndex}`}
+              variant="rectangular"
+              height={60}
+              animation="wave"
+              sx={{ bgcolor: 'grey.200' }}
+            />
+          ))}
+        </Box>
+      ))}
+    </Box>
+  );
+};

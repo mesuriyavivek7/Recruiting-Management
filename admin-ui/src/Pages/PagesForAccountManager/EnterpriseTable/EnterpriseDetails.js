@@ -5,11 +5,8 @@ import { FaBuilding, FaInfoCircle } from 'react-icons/fa'; // Importing relevant
 import { Card } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { FaBriefcase } from 'react-icons/fa';
-import { useLocation } from 'react-router-dom';
 import { fetchAccountManager } from '../../../services/api';
  
-
-
 const EnterpriseDetails = ({enterpriseDetails}) => {
   const [accountManager, setAccountManager] = useState(null); 
 

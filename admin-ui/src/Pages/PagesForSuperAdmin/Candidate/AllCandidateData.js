@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { Card } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
@@ -42,7 +42,6 @@ const AllCandidateData = () => {
           const candidate = await fetchCandidateStatusById(c_id);
           const job_basic_details = await fetchJobBasicDetailsByJobId(candidate.job_id);
 
-          // Get candidate status, defaulting to "Status Unavailable" if not found
           const candidateStatusKey = candidate.candidate_status || "Status Unavailable";
           const candidateStatus = cstatus.get(candidateStatusKey) || candidateStatusKey;
 
@@ -82,7 +81,7 @@ const AllCandidateData = () => {
      
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetchAllCandidateData();
   }, []);
 

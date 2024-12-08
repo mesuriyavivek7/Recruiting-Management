@@ -3,7 +3,8 @@ import AllCandidateData from "./Candidate/AllCandidateData";
 
 const SuperCandidateTable = () => {
   return (
-    <div className="">
+    <div>
+      {/* Header Section */}
       <div className="flex gap-6">
         <span
           style={{
@@ -20,6 +21,8 @@ const SuperCandidateTable = () => {
           All Candidates
         </span>
       </div>
+
+      {/* Data Section */}
       <div className="pt-8">
         <AllCandidateData />
       </div>
