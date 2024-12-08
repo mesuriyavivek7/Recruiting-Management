@@ -63,12 +63,30 @@ const Navbar = () => {
 
 
   const popupRef=useRef(null)
+  const profilePopUpRef = useRef(null)
 
   useEffect(()=>{
     const handleClickOutside = (event) => {
       // Check if the click is outside the popup
       if (popupRef.current && !popupRef.current.contains(event.target)) {
         setOpenSearchBox(false); // Close the popup
+      }
+    };
+
+    // Add event listener to the document
+    document.addEventListener("mousedown", handleClickOutside);
+
+    // Cleanup on component unmount
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  },[])
+
+  useEffect(()=>{
+    const handleClickOutside = (event) => {
+      // Check if the click is outside the popup
+      if (profilePopUpRef.current && !profilePopUpRef.current.contains(event.target)) {
+        setOpenProfile(false)
       }
     };
 
@@ -206,7 +224,8 @@ const Navbar = () => {
             <p className="text-white cursor-pointer text-sm mx-auto">{user && getShortName(user.full_name)}</p>
           </div>
           {
-            openProfile && <div className="absolute top-16 right-4 pb-2 z-50 custom-div">
+            openProfile &&
+           <div ref={profilePopUpRef} className="absolute top-16 right-4 pb-2 z-50 custom-div">
           <div className="bg-slate-100 rounded-sm flex flex-col gap-2 p-2">
             <h1 className="text-gray-600 text-lg">Recruiter</h1>
             <div>
