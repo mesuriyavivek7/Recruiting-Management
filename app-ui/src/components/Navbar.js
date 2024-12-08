@@ -102,12 +102,30 @@ const Navbar = () => {
   
 
   const popupRef=useRef(null)
+  const profilePopRef = useRef(null)
 
   useEffect(()=>{
     const handleClickOutside = (event) => {
       // Check if the click is outside the popup
       if (popupRef.current && !popupRef.current.contains(event.target)) {
         setOpenSearchBox(false); // Close the popup
+      }
+    };
+
+    // Add event listener to the document
+    document.addEventListener("mousedown", handleClickOutside);
+
+    // Cleanup on component unmount
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  },[])
+
+  useEffect(()=>{
+    const handleClickOutside = (event) => {
+      // Check if the click is outside the popup
+      if (profilePopRef.current && !profilePopRef.current.contains(event.target)) {
+        setOpenProfile(false); // Close the popup
       }
     };
 
@@ -215,19 +233,20 @@ const Navbar = () => {
             <p className="text-white text-sm mx-auto">{user && getShortName(user.full_name)}</p>
           </div>
           {
-            openProfile && <div className="absolute z-50 top-16 right-4 pb-2 custom-div">
-          <div className="bg-slate-100 rounded-sm flex flex-col gap-2 p-2">
-            <h1 className="text-gray-600 text-lg">Enterprise</h1>
-            <div>
-              <h1 className="text-md">{user.full_name}</h1>
-              <p className="text-sm text-gray-400">{user.email}</p>
-            </div>
-          </div>
-          <div className="w-full flex flex-col mt-2">
-            <span className="text-gray-700 hover:bg-gray-200  p-1 cursor-pointer font-light text-sm">Change Profile Picture</span>
-            <span onClick={handleLogout} className="text-gray-700 hover:bg-gray-200 p-1  cursor-pointer font-light text-sm">Log Out</span>
-          </div>
-        </div>
+          openProfile && 
+          <div ref={profilePopRef} className="absolute z-40 top-16 right-4 pb-2 custom-div">
+           <div className="bg-slate-100 rounded-sm flex flex-col gap-2 p-2">
+             <h1 className="text-gray-600 text-lg">Enterprise</h1>
+             <div>
+               <h1 className="text-md">{user.full_name}</h1>
+               <p className="text-sm text-gray-400">{user.email}</p>
+             </div>
+           </div>
+           <div className="w-full flex flex-col mt-2">
+             <span className="text-gray-700 hover:bg-gray-200  p-1 cursor-pointer font-light text-sm">Change Profile Picture</span>
+             <span onClick={handleLogout} className="text-gray-700 hover:bg-gray-200 p-1  cursor-pointer font-light text-sm">Log Out</span>
+           </div>
+         </div>
         }
         </div>
       </div>
