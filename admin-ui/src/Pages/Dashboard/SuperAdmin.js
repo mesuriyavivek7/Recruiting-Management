@@ -8,6 +8,7 @@ import Navbar from "../../Components/Navbar";
 
 import { Outlet, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import SuperAmNavbar from "../../Components/SuperAmNavbar";
 
 const SuperAdmin = () => {
   const navigate=useNavigate()
@@ -22,7 +23,7 @@ const SuperAdmin = () => {
 
   return ( 
     <div className="flex flex-col w-screen max-w-[100vw] h-[100vh] max-h-screen relative overflow-hidden ">
-      <Navbar/>
+      <SuperAmNavbar/>
       <div className="flex w-full h-full relative gap-9 ">
         <SideNavbar/>
         
