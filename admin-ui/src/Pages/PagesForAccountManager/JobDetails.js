@@ -227,7 +227,7 @@ function AdminJobDetails() {
                       }}
                     >
                       <Typography variant="body1">
-                        <strong>City:</strong> {jobDetails?.city}
+                        <strong>City:</strong> {jobDetails?.city.join(", ")}
                       </Typography>
                     </Box>
                   </Grid>

@@ -297,7 +297,7 @@ const handleSubmit=async ()=>{
         <div className='fixed inset-0 flex justify-center bg-black z-40 bg-opacity-50 backdrop-blur-md items-center'>
          {
           loading ? (
-            <div className='custom-div w-72 flex justify-center items-center'>
+            <div className='custom-div pb-3 w-72 flex justify-center items-center'>
                <img src={WhiteLoader} className='w-8 h-8' alt='loader'></img>
             </div>
           ) : (
