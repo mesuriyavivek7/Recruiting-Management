@@ -15,6 +15,7 @@ export default function AllEnterpriseData() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [rows, setRows] = React.useState([]);
+  const [loader, setLoader] = React.useState(false)
 
   const navigate = useNavigate();
 
@@ -29,6 +30,7 @@ export default function AllEnterpriseData() {
   };
 
   const fetchAllEnterpriseData = async () => {
+    setLoader(true);
     try {
       const enterpriseIds = await getAllVerifiedEnterprisesSuperAdmin();
 
@@ -53,6 +55,9 @@ export default function AllEnterpriseData() {
       setRows(response);
     } catch (error) {
       console.error("Error fetching enterprise details: ", error);
+    }
+    finally {
+      setLoader(false);
     }
   };
 
@@ -80,6 +85,7 @@ export default function AllEnterpriseData() {
           rows={rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
           columns={columns}
           rowHeight={80}
+          loading={loader}
           getRowHeight={calculateRowHeight}
           onRowClick={handleRowClick}
           pagination={false}

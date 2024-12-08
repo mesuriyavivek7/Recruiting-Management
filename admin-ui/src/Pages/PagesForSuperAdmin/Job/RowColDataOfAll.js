@@ -137,9 +137,9 @@ export const columns = [
     headerAlign: 'left',
     align: 'left',
     renderCell: (params) => {
-      const createdOnDate = new Date(params.row.createdAt); // Parse ISO date string
-      const formattedDate = format(createdOnDate, 'dd-MMM-yy'); // Format the date as 13-Sep-23
-      const timeAgo = formatDistanceToNowStrict(createdOnDate, { addSuffix: true }); // Get "X days ago"
+      const createdDate = params.row?.createdAt ? new Date(params.row.createdAt) : null;
+      const formattedDate = createdDate ? format(createdDate, 'dd-MMM-yy') : 'Invalid Date';
+      const timeAgo = createdDate ? formatDistanceToNowStrict(createdDate, { addSuffix: true }) : 'Invalid Date';
 
       return (
         <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%', padding: '8px 0' }}>
@@ -159,9 +159,9 @@ export const columns = [
     headerAlign: 'left',
     align: 'left',
     renderCell: (params) => {
-      const updatedDate = new Date(params.row.lastUpdated); // Parse ISO date string
-      const formattedDate = format(updatedDate, 'dd-MMM-yy'); // Format the date as 13-Sep-23
-      const timeAgo = formatDistanceToNowStrict(updatedDate, { addSuffix: true }); // Get "X days ago"
+      const updatedDate = params.row?.lastUpdated ? new Date(params.row.lastUpdated) : null;
+      const formattedDate = updatedDate ? format(updatedDate, 'dd-MMM-yy') : 'Invalid Date';
+      const timeAgo = updatedDate ? formatDistanceToNowStrict(updatedDate, { addSuffix: true }) : 'Invalid Date';
 
       return (
         <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%', padding: '8px 0' }}>

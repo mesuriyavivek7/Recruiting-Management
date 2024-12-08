@@ -12,12 +12,15 @@ const calculateRowHeight = (params) => {
 const AllJobData = () => {
   const [selectedRowId, setSelectedRowId] = useState(null);
   const [rows, setRows] = useState([]);
+  const [loader,setLoader]= React.useState(false)
 
   const navigate = useNavigate();
 
-  const handleRowClick = (id) => {
+  const handleRowClick = (params) => {
+    const { id } = params;
+    const job_id = params?.row?.job_id;
     setSelectedRowId(id);
-    navigate(`/super_admin/job/${id}`);
+    navigate(`/super_admin/job/${id}`, {state : {job_id: job_id}});
   };
 
   // State for pagination
@@ -35,14 +38,16 @@ const AllJobData = () => {
   };
 
   const fetchAllJobData = async () => {
+    setLoader(true);
     try {
       const jobIds = await getAllVerifiedJobsSuperAdmin();
       const response = await Promise.all(
         jobIds.data.map(async (jobId, index) => {
+          
           const jobs = await fetchJobDetailsById(jobId);
           const jobDetails = await fetchJobBasicDetailsByJobId(jobs.job_id);
-
           const recruiter = await fetchRecruiterByEId(jobs.enterprise_id);
+
           return {
             _id: String(`${index + 1}`),
             job_title: jobDetails?.job_title || "No Title Available",
@@ -57,8 +62,8 @@ const AllJobData = () => {
               maxexp: jobDetails?.experience?.maxexp || 'N/A',
             },
             job_status: jobs?.job_status,
-            createdAt: jobDetails?.createdAt ? new Date(jobDetails.createdAt) : new Date(),
-            lastUpdated: jobDetails?.updatedAt ? new Date(jobDetails.updatedAt) : new Date()
+            createdAt: jobs?.createdAt,
+            lastUpdated: jobs?.updatedAt,
           };
         })
       );
@@ -66,11 +71,14 @@ const AllJobData = () => {
     } catch (error) {
       console.error("Error fetching all jobs: ", error);
     }
+    finally {
+      setLoader(false);
+    }
   };
 
   React.useEffect(() => {
     fetchAllJobData();
-  }, [rows]);
+  }, []);
 
   // Calculate the rows to display
   const paginatedRows = rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
@@ -83,7 +91,8 @@ const AllJobData = () => {
             rows={paginatedRows}
             columns={columns}
             rowHeight={80}
-            onRowClick={(params) => handleRowClick(params.id)}
+            loading = {loader}
+            onRowClick={(params) => handleRowClick(params)}
             getRowId={(row) => row._id} // Specify the custom ID field
             getRowHeight={calculateRowHeight}
             pagination={false}
