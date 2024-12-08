@@ -16,15 +16,10 @@ const superadminSchema=new mongoose.Schema({
         type:String,
         required:true
     },
-    
     admin_type:{
        type:String,
-       required:true
+       default:"super_admin"
     },
-    super_admin_type:{
-        type:String,
-        //required:true
-    }
 
 },{timestamps:true})
 
