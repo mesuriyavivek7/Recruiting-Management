@@ -21,6 +21,7 @@ import AccountJobTable from './Pages/PagesForAccountManager/AccountJobTable';
 import AccountCandidateTable from './Pages/PagesForAccountManager/AccountCandidateTable';
 import Job from './Pages/PagesForAccountManager/Job';
 import CandidateDetails from './Pages/PagesForAccountManager/CandidateDetails';
+import AcRecruiting from './Pages/PagesForAccountManager/RecruitingAgency/AcRecruting';
 
 import SuperAdmin from './Pages/Dashboard/SuperAdmin';
 import SupperAdminDashboard from './Components/SuperAdminDashboard';
@@ -31,7 +32,7 @@ import SuperCandidateTable from './Pages/PagesForSuperAdmin/SuperCandidateTable'
 import SuperCandidateDetails from './Pages/PagesForSuperAdmin/SuperCandidateDetails';
 import SuperAdminJob from './Pages/PagesForSuperAdmin/SuperAdminJob';
 import AcEnterprise from './Pages/PagesForAccountManager/AcEnterprise';
-import AcRecruiting from './Pages/PagesForAccountManager/RecruitingAgency/AcRecruting';
+import SuperRecruiting from './Pages/PagesForSuperAdmin/RecruitingAgency/SuperRecruiting';
 import SuperEnterpriseDetails from './Pages/PagesForSuperAdmin/SuperEnterpriseDetails';
 
 function App() {
@@ -158,6 +159,10 @@ function App() {
           {
             path: "jobs",
             element: <SuperJobTable />,
+          },
+          {
+            path: "recruiting-agency/:id",
+            element: <SuperRecruiting></SuperRecruiting>,
           },
           {
             path: "candidates",
