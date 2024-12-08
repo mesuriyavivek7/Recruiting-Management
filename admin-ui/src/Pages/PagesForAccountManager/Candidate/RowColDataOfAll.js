@@ -21,7 +21,7 @@ export const columns = (candiadteStatusChange,handleRowClick)=> [
       const first_name = params.row?.candidate_name?.first_name || 'No First Name';
       const last_name = params.row?.candidate_name?.last_name || 'No Last Name';
       return (
-        <div onClick={()=>handleRowClick(params.row._id)} className='cursor-pointer hover:text-blue-500' style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%', padding: '8px 0' }}>
+        <div onClick={()=>handleRowClick(params.row)} className='cursor-pointer hover:text-blue-500' style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%', padding: '8px 0' }}>
            <p style={{ margin: 0, lineHeight: 1.5 }}>
             <span className='hover:underline-offset-1	'>{first_name} {last_name}</span>
           </p>
@@ -123,6 +123,14 @@ export const columns = (candiadteStatusChange,handleRowClick)=> [
         {params.row.notice_period} Days
       </div>
     ),
+  },
+  {
+   field: 'recruiter_member',
+   headerName: 'Recruiter Member',
+   flex: 1,
+   minWidth: 180,
+   headerAlign: 'left',
+   align: 'left',
   },
   {
     field: 'submitted',

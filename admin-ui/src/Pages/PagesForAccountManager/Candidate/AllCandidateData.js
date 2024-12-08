@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Box, Button, Card, CircularProgress, Dialog, DialogActions, DialogTitle, IconButton, InputAdornment, TablePagination, TextField } from '@mui/material';
+import { Box, Button, Card, IconButton, InputAdornment, TextField } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { columns } from './RowColDataOfAll'; // Import columns configuration
 import { FaSearch } from 'react-icons/fa';
 import { store } from '../../../State/Store';
-import { fetchCandidateBasicDetailsById, fetchCandidateStatusById, fetchJobBasicDetailsByJobId, fetchVerifiedCandidatesByACManagerId } from '../../../services/api';
+import { fetchCandidateBasicDetailsById, fetchCandidateStatusById, fetchJobBasicDetailsByJobId, fetchVerifiedCandidatesByACManagerId, fetchRecruiterMemberDetails } from '../../../services/api';
 import { cstatus } from '../../../constants/jobStatusMapping';
 import axios from 'axios'
 import Notification from '../../../Components/Notification';
@@ -40,13 +40,6 @@ const AllCandidateData = () => {
   };
 
 
-  useEffect(() => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-    }, 1000);
-  }, []);
-
   const fetchData = async () => {
     try {
       setLoading(true)
@@ -63,6 +56,9 @@ const AllCandidateData = () => {
 
         const candidateStatus = candidate.candidate_status || "Status Unavailable"; // Map status or use original
 
+
+        const recruiter_member = await fetchRecruiterMemberDetails(candidate.recruiter_member_id)
+
         return {
           orgcandidateid: candidate._id,
           candidate_id: basic_details.candidate_id,
@@ -78,7 +74,8 @@ const AllCandidateData = () => {
           lastUpdated: basic_details?.updatedAt || "No Update Date",
           notice_period: basic_details?.notice_period || "N/A",
           email: basic_details?.primary_email_id || "No Email",
-          mobile: basic_details?.primary_contact_number || "No Contact Number"
+          mobile: basic_details?.primary_contact_number || "No Contact Number",
+          recruiter_member: recruiter_member.full_name || "No Recruiter member"
         };
       })
       );
@@ -190,11 +187,7 @@ const AllCandidateData = () => {
         </Box>
 
       </Box>
-      {loading ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 400, color: '#315370' }}>
-          <CircularProgress />
-        </Box>
-      ) : (
+
         <Card className='mt-8 border p-2 font-sans'>
           <p className='text-lg xl:text-2xl'>All Candidates</p>
           <div style={{ height: 600, width: '100%' }} className='pt-4'>
@@ -207,6 +200,7 @@ const AllCandidateData = () => {
               onRowClick={(params) => handleRowClick(params.row)}
               getRowHeight={calculateRowHeight}
               pageSize={8}
+              loading={loading}
               pageSizeOptions={[5, 10]}
               initialState={{
                 pagination: { paginationModel: { page: 0, pageSize: 10 } },
@@ -266,7 +260,7 @@ const AllCandidateData = () => {
               }}
             />
           </div>
-        </Card>)}
+        </Card>
 
 
     </div>
