@@ -4,6 +4,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import TablePagination from "@mui/material/TablePagination";
 import { columns } from "./RowColData";
 import { fetchEnterpriseById, getAllVerifiedEnterprisesSuperAdmin } from "../../../services/api";
+import { useNavigate } from "react-router-dom";
 
 const calculateRowHeight = (params) => {
   const contentHeight = params.row ? params.row.content.length / 10 : 50;
@@ -14,6 +15,8 @@ export default function AllEnterpriseData() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [rows, setRows] = React.useState([]);
+
+  const navigate = useNavigate();
 
   // Pagination handlers
   const handleChangePage = (event, newPage) => {
@@ -57,6 +60,18 @@ export default function AllEnterpriseData() {
     fetchAllEnterpriseData();
   }, []);
 
+  const handleRowClick = async (params) => {
+    const id = params.id;
+    const e_id = params.row._id;
+    console.log(params.row);
+    try {
+      navigate(`/super_admin/enterprise/${id}`, { state: { enterpriseId: e_id } })
+    } catch (error) {
+      console.error("Error fetching enterprise data:", error);
+    }
+  };
+
+
   return (
     <>
       <Box sx={{ height: 600, width: "100%" }}>
@@ -66,6 +81,7 @@ export default function AllEnterpriseData() {
           columns={columns}
           rowHeight={80}
           getRowHeight={calculateRowHeight}
+          onRowClick={handleRowClick}
           pagination={false}
           pageSize={rowsPerPage}
           hideFooterPagination={true}
