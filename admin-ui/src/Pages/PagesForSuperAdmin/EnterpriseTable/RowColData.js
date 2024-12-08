@@ -58,6 +58,14 @@ export const columns = [
     )
   },
   {
+    field: 'account_manager',
+    headerName: 'Account Manager',
+    flex: 1,
+    minWidth: 180,
+    headerAlign: 'left',
+    align: 'left',
+  },
+  {
     field: 'email_verification',
     headerName: 'Email Verification',
     flex: 1.5, // Flexible width with moderate space

@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import { DataGrid } from "@mui/x-data-grid";
 import TablePagination from "@mui/material/TablePagination";
 import { columns } from "./RowColData";
-import { fetchEnterpriseById, getAllVerifiedEnterprisesSuperAdmin } from "../../../services/api";
+import { fetchAccountManager, fetchEnterpriseById, getAllVerifiedEnterprisesSuperAdmin } from "../../../services/api";
 import { useNavigate } from "react-router-dom";
 
 const calculateRowHeight = (params) => {
@@ -37,6 +37,10 @@ export default function AllEnterpriseData() {
       const response = await Promise.all(
         enterpriseIds.data.map(async (enterpriseId, index) => {
           const enterprise = await fetchEnterpriseById(enterpriseId);
+          console.log(enterprise);
+
+          const account_manager = await fetchAccountManager(enterprise.allocated_account_manager)
+          console.log(account_manager);
 
           return {
             id: index + 1,
@@ -49,6 +53,7 @@ export default function AllEnterpriseData() {
             city: enterprise.city || "Unknown",
             email_verification: enterprise.isEmailVerified ? "yes" : "no",
             account_status: enterprise.account_status.status,
+            account_manager: account_manager.full_name,
           };
         })
       );

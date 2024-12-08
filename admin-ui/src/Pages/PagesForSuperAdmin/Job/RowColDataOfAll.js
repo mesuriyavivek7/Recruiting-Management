@@ -34,7 +34,7 @@ export const columns = [
   },
   {
     field: 'recruiter',
-    headerName: 'Recruiter',
+    headerName: 'Recruiter Member',
     flex: 2,
     minWidth: 250,
     headerAlign: 'left',
@@ -50,6 +50,14 @@ export const columns = [
         </div>
       );
     },
+  },
+  {
+    field: 'account_manager',
+    headerName: 'Account Manager',
+    flex: 1,
+    minWidth: 180,
+    headerAlign: 'left',
+    align: 'left',
   },
   {
     field: 'location',
