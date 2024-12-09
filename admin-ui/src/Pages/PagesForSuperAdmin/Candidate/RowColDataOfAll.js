@@ -80,7 +80,7 @@ export const columns = [
     field: 'candidate_status',
     headerName: 'Candidate Status',
     flex: 1,
-    minWidth: 200,
+    minWidth: 300,
     headerAlign: 'left',
     align: 'left',
     renderCell : (params) =>(
