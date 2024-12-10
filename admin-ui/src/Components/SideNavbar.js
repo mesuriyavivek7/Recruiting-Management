@@ -6,11 +6,14 @@ import { ReactComponent as CandidatesIcon } from "../assets/asset20.svg";
 import { ReactComponent as ActionIcon } from "../assets/asset23.svg";
 import { PiBuildingApartmentFill } from "react-icons/pi";
 import { FaBriefcase } from "react-icons/fa";
+import { useSelector } from "react-redux";
+import SupportIcon from '@mui/icons-material/Support';
 
 import { NavLink, useLocation } from "react-router-dom";
 
 
 const SideNavbar = () => {
+  const userData = useSelector((state) => state.admin?.userData);
   const [isOpen, setIsOpen] = useState(false);
   
   const location = useLocation();
@@ -200,6 +203,35 @@ const SideNavbar = () => {
     </div>
   )}
 </div>
+
+
+ {/* support link */}
+ <div className="relative">
+  <NavLink
+    to={getNavLinkPath("/super_admin/support")}
+    className={({ isActive }) => `hover:bg-gray-400 rounded-md p-2 ${!isOpen && "justify-center"} flex gap-2 ${isActive ? 'bg-gray-400' : ''}`}
+    onMouseEnter={() => handleMouseEnter("support")}
+    onMouseLeave={() => handleMouseLeave("support")}
+  >
+    <SupportIcon className="w-[24px] text-white"></SupportIcon>
+    {isOpen && <span className="text-white">Support</span>}
+  </NavLink>
+
+  {!isOpen && visibleTooltips["support"] && (
+    <div className="absolute bg-gray-500 text-white p-1.5 rounded-md" style={{
+      top: "0px",
+      left: "65px",
+      fontSize: "16px",
+      whiteSpace: "nowrap",
+      pointerEvents: "none",
+      zIndex: 9999,
+    }}>
+      Support
+    </div>
+  )}
+</div>
+
+
 
 </div>
 

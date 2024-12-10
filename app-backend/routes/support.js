@@ -1,5 +1,5 @@
 import express from 'express'
-import { createSupport, getSupport } from '../controller/supportController.js'
+import { createSupport, getAllSupport, getSupport, updateSupportsDetails } from '../controller/supportController.js'
 
 
 const router = express.Router()
@@ -12,8 +12,11 @@ router.post('/',createSupport)
 //For Getting support
 router.get('/:dashboard_type',getSupport)
 
+//For getting all support 
+router.get('/',getAllSupport)
 
 //For Update Support
+router.put('/',updateSupportsDetails)
 
 
 
