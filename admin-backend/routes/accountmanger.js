@@ -1,12 +1,15 @@
 import express from 'express'
-import { addCandidatePendingList, addCandidateVerifiedList, addEnterprise, addJobIntoVerifyList, addJobsPendingList, AddNewAccountManager, addRecruiting, addVerifiedEnterprise, addVerifiedRecruitng, getAcByMadminId, getAccountManager, getAcManagerEmail, getAcmanagerMailandName, getAllPendingCandidates, getAllPendingEnterprises, getAllPendingJobs, getAllPendingRecruitingAgencies, getAllVerifiedCandidates, getAllVerifiedEnterprises, getAllVerifiedJobs, getAllVerifiedRecruitingAgencies, } from '../controller/accountmanagerController.js'
+import { addCandidatePendingList, addCandidateVerifiedList, addEnterprise, addJobIntoVerifyList, addJobsPendingList, AddNewAccountManager, addRecruiting, addVerifiedEnterprise, addVerifiedRecruitng, getAcByMadminId, getAccountManager, getAcManagerEmail, getAcmanagerMailandName, getAllPendingCandidates, getAllPendingEnterprises, getAllPendingJobs, getAllPendingRecruitingAgencies, getAllVerifiedCandidates, getAllVerifiedEnterprises, getAllVerifiedJobs, getAllVerifiedRecruitingAgencies, getAllAccountManager } from '../controller/accountmanagerController.js'
 
 const router = express.Router()
 
 //get account manager by particuler master admin id
 router.get('/madmin/:id', getAcByMadminId)
 
-//get all account manager details
+//get all account managers details
+router.get('/getall', getAllAccountManager);
+
+//get account manager details by id
 router.get('/:ac_manager_id', getAccountManager);
 
 //add enterprise into pending list

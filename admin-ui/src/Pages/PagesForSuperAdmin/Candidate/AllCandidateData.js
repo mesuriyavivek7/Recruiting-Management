@@ -100,7 +100,7 @@ const AllCandidateData = () => {
   return (
     <div>
       {notification && <Notification message={notification.message} type={notification.type} onClose={() => setNotification(null)}></Notification>}
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} gap={2} pt={4}>
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} gap={2} >
         <TextField
           label="Search..."
           variant="outlined"
