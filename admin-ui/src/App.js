@@ -34,6 +34,7 @@ import SuperAdminJob from './Pages/PagesForSuperAdmin/SuperAdminJob';
 import AcEnterprise from './Pages/PagesForAccountManager/AcEnterprise';
 import SuperRecruiting from './Pages/PagesForSuperAdmin/RecruitingAgency/SuperRecruiting';
 import SuperEnterpriseDetails from './Pages/PagesForSuperAdmin/SuperEnterpriseDetails';
+import Support from './Pages/PagesForSuperAdmin/Support';
 
 function App() {
   const userData = useSelector((state) => state.admin?.userData);
@@ -180,6 +181,10 @@ function App() {
             path: "candidate/:id",
             element: <SuperCandidateDetails />,
           },
+          {
+            path: "support",
+            element: <Support></Support>
+          }
         ],
       },
     ]
