@@ -30,6 +30,11 @@ const corsOptions = {
             "https://app-backend-jna4.onrender.com",
             "https://admin-ui-l3vq.onrender.com",
             "https://admin-backend-1vl2.onrender.com",
+             //Cors Origin for hostinger
+             "https://app.vms.uphire.in",
+             "https://admin.vms.uphire.in",
+             "https://api.app.vms.uphire.in",
+             "https://api.admin.vms.uphire.in"
         ];
         // Allow requests with no origin (like mobile apps or CURL)
         if (!origin || allowedOrigins.includes(origin)) {
