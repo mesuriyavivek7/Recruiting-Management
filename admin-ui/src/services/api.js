@@ -673,3 +673,13 @@ export const getAllVerifiedCandidatesSuperAdmin = async () => {
         throw error;
     }
 }
+
+export const fetchAccountManagers = async () => {
+    try {
+        const response = await axios.get(`${admin_be_uri}/accountmanager/getall`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching all account managers: ", error);
+        throw error;
+    }
+}
