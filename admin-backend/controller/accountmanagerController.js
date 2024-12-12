@@ -221,7 +221,6 @@ export const getAccountManager = async (req, res, next) => {
 export const getAllAccountManager = async (req, res, next) => {
   try {
     const accountManagers = await ACCOUNTMANAGER.find();
-    console.log(accountManagers);
     res.status(200).json(accountManagers);
   } catch (error) {
     next(error);

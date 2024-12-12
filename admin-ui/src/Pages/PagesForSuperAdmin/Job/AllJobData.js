@@ -150,6 +150,8 @@ const AllJobData = () => {
               onRowClick={handleRowClick}
               getRowId={(row) => row._id}
               pageSize={8}
+              initialState={{ pagination: { paginationModel: { page: 0, pageSize: 10 } } }}
+              pageSizeOptions={[5, 10]}
               disableSelectionOnClick
               sx={{
                 '& .MuiDataGrid-root': {

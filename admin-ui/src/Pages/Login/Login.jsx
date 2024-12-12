@@ -100,7 +100,7 @@ export default function Login() {
         
       }catch(err){  
          console.log(err)
-         showNotification(err.response.data.message)
+         showNotification(err.response.data.message,'failure')
       }
       
       setLoad(false)

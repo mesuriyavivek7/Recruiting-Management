@@ -171,7 +171,7 @@ function App() {
             element: <SuperCandidateTable />,
           },
           {
-            path: "account_manager",
+            path: "ac_manager",
             element: <AccountManagerTable />
           },
           {
