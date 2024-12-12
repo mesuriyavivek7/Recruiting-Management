@@ -197,7 +197,6 @@ const AllCandidateData = () => {
               columns={columns(candiadteStatusChange, handleRowClick)}
               rowHeight={80}
               getRowId={(row) => row._id} // Specify the custom ID field
-              onRowClick={(params) => handleRowClick(params.row)}
               getRowHeight={calculateRowHeight}
               pageSize={8}
               loading={loading}

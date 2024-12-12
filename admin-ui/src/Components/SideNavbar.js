@@ -110,7 +110,7 @@ const SideNavbar = () => {
       {userData?.admin_type === "super_admin" && (
         <div className="relative">
           <NavLink
-            to={getNavLinkPath("/super_admin/account_manager")}
+            to={getNavLinkPath("/super_admin/ac_manager")}
             className={({ isActive }) =>
               `hover:bg-gray-400 rounded-md p-2 ${!isOpen && "justify-center"} flex gap-2 ${isActive ? "bg-gray-400" : ""}`
             }
@@ -259,9 +259,10 @@ const SideNavbar = () => {
       </div>
 
       {/* Support Link */}
+      {userData?.admin_type === "super_admin" && 
       <div className="relative">
         <NavLink
-          to={getNavLinkPath("/master_admin/support")}
+          to={getNavLinkPath("/super_admin/support")}
           className={({ isActive }) =>
             `hover:bg-gray-400 rounded-md p-2 ${!isOpen && "justify-center"} flex gap-2 ${isActive ? "bg-gray-400" : ""}`
           }
@@ -287,6 +288,7 @@ const SideNavbar = () => {
           </div>
         )}
       </div>
+      }
     </div>
   );
 };

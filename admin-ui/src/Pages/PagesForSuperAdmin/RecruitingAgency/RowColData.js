@@ -70,6 +70,19 @@ export const columns = [
     align : 'left',
   },
   {
+    field: 'account_status',
+    headerName: 'Account Status',
+    flex: 1,
+    minWidth: 180,
+    headerAlign: 'left',
+    align : 'left',
+    renderCell: (params) =>(
+      <div className='w-full h-full flex items-center'>
+         <span className={`w-28 h-8 flex justify-center items-center ${params.row.account_status==="Active"?"bg-green-500":"bg-red-500"} text-white rounded-md`}>{params.row.account_status}</span>
+      </div>
+    )
+  },
+  {
     field: 'account_manager',
     headerName: 'Account Manager',
     flex: 1,
