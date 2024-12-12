@@ -59,9 +59,9 @@ export const enterpriseLogin=async (req,res,next)=>{
 
         if(!isPasswordCorrect) return res.status(404).json({message:"Password is incorrect",type:'failure'})
 
-        const token=jwt.sign({id:user._id,isAdmin:user.isAdmin},process.env.JWT,{ expiresIn: '30d' })
+        const token=jwt.sign({id:user._id,isAdmin:user.isAdmin,userType:'enterprise'},process.env.JWT,{ expiresIn: '30d' })
         const {password,email_verified,isAdmin,hide_commision,...otherDetails}=user._doc
-        res.cookie("t_user",token,{expires:new Date(Date.now()+2592000000),httpOnly:process.env.NODE_ENV === 'production' ? true : false,secure:process.env.NODE_ENV === 'production',sameSite:process.env.NODE_ENV === 'production' ? 'none' : 'lax',domain:'.vms.uphire.in'}).status(200).json({details:{...otherDetails,userType:"enterprise"}})
+        res.cookie("t_user",token,{expires:new Date(Date.now()+2592000000),httpOnly:true,secure:process.env.NODE_ENV === 'production',sameSite:process.env.NODE_ENV === 'production' ? 'none' : 'lax',domain:process.env.NODE_ENV === 'production'?'.vms.uphire.in':undefined}).status(200).json({details:{...otherDetails,userType:"enterprise"}})
 
      }catch(err){
         next(err)
@@ -81,14 +81,48 @@ export const recruiterLogin=async (req,res,next)=>{
 
      if(!isPasswordCorrect) return res.status(404).json({message:"Password is incorrect",type:'failure'})
 
-     const token=jwt.sign({id:user._id,isAdmin:user.isAdmin},process.env.JWT,{ expiresIn: '30d' })
+     const token=jwt.sign({id:user._id,isAdmin:user.isAdmin,userType:"recruiting"},process.env.JWT,{ expiresIn: '30d' })
      const {password,email_verified,isAdmin,hide_commision,...otherDetails}=user._doc
-     res.cookie("t_user",token,{expires:new Date(Date.now()+2592000000),httpOnly:process.env.NODE_ENV === 'production' ? true : false,secure: process.env.NODE_ENV === 'production',sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',domain:'.vms.uphire.in'}).status(200).json({details:{...otherDetails,userType:"recruiting"}})
+     res.cookie("t_user",token,{expires:new Date(Date.now()+2592000000),httpOnly:true,secure: process.env.NODE_ENV === 'production',sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',domain:process.env.NODE_ENV === 'production'?'.vms.uphire.in':undefined}).status(200).json({details:{...otherDetails,userType:"recruiting"}})
 
    }catch(err){
      next(err)
    }
 }
+
+export const validateUser = async (req, res, next) => {
+    try {
+      // Extract the token from cookies
+      const token = req.cookies.t_user;
+  
+      if (!token) {
+        return res.status(401).json({ message: "No Token Found" });
+      }
+  
+      // Verify the token
+      const decoded = jwt.verify(token, process.env.JWT);
+  
+      // Define the model dynamically based on the userType
+      const Model = decoded.userType === "enterprise" ? ENTERPRISETEAM : RECRUITINGTEAM;
+  
+      // Fetch the user
+      const user = await Model.findById(decoded.id);
+  
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+  
+      // Exclude sensitive fields from the user data
+      const { password, email_verified, isAdmin, hide_commission, ...userData } = user._doc;
+  
+      // Respond with user data and userType
+      res.status(200).json({ ...userData, userType: decoded.userType });
+    } catch (err) {
+      // Handle errors and pass to error middleware
+      console.error("Error validating user:", err.message);
+      next(err);
+    }
+  };
 
 
 export const logout=async (req,res,next)=>{

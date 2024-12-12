@@ -32,7 +32,7 @@ const Login = () => {
           navigate('/recruiter/dashboard')
         }
      }
-  },[])
+  },[user])
 
   const [errors,setErrors]=useState({})
   const [formData,setFormData]=useState({
