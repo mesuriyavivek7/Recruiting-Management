@@ -1,30 +1,11 @@
 import {  createContext, useEffect, useReducer, useState } from "react";
-import Cookies from 'js-cookie';
 import axios from "axios";
 
-
-const token=Cookies.get("t_user")
-let userData=((localStorage.getItem("user")!=="undefined" && localStorage.getItem("user")!==undefined && localStorage.getItem("user")!==null)?(JSON.parse(localStorage.getItem("user"))):null)
-if(token===undefined){
-     if(userData!=null){
-        localStorage.removeItem("user")
-     }
-     userData=null
-}
-
-if(!userData){
-    if(token){
-        Cookies.remove("t_user");
-    }
-    userData=null
-}
-
 const INITIAL_STATE={
-    user:userData,
-    loading:false,
+    user:null,
+    loading:true,
     error:null
 }
-
 
 export const AuthContext=createContext(INITIAL_STATE)
 
@@ -68,6 +49,22 @@ export const AuthContextProvider=({children})=>{
     const [isAdmin,setIsAdmin]=useState(false)
     const [isVerified,setIsVerified]=useState(true)
 
+
+    // Fetch user data from the server using the httpOnly cookie
+    const fetchUserData = async () => {
+      dispatch({ type: "USER_FETCH_START" });
+      try {
+         const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/auth/validate`, {
+          withCredentials: true, // Include cookies in the request
+         });
+        console.log("data---->",res.data)
+        dispatch({ type: "USER_FETCH_SUCCESS", payload: res.data });
+      } catch (error) {
+        console.log("Error while fetching data",error)
+        dispatch({ type: "USER_FETCH_FAILURE", payload: error.response?.data?.message || "Failed to fetch user" });
+      }
+    };
+
     //Check for user is admin or not
     const checkAdmin=async ()=>{
         if(state.user){
@@ -86,7 +83,6 @@ export const AuthContextProvider=({children})=>{
     }
 
     //check for user is verified by master admin or not
-
     const handleCheckisVerified=async ()=>{
         try{
            if(state.user){
@@ -101,7 +97,9 @@ export const AuthContextProvider=({children})=>{
         }
      }
    
-    
+    useEffect(()=>{
+      fetchUserData()
+    },[])
 
     useEffect(()=>{
        localStorage.setItem("user",JSON.stringify(state.user))

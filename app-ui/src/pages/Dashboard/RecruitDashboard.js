@@ -13,7 +13,7 @@ import WhiteLoader from '../../assets/whiteloader.svg'
 
 
 const RecruitDashboard = () => {
-  const {user}=useContext(AuthContext)
+  const {user,loading}=useContext(AuthContext)
   const navigate=useNavigate()
 
   const [notification,setNotification]=useState(null)
@@ -24,7 +24,7 @@ const RecruitDashboard = () => {
   }
 
   const [openKycPopUp,setOpenKycPopUp] = useState(true)
-  const [loading,setLoading] = useState(false)
+  const [kycLoading,setKycLoading] = useState(false)
   const [load,setLoad] = useState(false)
   const [kycData,setKycData]=useState({
     entity_type:'',
@@ -36,8 +36,8 @@ const RecruitDashboard = () => {
   const [file,setFile]=useState(null)
 
   useEffect(()=>{
-    if(!user) navigate('/')
-  },[])
+    if(!loading && !user) navigate('/')
+  },[loading,user,navigate])
 
   const handleChange=(e)=>{
     const {name,value,type}=e.target
@@ -95,10 +95,9 @@ const prevStep = () => {
 
 //check kyc details are verified
 const checkKycDetails = async ()=>{
-    setLoading(true)
+    setKycLoading(true)
     try{
       const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/recruiting/check-kyc/${user.recruiting_agency_id}`)
-      console.log(res.data)
       if(res.data){
         setKycVerified(true)
         setOpenKycPopUp(false)
@@ -107,13 +106,13 @@ const checkKycDetails = async ()=>{
       console.log(err)
       showNotification("Something went wrong.",'failure')
     }finally{
-      setLoading(false)
+      setKycLoading(false)
     }
 }
 
 useEffect(()=>{
-    checkKycDetails()
-},[])
+   if(user) checkKycDetails()
+},[user])
 
 const handleSubmit=async ()=>{
     if(validateform()){
@@ -293,37 +292,49 @@ const handleSubmit=async ()=>{
     <div>
       {notification && <Notification message={notification.message} type={notification.type} onClose={()=>setNotification(null)}></Notification>}
       {
-        openKycPopUp && 
-        <div className='fixed inset-0 flex justify-center bg-black z-40 bg-opacity-50 backdrop-blur-md items-center'>
-         {
-          loading ? (
-            <div className='custom-div pb-3 w-72 flex justify-center items-center'>
-               <img src={WhiteLoader} className='w-8 h-8' alt='loader'></img>
-            </div>
-          ) : (
-             !kycVerified && 
-             <div className='custom-div gap-0 p-0 w-4/12 bg-white rounded-md  overflow-hidden'>
-               <div className="bg-blue-300 w-full bg-opacity-50 py-2 px-7">
-                <h1 className="text-xl text-blue-400 font-semibold">KYC Details</h1>
-              </div>
-              <div className="p-5">{renderKYCForm()}</div>
-             </div>
-          )
-         }
-         
-      </div>
-
-      }
-     
-      <div className="flex flex-col w-screen max-w-[100vw] h-[100vh] max-h-screen relative overflow-hidden ">
-      <Navbar />
-      <div className="z-0 flex w-full h-full relative">
-        <SideNavbar />
-        <div className="w-full h-full flex flex-col pb-20 gap-2 relative bg-white-200 p-4 overflow-y-scroll ">
-          <Outlet />
+      loading && 
+       <div className="fixed inset-0 flex justify-center bg-white z-40 backdrop-blur-md items-center">
+        <div className="flex flex-col items-center gap-2">
+          <img src={WhiteLoader} className="h-12 w-12"></img>
+          <span className="text-sm font-sans">Please wait while fetching data...</span>
         </div>
-      </div>
-    </div>
+       </div>
+      }
+      {
+        user && 
+        <>
+         {
+          openKycPopUp && 
+          <div className='fixed inset-0 flex justify-center bg-black z-40 bg-opacity-50 backdrop-blur-md items-center'>
+           {
+            kycLoading ? (
+              <div className='custom-div pb-3 w-72 flex justify-center items-center'>
+                 <img src={WhiteLoader} className='w-8 h-8' alt='loader'></img>
+              </div>
+            ) : (
+               !kycVerified && 
+               <div className='custom-div gap-0 p-0 w-4/12 bg-white rounded-md  overflow-hidden'>
+                 <div className="bg-blue-300 w-full bg-opacity-50 py-2 px-7">
+                  <h1 className="text-xl text-blue-400 font-semibold">KYC Details</h1>
+                </div>
+                <div className="p-5">{renderKYCForm()}</div>
+               </div>
+            )
+           }   
+         </div>
+         }
+        <div className="flex flex-col w-screen max-w-[100vw] h-[100vh] max-h-screen relative overflow-hidden ">
+            <Navbar/>
+            <div className="z-0 flex w-full h-full relative">
+              <SideNavbar />
+              <div className="w-full h-full flex flex-col pb-20 gap-2 relative bg-white-200 p-4 overflow-y-scroll ">
+               <Outlet />
+              </div>
+            </div>
+         </div>
+        </>
+      }
+    
     </div>
   )
 }
