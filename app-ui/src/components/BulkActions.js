@@ -31,16 +31,6 @@ const BulkActions = () => {
   }
   console.log(emails)
 
-  const fetchAllotedAccountmanager=async ()=>{
-      try{
-          const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/enterprise/getacmanagermailandname/${user.enterprise_id}`)
-           setAcManager(res.data)
-      }catch(err){
-         //handeling error here
-         console.log(err)
-      }
-  }
-
 
     //for showing notification
     const [notification,setNotification]=useState(null)
@@ -83,6 +73,16 @@ const BulkActions = () => {
   }
 
   useEffect(()=>{
+     const fetchAllotedAccountmanager=async ()=>{
+      try{
+          const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/enterprise/getacmanagermailandname/${user.enterprise_id}`)
+           setAcManager(res.data)
+      }catch(err){
+         //handeling error here
+         console.log(err)
+      }
+     }
+
      fetchCandidateMails()
      fetchAllotedAccountmanager()
   },[])
@@ -108,7 +108,7 @@ const BulkActions = () => {
         loader && 
         <div className="fixed inset-0  bg-black z-50 bg-opacity-50 flex justify-center items-center">
          <div className="custom-div gap-4 w-[400px] items-center">
-             <img className="w-32 h-36" src={Rocket}></img>
+             <img className="w-32 h-36" alt="loading" src={Rocket}></img>
              <span>Wait for few seconds while we are sending mails...</span>
          </div>
        </div>

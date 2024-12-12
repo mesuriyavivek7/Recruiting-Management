@@ -12,9 +12,8 @@ const KYC = () => {
   useEffect(()=>{
     if(!location.state){
        navigate('/')
-       
     }
-  },[])
+  },[location.state,navigate])
 
   const [load,setLoad]=useState(false)
   const [kycData,setKycData]=useState({

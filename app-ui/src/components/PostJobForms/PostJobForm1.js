@@ -78,33 +78,36 @@ const PostJobForm1 = ({ onNext, onFormDataChange,jobId,handleDraftSave,parentFor
   const [cities, setCities] = useState([]);
   const [selectedCountry, setSelectedCountry] = useState("");
   const [selectedState, setSelectedState] = useState("")
-  const [selectedCity, setSelectedCity] = useState("");
 
-  const getCountryId=()=>{
-    if(Object.keys(parentFormData.form1).length>0){
-       let countryname=parentFormData.form1.country
-       for (let i of countries){
-        if(i.country_name===countryname){
-            setSelectedCountry(parseInt(i.country_id))
-            break;
-        }
-      }
-    }
-  }
-  const getStateId=()=>{
-    if(Object.keys(parentFormData.form1).length>0){
-      let statename=parentFormData.form1.state
-      for(let i of states){
-        if(i.state_name===statename){
-          setSelectedState(parseInt(i.state_id))
-          break;
-        }
-      }
-    }
-  }
+  
 
  
   useEffect(() => {
+    const getCountryId=()=>{
+      if(Object.keys(parentFormData.form1).length>0){
+         let countryname=parentFormData.form1.country
+         for (let i of countries){
+          if(i.country_name===countryname){
+              setSelectedCountry(parseInt(i.country_id))
+              break;
+          }
+        }
+      }
+    }
+
+
+    const getStateId=()=>{
+      if(Object.keys(parentFormData.form1).length>0){
+        let statename=parentFormData.form1.state
+        for(let i of states){
+          if(i.state_name===statename){
+            setSelectedState(parseInt(i.state_id))
+            break;
+          }
+        }
+      }
+    }
+
     getCountries();
     getStates();
     getCities();
@@ -114,10 +117,34 @@ const PostJobForm1 = ({ onNext, onFormDataChange,jobId,handleDraftSave,parentFor
 
 
   useEffect(()=>{
+    const getCountryId=()=>{
+      if(Object.keys(parentFormData.form1).length>0){
+         let countryname=parentFormData.form1.country
+         for (let i of countries){
+          if(i.country_name===countryname){
+              setSelectedCountry(parseInt(i.country_id))
+              break;
+          }
+        }
+      }
+    }
+
     getCountryId()
   },[countries])
 
   useEffect(()=>{
+    const getStateId=()=>{
+      if(Object.keys(parentFormData.form1).length>0){
+        let statename=parentFormData.form1.state
+        for(let i of states){
+          if(i.state_name===statename){
+            setSelectedState(parseInt(i.state_id))
+            break;
+          }
+        }
+      }
+    }
+
     getStateId()
   },[states])
 
@@ -155,7 +182,6 @@ const PostJobForm1 = ({ onNext, onFormDataChange,jobId,handleDraftSave,parentFor
     const selectedCountryId = parseInt(event.target.value);
     setSelectedCountry(selectedCountryId);
     setSelectedState("");
-    setSelectedCity("");
     for (let i of countries) {
       if (parseInt(i.country_id) === selectedCountryId) {
         setFormData((prevData) => ({ ...prevData, country: i.country_name }));
@@ -167,7 +193,6 @@ const PostJobForm1 = ({ onNext, onFormDataChange,jobId,handleDraftSave,parentFor
   const handleStateChange = (event) => {
     const selectedStateId = parseInt(event.target.value);
     setSelectedState(selectedStateId);
-    setSelectedCity("");
     for (let i of states) {
       if (parseInt(i.state_id) === selectedStateId) {
         setFormData((prevData) => ({ ...prevData, state: i.state_name }));
@@ -211,7 +236,7 @@ const PostJobForm1 = ({ onNext, onFormDataChange,jobId,handleDraftSave,parentFor
     return Object.keys(newErrors).length === 0;
   };
 
-
+ useEffect(()=>{
   const handleParentFormDataChange=()=>{
     if((actionMode.next===true || actionMode.draft===true) && validate()){
       onFormDataChange({
@@ -230,33 +255,15 @@ const PostJobForm1 = ({ onNext, onFormDataChange,jobId,handleDraftSave,parentFor
         hiring_managers:formData.managersEmail,
         share_salary_details:formData.shareSalaryDetails
       })
-    }
- }
+   }
+  }
 
- useEffect(()=>{
    handleParentFormDataChange()
  },[actionMode])
 
  useEffect(()=>{
     if(actionMode.draft) handleDraft()
     else if(actionMode.next) handleNext()
-    // else if(Object.keys(parentFormData.form1).length>0){
-    //    setFormData({
-    //     jobTitle: (Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.job_title):(""),
-    // jobDescription: (Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.job_description):(""),
-    // remoteWork: (Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.permanent_remote_work):(false),
-    // country:  (Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.country):(""),
-    // state:  (Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.state):(""),
-    // city: (Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.city):([]),
-    // domain:  (Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.job_domain):(""),
-    // positions:  (Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.positions):(""),
-    // minExperience:(Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.experience.minexp):(""),
-    // maxExperience: (Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.experience.maxexp):(""),
-    // jobId: (Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.ext_job_id):(""),
-    // managersEmail: (Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.hiring_managers):(""),
-    // shareSalaryDetails: (Object.keys(parentFormData.form1).length>0)?(parentFormData.form1.share_salary_details):(false),
-    //    })
-    // }
     setActionMode({next:false,draft:false})
  },[parentFormData])
 
