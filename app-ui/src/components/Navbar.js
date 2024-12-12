@@ -65,36 +65,33 @@ const Navbar = () => {
       
   }
 
-  const searchJobs=async ()=>{
-    setLoader(true)
-    try{
-        const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/job/search-job-enterprise/${user._id}?searchTearm=${searchTearm}`)
-        console.log("JOb Details---->",res.data)
-        setSearchResults(res.data)
-    }catch(err){
-        console.log(err)
-        showNotification("Something went wrong.",'failure')
-    }finally{
-      setLoader(false)
-    }
-  }
-
-  const searchCandidates=async ()=>{
-    setLoader(true)
-     try{
-       const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/candidate/search-candidate-enterprise/${user._id}?searchTearm=${searchTearm}`)
-       console.log("Candidate details----->",res.data)
-       setSearchResults(res.data)
-     }catch(err){
-       console.log(err)
-       showNotification("Something went wrong.",'failure')
-     }finally{
-       setLoader(false)
-     }
-  }
-
-
   useEffect(()=>{
+    const searchJobs=async ()=>{
+      setLoader(true)
+      try{
+          const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/job/search-job-enterprise/${user._id}?searchTearm=${searchTearm}`)
+          setSearchResults(res.data)
+      }catch(err){
+          console.log(err)
+          showNotification("Something went wrong.",'failure')
+      }finally{
+        setLoader(false)
+      }
+    }
+  
+    const searchCandidates=async ()=>{
+      setLoader(true)
+       try{
+         const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/candidate/search-candidate-enterprise/${user._id}?searchTearm=${searchTearm}`)
+         setSearchResults(res.data)
+       }catch(err){
+         console.log(err)
+         showNotification("Something went wrong.",'failure')
+       }finally{
+         setLoader(false)
+       }
+    }
+
      if(searchTab==="Candidates") searchCandidates()
      else searchJobs()
   },[searchTearm,searchTab])
