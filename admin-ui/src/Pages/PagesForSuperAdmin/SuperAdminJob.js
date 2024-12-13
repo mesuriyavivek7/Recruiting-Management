@@ -9,7 +9,6 @@ import MappedRecruiterMember from './RecruitingAgency/MappedRecruiterMember';
 import RequestedRecruiter from './Job/RequestedRecruiter';
 
 const Job = () => {
-  const { id } = useParams();
   const location = useLocation();
   const job_id = location?.state?.job_id;
   const [activeTab, setActiveTab] = useState('Job');
@@ -163,22 +162,22 @@ const Job = () => {
           )}
           {activeTab === 'Candidate' && (
             <div className='pt-9 '>
-              <AllCandidateDataForEachJob jobId={id} />
+              <AllCandidateDataForEachJob jobId={job_id} />
             </div>
           )}
           {activeTab === 'acceptedRe' && (
             <div className='pt-9 '>
-              <AcceptedRecruiterMember jobId={id} />
+              <AcceptedRecruiterMember jobId={job_id} />
             </div>
           )}
           {activeTab === 'mRecruiter' && (
             <div className='pt-9 '>
-              <MappedRecruiterMember jobId={id} handleMappedRecruiterCount={handleMappedRecruiterCount} handleRequestedRecruiterCount={handleRequestedRecruiterCount}></MappedRecruiterMember>
+              <MappedRecruiterMember jobId={job_id} handleMappedRecruiterCount={handleMappedRecruiterCount} handleRequestedRecruiterCount={handleRequestedRecruiterCount}></MappedRecruiterMember>
             </div>
           )}
           {activeTab === 'rRecruiter' && (
             <div className='pt-9 '>
-              <RequestedRecruiter jobId={id} />
+              <RequestedRecruiter jobId={job_id} />
             </div>
           )}
         </div>
