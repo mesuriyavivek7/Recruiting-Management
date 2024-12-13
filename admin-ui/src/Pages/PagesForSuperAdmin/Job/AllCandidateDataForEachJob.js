@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Box, Button, Card, CircularProgress, Dialog, DialogActions, DialogTitle, IconButton, InputAdornment, TablePagination, TextField } from '@mui/material';
+import { Box, Button, Card, CircularProgress, IconButton, InputAdornment, TextField } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { FaSearch } from 'react-icons/fa';
-import { store } from '../../../State/Store';
 import { cstatus } from '../../../constants/jobStatusMapping';
 import axios from 'axios'
 import Notification from '../../../Components/Notification';
@@ -19,9 +18,6 @@ const calculateRowHeight = (params) => {
 
 const AllCandidateDataForEachJob = ({ jobId }) => {
   const navigate = useNavigate();
-
-  const selectUserData = (state) => state?.admin?.userData;
-  const userData = selectUserData(store?.getState());
 
   const [loading, setLoading] = useState(false);
   const [candidateStatusLoader, setCandidateStatusLoader] = useState(false)
@@ -40,13 +36,6 @@ const AllCandidateDataForEachJob = ({ jobId }) => {
   const handleRowClick = (id) => {
     navigate(`/account_manager/candidate/${id}`);
   };
-
-  useEffect(() => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-    }, 1000);
-  }, []);
 
   const fetchData = async () => {
     try {
@@ -205,6 +194,7 @@ const AllCandidateDataForEachJob = ({ jobId }) => {
               rowHeight={80}
               getRowId={(row) => row._id} // Specify the custom ID field
               getRowHeight={calculateRowHeight}
+              loading={loading}
               pageSize={8}
               pageSizeOptions={[5, 10]}
               initialState={{

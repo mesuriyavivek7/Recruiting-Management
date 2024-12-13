@@ -135,7 +135,7 @@ export default function AcceptedRecruiterMember({ jobId }) {
       </Box>
       
       <div className='mt-8'>
-        <p className='text-lg xl:text-2xl'>Mapped Recruiting Member </p>
+        <p className='text-lg xl:text-2xl'>Accepted Recruiting Member </p>
         <Box sx={{ height: 600, width: '100%', paddingTop: '19px' }}>
           <DataGrid
             rows={recruiterData}
