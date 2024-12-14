@@ -1,71 +1,89 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { fetchBothMasterAdminDetails } from "../../services/api";
 
 const OtherDetails = () => {
   const [selectedTab, setSelectedTab] = useState("Domestic");
+  const [masterAdminDetails, setMasterAdminDetails] = useState({});
 
-  const domesticDetails = [
-    { label: "Email", value: "domestic@example.com" },
-    { label: "Master Admin", value: "John Doe" },
-    { label: "Verified Enterprise", value: "10" },
-    { label: "Verified Recruiter Agency", value: "15" },
-    { label: "Pending Enterprise", value: "5" },
-    { label: "Pending Recruiter Agency", value: "3" },
-  ];
+  const fetchMasterAdminData = async () => {
+    try {
+      const response = await fetchBothMasterAdminDetails();
+      const formattedDetails = response.reduce((acc, admin) => {
+        const adminType = admin.master_admin_type.toLowerCase();
+        acc[adminType] = {
+          email: admin.email,
+          verifiedEnterprise: admin.verified_enterprise.length,
+          verifiedRecruitingAgency: admin.verified_recruiting_agency.length,
+          pendingEnterprise: admin.pending_verify_enterprise.length,
+          pendingRecruitingAgency: admin.pending_verify_recruiting_agency.length,
+        };
+        return acc;
+      }, {});
+      setMasterAdminDetails(formattedDetails);
+    } catch (error) {
+      console.error("Error fetching master admin data:", error);
+    }
+  };
 
-  const internationalDetails = [
-    { label: "Email", value: "international@example.com" },
-    { label: "Master Admin", value: "Jane Smith" },
-    { label: "Verified Enterprise", value: "20" },
-    { label: "Verified Recruiter Agency", value: "12" },
-    { label: "Pending Enterprise", value: "7" },
-    { label: "Pending Recruiter Agency", value: "4" },
-  ];
+  useEffect(() => {
+    fetchMasterAdminData();
+  }, []);
 
-  const details =
-    selectedTab === "Domestic" ? domesticDetails : internationalDetails;
+  const details = masterAdminDetails[selectedTab.toLowerCase()] || {};
 
   return (
     <div className="flex items-center justify-center bg-gray-50 p-6 pt-10">
-      <div className="w-full max-w-4xl bg-white shadow-lg rounded-lg p-6">
+      <div className="w-full max-w-4xl bg-white shadow-lg rounded-lg p-5">
+
+        <h2 className="text-xl font-bold pb-4 text-gray-700 text-center">Master Admin</h2>
         {/* Tabs */}
         <div className="flex justify-center mb-6">
-  <div className="inline-flex shadow rounded-lg overflow-hidden">
-    <button
-      className={`px-6 py-2 text-md font-medium ${
-        selectedTab === "Domestic"
-          ? "bg-blue-230 text-white"
-          : "bg-gray-100 text-gray-700"
-      }`}
-      onClick={() => setSelectedTab("Domestic")}
-    >
-      Domestic
-    </button>
-    <button
-      className={`px-6 py-2 text-md font-medium ${
-        selectedTab === "International"
-          ? "bg-blue-230 text-white"
-          : "bg-gray-100 text-gray-700"
-      }`}
-      onClick={() => setSelectedTab("International")}
-    >
-      International
-    </button>
-  </div>
-</div>
-
+          <div className="inline-flex shadow rounded-lg overflow-hidden">
+            {["Domestic", "International"].map((tab) => (
+              <button
+                key={tab}
+                className={`px-6 py-2 text-md font-medium ${selectedTab === tab
+                    ? "bg-blue-230 text-white"
+                    : "bg-gray-100 text-gray-700"
+                  }`}
+                onClick={() => setSelectedTab(tab)}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+        </div>
 
         {/* Details */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {details.map((item, index) => (
-            <div
-              key={index}
-              className="flex items-center justify-between bg-gray-100 rounded-lg p-4 shadow-sm"
-            >
-              <span className="text-gray-700 font-medium text-md">{item.label}</span>
-              <span className="text-gray-900 font-semibold text-md ">{item.value}</span>
+        {Object.keys(details).length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="flex items-center justify-center col-span-2">
+              <div className="flex w-80 bg-gray-100 rounded-lg p-4 shadow-sm text-center justify-between">
+                <span className="text-gray-700 font-medium text-md">Email</span>
+                <div className="text-gray-900 font-semibold text-md">{details.email}</div>
+              </div>
             </div>
-          ))}
-        </div>
+            <div className="grid grid-cols-2 gap-6 col-span-2">
+              {Object.entries(details).map(([label, value], index) =>
+                label !== "email" ? (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between bg-gray-100 rounded-lg p-4 shadow-sm"
+                  >
+                    <span className="text-gray-700 font-medium text-md">
+                      {label
+                        .replace(/([A-Z])/g, " $1")
+                        .replace(/^./, (str) => str.toUpperCase())}
+                    </span>
+                    <span className="text-gray-900 font-semibold text-md">{value}</span>
+                  </div>
+                ) : null
+              )}
+            </div>
+          </div>
+        ) : (
+          <p className="text-center text-gray-500">No details available.</p>
+        )}
       </div>
     </div>
   );
