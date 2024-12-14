@@ -4,6 +4,7 @@ import React from 'react'
 
 import User from '../Pages/PagesForSuperAdmin/User'
 import Add from '../Pages/PagesForSuperAdmin/Add'
+import OtherDetails from '../Pages/PagesForSuperAdmin/OtherDetails'
 
 const SupperAdminDashboard= () => {
   return (
@@ -13,6 +14,7 @@ const SupperAdminDashboard= () => {
       <div className="grid grid-cols-1  gap-9 ">
           <Add/>
           <User/>
+          <OtherDetails/>
         </div>
       </div>
     </div>
