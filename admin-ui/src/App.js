@@ -1,5 +1,9 @@
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { validateUser } from './State/Admin/Action';
+import { useEffect } from 'react';
+
+import Loading from './Components/Loading';
 
 import Admin from './Pages/Dashboard/Admin';
 import AdminDashboard from './Components/AdminDashboard';
@@ -37,14 +41,32 @@ import SuperEnterpriseDetails from './Pages/PagesForSuperAdmin/SuperEnterpriseDe
 import Support from './Pages/PagesForSuperAdmin/Support';
 import AccountManagerTable from './Pages/PagesForSuperAdmin/AccountManagerTable';
 
+
 function App() {
-  const userData = useSelector((state) => state.admin?.userData);
+  const {userData,loading} = useSelector((state) => state.admin);
+  const dispatch = useDispatch()
+
+  useEffect(()=>{
+      dispatch(validateUser())
+  },[dispatch])
+
+  if(loading) {
+    return <Loading></Loading>
+  }
+
 
   const AppRouter = createBrowserRouter(
     [
       {
         path: "/",
-        element: !userData ? <Login /> : <Navigate to={`/${userData.admin_type}/dashboard`} />
+        element:
+          !userData && !loading ? (
+            <Login />
+          ) : userData?.admin_type ? (
+            <Navigate to={`/${userData.admin_type}/dashboard`} />
+          ) : (
+            <Loading />
+          ),
       },
       {
         path: "/master_admin",
@@ -197,7 +219,9 @@ function App() {
 
   return (
     <div className="App max-w-[100vw] max-h-screen">
-      <RouterProvider router={AppRouter} />
+      {
+        <RouterProvider router={AppRouter} />
+      }
     </div>
   );
 }
