@@ -3,29 +3,29 @@ import logo from "../assets/logo.jpeg"
 import asset15 from "../assets/asset15.svg";
 import { Link, useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, Button, TextField, Box, DialogActions, InputAdornment } from "@mui/material";
-import { MdPerson, MdEmail, MdVerifiedUser, MdBusinessCenter} from 'react-icons/md';
+import { MdPerson, MdEmail, MdVerifiedUser, MdBusinessCenter } from 'react-icons/md';
 import { BiSearch } from "react-icons/bi";
 import { MdLogout } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllVerifiedRecruitingAgenciesSuperAdmin, getAllVerifiedEnterprisesSuperAdmin, fetchEnterpriseById, fetchRecuritingAgencybyId, fetchAccountManager} from "../services/api";
-import Cookies from 'js-cookie';
+import { getAllVerifiedRecruitingAgenciesSuperAdmin, getAllVerifiedEnterprisesSuperAdmin, fetchEnterpriseById, fetchRecuritingAgencybyId, fetchAccountManager } from "../services/api";
 import Notification from "./Notification";
 import WhiteLoader from '../assets/whiteloader.svg'
+import axios from 'axios';
 
 const SuperAmNavbar = () => {
   const super_admin = useSelector((state) => state.admin?.userData);
-  const [loading,setLoading] = useState(false)
+  const [loading, setLoading] = useState(false)
   const [showProfilePopup, setShowProfilePopup] = useState(false);
   const profileRef = useRef(null);
   const [popupSearchTerm, setPopupSearchTerm] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [searchTab,setSearchTab] = useState('enterprise')
+  const [searchTab, setSearchTab] = useState('enterprise')
   const [showLogoutDialog, setShowLogoutDialog] = useState(false); // State for logout confirmation dialog
 
   const [notification, setNotification] = React.useState(null);
 
-  const [enterpriseData,setEnterpriseData]= useState([])
-  const [recruiterData,setRecruiterData] = useState([])
+  const [enterpriseData, setEnterpriseData] = useState([])
+  const [recruiterData, setRecruiterData] = useState([])
 
   const showNotification = (message, type) => {
     setNotification({ message, type });
@@ -51,12 +51,25 @@ const SuperAmNavbar = () => {
   };
 
   // Confirm logout
-  const confirmLogout = () => {
-    Cookies.remove('admin_user');
-    localStorage.removeItem('userData');
-    dispatch({ type: 'SET_USER_DATA', payload: null });
-    navigate('/');
-    setShowLogoutDialog(false);
+  const confirmLogout = async () => {
+    try {
+      await axios.post(
+        `${process.env.REACT_APP_API_BASE_URL}/auth/logout`,
+        {},
+        { withCredentials: true }
+      );
+
+      localStorage.removeItem("userData");
+      dispatch({ type: "SET_USER_DATA", payload: null });
+
+      // Navigate to the login page
+      navigate("/");
+      setShowLogoutDialog(false);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      window.location.reload();
+    }
   };
 
   // Handle clicks outside profile to close popup
@@ -86,9 +99,9 @@ const SuperAmNavbar = () => {
   };
 
   //for fetching enterprise data
-  const fetchEnterpriseData = async ()=>{
+  const fetchEnterpriseData = async () => {
     setLoading(true);
-     try{
+    try {
       const enterpriseIds = await getAllVerifiedEnterprisesSuperAdmin();
       const response = await Promise.all(
         enterpriseIds.data.map(async (enterpriseId, index) => {
@@ -109,19 +122,19 @@ const SuperAmNavbar = () => {
         item?.full_name?.toLowerCase().includes(popupSearchTerm.toLowerCase())
       );
       setEnterpriseData(filteredEnterpriseData)
-     }catch(err){
-       showNotification("Something went wrong while searching..",'failure')
-       console.log(err)
-     }finally{
+    } catch (err) {
+      showNotification("Something went wrong while searching..", 'failure')
+      console.log(err)
+    } finally {
       setLoading(false)
-     }
+    }
   }
 
 
   //for fetching recruiter data
-  const fetchRecruiterData = async ()=>{
-     setLoading(true);
-     try{
+  const fetchRecruiterData = async () => {
+    setLoading(true);
+    try {
       const recruitingAgencyIds = await getAllVerifiedRecruitingAgenciesSuperAdmin();
       const response = await Promise.all(
         recruitingAgencyIds.data.map(async (recruitingAgencyId, index) => {
@@ -137,18 +150,18 @@ const SuperAmNavbar = () => {
             account_manager: account_manager.full_name || "None",
           };
         })
-       );
+      );
 
-       const filterRecruiterData = response.filter((item) =>
-         item?.full_name?.toLowerCase().includes(popupSearchTerm.toLowerCase())
-       );
-       setRecruiterData(filterRecruiterData)
-     }catch(err){
-        console.log(err)
-        showNotification("Something went wrong while searching..",'failure')
-     }finally{
-       setLoading(false)
-     }
+      const filterRecruiterData = response.filter((item) =>
+        item?.full_name?.toLowerCase().includes(popupSearchTerm.toLowerCase())
+      );
+      setRecruiterData(filterRecruiterData)
+    } catch (err) {
+      console.log(err)
+      showNotification("Something went wrong while searching..", 'failure')
+    } finally {
+      setLoading(false)
+    }
   }
 
   useEffect(() => {
@@ -159,7 +172,7 @@ const SuperAmNavbar = () => {
 
   return (
     <div className="w-full flex justify-between py-4 px-3 bg-blue-230">
-     {notification && (
+      {notification && (
         <Notification
           message={notification.message}
           type={notification.type}
@@ -167,11 +180,11 @@ const SuperAmNavbar = () => {
         />
       )}
       <div className="flex place-items-center gap-12">
-         
-          <div className="p-1 bg-white rounded-md">
-            <img src={logo} className="w-24 h-7"></img>
-          </div>
-    
+
+        <div className="p-1 bg-white rounded-md">
+          <img src={logo} className="w-24 h-7"></img>
+        </div>
+
 
         <div className="relative search-input flex place-items-center gap-2 text-md px-4 w-[600px] bg-white-400 py-[5px]">
           <img
@@ -248,8 +261,8 @@ const SuperAmNavbar = () => {
               variant="contained"
               size="small"
               style={{
-                backgroundColor: searchTab==="enterprise" ? '#315370' : '#e0e0e0',
-                color: searchTab==="enterprise" ? 'white' : '#000',
+                backgroundColor: searchTab === "enterprise" ? '#315370' : '#e0e0e0',
+                color: searchTab === "enterprise" ? 'white' : '#000',
                 fontSize: '20px',
                 textTransform: 'none',
                 height: '40px',
@@ -265,8 +278,8 @@ const SuperAmNavbar = () => {
               variant="contained"
               size="small"
               style={{
-                backgroundColor: searchTab==='recruiter' ? '#315370' : '#e0e0e0',
-                color: searchTab==="recruiter" ? 'white' : '#000',
+                backgroundColor: searchTab === 'recruiter' ? '#315370' : '#e0e0e0',
+                color: searchTab === "recruiter" ? 'white' : '#000',
                 fontSize: '20px',
                 height: '40px',
                 textTransform: 'none',
@@ -288,91 +301,91 @@ const SuperAmNavbar = () => {
               </div>
             ) : (
               <div className="border-t pt-4 mt-2 max-h-[300px] overflow-y-auto">
-            {popupSearchTerm && (
-              <>
-                {searchTab==="enterprise" ? (
+                {popupSearchTerm && (
                   <>
-                    <h4 className="font-semibold text-xl">Enterprise Results:</h4>
-                    {enterpriseData.length > 0 ? (
-                      enterpriseData.map((item, index) => (
+                    {searchTab === "enterprise" ? (
+                      <>
+                        <h4 className="font-semibold text-xl">Enterprise Results:</h4>
+                        {enterpriseData.length > 0 ? (
+                          enterpriseData.map((item, index) => (
 
-                        <Box
-                          key={index}
-                          className="p-6 my-4 bg-white border border-gray-200 hover:shadow-lg rounded-lg shadow-sm transition duration-300"
-                        >
-                          <div className="mb-3 flex items-center space-x-3">
-                            <MdPerson className="text-black text-xl" />
-                            <p className="font-semibold text-lg text-gray-800">Full Name:</p>
-                            <p className="text-gray-700 text-lg">{item.full_name}</p>
-                          </div>
+                            <Box
+                              key={index}
+                              className="p-6 my-4 bg-white border border-gray-200 hover:shadow-lg rounded-lg shadow-sm transition duration-300"
+                            >
+                              <div className="mb-3 flex items-center space-x-3">
+                                <MdPerson className="text-black text-xl" />
+                                <p className="font-semibold text-lg text-gray-800">Full Name:</p>
+                                <p className="text-gray-700 text-lg">{item.full_name}</p>
+                              </div>
 
-                          <div className="mb-3 flex items-center space-x-3">
-                            <MdEmail className="text-black text-xl" />
-                            <p className="font-semibold text-lg text-gray-800">Email:</p>
-                            <p className="text-gray-700 text-lg">{item.email}</p>
-                          </div>
+                              <div className="mb-3 flex items-center space-x-3">
+                                <MdEmail className="text-black text-xl" />
+                                <p className="font-semibold text-lg text-gray-800">Email:</p>
+                                <p className="text-gray-700 text-lg">{item.email}</p>
+                              </div>
 
-                          <div className="mb-3 flex items-center space-x-3">
-                            <MdVerifiedUser className="text-black text-xl" />
-                            <p className="font-semibold text-lg text-gray-800">Account Status:</p>
-                            <p className={`text-lg ${item.account_status === 'Active' ? 'text-green-600' : 'text-red-600'}`}>
-                              {item.account_status}
-                            </p>
-                          </div>
+                              <div className="mb-3 flex items-center space-x-3">
+                                <MdVerifiedUser className="text-black text-xl" />
+                                <p className="font-semibold text-lg text-gray-800">Account Status:</p>
+                                <p className={`text-lg ${item.account_status === 'Active' ? 'text-green-600' : 'text-red-600'}`}>
+                                  {item.account_status}
+                                </p>
+                              </div>
 
-                          <div className="flex items-center space-x-3">
-                            <MdBusinessCenter className="text-black text-xl" />
-                            <p className="font-semibold text-lg text-gray-800">Account Manager:</p>
-                            <p className="text-gray-700 text-lg">{item.account_manager}</p>
-                          </div>
-                        </Box>
-                      ))
+                              <div className="flex items-center space-x-3">
+                                <MdBusinessCenter className="text-black text-xl" />
+                                <p className="font-semibold text-lg text-gray-800">Account Manager:</p>
+                                <p className="text-gray-700 text-lg">{item.account_manager}</p>
+                              </div>
+                            </Box>
+                          ))
+                        ) : (
+                          <p>No enterprise results found.</p>
+                        )}
+                      </>
                     ) : (
-                      <p>No enterprise results found.</p>
-                    )}
-                  </>
-                ) : (
-                  <>
-                    <h4 className="font-semibold text-xl">Recruiter Results:</h4>
-                    {recruiterData.length > 0 ? (
-                      recruiterData.map((item, index) => (
-                        <Box
-                          key={index}
-                          className="p-6 my-4 bg-white border border-gray-200 hover:shadow-lg rounded-lg shadow-sm transition duration-300"
-                        >
-                          <div className="mb-3 flex items-center space-x-3">
-                            <MdPerson className="text-black text-xl" />
-                            <p className="font-semibold text-lg text-gray-800">Full Name:</p>
-                            <p className="text-gray-700 text-lg">{item.full_name}</p>
-                          </div>
+                      <>
+                        <h4 className="font-semibold text-xl">Recruiter Results:</h4>
+                        {recruiterData.length > 0 ? (
+                          recruiterData.map((item, index) => (
+                            <Box
+                              key={index}
+                              className="p-6 my-4 bg-white border border-gray-200 hover:shadow-lg rounded-lg shadow-sm transition duration-300"
+                            >
+                              <div className="mb-3 flex items-center space-x-3">
+                                <MdPerson className="text-black text-xl" />
+                                <p className="font-semibold text-lg text-gray-800">Full Name:</p>
+                                <p className="text-gray-700 text-lg">{item.full_name}</p>
+                              </div>
 
-                          <div className="mb-3 flex items-center space-x-3">
-                            <MdEmail className="text-black text-xl" />
-                            <p className="font-semibold text-lg text-gray-800">Email:</p>
-                            <p className="text-gray-700 text-lg">{item.email}</p>
-                          </div>
+                              <div className="mb-3 flex items-center space-x-3">
+                                <MdEmail className="text-black text-xl" />
+                                <p className="font-semibold text-lg text-gray-800">Email:</p>
+                                <p className="text-gray-700 text-lg">{item.email}</p>
+                              </div>
 
-                          <div className="mb-3 flex items-center space-x-3">
-                          <MdVerifiedUser className="text-black text-xl" />
-                            <p className="font-semibold text-lg text-gray-800">Account Status:</p>
-                            <p className={`${item.account_status==="Active"?"text-green-500":"text-red-500"} text-lg`}>{item.account_status}</p>
-                          </div>
+                              <div className="mb-3 flex items-center space-x-3">
+                                <MdVerifiedUser className="text-black text-xl" />
+                                <p className="font-semibold text-lg text-gray-800">Account Status:</p>
+                                <p className={`${item.account_status === "Active" ? "text-green-500" : "text-red-500"} text-lg`}>{item.account_status}</p>
+                              </div>
 
-                          <div className="flex items-center space-x-3">
-                          <MdBusinessCenter className="text-black text-xl" />
-                            <p className="font-semibold text-lg text-gray-800">Account Manager:</p>
-                            <p className="text-gray-700 text-lg">{item.account_manager}</p>
-                          </div>
-                        </Box>
-                      ))
-                    ) : (
-                      <p>No recruiter results found.</p>
+                              <div className="flex items-center space-x-3">
+                                <MdBusinessCenter className="text-black text-xl" />
+                                <p className="font-semibold text-lg text-gray-800">Account Manager:</p>
+                                <p className="text-gray-700 text-lg">{item.account_manager}</p>
+                              </div>
+                            </Box>
+                          ))
+                        ) : (
+                          <p>No recruiter results found.</p>
+                        )}
+                      </>
                     )}
                   </>
                 )}
-              </>
-            )}
-          </div>
+              </div>
 
             )
           }

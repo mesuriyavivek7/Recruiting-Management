@@ -1,5 +1,5 @@
 import express from 'express'
-import { acRegister, login, madminRegister, sadminRegister, validateUser } from '../controller/authController.js'
+import { acRegister, login, logout, madminRegister, sadminRegister, validateUser } from '../controller/authController.js'
 
 
 const router=express.Router()
@@ -20,6 +20,9 @@ router.post('/acmanagerregister',acRegister)
 
 //register new superadmin
 router.post('/superadminregister',sadminRegister)
+
+//for general logout from the dashboard
+router.post('/logout',logout)
 
 
 export default router

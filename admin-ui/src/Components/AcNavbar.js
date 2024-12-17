@@ -7,9 +7,9 @@ import { MdPerson, MdEmail, MdVerifiedUser, MdBusinessCenter } from 'react-icons
 import { BiSearch } from "react-icons/bi";
 import { MdLogout } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
-import Cookies from 'js-cookie';
-import { fetchVerifedEntepreiseByACId , fetchEnterpriseById, fetchAccountManager, fetchVerifiedRAgenciesByACmanagerId, fetchRecuritingAgencybyId } from "../services/api";
+import { fetchVerifedEntepreiseByACId, fetchEnterpriseById, fetchAccountManager, fetchVerifiedRAgenciesByACmanagerId, fetchRecuritingAgencybyId } from "../services/api";
 import WhiteLoader from '../assets/whiteloader.svg'
+import axios from 'axios';
 
 const AcNavbar = () => {
   const ACManagerData = useSelector((state) => state.admin?.userData);
@@ -18,12 +18,12 @@ const AcNavbar = () => {
   const profileRef = useRef(null);
   const [popupSearchTerm, setPopupSearchTerm] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [searchTab,setSearchTab] = useState('enterprise')
+  const [searchTab, setSearchTab] = useState('enterprise')
   const [showLogoutDialog, setShowLogoutDialog] = useState(false); // State for logout confirmation dialog
 
-  const [enterpriseData,setEnterpriseData]= useState([])
-  const [recruiterData,setRecruiterData] = useState([])
-  const [loading,setLoading] = useState(false)
+  const [enterpriseData, setEnterpriseData] = useState([])
+  const [recruiterData, setRecruiterData] = useState([])
+  const [loading, setLoading] = useState(false)
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -45,12 +45,27 @@ const AcNavbar = () => {
   };
 
   // Confirm logout
-  const confirmLogout = () => {
-    Cookies.remove('admin_user');
-    localStorage.removeItem('userData');
-    dispatch({ type: 'SET_USER_DATA', payload: null });
-    navigate('/');
-    setShowLogoutDialog(false);
+
+  // Confirm logout
+  const confirmLogout = async () => {
+    try {
+      await axios.post(
+        `${process.env.REACT_APP_API_BASE_URL}/auth/logout`,
+        {},
+        { withCredentials: true }
+      );
+
+      localStorage.removeItem("userData");
+      dispatch({ type: "SET_USER_DATA", payload: null });
+
+      // Navigate to the login page
+      navigate("/");
+      setShowLogoutDialog(false);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      window.location.reload();
+    }
   };
 
   // Handle clicks outside profile to close popup
@@ -81,12 +96,12 @@ const AcNavbar = () => {
   };
 
   //Fetch Enterprise Data 
-  const fetchEnterpriseData = async ()=>{
-     setLoading(true)
-     try{
-       const data= await fetchVerifedEntepreiseByACId(ACManagerData?._id)
+  const fetchEnterpriseData = async () => {
+    setLoading(true)
+    try {
+      const data = await fetchVerifedEntepreiseByACId(ACManagerData?._id)
 
-       const rows = await Promise.all(
+      const rows = await Promise.all(
         data.map(async (enterprise, index) => {
           // Fetch complete enterprise details
           const enterpriseData = await fetchEnterpriseById(enterprise);
@@ -121,22 +136,22 @@ const AcNavbar = () => {
 
       setEnterpriseData(filteredEnterpriseData)
 
-     }catch(err){
-       console.log(err)
-     }finally{
-       setLoading(false)
-     }
+    } catch (err) {
+      console.log(err)
+    } finally {
+      setLoading(false)
+    }
   }
 
   //Fetch Recruiter Data
-  const fetchRecruiterData = async ()=>{
-     setLoading(true)
-     try{
+  const fetchRecruiterData = async () => {
+    setLoading(true)
+    try {
       //fetch Ids of verified recruiter agencys
       const data = await fetchVerifiedRAgenciesByACmanagerId(ACManagerData?._id)
 
-       //fetch more details about recruiter agency
-       const rows = await Promise.all(
+      //fetch more details about recruiter agency
+      const rows = await Promise.all(
         data.map(async (agency_id, index) => {
           const agency = await fetchRecuritingAgencybyId(agency_id);
 
@@ -161,25 +176,25 @@ const AcNavbar = () => {
 
       setRecruiterData(filteredRecruiterData);
 
-     }catch(err){
-       console.log(err)
-     }finally{
+    } catch (err) {
+      console.log(err)
+    } finally {
       setLoading(false)
-     }
+    }
   }
 
   useEffect(() => {
     if (searchTab === "enterprise") fetchEnterpriseData();
     else fetchRecruiterData();
   }, [popupSearchTerm, searchTab]);
-  
+
 
   return (
     <div className="w-full flex justify-between py-4 px-3 bg-blue-230">
       <div className="flex place-items-center gap-12">
-         <div className="p-1 bg-white rounded-md">
-            <img src={logo} className="w-24 h-7"></img>
-          </div>
+        <div className="p-1 bg-white rounded-md">
+          <img src={logo} className="w-24 h-7"></img>
+        </div>
 
         <div className="relative search-input flex place-items-center gap-2 text-md px-4 w-[600px] bg-white-400 py-[5px]">
           <img
@@ -256,8 +271,8 @@ const AcNavbar = () => {
               variant="contained"
               size="small"
               style={{
-                backgroundColor: searchTab==="enterprise" ? '#315370' : '#e0e0e0',
-                color: searchTab==="enterprise" ? 'white' : '#000',
+                backgroundColor: searchTab === "enterprise" ? '#315370' : '#e0e0e0',
+                color: searchTab === "enterprise" ? 'white' : '#000',
                 fontSize: '20px',
                 textTransform: 'none',
                 height: '40px',
@@ -273,8 +288,8 @@ const AcNavbar = () => {
               variant="contained"
               size="small"
               style={{
-                backgroundColor: searchTab==="recruiter" ? '#315370' : '#e0e0e0',
-                color: searchTab==="recruiter" ? 'white' : '#000',
+                backgroundColor: searchTab === "recruiter" ? '#315370' : '#e0e0e0',
+                color: searchTab === "recruiter" ? 'white' : '#000',
                 fontSize: '20px',
                 height: '40px',
                 textTransform: 'none',
@@ -296,91 +311,91 @@ const AcNavbar = () => {
               </div>
             ) : (
               <div className="border-t pt-4 mt-2 max-h-[300px] overflow-y-auto">
-            {popupSearchTerm && (
-              <>
-                {searchTab==="enterprise" ? (
+                {popupSearchTerm && (
                   <>
-                    <h4 className="font-semibold text-xl">Enterprise Results:</h4>
-                    {enterpriseData.length > 0 ? (
-                      enterpriseData.map((item, index) => (
+                    {searchTab === "enterprise" ? (
+                      <>
+                        <h4 className="font-semibold text-xl">Enterprise Results:</h4>
+                        {enterpriseData.length > 0 ? (
+                          enterpriseData.map((item, index) => (
 
-                        <Box
-                          key={index}
-                          className="p-6 my-4 bg-white border border-gray-200 hover:shadow-lg rounded-lg shadow-sm transition duration-300"
-                        >
-                          <div className="mb-3 flex items-center space-x-3">
-                            <MdPerson className="text-black text-xl" />
-                            <p className="font-semibold text-lg text-gray-800">Full Name:</p>
-                            <p className="text-gray-700 text-lg">{item.full_name}</p>
-                          </div>
+                            <Box
+                              key={index}
+                              className="p-6 my-4 bg-white border border-gray-200 hover:shadow-lg rounded-lg shadow-sm transition duration-300"
+                            >
+                              <div className="mb-3 flex items-center space-x-3">
+                                <MdPerson className="text-black text-xl" />
+                                <p className="font-semibold text-lg text-gray-800">Full Name:</p>
+                                <p className="text-gray-700 text-lg">{item.full_name}</p>
+                              </div>
 
-                          <div className="mb-3 flex items-center space-x-3">
-                            <MdEmail className="text-black text-xl" />
-                            <p className="font-semibold text-lg text-gray-800">Email:</p>
-                            <p className="text-gray-700 text-lg">{item.email}</p>
-                          </div>
+                              <div className="mb-3 flex items-center space-x-3">
+                                <MdEmail className="text-black text-xl" />
+                                <p className="font-semibold text-lg text-gray-800">Email:</p>
+                                <p className="text-gray-700 text-lg">{item.email}</p>
+                              </div>
 
-                          <div className="mb-3 flex items-center space-x-3">
-                            <MdVerifiedUser className="text-black text-xl" />
-                            <p className="font-semibold text-lg text-gray-800">Account Status:</p>
-                            <p className={`text-lg ${item.account_status.status === 'Active' ? 'text-green-600' : 'text-red-600'}`}>
-                              {item.account_status.status}
-                            </p>
-                          </div>
+                              <div className="mb-3 flex items-center space-x-3">
+                                <MdVerifiedUser className="text-black text-xl" />
+                                <p className="font-semibold text-lg text-gray-800">Account Status:</p>
+                                <p className={`text-lg ${item.account_status.status === 'Active' ? 'text-green-600' : 'text-red-600'}`}>
+                                  {item.account_status.status}
+                                </p>
+                              </div>
 
-                          <div className="flex items-center space-x-3">
-                            <MdBusinessCenter className="text-black text-xl" />
-                            <p className="font-semibold text-lg text-gray-800">Account Manager:</p>
-                            <p className="text-gray-700 text-lg">{item.account_manager}</p>
-                          </div>
-                        </Box>
-                      ))
+                              <div className="flex items-center space-x-3">
+                                <MdBusinessCenter className="text-black text-xl" />
+                                <p className="font-semibold text-lg text-gray-800">Account Manager:</p>
+                                <p className="text-gray-700 text-lg">{item.account_manager}</p>
+                              </div>
+                            </Box>
+                          ))
+                        ) : (
+                          <p>No enterprise results found.</p>
+                        )}
+                      </>
                     ) : (
-                      <p>No enterprise results found.</p>
-                    )}
-                  </>
-                ) : (
-                  <>
-                    <h4 className="font-semibold text-xl">Recruiter Results:</h4>
-                    {recruiterData.length > 0 ? (
-                      recruiterData.map((item, index) => (
-                        <Box
-                          key={index}
-                          className="p-6 my-4 bg-white border border-gray-200 hover:shadow-lg rounded-lg shadow-sm transition duration-300"
-                        >
-                          <div className="mb-3 flex items-center space-x-3">
-                            <MdPerson className="text-black text-xl" />
-                            <p className="font-semibold text-lg text-gray-800">Full Name:</p>
-                            <p className="text-gray-700 text-lg">{item.full_name}</p>
-                          </div>
+                      <>
+                        <h4 className="font-semibold text-xl">Recruiter Results:</h4>
+                        {recruiterData.length > 0 ? (
+                          recruiterData.map((item, index) => (
+                            <Box
+                              key={index}
+                              className="p-6 my-4 bg-white border border-gray-200 hover:shadow-lg rounded-lg shadow-sm transition duration-300"
+                            >
+                              <div className="mb-3 flex items-center space-x-3">
+                                <MdPerson className="text-black text-xl" />
+                                <p className="font-semibold text-lg text-gray-800">Full Name:</p>
+                                <p className="text-gray-700 text-lg">{item.full_name}</p>
+                              </div>
 
-                          <div className="mb-3 flex items-center space-x-3">
-                            <MdEmail className="text-black text-xl" />
-                            <p className="font-semibold text-lg text-gray-800">Email:</p>
-                            <p className="text-gray-700 text-lg">{item.email}</p>
-                          </div>
+                              <div className="mb-3 flex items-center space-x-3">
+                                <MdEmail className="text-black text-xl" />
+                                <p className="font-semibold text-lg text-gray-800">Email:</p>
+                                <p className="text-gray-700 text-lg">{item.email}</p>
+                              </div>
 
-                          <div className="mb-3 flex items-center space-x-3">
-                          <MdVerifiedUser className="text-black text-xl" />
-                            <p className="font-semibold text-lg text-gray-800">Account Status:</p>
-                            <p className={`${item.account_status==="Active"?"text-green-500":"text-red-500"} text-lg`}>{item.account_status}</p>
-                          </div>
+                              <div className="mb-3 flex items-center space-x-3">
+                                <MdVerifiedUser className="text-black text-xl" />
+                                <p className="font-semibold text-lg text-gray-800">Account Status:</p>
+                                <p className={`${item.account_status === "Active" ? "text-green-500" : "text-red-500"} text-lg`}>{item.account_status}</p>
+                              </div>
 
-                          <div className="flex items-center space-x-3">
-                          <MdBusinessCenter className="text-black text-xl" />
-                            <p className="font-semibold text-lg text-gray-800">Account Manager:</p>
-                            <p className="text-gray-700 text-lg">{item.account_manager}</p>
-                          </div>
-                        </Box>
-                      ))
-                    ) : (
-                      <p>No recruiter results found.</p>
+                              <div className="flex items-center space-x-3">
+                                <MdBusinessCenter className="text-black text-xl" />
+                                <p className="font-semibold text-lg text-gray-800">Account Manager:</p>
+                                <p className="text-gray-700 text-lg">{item.account_manager}</p>
+                              </div>
+                            </Box>
+                          ))
+                        ) : (
+                          <p>No recruiter results found.</p>
+                        )}
+                      </>
                     )}
                   </>
                 )}
-              </>
-            )}
-          </div>
+              </div>
 
             )
           }
