@@ -22,8 +22,8 @@ import {
   fetchVerifiedRAgenciesByAdminId,
   fetchRecuritingAgencybyId,
 } from "../services/api";
-import Cookies from "js-cookie";
 import WhiteLoader from "../assets/whiteloader.svg";
+import axios from 'axios';
 
 const Navbar = () => {
   const userData = useSelector((state) => state.admin?.userData);
@@ -59,13 +59,27 @@ const Navbar = () => {
   };
 
   // Confirm logout
-  const confirmLogout = () => {
-    Cookies.remove("admin_user");
-    localStorage.removeItem("userData");
-    dispatch({ type: "SET_USER_DATA", payload: null });
-    navigate("/");
-    setShowLogoutDialog(false);
+  const confirmLogout = async () => {
+    try {
+      await axios.post(
+        `${process.env.REACT_APP_API_BASE_URL}/auth/logout`,
+        {},
+        { withCredentials: true }
+      );
+
+      localStorage.removeItem("userData");
+      dispatch({ type: "SET_USER_DATA", payload: null });
+
+      // Navigate to the login page
+      navigate("/");
+      setShowLogoutDialog(false);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      window.location.reload();
+    }
   };
+
 
   useEffect(() => {
     // Handle clicks outside profile to close popup
@@ -201,9 +215,9 @@ const Navbar = () => {
   return (
     <div className="w-full flex justify-between py-4 px-3 bg-blue-230">
       <div className="flex place-items-center gap-12">
-          <div className="p-1 bg-white rounded-md">
-            <img src={logo} className="w-24 h-7"></img>
-          </div>
+        <div className="p-1 bg-white rounded-md">
+          <img src={logo} className="w-24 h-7"></img>
+        </div>
 
         <div className="relative search-input flex place-items-center gap-2 text-md px-4 w-[600px] bg-white-400 py-[5px]">
           <img

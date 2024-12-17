@@ -121,3 +121,18 @@ export const sadminRegister=async (req,res,next)=>{
      next(err)
    }
 }
+
+export const logout=async (req,res,next)=>{
+      try{
+        
+        res.clearCookie("admin_user", {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+          domain: process.env.NODE_ENV === 'production' ? '.vms.uphire.in' : undefined
+        }).status(200).json({ message: "Logged out successfully" });
+        
+      }catch(err){
+          next(err)
+      }
+}
