@@ -411,11 +411,12 @@ const NewRecruitingAgencyData = () => {
                     onChange={handleManagerChange}
                     label="Select Account Manager"
                   >
-                    {acManager?.map((manager) => (
+                    {acManager.length>0 ? acManager?.map((manager) => (
                       <MenuItem key={manager._id} value={manager._id}>
                         {manager.full_name}
                       </MenuItem>
-                    ))}
+                    )):
+                    <span className='p-1.5'>No Account Managers</span>}
                   </Select>
                 </FormControl>
               </div>

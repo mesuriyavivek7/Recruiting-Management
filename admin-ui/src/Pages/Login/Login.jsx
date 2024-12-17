@@ -41,7 +41,7 @@ export default function Login() {
   },[myValue,navigate])
 
 
-  const [load,setLoad]=useState(false)
+  const [load,setLoad]=useState(true)
   const [errors,setErrors]=useState(false)
   const [formData,setFormData]=useState({
     email:"",
@@ -174,7 +174,16 @@ export default function Login() {
                 }
 
               </div>
-              <button type='button' onClick={handleSubmit} disabled={load} className='w-full mt-2 py-[6px] bg-blue-400 text-white rounded-md disabled:bg-gray-400 disabled:cursor-not-allowed disabled:opacity-50'>Login</button>
+              <button type='button' onClick={handleSubmit} disabled={load} className='w-full flex justify-center items-center mt-2 py-[6px] bg-blue-400 text-white rounded-md disabled:bg-gray-400 disabled:cursor-not-allowed disabled:opacity-50'>
+                {
+                  load && 
+                  <svg className="w-5 h-5 mr-2 text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l5.6-3.2a10 10 0 00-10.4 0L4 12z"></path>
+                  </svg>
+                }
+                Login
+              </button>
             </form>
          </div>
          </div>
