@@ -1,5 +1,5 @@
 import express from 'express'
-import { acRegister, login, madminRegister, sadminRegister } from '../controller/authController.js'
+import { acRegister, login, madminRegister, sadminRegister, validateUser } from '../controller/authController.js'
 
 
 const router=express.Router()
@@ -8,6 +8,8 @@ const router=express.Router()
 //login admin
 router.post('/login',login)
 
+//validate admin
+router.get('/validate',validateUser)
 
 //register new masteradmin
 router.post('/madminregister',madminRegister)

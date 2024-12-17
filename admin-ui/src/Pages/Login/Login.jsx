@@ -84,7 +84,6 @@ export default function Login() {
       try{
         const response=await axios.post(`${process.env.REACT_APP_API_BASE_URL}/auth/login`,formData,{withCredentials:true})
         dispatch(setUserData(response.data.details));
-        console.log(response.data.details)
         if(response.data.details.admin_type==="master_admin"){
           navigate('/master_admin/dashboard')
         }else if(response.data.details.admin_type==="account_manager"){
