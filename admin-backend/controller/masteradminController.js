@@ -35,12 +35,12 @@ export const rmvEnterprisePendingList = async (req, res, next) => {
     }
 }
 
-export const recruiterAgencyVerified = async (req, res, next) =>{
-    try{
-        await MASTERADMIN.findByIdAndUpdate(req.body.m_id,{$pull:{pending_verify_recruiting_agency:req.body.ra_id},$push:{verified_recruiting_agency:req.body.ra_id}})
+export const recruiterAgencyVerified = async (req, res, next) => {
+    try {
+        await MASTERADMIN.findByIdAndUpdate(req.body.m_id, { $pull: { pending_verify_recruiting_agency: req.body.ra_id }, $push: { verified_recruiting_agency: req.body.ra_id } })
         res.status(200).json("Successfully recruiter agency verified by masteradmin")
-    }catch(err){
-         next(err)
+    } catch (err) {
+        next(err)
     }
 }
 
@@ -157,7 +157,7 @@ export const getAllVerifiedRecuritingAgencies = async (req, res, next) => {
 export const getAllPendingRecuritingAgencies = async (req, res, next) => {
     try {
         const RecruitingAgencies = await MASTERADMIN.findById(req.params.m_admin_id);
-        if(!RecruitingAgencies) return res.status([])
+        if (!RecruitingAgencies) return res.status([])
         else res.status(200).json(RecruitingAgencies.pending_verify_recruiting_agency);
     } catch (error) {
         next(error);
@@ -242,12 +242,21 @@ export const getAllPendingCandidates = async (req, res, next) => {
 };
 
 
-export const handleAddAcManager=async (req,res,next)=>{
-     try{ 
-        const {m_admin_id, ac_id}=req.body
-        await MASTERADMIN.findByIdAndUpdate(m_admin_id,{$push:{account_manager:ac_id}})
+export const handleAddAcManager = async (req, res, next) => {
+    try {
+        const { m_admin_id, ac_id } = req.body
+        await MASTERADMIN.findByIdAndUpdate(m_admin_id, { $push: { account_manager: ac_id } })
         res.status(200).json("Account manager added.")
-     }catch(err){
-         next(err)
-     }
+    } catch (err) {
+        next(err)
+    }
+}
+
+export const getBothMasterAdminDetails = async (req, res, next) => {
+    try {
+        const masterAdmin = await MASTERADMIN.find();
+        res.status(200).json(masterAdmin)
+    } catch (err) {
+        next(err)
+    }
 }
