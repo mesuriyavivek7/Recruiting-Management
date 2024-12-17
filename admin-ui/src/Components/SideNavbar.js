@@ -37,8 +37,6 @@ const SideNavbar = () => {
       return path.replace("/master_admin", "/account_manager");
     } else if (location.pathname.includes("super_admin")) {
       return path.replace("/master_admin", "/super_admin");
-    } else if (location.pathname.includes("enterprise")) {
-      return path.replace("/master_admin", "/enterprise"); // Handle enterprise route
     } else {
       return path;
     }

@@ -21,10 +21,12 @@ import { FaEnvelope, FaBuilding, FaUsers, FaPhone, FaBriefcase, FaMapMarkerAlt, 
 import { fetchPendingRAgenciesByAdminId, fetchRecuritingAgencybyId } from '../../../services/api';
 import { store } from '../../../State/Store';
 
-const selectUserData = (state) => state.admin.userData;
-const userData = selectUserData(store.getState());
 
 const NewRecruitingAgencyData = () => {
+
+  const selectUserData = (state) => state.admin.userData;
+  const userData = selectUserData(store.getState());
+
   const [open, setOpen] = useState(false);
   const myValue = useSelector((state) => state.admin);
   const [recruitingAgency, setRecruitingAgency] = useState([]);
@@ -53,6 +55,7 @@ const NewRecruitingAgencyData = () => {
   const fetchRecruitingAgency = async () => {
     try {
       setLoading(true)
+      console.log(userData)
       //fetch ids of recruiter agency
       const res = await fetchPendingRAgenciesByAdminId(userData?._id);
       
@@ -74,7 +77,7 @@ const NewRecruitingAgencyData = () => {
       setRecruitingAgency(filteredAgencies);
     } catch (err) {
       console.error("Error in fetchRecruitingAgency:", err);
-      showNotification("There is something wrong while fetching data", "error");
+      showNotification("There is something wrong while fetching data", "failure");
     }finally{
       setLoading(false)
     }
