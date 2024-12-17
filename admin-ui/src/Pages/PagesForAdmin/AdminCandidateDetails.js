@@ -524,7 +524,7 @@ function AdminCandidateDetails() {
                       </Box>
                       {candidateResumes?.filepath ? (
                         <a
-                          href={`http://localhost:8080/resumedocs/${candidateResumes.filepath.replace(
+                          href={`${process.env.REACT_APP_APP_URL}/resumedocs/${candidateResumes.filepath.replace(
                             /^uploads\/resumedocs\//,
                             ""
                           )}`}
@@ -580,7 +580,7 @@ function AdminCandidateDetails() {
                       </Box>
                       {candidateAttachments?.evaluation_form.filepath ? (
                         <a
-                          href={`http://localhost:8080/candidatedocs/${candidateAttachments?.evaluation_form.filepath.replace(
+                          href={`${process.env.REACT_APP_APP_URL}/candidatedocs/${candidateAttachments?.evaluation_form.filepath.replace(
                             /^uploads\/candidatedocs\//,
                             ""
                           )}`}
@@ -636,7 +636,7 @@ function AdminCandidateDetails() {
                       </Box>
                       {candidateAttachments?.evaluation_form.filepath ? (
                         <a
-                          href={`http://localhost:8080/consetproof/${candidateconsentProof?.filepath.replace(
+                          href={`${process.env.REACT_APP_APP_URL}/consetproof/${candidateconsentProof?.filepath.replace(
                             /^uploads\/consetproof\//,
                             ""
                           )}`}

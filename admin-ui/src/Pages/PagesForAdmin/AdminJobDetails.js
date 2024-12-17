@@ -1,5 +1,3 @@
-
-
 import { useEffect, useState } from 'react';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -879,7 +877,7 @@ function AdminJobDetails() {
                                 <span>Audio Brief</span>
                               </div>
                               <a
-                                href={`http://localhost:8080/jobdocs/${jobAttachments.audio_brief.filepath.replace(
+                                href={`${process.env.REACT_APP_APP_URL}/jobdocs/${jobAttachments.audio_brief.filepath.replace(
                                   /^uploads\/jobdocs\//,
                                   ""
                                 )}`}
@@ -906,7 +904,7 @@ function AdminJobDetails() {
                                 <span>Evaluation Form</span>
                               </div>
                               <a
-                                href={`http://localhost:8080/jobdocs/${jobAttachments.evaluation_form.filepath.replace(
+                                href={`${process.env.REACT_APP_APP_URL}/jobdocs/${jobAttachments.evaluation_form.filepath.replace(
                                   /^uploads\/jobdocs\//,
                                   ""
                                 )}`}
@@ -933,7 +931,7 @@ function AdminJobDetails() {
                                 <span>Sample CV</span>
                               </div>
                               <a
-                                href={`http://localhost:8080/jobdocs/${jobAttachments.sample_cv.filepath.replace(
+                                href={`${process.env.REACT_APP_APP_URL}/jobdocs/${jobAttachments.sample_cv.filepath.replace(
                                   /^uploads\/jobdocs\//,
                                   ""
                                 )}`}
@@ -960,7 +958,7 @@ function AdminJobDetails() {
                                 <span>Other Documents</span>
                               </div>
                               <a
-                                href={`http://localhost:8080/jobdocs/${jobAttachments.other_docs.filepath.replace(
+                                href={`${process.env.REACT_APP_APP_URL}/jobdocs/${jobAttachments.other_docs.filepath.replace(
                                   /^uploads\/jobdocs\//,
                                   ""
                                 )}`}

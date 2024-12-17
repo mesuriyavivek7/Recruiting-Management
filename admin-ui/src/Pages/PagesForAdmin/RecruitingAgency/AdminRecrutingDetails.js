@@ -161,7 +161,7 @@ const AdminRecruitingDetails = ({ recuritingAgenciesDetails }) => {
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 {recuritingAgenciesDetails?.kyc_documents?.filename ? (
                   <a
-                    href={`http://localhost:8080/kycdocs/${recuritingAgenciesDetails?.kyc_documents?.filename}`}
+                    href={`${process.env.REACT_APP_APP_URL}/kycdocs/${recuritingAgenciesDetails?.kyc_documents?.filename}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{
