@@ -368,11 +368,14 @@ const NewEnterpriseData = () => {
                     onChange={handleManagerChange}
                     label="Select Account Manager"
                   >
-                    {acManager?.map((manager) => (
+                    {acManager.length>0 ? acManager?.map((manager) => (
                       <MenuItem key={manager.ac_id} value={manager.ac_id}>
                         {manager.name}
                       </MenuItem>
-                    ))}
+                    ))
+                    :
+                    <span className='p-1.5'>No Account manager</span>
+                    }
                   </Select>
                 </FormControl>
               </div>
