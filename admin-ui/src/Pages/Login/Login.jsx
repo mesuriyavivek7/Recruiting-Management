@@ -41,7 +41,7 @@ export default function Login() {
   },[myValue,navigate])
 
 
-  const [load,setLoad]=useState(true)
+  const [load,setLoad]=useState(false)
   const [errors,setErrors]=useState(false)
   const [formData,setFormData]=useState({
     email:"",
