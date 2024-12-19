@@ -14,10 +14,18 @@ export const createCandidateBasicDetails = async (req, res, next) => {
 }
 
 export const checkEmailAndMobile = async (req, res, next) => {
-  const { email, mobileno } = req.body
+  const { email, mobileno, jobid} = req.body
   try {
-    const candidate = await CANDIDATEBASICDETAILS.findOne({ $or: [{ primary_email_id: email }, { primary_contact_number: mobileno }] })
-    if (candidate) res.status(200).json(true)
+    const candidate = await CANDIDATEBASICDETAILS.find({ $or: [{ primary_email_id: email }, { primary_contact_number: mobileno }] })
+    
+    let flag=false
+
+    await Promise.all(candidate.map(async (item)=>{
+       const exitcandidate = await CANDIDATE.findOne({candidate_id:item.candidate_id,job_id:jobid})
+       if(exitcandidate) flag=true
+    }))
+
+    if (flag) res.status(200).json(true)
     else res.status(200).json(false)
   } catch (err) {
     next(err)
