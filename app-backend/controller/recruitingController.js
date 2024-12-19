@@ -6,6 +6,7 @@ import RECRUITING from "../models/RECRUITING.js"
 import RECRUITINGTEAM from "../models/RECRUITINGTEAM.js"
 import fs from 'fs'
 import exceljs from 'exceljs'
+import axios from 'axios'
 
 
 //for kyc details submission
@@ -315,3 +316,32 @@ export const exportMemberData=async (req,res,next)=>{
         next(err)
      }
 }
+
+export const getAcmanagerNameEmail = async (req, res, next) =>{
+     try{
+        const acmanagerId =await RECRUITING.findById(req.params.ragencyid)
+      
+        if(!acmanagerId.alloted_account_manager) return res.status(400).json("Account manager not found.")
+
+        const response = await axios.get(`${process.env.ADMIN_SERVER_URL}/accountmanager/getmailandname/${acmanagerId.alloted_account_manager}`)
+
+        if(!response.data) return res.status(400).json("Account manager not found.")
+
+        res.status(200).json(response.data)
+
+     }catch(err){
+         next(err)
+     }
+}
+
+export const getReAgancyName = async (req, res, next) =>{
+   try{
+      const name = await RECRUITING.findById(req.params.reagencyid,{full_name:1,_id:0})
+      if(!name) res.status(404).json("Recruiter agency not found")
+
+      res.status(200).json(name)
+   }catch(err){
+     next(err)
+   }
+}
+

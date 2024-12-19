@@ -176,7 +176,7 @@ const Job = () => {
           )}
           {activeTab === 'rRecruiter' && (
             <div className='pt-9 '>
-              <RequestedRecruiter jobId={id} />
+              <RequestedRecruiter jobId={id} handleAcceptedRecruiterCount={handleAcceptedRecruiterCount} />
             </div>
           )}
         </div>

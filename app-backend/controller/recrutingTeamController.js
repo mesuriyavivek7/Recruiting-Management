@@ -468,3 +468,14 @@ export const checkPassword=async (req, res, next)=>{
          next(err)
      }
  }
+
+
+ export const addJobIntoAcceptedList = async (req, res , next) =>{
+    try{
+        const {orgjobid,rememberid} = req.body
+        await RECRUITINGTEAM.findByIdAndUpdate(rememberid,{$pull:{requested_jobs:orgjobid},$push:{accepted_jobs:orgjobid}})
+        res.status(200).json("Added into accepted list")
+    }catch(err){
+         next(err)
+    }
+}

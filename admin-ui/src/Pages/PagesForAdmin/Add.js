@@ -6,17 +6,22 @@ import { CreateAccountManager } from '../../services/api';
 import Notification from '../../Components/Notification';
 import axios from 'axios';
 
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
+import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
+
 const admin_be_uri = process.env.REACT_APP_API_BASE_URL;
 
 const Add = () => {
   const adminData = useSelector((state) => state.admin.userData)
   const [open, setOpen] = useState(false);
-  const [loading,setLoading]=useState(false)
+  const [loading,setLoading]=useState(true)
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [notification, setNotification] = useState(null);
   const [errors,setErrors]=useState({})
+
+  const [hidePassword,setHidePassword] = useState(false)
 
   const showNotification = (message, type) => {
     setNotification({ message, type });
@@ -180,13 +185,13 @@ const Add = () => {
                 errors.email && <span className='text-red-400 mt-1 text-sm'>{errors.email}</span>
               }
               </div>
-              <div className='flex mb-2 flex-col'>
+              <div className='relative flex mb-2 flex-col'>
               <Typography component="label" sx={{ fontWeight: 'bold', mb: 1 }}>
                 Password <Typography component="span" color="error">*</Typography>
               </Typography>
               <TextField
                 variant="outlined"
-                type="password"
+                type={hidePassword?"password":'text'}
                 fullWidth
                 value={password}
                 sx={{
@@ -209,6 +214,7 @@ const Add = () => {
                 }}
                 onChange={(e) => setPassword(e.target.value)}
               />
+              <span onClick={()=>setHidePassword(!hidePassword)} className='absolute cursor-pointer top-11 right-2'>{hidePassword?<VisibilityOutlinedIcon style={{fontSize:'1.3rem'}} />:<VisibilityOffOutlinedIcon style={{fontSize:"1.3rem"}}/>}</span>
               {
                 errors.password && <span className='text-red-400 mt-1 text-sm'>{errors.password}</span>
               }
@@ -221,14 +227,22 @@ const Add = () => {
                 fullWidth
                 onClick={handleSubmit}
                 sx={{
-                  backgroundColor: 'gray',
+                  backgroundColor: '#315370',
                   color: 'white',
                   '&:hover': {
-                    backgroundColor: '#315370',
+                    backgroundColor: 'gray',
                   },
                 }}
-              >
-                + Add Manager
+              >  
+                {
+                    loading ?
+                       <svg className="w-5 h-5 mr-2 text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l5.6-3.2a10 10 0 00-10.4 0L4 12z"></path>
+                       </svg>
+                       :<span>+ Add Manager</span>
+                }
+                
               </Button>
             </DialogActions>
           </Box>

@@ -166,6 +166,17 @@ export const fetchRequestedRecruiterIds = async (job_id) => {
     }
 }
 
+//For getting account manager name and email by recruiter agency id
+export const fetchAcmanagerNameEmail = async (r_agency_id) => {
+    try {
+        const response = await axios.get(`${process.env.REACT_APP_API_APP_URL}/recruiting/getacmanager/${r_agency_id}`)
+        return response.data
+    } catch(error) {
+        console.log("Error while fetching account manager name and email using recruiteragency id")
+        throw error
+    }
+}
+
 //get the job basic details to show futher details in enterprise table
 export const fetchJobBasicDetailsByEnId = async (enterprise_id) => {
     try {
@@ -329,6 +340,17 @@ export const fetchPendingJobsByACManagerId = async (ac_manager_id) => {
     }
 }
 
+//For getting orgjob id by job_id
+export const getOrgJobId = async (job_id) =>{
+     try{
+       const response = await axios.get(`${process.env.REACT_APP_API_APP_URL}/job/getorgjobid/${job_id}`)
+       return response.data
+     } catch(error) {
+        console.log("Error while fetching org job id by job_id",error)
+        throw error
+     }
+}
+
 export const fetchVerifiedCandidatesByACManagerId = async (ac_manager_id) => {
     try {
         const response = await axios.get(`${admin_be_uri}/accountmanager/getverifiedcandidates/${ac_manager_id}`);
@@ -467,6 +489,17 @@ export const fetchRecruiterMemberDetails = async (re_member_id) => {
     } catch (error) {
         console.error("Error while fetching the recruiter member details: ", error)
         throw error
+    }
+}
+
+//Get recruiter agency name by recruiter_agency_id
+export const fetchRecruiterAgencyName = async (re_agency_id) => {
+    try{
+        const response = await axios.get(`${process.env.REACT_APP_API_APP_URL}/recruiting/getagencyname/${re_agency_id}`)
+        return response.data
+    } catch(error) { 
+         console.log("Error while fetching recruiter agency admin name by re_agency_id",error)
+         throw error
     }
 }
 
