@@ -17,8 +17,7 @@ export const createAndParseResume=async (req,res,next)=>{
         if(fileType==="application/pdf"){
          const dataBuffer=fs.readFileSync(filepath)
          pdfparse(dataBuffer).then(function(data) {
-            const text = data.text;
-            parseResumeText(filepath,text, res);
+            parseResumeText(filepath,data, res);
         });
         }else if(fileType==="application/vnd.openxmlformats-officedocument.wordprocessingml.document"){
          const docxBuffer=fs.readFileSync(filepath)
@@ -53,14 +52,21 @@ const cleanMobileNumber=(mobilenum)=>{
      else return ""
 }
 
-const parseResumeText=async (filepath,text,res)=>{
+const parseResumeText=async (filepath,data,res)=>{
+   const text = data.pageData ? data.pageData.join(" ") : data.text;
    const firstNameLastNameRegex = /([A-Z][a-z]+)\s([A-Z][a-z]+)/;
    const educationRegex = /(Bachelor|Master|PhD|B\.Sc|M\.Sc|Diploma|Degree)/i;
+
 
    const nameMatch=text.match(firstNameLastNameRegex)
    const mobileMatch=text.match(phoneRegax())
    const emailMatch=text.match(emailRegax())
    const educationMatch=text.match(educationRegex)
+
+   console.log('name',nameMatch)
+   console.log('mobile',mobileMatch)
+   console.log('email',emailMatch)
+   console.log('education',educationMatch)
 
    res.status(200).json({
       firstName: nameMatch ? nameMatch[1] : null,
