@@ -46,8 +46,8 @@ const corsOptions = {
             "https://admin-ui-l3vq.onrender.com",
             "https://admin-backend-1vl2.onrender.com",
             //Cors Origin for hostinger
-            "https://app.vms.uphire.in",
-            "https://admin.vms.uphire.in",
+            "https://app.uphire.in",
+            "https://admin.uphire.in",
             "https://api.app.vms.uphire.in",
             "https://api.admin.vms.uphire.in"
         ];
