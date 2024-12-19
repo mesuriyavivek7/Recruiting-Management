@@ -1,5 +1,5 @@
 import express from 'express'
-import { addJobIntoAcceptList, addJobIntoFavoutiteList, addJobIntoMappedList, addVerifiedCandidate, changeAccountStatus, changeCommissionFlag, changeEmailAddress, changePassword, checkCreadentials, checkEmailAddress, checkForRequestJob, checkIsAdmin, checkMobileNo, checkPassword, createteammember, getDashBoardCount, getEnterpriseTeamMember, getFavouriteJobIds, getRecruiterCandidateDetails, getRecruiterMemberById, getRecruiterMemberByRAgencyId, getRecruiterProfilePageDetails, getRecuritingTeamDetails, getSubmitedCandidates, isFavouriteJob, isVerifiedMail, rejectJob, removeJobFromFavouriteList, removeJobFromMappedList, requestMapJob, unmapJob, updateJobMappedList, updateRecruiterTeamDetails } from '../controller/recrutingTeamController.js'
+import { addJobIntoAcceptedList, addJobIntoAcceptList, addJobIntoFavoutiteList, addJobIntoMappedList, addVerifiedCandidate, changeAccountStatus, changeCommissionFlag, changeEmailAddress, changePassword, checkCreadentials, checkEmailAddress, checkForRequestJob, checkIsAdmin, checkMobileNo, checkPassword, createteammember, getDashBoardCount, getEnterpriseTeamMember, getFavouriteJobIds, getRecruiterCandidateDetails, getRecruiterMemberById, getRecruiterMemberByRAgencyId, getRecruiterProfilePageDetails, getRecuritingTeamDetails, getSubmitedCandidates, isFavouriteJob, isVerifiedMail, rejectJob, removeJobFromFavouriteList, removeJobFromMappedList, requestMapJob, unmapJob, updateJobMappedList, updateRecruiterTeamDetails } from '../controller/recrutingTeamController.js'
 
 
 
@@ -103,4 +103,7 @@ router.put('/addjobmappedlist/:rememberid/:orgjobid',addJobIntoMappedList)
 
 //For remove job id from recruiter member mapped list
 router.put('/removejobmappedlist/:rememberid/:orgjobid',removeJobFromMappedList)
+
+//Adding job into accepted list (remove from request list)
+router.put('/addintoacceptedlist',addJobIntoAcceptedList)
 export default router

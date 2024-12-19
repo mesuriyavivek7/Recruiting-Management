@@ -1180,3 +1180,26 @@ export const removeRememberFromMappedList = async (req, res, next) =>{
       next(err)
     }
 }
+
+export const getOrgJobId = async (req, res, next) =>{
+   try{
+     const orgjobid = await JOBS.findOne({job_id:req.params.job_id})
+     if(!orgjobid) return res.status(404).json("Job not found")
+     
+     res.status(200).json(orgjobid._id)
+   }catch(err){ 
+     next(err)
+   }
+}
+
+
+export const addRememberIntoAcceptedList = async (req, res , next) =>{
+    try{
+      const {orgjobid,rememberid} = req.body
+      await JOBS.findByIdAndUpdate(orgjobid,{$pull:{job_request:rememberid},$push:{accepted_recruiting_agency:rememberid}})
+
+      res.status(200).json("added remember into accepted list")
+    }catch(err){
+       next(err)
+    }
+}

@@ -3,8 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import {
-  Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, TextField,
-  TablePagination,
+  Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, TextField
 } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import Notification from '../../../Components/Notification';
@@ -25,18 +24,6 @@ const NewEnterpriseData = () => {
   const [selectInactive, setSelectInactive] = useState(null);
   const [selectedRow, setSelectedRow] = useState(null);
 
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
-
-  // Pagination handlers
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0); // Reset page to 0 when rows per page changes
-  };
 
   const showNotification = (message, type) => {
     setNotification({ message, type });
@@ -134,7 +121,6 @@ const NewEnterpriseData = () => {
     fetchEnterprise();
   }, []);
 
-  const paginatedRows = newEnterprise.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
 
   return (
@@ -145,14 +131,18 @@ const NewEnterpriseData = () => {
           <div style={{ height: 600, width: '100%', paddingTop: '19px' }}>
           <DataGrid
            getRowId={(rows) => rows._id} // Specify the custom ID field
-           rows={newEnterprise.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)}
+           rows={newEnterprise}
            columns={columns(handleInactivateButton)} // Pass the function to columns
            rowHeight={80}
            onRowClick={(params) => handleRowClick(params.row)}
-           pagination={false}
-           pageSize={rowsPerPage}
+           pageSize={8}
            loading={loader}
-           hideFooterPagination={true}
+           pageSizeOptions={[5, 10]}
+            initialState={{
+                  pagination: {
+                    paginationModel: { page: 0, pageSize: 10 },
+                  },
+            }}
            sx={{
              '& .MuiDataGrid-root': {
                fontSize: { xs: '0.75rem', sm: '0.875rem', md: '0.7rem', lg: '1.09rem' },
@@ -360,16 +350,7 @@ const NewEnterpriseData = () => {
           }
         </Dialog>
       )}
-      <TablePagination
-        component="div"
-        count={paginatedRows.length} // Total number of rows
-        page={page} // Current page number
-        onPageChange={handleChangePage} // Handler for changing page
-        rowsPerPage={rowsPerPage} // Rows per page number
-        onRowsPerPageChange={handleChangeRowsPerPage} // Handler for changing rows per page
-        rowsPerPageOptions={[5, 10, 25]} // Rows per page options
-        labelRowsPerPage="Rows per page" // Label
-      />
+
     </>
   );
 };

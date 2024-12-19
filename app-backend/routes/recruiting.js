@@ -3,7 +3,7 @@ import multer from "multer"
 import path from 'path'
 
 
-import { acVerified, allocatedAcManager, changeAccountStatus, checkAndRemoveCoiFile, checkIsVerifiedRecruiter, checkKycDetails, exportMemberData, getAcmanager, getAgencyDetailsForProfilePage, getAllPendingAcmanagerRecruiting, getAllPendingMadminVerifyRAgency, getRecruitingAgencies, getRecruitingAgencyById, getTeamMember, kycDetailsSubmission, kycDocsSubmission, updateAgencyDetails, uploadCoiCertificate } from "../controller/recruitingController.js";
+import { acVerified, allocatedAcManager, changeAccountStatus, checkAndRemoveCoiFile, checkIsVerifiedRecruiter, checkKycDetails, exportMemberData, getAcmanager, getAcmanagerNameEmail, getAgencyDetailsForProfilePage, getAllPendingAcmanagerRecruiting, getAllPendingMadminVerifyRAgency, getReAgancyName, getRecruitingAgencies, getRecruitingAgencyById, getTeamMember, kycDetailsSubmission, kycDocsSubmission, updateAgencyDetails, uploadCoiCertificate } from "../controller/recruitingController.js";
 
 
 const router=express.Router()
@@ -87,4 +87,14 @@ router.get('/isverified/:ragencyid',checkIsVerifiedRecruiter)
 
 //For export recruiter member data
 router.get('/export-member-data/:ragencyid',exportMemberData)
+
+//For getting account manager name and email using re_agency_id
+router.get('/getacmanager/:ragencyid',getAcmanagerNameEmail)
+
+//For getting recruiter agency admin name using re_agency_id
+router.get('/getagencyname/:reagencyid',getReAgancyName)
+
+
+
+
 export default router
