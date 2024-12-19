@@ -152,7 +152,7 @@ export default function ResumeUpload1({jobObj,parentFormData,candidateId,parentF
 
   const checkCreadential=async ()=>{
     try{
-        const res=await axios.post(`${process.env.REACT_APP_API_BASE_URL}/candidate/checkmobileandemail`,{email:formData.primaryEmailId,mobileno:formData.primaryContactNumber})
+        const res=await axios.post(`${process.env.REACT_APP_API_BASE_URL}/candidate/checkmobileandemail`,{email:formData.primaryEmailId,mobileno:formData.primaryContactNumber,jobid:jobObj.job_id})
         if(res.data) showNotification("Email address or Mobile number is already exist.","failure")
         else handleNext()
     }catch(err){
