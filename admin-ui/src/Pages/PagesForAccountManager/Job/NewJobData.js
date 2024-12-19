@@ -254,7 +254,7 @@ const viewJobAttachments=async (jobid,fileName,fileType)=>{
       }
       console.log(orgfilename)
      if(orgfilename){
-       const fileUrl=`${process.env.REACT_APP_API_BASE_URL}/job/viewjobattachments/${jobid}/${orgfilename}`
+       const fileUrl=`${process.env.REACT_APP_API_APP_URL}/job/viewjobattachments/${jobid}/${orgfilename}`
        window.open(fileUrl,'_blank')
      }else{
        showNotification("Unsupported file type.",'failure')
