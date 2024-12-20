@@ -24,7 +24,7 @@ export default function UploadResume() {
     form2:{}
   })
 
-  console.log('location---->',location.state)
+  console.log(formData)
   
 
   const createCandidateId=()=>{
@@ -61,9 +61,6 @@ export default function UploadResume() {
         [formName]:data
     }))
   }
-
-  console.log("Candidate id---->",candidateId)
-  console.log("parent form data----->",formData)
 
   const handleSubmit=async ()=>{
     try{
@@ -107,17 +104,20 @@ export default function UploadResume() {
       //step-5 storing candidate answer into db
       if(Object.keys(formData.form2).length>0) await axios.post(`${process.env.REACT_APP_API_BASE_URL}/candidate/createsqanswer/${res.data._id}`,formData.form2)
 
-      //step-6 make resumeparse and resumedocs as completed
-      await axios.put(`${process.env.REACT_APP_API_BASE_URL}/candidate/markascompleted/${candidateId}`)
-
-      //step-7 get alloted account manager id
         
-      //step-8 add candidate profile into account manager pending list
+      //step-6 add candidate profile into account manager pending list
       await axios.post(`${process.env.REACT_APP_API_ADMIN_URL}/accountmanager/addpendingcandidate/${acmanager.data}`,{orgcid:res.data._id})
 
-      //step-9 add accountmanager id into candidate profile
+      //step-7 add accountmanager id into candidate profile
       await axios.post(`${process.env.REACT_APP_API_BASE_URL}/candidate/addacmanager/${res.data._id}`,{acmanagerid:acmanager.data})
-
+ 
+      //step-8 make resumeparse and resumedocs as completed
+      await axios.put(`${process.env.REACT_APP_API_BASE_URL}/candidate/markascompleted/${candidateId}`
+      ,{first_name:formData.form1.basicDetails.first_name,
+        last_name:formData.form1.basicDetails.last_name,
+        contactno:formData.form1.basicDetails.primary_contact_number,
+        emailid:formData.form1.basicDetails.primary_email_id})
+      
        return true
      }else{
        return false

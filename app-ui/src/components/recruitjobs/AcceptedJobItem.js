@@ -36,7 +36,7 @@ export default function AcceptedJobItem({jobObj,showNotification,handleOpenPrevi
 
   const workType=jobObj.work_type
   const currency=jobObj.work_type==="full_time"?(jobObj.full_time_salary_currency):(jobObj.contract_pay_currency)
-
+  
   //Creating country mapping
   const country=new Map([
     ['India',INDIAFLAG],

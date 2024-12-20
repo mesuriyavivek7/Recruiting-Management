@@ -198,5 +198,6 @@ router.get('/getconsentproof/:candidate_id', getCandidateConsentProofs)
 //for getting screening question ans answers by candidate id
 router.get('/getsqanswers/:candidate_id', getScreeingQuesionsAnswers);
 
+
 export default router
 
