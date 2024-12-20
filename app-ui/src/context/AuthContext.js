@@ -57,7 +57,6 @@ export const AuthContextProvider=({children})=>{
          const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/auth/validate`, {
           withCredentials: true, // Include cookies in the request
          });
-        console.log("data---->",res.data)
         dispatch({ type: "USER_FETCH_SUCCESS", payload: res.data });
       } catch (error) {
         console.log("Error while fetching data",error)

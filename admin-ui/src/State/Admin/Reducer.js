@@ -5,6 +5,7 @@ const initialState = {
 };
 
 const AdminReducer = (state = initialState, action) => {
+  console.log(action)
   switch (action.type) {
     case "USER_FETCH_START":
       return{

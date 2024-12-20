@@ -27,6 +27,6 @@ const resumeparseSchema=new mongoose.Schema({
     emailid:String,
     educationdetails:String,
     pancardnumber:String
-})
+},{timestamps:true})
 
 export default mongoose.model("resumeparse",resumeparseSchema)

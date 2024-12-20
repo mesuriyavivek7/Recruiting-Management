@@ -320,9 +320,10 @@ export const getFavouriteJobIds=async (req,res,next)=>{
 export const unmapJob=async (req,res,next)=>{
      try{
          const {orgjobid,rememberid}=req.body
-         //pull and push work done
-         await RECRUITINGTEAM.findByIdAndUpdate(rememberid,{$pull:{accepted_jobs:orgjobid},$push:{mapped_jobs:orgjobid}})
+         //pull and push do in recruiterteam side
+         await RECRUITINGTEAM.findByIdAndUpdate(rememberid,{$pull:{accepted_jobs:orgjobid,favourite_jobs:orgjobid},$push:{mapped_jobs:orgjobid}})
 
+         //pull and push do in job side
          await axios.post(`${process.env.APP_SERVER_URL}/job/unmapjob`,{orgjobid,rememberid})
 
          res.status(200).json("Job unmaped from the both collection")

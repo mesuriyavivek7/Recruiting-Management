@@ -63,11 +63,6 @@ const parseResumeText=async (filepath,data,res)=>{
    const emailMatch=text.match(emailRegax())
    const educationMatch=text.match(educationRegex)
 
-   console.log('name',nameMatch)
-   console.log('mobile',mobileMatch)
-   console.log('email',emailMatch)
-   console.log('education',educationMatch)
-
    res.status(200).json({
       firstName: nameMatch ? nameMatch[1] : null,
       lastName: nameMatch ? nameMatch[2] : null,
@@ -80,9 +75,11 @@ const parseResumeText=async (filepath,data,res)=>{
 
 
 export const checkParseDetails=async (req,res,next)=>{
+   const thirtyDaysAgo = new Date()
+   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
    try{
       const {job_id,filepath,firstname,lastname,contactno,emailid,educationdetails,pancardnumber}=req.body
-      const check=await RESUMEPARSE.find({$and:[{job_id:job_id},{completed:true},{$or:[{emailid},{contactno},{pancardnumber}]}]})
+      const check=await RESUMEPARSE.find({$and:[{job_id:job_id},{completed:true},{$or:[{emailid},{contactno},{pancardnumber}]},{createdAt:{$gte:thirtyDaysAgo}}]})
       if(check.length!==0){
          fs.unlinkSync(filepath)
          res.status(200).json(false)
@@ -166,9 +163,10 @@ export const cancelProcess=async (req,res,next)=>{
 
 
 export const marksAsCompleted=async (req,res,next)=>{
+    const {first_name,last_name,emailid,contactno} = req.body
     try{
       await RESUMEDOCS.findOneAndUpdate({candidate_id:req.params.cid},{$set:{completed:true}})
-      await RESUMEPARSE.findOneAndUpdate({candidate_id:req.params.cid},{$set:{completed:true}})
+      await RESUMEPARSE.findOneAndUpdate({candidate_id:req.params.cid},{$set:{completed:true,firstname:first_name,lastname:last_name,emailid,contactno}})
       res.status(200).json("Updated resume docs and parse")
     }catch(err){
       next(err)
@@ -207,4 +205,6 @@ export const getResumeFilePath=async (req,res,next)=>{
           next(err)
       }
 }
+
+
 
