@@ -5,7 +5,7 @@ import multer from 'multer'
 import { fileURLToPath } from 'url';
 
 
-import { activateJob, getAllJobs, addCandidateProfileList, allotedJobToAcManager, createJobs, deleteJobDraftWithOtherDetails, downloadEvaluationForm, getAllJobDetails, getAllJobDraftDetails, getCandidateScreeningQue, getFrontAcceptedJobDetails, getFrontMappedJobDetails, getJobAttachmentsDetailsForCandidate, getJobBasicDetailsForPreview, getJobCompanyDetailsForPreview, getJobSourcingGuidelinesForPreview, getJobStatusForPreview, getJobCommissionDetailsForPreview, createJobUpdates, getJobUpdates, getJobAttachmentsDetailsForPreview, getAcManagerNameAndMail, viewJobAttachments, downloadJobAttachments, getJobAttachmentFileType, getJobHotMark, changeJobHotMark, getJobCandidatesForPreview, getLiveJobs, getFrontFavouriteJobs, unMapJob, addJobMapRequest, SearchJobByTitle, getJobScreeningQuestionsForPreview, SearchPastJobByTitleAndEnMemberId, getActiveJobCountForEnMember, getPendingJobCountForEnMember, searchJobRecruiter, searchJobEnterprise, getPostedCandidatesByJobId, getAllotedAcManagerId, getMainJobDetails, addCandidateIntoEnMemberReceivedList, getMappedRecruiterMemberIds, getRequestedRecruiterIds, getAcceptedRecruiterIds, addRecruiterMemberIntoMappedList, convertFromRequestedToMapped, removeRememberFromMappedList, getOrgJobId, addRememberIntoAcceptedList } from '../controller/jobController.js';
+import { activateJob, getAllJobs, addCandidateProfileList, allotedJobToAcManager, createJobs, deleteJobDraftWithOtherDetails, downloadEvaluationForm, getAllJobDetails, getAllJobDraftDetails, getCandidateScreeningQue, getFrontAcceptedJobDetails, getFrontMappedJobDetails, getJobAttachmentsDetailsForCandidate, getJobBasicDetailsForPreview, getJobCompanyDetailsForPreview, getJobSourcingGuidelinesForPreview, getJobStatusForPreview, getJobCommissionDetailsForPreview, createJobUpdates, getJobUpdates, getJobAttachmentsDetailsForPreview, getAcManagerNameAndMail, viewJobAttachments, downloadJobAttachments, getJobAttachmentFileType, getJobHotMark, changeJobHotMark, getJobCandidatesForPreview, getLiveJobs, getFrontFavouriteJobs, unMapJob, addJobMapRequest, SearchJobByTitle, getJobScreeningQuestionsForPreview, SearchPastJobByTitleAndEnMemberId, getActiveJobCountForEnMember, getPendingJobCountForEnMember, searchJobRecruiter, searchJobEnterprise, getPostedCandidatesByJobId, getAllotedAcManagerId, getMainJobDetails, addCandidateIntoEnMemberReceivedList, getMappedRecruiterMemberIds, getRequestedRecruiterIds, getAcceptedRecruiterIds, addRecruiterMemberIntoMappedList, convertFromRequestedToMapped, removeRememberFromMappedList, getOrgJobId, addRememberIntoAcceptedList, getJdContent } from '../controller/jobController.js';
 import { craeteJobBasicDeatils, showJobDetail, getJobBasicDetails, getJobDetailsByEnId, getJobDetailsById } from '../controller/jobBasicController.js'
 import { createJobDraft, deleteJobDraft } from '../controller/jobDraftController.js'
 import { createJobCommission, showJobCommission, getJobCommissionDetails } from '../controller/jobCommissionController.js'
@@ -38,6 +38,16 @@ const storage = multer.diskStorage({
     }
 })
 
+//Creating disk storage for upload jd
+const jdStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+       cb(null,'uploads/jd/')
+    },
+    filename:(req,file,cb)=> {
+      cb(null, Date.now() + path.extname(file.originalname))
+    }
+})
+
 //middleware function to handle file replacement
 const fileFilter = (req, file, cb) => {
     const uplodDir = `uploads/jobdocs/${req.params.jobid}`
@@ -58,6 +68,8 @@ const fileFilter = (req, file, cb) => {
 }
 
 const upload = multer({ storage, fileFilter })
+
+const jdUpload = multer({ storage:jdStorage})
 
 //for creating job
 router.post('/', createJobs)
@@ -99,6 +111,9 @@ router.post('/updateuploadjobdocs/:jobid', upload.fields([
     { name: 'audio_brief', maxCount: 1 },
     { name: 'other_docs', maxCount: 1 }
 ]), updateJobAttachmentsDetails)
+
+//for uploading jd and get jd content
+router.post('/getjdcontent', jdUpload.single('file'),getJdContent)
 
 //for check given file is present in upload folder
 router.post('/checkjobattachfile', checkAndRemoveFile)
@@ -288,5 +303,8 @@ router.get('/getorgjobid/:job_id',getOrgJobId)
 
 //For adding recruiter memeber id into accepted list using admin 
 router.put('/addrememberacceptedlist',addRememberIntoAcceptedList)
+
+
+
 
 export default router

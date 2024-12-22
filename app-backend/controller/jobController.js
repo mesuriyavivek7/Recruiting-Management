@@ -11,6 +11,8 @@ import { filterOutLiveJobs } from "../helper/filterJobs.js";
 import path from 'path'
 import { fileURLToPath } from 'url';
 import fs from 'fs'
+import pdfparse from 'pdf-parse'
+import mammoth from 'mammoth'
 
 import axios from 'axios'
 
@@ -1202,4 +1204,35 @@ export const addRememberIntoAcceptedList = async (req, res , next) =>{
     }catch(err){
        next(err)
     }
+}
+
+export const getJdContent = async (req, res, next) =>{
+  try{
+     const file = req.file
+     let content = ''
+
+     if(file.mimetype === 'application/pdf'){
+       const pdfBuffer = fs.readFileSync(file.path)
+       const pdfDoc = await pdfparse(pdfBuffer)
+       const text = pdfDoc.pageData ? pdfDoc.pageData.join(" ") : data.text;
+
+       content = text
+
+     }else if(file.mimetype === 'application/msword' ||
+     file.mimetype ===
+       'application/vnd.openxmlformats-officedocument.wordprocessingml.document'){
+        const dataBuffer = fs.readFileSync(file.path)
+        const result = await mammoth.extractRawText({buffer:dataBuffer})
+        content = result.value
+    }else{
+      fs.unlinkSync(file.path)
+      return res.status(400).json("Unsupported file type")
+    }
+
+    fs.unlinkSync(file.path)
+
+    res.status(200).json(content)
+  }catch(err){
+     next(err)
+  }
 }

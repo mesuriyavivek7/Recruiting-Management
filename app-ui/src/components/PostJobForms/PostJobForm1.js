@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import Multiselect from 'multiselect-react-dropdown';
 import { AuthContext } from "../../context/AuthContext";
 import Notification from "../Notification";
-
+import axios from 'axios'
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
@@ -79,7 +79,46 @@ const PostJobForm1 = ({ onNext, onFormDataChange,jobId,handleDraftSave,parentFor
   const [selectedCountry, setSelectedCountry] = useState("");
   const [selectedState, setSelectedState] = useState("")
 
-  
+  //For uploading jd file
+  const [file,setFile] = useState(null)
+  const [content,setContent] = useState('')
+  const [jdLoad,setJdLoad] = useState(false)
+ 
+  const fileTypes = ["application/pdf","application/msword","application/vnd.openxmlformats-officedocument.wordprocessingml.document"]
+
+  const handleFileChange = (e) =>{
+    console.log('File changed call')
+    const selectedFile = e.target.files[0]
+    if(selectedFile && fileTypes.includes(selectedFile.type) && selectedFile.size<=10*1024*1024){
+      setFile(selectedFile)
+    }else{
+       showNotification("Please select valid filetype under 10mb.",'failure')
+    }
+  }
+
+
+  useEffect(()=>{
+    
+    const getJDText = async ()=>{
+     if(file){
+       setJdLoad(true)
+       const fileData = new FormData()
+       fileData.append('file',file)
+       try{
+         const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/job/getjdcontent`,fileData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        })
+        setFormData((prevData)=>({...prevData,jobDescription:response.data}))
+       }catch(err){
+         showNotification("Something went wrong while parse your document.",'failure')
+         console.log(err)
+       }finally{
+         setJdLoad(false)
+       }
+      }
+    }
+    getJDText()
+  },[file])
 
  
   useEffect(() => {
@@ -320,7 +359,7 @@ const PostJobForm1 = ({ onNext, onFormDataChange,jobId,handleDraftSave,parentFor
               Provide a Job Title and Job Description.
             </p>
           </div>
-          <form className="custom-div pb-16 flex-col gap-6 w-8/12 p-6">
+          <form className="custom-div pb-8 flex-col gap-6 w-8/12 p-6">
             <div className="w-full relative flex flex-col gap-2">
               <label htmlFor="jobTitle" className="input-label">
                 Job Title
@@ -342,14 +381,17 @@ const PostJobForm1 = ({ onNext, onFormDataChange,jobId,handleDraftSave,parentFor
               </label>
               {errors.jobDescription && <p className="text-red-600 text-xs">{errors.jobDescription}</p>}
                <ReactQuill 
-                style={{height:'200px'}}
+                style={{height:'200px',marginBottom:"2rem"}}
                 value={formData.jobDescription}
                 onChange={newContent=>handleDescription(newContent)}
                 modules={modules}
                 formats={formats}
                 theme="snow"
                 />
-              
+              <div className="mt-6 w-full">
+                 <label className="bg-orange-400 text-center text-white py-1.5 px-4 rounded-md cursor-pointer" htmlFor="jd">{(formData.jobDescription && file) ? "Change JD" : "Upload JD" }</label>
+                 <input onChange={handleFileChange} type="file" id="jd" className="hidden"></input>
+              </div>
             </div>
           </form>
         </div>
