@@ -242,7 +242,7 @@ export const getFrontMappedJobDetails = async (req, res, next) => {
               positions: basicdetails.positions,
               experience: basicdetails.experience,
               domain: basicdetails.job_domain,
-              cp_name: company.client_name,
+              cp_name: company.client_visibility==='Visible'?company.client_name:null,
               ac_manager: acmanageremail,
               work_type: commision.work_type,
               isHotJob: jobObj.mark_hot_job,
@@ -376,7 +376,7 @@ export const getFrontAcceptedJobDetails = async (req, res, next) => {
               positions: basicdetails.positions,
               experience: basicdetails.experience,
               domain: basicdetails.job_domain,
-              cp_name: company.client_name,
+              cp_name: company.client_visibility==="Visible"?company.client_name:null,
               ac_manager: acmanageremail,
               work_type: commision.work_type,
               // additional logic based on work_type (full_time or contract)
@@ -1232,6 +1232,30 @@ export const getJdContent = async (req, res, next) =>{
     fs.unlinkSync(file.path)
 
     res.status(200).json(content)
+  }catch(err){
+     next(err)
+  }
+}
+
+
+export const getJobStatus = async (req, res, next)=>{
+   try{
+     const jobStatus = await JOBS.findOne({job_id:req.params.job_id})
+
+     if(!jobStatus) return res.status(400).json("Job Status is not found")
+
+     res.status(200).json(jobStatus.job_status)
+   }catch(err){
+     next(err)
+   }
+}
+
+
+export const changeJobStatus = async (req, res, next)=>{
+  try{
+     const {job_id,job_status} = req.params
+     await JOBS.findOneAndUpdate({job_id},{$set:{job_status}})
+     res.status(200).json("Job Updated successfully")
   }catch(err){
      next(err)
   }
