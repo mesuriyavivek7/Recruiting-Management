@@ -246,7 +246,7 @@ export default function EnterpriseTeam() {
             <div
               className={`w-12 h-6 mt-7 flex items-center rounded-full p-1 cursor-pointer ${(params.row.account_status === "Active") ? 'bg-blue-500' : 'bg-gray-300'
                 }`}
-              onClick={() => handleChangeAccountStatus(params.row.id, (params.row.account_status === "Active") ? ("InActive") : ("Active"))}
+              onClick={() => handleChangeAccountStatus(params.row.id, (params.row.account_status === "Active") ? ("Inactive") : ("Active"))}
             >
               <div
                 className={`bg-white w-4 h-4 rounded-full shadow-md transform duration-300 ease-in-out ${(params.row.account_status === "Active") ? 'translate-x-6' : 'translate-x-0'

@@ -149,7 +149,7 @@ export default function AcceptedJobItem({jobObj,showNotification,handleOpenPrevi
                         <img className='w-6 h-6 rounded-md' src={getCountryFlag(jobObj)}></img>
                         <span className='text-gray-500 text-[15px] font-semibold'>{jobObj.job_id} - {jobObj.job_title}</span>
                     </div>
-                    <span className='text-light w-52 leading-5 text-[12px] text-gray-400'>CP - {jobObj.cp_name}</span>
+                    <span className='text-light w-52 leading-5 text-[12px] text-gray-400'>{jobObj.cp_name && `CP - ${jobObj.cp_name}`}</span>
                     {
                       jobObj.isRemoteWork &&
                       <span className='text-sm'>Permenant Remote Work</span>

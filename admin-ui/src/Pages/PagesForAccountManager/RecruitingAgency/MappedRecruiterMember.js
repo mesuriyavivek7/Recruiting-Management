@@ -5,13 +5,12 @@ import { fetchMappedRecruiterMemberIds,fetchRecuritingAgencybyId, fetchAcceptedR
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { Button, IconButton, InputAdornment, TextField } from '@mui/material';
 import { FaSearch } from 'react-icons/fa';
-import Notification from '../../../Components/Notification';
 import { mappedColumns } from './RowColMappedReMember';
 import { store } from '../../../State/Store';
 import axios from 'axios'
 import WhiteLoader from '../../../assets/whiteloader.svg'
 
-export default function MappedRecruiterMember({jobId,handleMappedRecruiterCount,handleRequestedRecruiterCount}) {
+export default function MappedRecruiterMember({jobId,jobStatus,handleMappedRecruiterCount,handleRequestedRecruiterCount,showNotification}) {
  const selectUserData = (state) => state?.admin?.userData;
  const userData = selectUserData(store?.getState());
 
@@ -21,7 +20,6 @@ export default function MappedRecruiterMember({jobId,handleMappedRecruiterCount,
  const [searchTerm, setSearchTerm] = useState('');
  const [filterStatus, setFilterStatus] = useState('All');
 
- const [notification, setNotification] = React.useState(null);
 
  const [verifiedLoading,setVerifiedLoading] = useState(false)
  const [addMemberLoading,setAddMemberLoading]=useState(false)
@@ -125,6 +123,14 @@ export default function MappedRecruiterMember({jobId,handleMappedRecruiterCount,
      }
  }
 
+ const handleOpenAddPopUp = () =>{
+    if(jobStatus==="Active"){
+      setOpenAddPopUp(true)
+    }else{
+      showNotification("This job is not accepting more Recruiter Member.",'warning')
+    }
+ }
+
  const handleAddMemberData= async () =>{
     setAddMemberLoading(true)
     try{
@@ -166,12 +172,6 @@ export default function MappedRecruiterMember({jobId,handleMappedRecruiterCount,
      fetchVerifiedRecruiter()
  },[searchTerm,filterStatus])
 
-    
- const showNotification = (message, type) => {
-      setNotification({ message, type });
- };
-
-
   const calculateRowHeight = (params) => {
         const contentHeight = params.row ? params.row.content.length / 10 : 50;
         return Math.max(80, contentHeight);
@@ -179,7 +179,7 @@ export default function MappedRecruiterMember({jobId,handleMappedRecruiterCount,
 
   return (
     <>
-    {notification && <Notification message={notification.message} type={notification.type} onClose={() => setNotification(null)} />}
+    
     {
       removeMemberLoading && 
       <div className='fixed inset-0 flex justify-center bg-black z-50 bg-opacity-50 backdrop-blur-md items-center'>
@@ -268,7 +268,7 @@ export default function MappedRecruiterMember({jobId,handleMappedRecruiterCount,
     />
 
     <div className='flex flex-col items-end gap-2'>
-     <button onClick={()=>setOpenAddPopUp(true)} className='bg-blue-230 w-44 p-2 rounded-md text-white'>+  Add Recruiter</button>
+     <button onClick={()=>handleOpenAddPopUp()} className='bg-blue-230 w-44 p-2 rounded-md text-white'>+  Add Recruiter</button>
 
     {/* Filter Buttons */}
     <Box display="flex" gap={0}>

@@ -364,10 +364,13 @@ const handleClosePreviewBox=()=>{
                              }
                           </div>
                           <div className='flex flex-col gap-2'>
-                             <div className='flex items-center gap-2'>
-                               <span className='text-sm w-32'>Client Name</span>
-                               <span className='text-[14px] w-32 font-semibold'>{clientDescription && clientDescription.client_name}</span>
+                             {
+                               clientDescription.client_name && 
+                               <div className='flex items-center gap-2'>
+                                 <span className='text-sm w-32'>Client Name</span>
+                                 <span className='text-[14px] w-32 font-semibold'>{clientDescription && clientDescription.client_name}</span>
                              </div>
+                             }
                              {
                               jobCommissionDetails.work_type==="contract" && 
                               <div className='flex items-center gap-2'>

@@ -213,7 +213,7 @@ export default function MappedJobsItem({jobObj,handleOpenPreviewBox,fetchAccepte
                     <img className='w-6 h-6 rounded-md' src={getCountryFlag(jobObj)}></img>
                     <span className='text-gray-500 text-[16px] font-semibold'>{jobObj.job_id} - {jobObj.job_title}</span>
                 </div>
-                <span className='text-light w-52 leading-5 text-[13px] text-gray-400'>CP - {jobObj.cp_name}</span>
+                <span className='text-light w-52 leading-5 text-[13px] text-gray-400'>{jobObj.cp_name && `CP - ${jobObj.cp_name}`}</span>
                 {
                   jobObj.isRemoteWork && <span className='text-sm'>Permenant Remote Work</span>
                 }
