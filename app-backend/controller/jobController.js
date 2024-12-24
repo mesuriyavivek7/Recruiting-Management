@@ -199,9 +199,9 @@ export const getFrontMappedJobDetails = async (req, res, next) => {
       joblist.mapped_jobs.map(async (item) => {
         try {
           // get job id and allotted account manager id for the original job id
-          const jobObj = await JOBS.findById(item, { job_id: 1, alloted_account_manager: 1, mark_hot_job: 1, _id: 1 });
+          const jobObj = await JOBS.findOne({_id:item , job_status:'Active'}, { job_id: 1, alloted_account_manager: 1, mark_hot_job: 1, _id: 1 });
           if (!jobObj) {
-            throw new Error("Job not found");
+            return null
           }
 
           const basicdetails = await JOBBASICDETAILS.findOne({ job_id: jobObj.job_id });
@@ -325,9 +325,9 @@ export const getFrontAcceptedJobDetails = async (req, res, next) => {
       joblist.accepted_jobs.map(async (item) => {
         try {
           // get job id and allotted account manager id for the original job id
-          const jobObj = await JOBS.findById(item, { job_id: 1, job_updates: 1, alloted_account_manager: 1, _id: 1 });
+          const jobObj = await JOBS.findOne({_id:item,job_status:'Active'}, { job_id: 1, job_updates: 1, alloted_account_manager: 1, _id: 1 });
           if (!jobObj) {
-            throw new Error("Job not found");
+            return null
           }
 
           const basicdetails = await JOBBASICDETAILS.findOne({ job_id: jobObj.job_id });
@@ -371,6 +371,7 @@ export const getFrontAcceptedJobDetails = async (req, res, next) => {
               isRemoteWork: basicdetails.permanent_remote_work,
               isHotJob: jobObj.mark_hot_job,
               resumeSubmitCount: resumeSubmitCount.data,
+              resume_required:jobObj.resume_required,
               jobUpdates: jobObj.job_updates,
               isFavouriteJob: isFavouriteJob.data,
               positions: basicdetails.positions,
@@ -455,9 +456,9 @@ export const getFrontFavouriteJobs = async (req, res, next) => {
       joblist.data.map(async (item) => {
         try {
           // get job id and allotted account manager id for the original job id
-          const jobObj = await JOBS.findById(item, { job_id: 1, job_updates: 1, alloted_account_manager: 1, _id: 1 });
+          const jobObj = await JOBS.findOne({_id:item,job_status:'Active'}, { job_id: 1, job_updates: 1, alloted_account_manager: 1, _id: 1 });
           if (!jobObj) {
-            throw new Error("Job not found");
+            return null
           }
 
           const basicdetails = await JOBBASICDETAILS.findOne({ job_id: jobObj.job_id });
@@ -506,6 +507,7 @@ export const getFrontFavouriteJobs = async (req, res, next) => {
               isFavouriteJob: isFavouriteJob.data,
               positions: basicdetails.positions,
               experience: basicdetails.experience,
+              resume_required:jobObj.resume_required,
               domain: basicdetails.job_domain,
               cp_name: company.client_name,
               ac_manager: acmanageremail,
@@ -1259,4 +1261,25 @@ export const changeJobStatus = async (req, res, next)=>{
   }catch(err){
      next(err)
   }
+}
+
+export const handleUploadResumeRequired = async (req, res, next)=>{
+  try{
+     const {orgjobid,resumerequired} = req.params
+
+     await JOBS.findByIdAndUpdate(orgjobid,{resume_required:resumerequired})
+     res.status(200).json("Successfully updated resume required details.")
+  }catch(err){
+     next(err)
+  }
+}
+
+export const getResumeRequiredCount = async (req, res, next) =>{
+   try{
+      const job = await JOBS.findById(req.params.orgjobid)
+      if(!job) return res.status(400).json("Job not found.")
+      res.status(200).json(job.resume_required)
+   }catch(err){
+     next(err)
+   }
 }

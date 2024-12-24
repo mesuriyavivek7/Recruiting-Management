@@ -55,6 +55,7 @@ const jobSchema=new mongoose.Schema({
             default:Date.now
         }
     }],
+    resume_required:String,
     job_request:[String],
     accepted_recruiting_agency:[String],
     mapped_recruiting_agency_member:[String],
