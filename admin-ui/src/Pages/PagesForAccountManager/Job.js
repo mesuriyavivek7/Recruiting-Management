@@ -110,7 +110,6 @@ const Job = () => {
             <select onChange={(e)=>setInputJobStatus(e.target.value)} value={inputJobStatus} className='border p-1 outline-none'>
                <option value='Active'>Active</option>
                <option value='Hold'>Hold</option>
-               <option value='Close'>Close</option>
             </select>
             <button onClick={handleChangeJobStatus} className='bg-blue-500 hover:bg-blue-600 rounded-md text-white w-32 p-1 text-base'>Change Status</button>
          </div>

@@ -1,4 +1,4 @@
-import React,{useContext, useState} from 'react'
+import React,{useContext, useEffect, useState} from 'react'
 
 import axios from 'axios'
 
@@ -32,6 +32,7 @@ export default function AcceptedJobItem({jobObj,showNotification,handleOpenPrevi
   }
 
   const [openUnmapConfirmBox,setOpenUnmapConfirmBox]=useState(false)
+  const [resumeRequired,setResumeRequired] = useState(null)
   
 
   const workType=jobObj.work_type
@@ -100,6 +101,22 @@ export default function AcceptedJobItem({jobObj,showNotification,handleOpenPrevi
        showNotification("Something went wrong while unmap job.",'failure')
      }
   }
+
+  const handleFetchJobResumeRequired = async () =>{
+    try{
+       const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/job/resume-required/${jobObj.orgjobid}`)
+       setResumeRequired(res.data)
+    }catch(err){
+      console.log(err)
+      showNotification("Something went wrong...!",'failure')
+    }
+ }
+
+ useEffect(() => {
+   handleFetchJobResumeRequired()
+ }, [])
+ 
+
 
   return (
     <>
@@ -218,7 +235,7 @@ export default function AcceptedJobItem({jobObj,showNotification,handleOpenPrevi
                     <span>RSR (Quality)</span>
                  </div>
                  <div className='flex flex-col font-semibold text-gray-700 gap-4 place-content-start'>
-                    <span className='p-0.5 text-[13px] flex justify-center items-center rounded-full text-blue-500 bg-slate-100'>5</span>
+                    <span className='p-0.5 text-[13px] flex justify-center items-center rounded-full text-blue-500 bg-slate-100'>{resumeRequired}</span>
                     <span className='p-0.5 text-[13px] flex justify-center items-center rounded-full text-black bg-slate-300'>{jobObj.resumeSubmitCount}</span>
                     <span className='p-0.5 px-1 text-[13px] flex justify-center items-center rounded-md text-yellow-500 bg-yellow-300'>0%</span>
                  </div>

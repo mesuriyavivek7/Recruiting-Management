@@ -34,6 +34,7 @@ const NewJobData = () => {
   const [pendingJobs,setPendingJobs]=useState([])
   const [notification, setNotification] = React.useState(null)
   const [approveLoad,setApproveLoad]=useState(false)
+  const [resumeRequired,setResumeRequired] = useState(0)
 
 
   //for showing notification
@@ -304,6 +305,7 @@ const duration=new Map([
 ])
 
 const handleApproveJob = async () =>{
+  if(resumeRequired && resumeRequired>0){
     try{
       if(currentJob){
        setApproveLoad(true)
@@ -312,6 +314,9 @@ const handleApproveJob = async () =>{
       //2. pull job id from pending job list and add into verified jobs
         await axios.post(`${process.env.REACT_APP_API_BASE_URL}/accountmanager/addjobverifylist`,{ac_id:userData._id,orgjobid:currentJob.orgid})
       }
+      //3 update resume required number
+       await axios.put(`${process.env.REACT_APP_API_APP_URL}/job/update-resumerequired/${currentJob.orgid}/${resumeRequired}`)
+
       //Process for closing popup box
       setOpenPreviewBox(false)
       setJobBasicDetails(null)
@@ -333,6 +338,7 @@ const handleApproveJob = async () =>{
       setOpenSourcingGuidelines(false)
       setOpenSq(false)
       fetchData()
+      setResumeRequired(0)
       showNotification("Successfully current job Approved",'success')
     }catch(err){
        console.log(err)
@@ -340,6 +346,9 @@ const handleApproveJob = async () =>{
     }finally {
       setApproveLoad(false)
     }
+  }else{
+    showNotification("Please enter number of resume required.",'failure')
+  }
 }
 
 
@@ -450,11 +459,17 @@ const handleClosePreviewBox=()=>{
                          </div>
                         </div>
                      </div>
-                 </div>
+                 </div> 
 
-                 <button disabled={approveLoad} onClick={handleApproveJob} className='bg-blue-500 disabled:bg-gray-400 hover:bg-blue-600 mr-2 tracking-wide text-white p-2 rounded-md'>
-                   Approve
-                 </button>
+                  <div className='flex items-center gap-4'>
+                   <div className='flex flex-col gap-.5'>
+                       <label htmlFor='resume'>Resume Required</label>
+                       <input onChange={(e)=>setResumeRequired(e.target.value)} type='number' className='outline-none rounded-md p-1'></input>
+                   </div>
+                   <button disabled={approveLoad || resumeRequired<=0 || !resumeRequired} onClick={handleApproveJob} className='bg-blue-500 disabled:bg-gray-400 hover:bg-blue-600 mr-2 tracking-wide text-white p-2 rounded-md'>
+                     Approve
+                   </button>
+                  </div>
                  </div>
                  
               </div>

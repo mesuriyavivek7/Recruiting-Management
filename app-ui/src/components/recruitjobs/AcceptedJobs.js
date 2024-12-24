@@ -43,6 +43,7 @@ export default function AcceptedJobs({jobs,loader,showNotification,fetchAccepted
   const [jobStatus,setJobStatus]=useState(null)
   const [screeningQuesions,setScreeningQue]=useState(null)
   const [currentJob,setCurrentJob]=useState(null)
+  
 
   
 
@@ -139,6 +140,7 @@ const handleFetchJobHotMark=async (jobid)=>{
       showNotification("Something went wrong...!",'failure')
     }
 }
+
 
 
 const getFirstLetterCapital=(val)=>{
