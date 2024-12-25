@@ -1,7 +1,7 @@
 import express from 'express'
 import multer from 'multer'
 import path from 'path'
-import { downloadInvoiceDoc, getEnterpriseInvoice, getInvoiceDocName, getInvoiceFileType, getRecruiterInvoice, removeInvoiceDoc, uploadInvoiceDocs, viewCandidateInvoice } from '../controller/invoiceController.js'
+import { downloadInvoiceDoc, getEnterpriseInvoice, getInvoiceDetails, getInvoiceDocName, getInvoiceFileType, getRecruiterInvoice, removeInvoiceDoc, uploadInvoiceDocs, viewCandidateInvoice } from '../controller/invoiceController.js'
 
 const router=express.Router()
 
@@ -40,5 +40,9 @@ router.get('/view-invoice/:cid',viewCandidateInvoice)
 
 //For get invoice doc name
 router.get('/get-doc-name/:cid',getInvoiceDocName)
+
+//For get invoice details for account manager
+router.get('/getinvoice-acmanager/:cid',getInvoiceDetails)
+
 
 export default router

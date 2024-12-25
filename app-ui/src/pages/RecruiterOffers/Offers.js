@@ -64,7 +64,6 @@ export default function Offers() {
       try{
         setLoader(true)
         const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/invoice/getinvoice-recruiter/${user._id}`)
-        console.log(res.data)
         setRows(res.data.map((item,index)=>({...item,id:index+1})))
         setLoader(false)
       }catch(err){
@@ -82,7 +81,7 @@ export default function Offers() {
     <div className='flex flex-col gap-2'>
         {notification && <Notification message={notification.message} type={notification.type} onClose={()=>setNotification(null)}></Notification>}
         <div className='custom-div pb-3 relative'>
-         <h1 className='text-xl font-medium'>Offers Selected</h1>
+         <h1 className='text-xl font-medium'>Candidate Invoice</h1>
         </div>
         <div className='custom-div'>
         <Box sx={{

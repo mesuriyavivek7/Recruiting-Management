@@ -139,7 +139,7 @@ export default function Offers() {
   }
   {notification && <Notification message={notification.message} type={notification.type} onClose={()=>setNotification(null)}></Notification>}
     <div className='custom-div pb-3 relative'>
-        <h1 className='text-xl font-medium'>Offers Selected</h1>
+        <h1 className='text-xl font-medium'>Candidate Invoice</h1>
     </div>
    <div className='custom-div'>
     <Box sx={{
