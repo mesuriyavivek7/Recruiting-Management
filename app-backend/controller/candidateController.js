@@ -52,12 +52,12 @@ export const getCandidate = async (req, res, next) => {
     next(err)
   }
 }
-
+//
 export const changeCandidateStatus = async (req, res, next) => {
   try {
     await CANDIDATE.findByIdAndUpdate(req.params.orgcid, { $set: { candidate_status: req.body.status } })
     const candidateInvoice = await INVOICE.findOne({ candidate_id: req.params.orgcid })
-    if (req.body.status === "o-accepted") {
+    if (req.body.status === "c-joine") {
       if (!candidateInvoice) {
         const candidate = await CANDIDATE.findById(req.params.orgcid)
         const candidateBasicDetails = await CANDIDATEBASICDETAILS.findOne({ candidate_id: candidate.candidate_id })
@@ -121,7 +121,7 @@ export const getCandidateForMultipleAction = async (req, res, next) => {
     next(err)
   }
 }
-
+//
 export const changeMultipleCandidateStatus = async (req, res, next) => {
   try {
     const { candidateIds, status } = req.body

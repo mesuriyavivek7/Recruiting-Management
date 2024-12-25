@@ -7,11 +7,19 @@ import { Button, Divider, Grid, Typography } from '@mui/material';
 import { FaBuilding } from "react-icons/fa";
 import { useLocation } from 'react-router-dom';
 import { fetchCandidateAttachmentsById, fetchCandidateBasicDetailsById, fetchCandidateResumesById, fetchconsentProofByCId, fetchSQAnswersByCid } from '../../services/api';
-
+import axios from 'axios';
+import Notification from '../../Components/Notification';
 
 function CandidateDetails() {
   const location = useLocation();
   const candidate_id = location.state?.candidate_id;
+
+  const [notification,setNotification]=useState(null)
+
+  //for showing notification
+  const showNotification=(message,type)=>{
+    setNotification({message,type})
+  }
 
   const [candidateDetails, setCandidateDetails] = useState(null);
   const [candidateAttachments, setCandidateAttachments] = useState(null);
@@ -20,6 +28,67 @@ function CandidateDetails() {
   const [candidateconsentProof, setCandidateconsentProof] = useState(null);
   const [candidateSQAnswers, setCandidateSQAnswers] = useState(null);
   const [value, setValue] = useState('one');
+
+  const [invoiceStatus, setInvoiceStatus] = useState(null)
+
+
+  const downloadCandidateInvoice=async (cid)=>{
+    try{
+       //Fetch which type of invoice file get
+       const fileExtension=await axios.get(`${process.env.REACT_APP_API_APP_URL}/invoice/getinvoice-type/${candidate_id}`)
+
+       //Fetch download invoice file
+       const res=await axios.get(`${process.env.REACT_APP_API_APP_URL}/invoice/download-invoice/${candidate_id}`,{responseType:'blob'})
+       
+       let fileType=[ 'application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']
+       if(fileExtension.data && res.data && fileType.includes(fileExtension.data)){
+         const blob = new Blob([res.data], { type: fileExtension.data });
+         const url=window.URL.createObjectURL(blob)
+         const link=document.createElement('a')
+         link.href=url
+         link.setAttribute('download','invoicedoc')
+         document.body.appendChild(link)
+         link.click()
+         link.remove()
+       }else{
+         showNotification("File download failed...!",'failure')
+       }
+    }catch(err){
+      console.log(err)
+      showNotification("Something went wrong while downloading candidate invoice.",'failure')
+    }
+}
+
+const handleViewCandidateInvoice=async ()=>{
+      try{
+        const fileName= await axios.get(`${process.env.REACT_APP_API_APP_URL}/invoice/get-doc-name/${candidate_id}`)
+        console.log(fileName.data)
+        if(fileName.data){
+         const correctUrl=`${process.env.REACT_APP_APP_URL}/invoicedocs/${fileName.data}`
+         window.open(correctUrl,'_blank')
+        }
+      }catch(err){
+        console.log(err)
+        showNotification("Something went wrong while viewing invoice doc.",'failure')
+      }
+}
+
+
+
+  //Check invoice is present or not
+  useEffect(()=>{
+    const checkInvoice = async () =>{
+      try{
+        const response = await axios.get(`${process.env.REACT_APP_API_APP_URL}/invoice/getinvoice-acmanager/${candidate_id}`)
+        console.log(response.data)
+        setInvoiceStatus(response.data)
+      }catch(err){
+         console.log(err)
+      }
+    }
+  
+    checkInvoice()
+  },[])
 
   const fetchCandidateDetails = async () => {
     const response = await fetchCandidateBasicDetailsById(candidate_id);
@@ -60,8 +129,10 @@ function CandidateDetails() {
   };
 
   return (
-    <div className='bg-gray-100 h-auto' >
-      <Box sx={{ width: '100%' }} className=" p-6 rounded-lg  font-sans">
+    <div className='h-auto'>
+    {notification && <Notification message={notification.message} type={notification.type} onClose={()=>setNotification(null)}></Notification>}
+      <Box sx={{ width: '100%' }} className="bg-gray-100 p-6 rounded-lg  font-sans">
+        <div className='w-full flex justify-between items-center'>
         <Tabs
           value={value}
           onChange={handleChange}
@@ -92,6 +163,9 @@ function CandidateDetails() {
           <Tab value="two" label="Attachments" icon={<FaBuilding className="text-lg" />} />
           <Tab value="three" label="Screening Questions" icon={<FaInfoCircle className="text-lg" />} />
         </Tabs>
+
+        {invoiceStatus && <span onClick={handleViewCandidateInvoice} className='bg-blue-500 rounded-md hover:bg-blue-600 cursor-pointer text-white p-2 tracking-wide'>Candidate Invoice</span>}
+        </div>
         <div className="mt-6">
           {value === 'one' && (
             <div>
@@ -500,6 +574,34 @@ function CandidateDetails() {
                   }}
                 >
                   <Box sx={{ padding: 3 }}>
+
+                   
+                    {/* Candidate Invoice */}
+                    <Box
+                      sx={{
+                        marginBottom: 2,
+                        padding: 2,
+                        borderRadius: "8px",
+                        backgroundColor: "#fff",
+                        boxShadow: 2,
+                        border: "1px solid #e0e0e0",
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Box>
+                        <Typography variant="h6" sx={{ fontWeight: "bold", color: "#333" }}>
+                          Candidate Invoice
+                        </Typography>
+                      </Box>
+                      
+                     <div className='flex items-center gap-2'>
+                      <button onClick={handleViewCandidateInvoice} className='bg-[#315370] shadow p-2 hover:bg-[#0056b3] rounded-md text-white'>View</button>
+                      <button onClick={downloadCandidateInvoice} className='bg-[#315370] shadow p-2 hover:bg-[#0056b3] rounded-md text-white'>Download</button>
+                     </div>
+                    </Box>
+
                     {/* Candidate Resume */}
                     <Box
                       sx={{
