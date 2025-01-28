@@ -14,7 +14,7 @@ const admin_be_uri = process.env.REACT_APP_API_BASE_URL;
 const Add = () => {
   const adminData = useSelector((state) => state.admin.userData)
   const [open, setOpen] = useState(false);
-  const [loading,setLoading]=useState(true)
+  const [loading,setLoading]=useState(false)
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
