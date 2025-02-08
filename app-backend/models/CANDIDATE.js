@@ -25,11 +25,26 @@ const candidateSchema=new mongoose.Schema({
      remarks:String,
      //this remarks is for recruiter 
      recruiter_remarks:String,
-     alloted_account_manager:String,
-     candidate_basic_details:String,
-     candidate_attachments:String,
-     candidate_consent_proof:String,
-     candidate_question_answer:String
+     alloted_account_manager:{
+      type:mongoose.Schema.Types.ObjectId,
+      ref:'accountmanager'
+     },
+     candidate_basic_details:{
+      type:mongoose.Schema.Types.ObjectId,
+      ref:'candidatebasicdetail'
+     },
+     candidate_attachments:{
+      type:mongoose.Schema.Types.ObjectId,
+      ref:'candidateattachment'
+     },
+     candidate_consent_proof:{
+      type:mongoose.Schema.Types.ObjectId,
+      ref:'candidateconsentproof'
+     },
+     candidate_question_answer:{
+      type:mongoose.Schema.Types.ObjectId,
+      ref:'candidatesqanswer'
+     }
 },{timestamps:true})
 
 

@@ -1,14 +1,15 @@
 import React, { useState } from "react";
 // Importing icons
 import { ReactComponent as ExpandIcon } from "../assets/asset19.svg";
-import { ReactComponent as DashboardIcon } from "../assets/asset28.svg";
-import { ReactComponent as CandidatesIcon } from "../assets/asset20.svg";
-import { ReactComponent as ActionIcon } from "../assets/asset23.svg";
-import { PiBuildingApartmentFill } from "react-icons/pi";
-import { FaBriefcase } from "react-icons/fa";
+import { Briefcase } from 'lucide-react';
 import { useSelector } from "react-redux";
 import SupportIcon from '@mui/icons-material/Support';
-import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
+import { BriefcaseBusiness } from 'lucide-react';
+import { LayoutDashboard } from 'lucide-react';
+import { Users } from 'lucide-react';
+import CorporateFareOutlinedIcon from '@mui/icons-material/CorporateFareOutlined';
+import SignalCellularAltOutlinedIcon from '@mui/icons-material/SignalCellularAltOutlined';
+import { UserRound } from 'lucide-react';
 
 import { NavLink, useLocation } from "react-router-dom";
 
@@ -84,7 +85,7 @@ const SideNavbar = () => {
           onMouseEnter={() => handleMouseEnter("dashboard")}
           onMouseLeave={() => handleMouseLeave("dashboard")}
         >
-          <DashboardIcon className="w-[26px] text-white" />
+          <LayoutDashboard className="w-[26px] text-white" />
           {isOpen && <span className="text-white">Dashboard</span>}
         </NavLink>
         {!isOpen && visibleTooltips["dashboard"] && (
@@ -115,7 +116,7 @@ const SideNavbar = () => {
             onMouseEnter={() => handleMouseEnter("account_manager")}
             onMouseLeave={() => handleMouseLeave("account_manager")}
           >
-            <ManageAccountsIcon className="w-[24px] text-white" />
+            <UserRound className="w-[24px] text-white" />
             {isOpen && <span className="text-white">Account Manager</span>}
           </NavLink>
           {!isOpen && visibleTooltips["account_manager"] && (
@@ -146,7 +147,7 @@ const SideNavbar = () => {
           onMouseEnter={() => handleMouseEnter("enterprise")}
           onMouseLeave={() => handleMouseLeave("enterprise")}
         >
-          <PiBuildingApartmentFill style={{ color: "white", fontSize: "28px" }} />
+          <CorporateFareOutlinedIcon style={{ color: "white", fontSize: "28px" }} />
           {isOpen && <span className="text-white">Enterprise</span>}
         </NavLink>
         {!isOpen && visibleTooltips["enterprise"] && (
@@ -176,7 +177,7 @@ const SideNavbar = () => {
           onMouseEnter={() => handleMouseEnter("recruiting")}
           onMouseLeave={() => handleMouseLeave("recruiting")}
         >
-          <ActionIcon className="w-[24px] text-white" />
+          <SignalCellularAltOutlinedIcon className="w-[24px] text-white" />
           {isOpen && <span className="text-white">Recruiting Agency</span>}
         </NavLink>
         {!isOpen && visibleTooltips["recruiting"] && (
@@ -206,7 +207,7 @@ const SideNavbar = () => {
           onMouseEnter={() => handleMouseEnter("job")}
           onMouseLeave={() => handleMouseLeave("job")}
         >
-          <FaBriefcase style={{ color: "white", fontSize: "22px" }} />
+          <Briefcase style={{ color: "white", fontSize: "22px" }} />
           {isOpen && <span className="text-white">Job</span>}
         </NavLink>
         {!isOpen && visibleTooltips["job"] && (
@@ -236,7 +237,7 @@ const SideNavbar = () => {
           onMouseEnter={() => handleMouseEnter("candidates")}
           onMouseLeave={() => handleMouseLeave("candidates")}
         >
-          <CandidatesIcon className="w-[24px] text-white" />
+          <Users className="w-[24px] text-white" />
           {isOpen && <span className="text-white">Candidates</span>}
         </NavLink>
         {!isOpen && visibleTooltips["candidates"] && (
@@ -287,6 +288,39 @@ const SideNavbar = () => {
         )}
       </div>
       }
+
+      {/* Account manager Job Link */}
+      {userData?.admin_type === "account_manager" && 
+      <div className="relative">
+        <NavLink
+          to={getNavLinkPath("/account_manager/myjobs")}
+          className={({ isActive }) =>
+            `hover:bg-gray-400 rounded-md p-2 ${!isOpen && "justify-center"} flex gap-2 ${isActive ? "bg-gray-400" : ""}`
+          }
+          onMouseEnter={() => handleMouseEnter("myjobs")}
+          onMouseLeave={() => handleMouseLeave("myjobs")}
+        >
+          <BriefcaseBusiness style={{ color: "white", fontSize: "28px" }} />
+          {isOpen && <span className="text-white">My Jobs</span>}
+        </NavLink>
+        {!isOpen && visibleTooltips["myjobs"] && (
+          <div
+            className="absolute bg-gray-500 text-white p-1.5 rounded-md"
+            style={{
+              top: "0px",
+              left: "65px",
+              fontSize: "16px",
+              whiteSpace: "nowrap",
+              pointerEvents: "none",
+              zIndex: 9999,
+            }}
+          >
+            My Jobs
+          </div>
+        )}
+      </div>
+      }
+
     </div>
   );
 };

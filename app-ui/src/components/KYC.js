@@ -9,11 +9,11 @@ const KYC = () => {
     const navigate=useNavigate()
     const location=useLocation()
 
-  useEffect(()=>{
-    if(!location.state){
-       navigate('/')
-    }
-  },[location.state,navigate])
+  // useEffect(()=>{
+  //   if(!location.state){
+  //      navigate('/')
+  //   }
+  // },[location.state,navigate])
 
   const [load,setLoad]=useState(false)
   const [kycData,setKycData]=useState({
@@ -250,8 +250,12 @@ const KYC = () => {
   };
 
   return (
-    <div className="relative w-screen h-screen overflow-hidden bg-gradient-radial from-orange-800 to-black-900 flex place-items-center">
-      <div className="kyc-form w-4/12 bg-white rounded-md mx-auto overflow-hidden">
+    <div className="relative z-20 w-screen h-screen bg-kyc-bg overflow-hidden flex place-items-center">
+      <div className="absolute inset-0 bg-black opacity-50"></div>
+      <div className="absolute w-full top-10 flex justify-center items-center">
+         <span className="bg-white p-3 font-medium rounded-md shadow text-green-700">Your Account is created Successfully, Please check your mail box for account credentials.</span>
+      </div>
+      <div className="kyc-form z-50 w-4/12 bg-white border  rounded-md mx-auto overflow-hidden">
         <div className="bg-blue-300 bg-opacity-50 py-2 px-7">
           <h1 className="text-xl text-blue-400 font-semibold">KYC Details</h1>
         </div>

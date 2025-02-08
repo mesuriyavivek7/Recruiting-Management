@@ -29,7 +29,9 @@ module.exports = {
         "orange-800": 'af8008',
         "blue-100":'#edf3fd'
       },
-    
+      backgroundImage: {
+        'kyc-bg': "url('/src/assets/kyc.jpg')",
+      },
       
     },
   },
