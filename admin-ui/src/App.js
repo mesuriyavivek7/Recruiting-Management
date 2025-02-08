@@ -26,6 +26,9 @@ import AccountCandidateTable from './Pages/PagesForAccountManager/AccountCandida
 import Job from './Pages/PagesForAccountManager/Job';
 import CandidateDetails from './Pages/PagesForAccountManager/CandidateDetails';
 import AcRecruiting from './Pages/PagesForAccountManager/RecruitingAgency/AcRecruting';
+import PostJob from './Pages/PagesForAccountManager/PostJob';
+import AcmanagerJobs from './Pages/PagesForAccountManager/AcmanagerJobs';
+import AcJob from './Pages/PagesForAccountManager/previewjob/AcJob';
 
 import SuperAdmin from './Pages/Dashboard/SuperAdmin';
 import SupperAdminDashboard from './Components/SuperAdminDashboard';
@@ -158,6 +161,18 @@ function App() {
             path: "candidate/:id",
             element: <CandidateDetails />,
           },
+          {
+            path: 'myjobs',
+            element: <AcmanagerJobs></AcmanagerJobs>
+          },
+          {
+            path: "myjobs/postjob",
+            element: <PostJob></PostJob>
+          },
+          {
+            path: 'myjobs/:id',
+            element: <AcJob></AcJob>
+          }
         ],
       },
       {

@@ -2,6 +2,7 @@ import React,{useState,useContext, useEffect} from 'react'
 import VideocamOutlinedIcon from '@mui/icons-material/VideocamOutlined';
 import BackupTableOutlinedIcon from '@mui/icons-material/BackupTableOutlined';
 import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
+import { useNavigate } from 'react-router-dom';
 //import icons
 import AddIcon from '@mui/icons-material/Add';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
@@ -16,41 +17,18 @@ import { AuthContext } from '../context/AuthContext';
 
 
 // charts
-
-import Polar from './Charts/Polar'; 
-import MyResponsiveRadialBar from './Charts/Radial'; 
-
+import Bar from './Charts/Bar';
+import PieLabel from './Charts/PieLabel';
+import Gauge from './Charts/Gauge';
 
 // Charts Data
-const polarData = [
-    { id: 'React', value: 40 },
-    { id: 'Angular', value: 30 },
-    { id: 'Vue', value: 30 },
-  ];
-  
-  const radialData = [
-    {
-        "id": "",
-        "data": [
-            { "x": "", "y": 120 },
-            { "x": "", "y": 150 },
-            { "x": "", "y": 100 }
-        ]
-    },
-    {
-        "id": "",
-        "data": [
-            { "x": "", "y": 100 },
-            { "x": "", "y": 130 },
-            { "x": "", "y": 80 }
-        ]
-    }
-  ];
+
+
+
+
 
 
 export default function RecruiterDashboard() {
-  
-
   const {user,isVerified}=useContext(AuthContext)
   const [teamFormData,setTeamFormData]=useState({
     full_name:'',
@@ -58,6 +36,7 @@ export default function RecruiterDashboard() {
     mobileno:'',
     hide_commision:false
   })
+  const navigate = useNavigate()
   const [openPopUp,setOpenPopUp]=useState(false)
 
   const [errors,setErrors]=useState({})
@@ -177,6 +156,11 @@ export default function RecruiterDashboard() {
     fetchDashBoardCount()
     handleCheckIsMailVerified()
   },[])
+
+
+  const handleNavigateCandidate = () =>{
+      navigate('/recruiter/candidate')
+  }
 
 
 
@@ -322,27 +306,22 @@ export default function RecruiterDashboard() {
   <h1 className='text-xl font-bold'>Key Indicators</h1>
   <div className='w-full flex gap-4 pb-2'>
     
-  <div className='w-48 h-56 flex-1 flex flex-col gap-2 shadow '>
-      <MyResponsiveRadialBar  data={radialData}/>
+    <div className='flex-1 h-64 flex justify-center items-center shadow p-4'>
+     <Bar></Bar>
     </div>
     
-    <div className='w-58 h-56 flex-1 flex flex-col gap-2 shadow pt-6'>
-      <Polar data={polarData} />
+    <div className='h-64 flex-1 p-4 shadow'>
+      <PieLabel></PieLabel>
     </div>
 
-    <div className='w-48 h-56 flex-1 flex flex-col gap-2 shadow pt-6'>
-      <Polar data={polarData} />
-    </div>
   </div>
 </div>
 {/* Finish section*/}
 
-
-
       <div className='custom-div py-4 gap-4'>
          <h1>Jobs</h1>
          <div className='w-full flex gap-4'>
-            <div className='custom-div flex-1'>
+            <div onClick={handleNavigateCandidate} className='cursor-pointer custom-div flex-1'>
                 <div className='flex w-full flex-col gap-1'>
                   <div className='flex gap-2 items-center'>
                       <div className='h-2 w-2 bg-green-400 rounded-full'></div>
@@ -361,26 +340,7 @@ export default function RecruiterDashboard() {
                     </div>
                 </div>
             </div>
-            <div className='custom-div flex-1'>
-                <div className='flex w-full flex-col gap-1'>
-                  <div className='flex gap-2 items-center'>
-                      <div className='h-2 w-2 bg-purple-400 rounded-full'></div>
-                      <h1 className='text-black-200 text-2xl'>0</h1>
-                  </div>
-                  <p className='text-sm text-gray-400'>Engaged</p>
-                </div>
-                <div className='flex justify-between w-full'>
-                    <div className='flex gap-1 items-center'>
-                        <span>0</span>
-                        <span className='text-gray-400 text-[.8rem]'>Active</span>
-                    </div>
-                    <div className='flex gap-1 items-center'>
-                        <span>0</span>
-                        <span className='text-gray-400 text-[.8rem]'>Paused</span>
-                    </div>
-                </div>
-            </div>
-            <div className='custom-div  flex-1'>
+            <div onClick={handleNavigateCandidate} className='cursor-pointer custom-div  flex-1'>
                 <div className='flex w-full flex-col gap-1'>
                   <div className='flex gap-2 items-center'>
                       <div className='h-2 w-2 bg-orange-400 rounded-full'></div>
@@ -399,7 +359,7 @@ export default function RecruiterDashboard() {
                     </div>
                 </div>
             </div>
-            <div className='custom-div flex-1'>
+            <div onClick={handleNavigateCandidate} className='cursor-pointer custom-div flex-1'>
                 <div className='flex w-full flex-col gap-1'>
                   <div className='flex gap-2 items-center'>
                       <div className='h-2 w-2 bg-orange-200 rounded-full'></div>
@@ -414,6 +374,21 @@ export default function RecruiterDashboard() {
       <div className='custom-div py-4 gap-4'>
         <h1>Resumes</h1>
         <div className='w-full flex gap-4'>
+            <div className='relative custom-div gap-4 flex-1'>
+                <h1 className='font-medium'>Relevency Relation</h1>
+                <div className='absolute top-20 left-10'>
+                  <span className='text-sm text-red-600'>Low</span>
+                </div>
+                <div className='absolute left-36 top-8'>
+                  <span className='text-sm text-green-600'>Medium</span>
+                </div>
+                <div className='absolute bottom-10 right-5'>
+                  <span className='text-sm text-blue-500'>Good</span>
+                </div>
+                <div className='h-28'>
+                <Gauge></Gauge>
+                </div>
+            </div>
             <div className='custom-div flex-1'>
                 <div className='flex flex-col gap-1'>
                  <div className='flex gap-2 items-center'>
@@ -509,25 +484,7 @@ export default function RecruiterDashboard() {
                     </div>
                 </div>
             </div>
-            <div className='custom-div flex-1'>
-                <div className='flex flex-col gap-1'>
-                 <div className='flex gap-2 items-center'>
-                    <div className='h-2 w-2 bg-purple-400 rounded-full'></div>
-                    <h1 className='text-2xl'>0</h1>
-                 </div>
-                 <p className='text-sm text-gray-400'>Others</p>
-                </div>
-                <div className='flex justify-between w-full'>
-                    <div className='flex gap-1 items-center'>
-                        <span>0</span>
-                        <span className='text-gray-400 text-[.8rem]'>Active</span>
-                    </div>
-                    <div className='flex gap-1 items-center'>
-                        <span>0</span>
-                        <span className='text-gray-400 text-[.8rem]'>Paused</span>
-                    </div>
-                </div>
-            </div>
+            
         </div>
       </div>
     </div>

@@ -250,7 +250,7 @@ const PostJob = () => {
 
       //step-9 getting account manager for particuler enterprise
       const acmanagerdata=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/enterprise/acmanager/${user.enterprise_id}`)
-      console.log('acoount manager---->',acmanagerdata.data)
+      
       //step-10 updated job with allocated account manager
       await axios.post(`${process.env.REACT_APP_API_BASE_URL}/job/allotacmanager/${res.data._id}`,{ac_id:acmanagerdata.data})
 
@@ -297,6 +297,7 @@ const PostJob = () => {
             parentFormData={formData}
           />
         );
+
       case 3:
         return (
           <PostJobForm3
@@ -308,6 +309,7 @@ const PostJob = () => {
             parentFormData={formData}
           />
         );
+
       case 4:
         return (
           <PostJobForm4
@@ -319,6 +321,7 @@ const PostJob = () => {
             parentFormData={formData}
           />
         );
+        
       case 5:
         return (
           <PostJobForm5
