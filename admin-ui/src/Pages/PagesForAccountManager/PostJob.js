@@ -81,25 +81,25 @@ function PostJob() {
   const getRevertChanges = async () =>{
      try{
        //step-1 delete job details
-       await axios.delete(`${process.env.REACT_APP_API_APP_URL}/${jobId}`)
+       await axios.delete(`${process.env.REACT_APP_API_APP_URL}/job/${jobId}`)
 
        //Step-2 delete job basic details
-       await axios.delete(`${process.env.REACT_APP_API_APP_URL}/removejobbasicdetails/${jobId}`)
+       await axios.delete(`${process.env.REACT_APP_API_APP_URL}/job/removejobbasicdetails/${jobId}`)
 
        //Step-3 delete job commission details
-       await axios.delete(`${process.env.REACT_APP_API_APP_URL}/removejobcommission/${jobId}`)
+       await axios.delete(`${process.env.REACT_APP_API_APP_URL}/job/removejobcommission/${jobId}`)
 
        //Step-4 delete job company info
-       await axios.delete(`${process.env.REACT_APP_API_APP_URL}/removejobcompany/${jobId}`)
+       await axios.delete(`${process.env.REACT_APP_API_APP_URL}/job/removejobcompany/${jobId}`)
 
        //Step-5 delete job sourcing details
-       await axios.delete(`${process.env.REACT_APP_API_APP_URL}/removejobsourcing/${jobId}`)
+       await axios.delete(`${process.env.REACT_APP_API_APP_URL}/job/removejobsourcing/${jobId}`)
 
        //Step-6 delete job attachments details
-       await axios.delete(`${process.env.REACT_APP_API_APP_URL}/removejobattachments/${jobId}`)
+       await axios.delete(`${process.env.REACT_APP_API_APP_URL}/job/removejobattachments/${jobId}`)
 
        //Step-7 delete job sqs
-       await axios.delete(`${process.env.REACT_APP_API_APP_URL}/removejobsq/${jobId}`)
+       await axios.delete(`${process.env.REACT_APP_API_APP_URL}/job/removejobsq/${jobId}`)
 
      }catch(err){
       console.log(err)
@@ -110,54 +110,57 @@ function PostJob() {
     try {
       //Step - 1 create job for manager
       const res = await axios.post(
-        `${process.env.REACT_APP_API_APP_URL}/acmanagerjob`,
+        `${process.env.REACT_APP_API_APP_URL}/job`,
         {
-          acmanager_id:userData._id,
           job_id: jobId,
-          job_status: "Pending",
+          job_status: "Active",
         }
       );
 
       //Step - 2 create job basic details
       if (Object.keys(formData.form1).length > 0)
         await axios.post(
-          `${process.env.REACT_APP_API_APP_URL}/acmanagerjob/basicjob/${res.data._id}`,
+          `${process.env.REACT_APP_API_APP_URL}/job/basicjob/${res.data._id}`,
           formData.form1
         );
 
       //step-3 create job commission details
       if (Object.keys(formData.form2).length > 0)
         await axios.post(
-          `${process.env.REACT_APP_API_APP_URL}/acmanagerjob/jobcommission/${res.data._id}`,
+          `${process.env.REACT_APP_API_APP_URL}/job/jobcommission/${res.data._id}`,
           formData.form2
         );
 
       //step-4 craete job company details
       if (Object.keys(formData.form3).length > 0)
         await axios.post(
-          `${process.env.REACT_APP_API_APP_URL}/acmanagerjob/company/${res.data._id}`,
+          `${process.env.REACT_APP_API_APP_URL}/job/company/${res.data._id}`,
           formData.form3
         );
 
       //step-5 craete sourcing guidelines
       if (Object.keys(formData.form4).length > 0)
         await axios.post(
-          `${process.env.REACT_APP_API_APP_URL}/acmanagerjob/sourcing/${res.data._id}`,
+          `${process.env.REACT_APP_API_APP_URL}/job/sourcing/${res.data._id}`,
           formData.form4
         );
 
       //step-6 Create job attachments
       if(Object.keys(formData.form4.attachments).length>0){
          let fileData = getUploadFiles(formData.form4.attachments)
-         if([...fileData.entries()].length!==0) await axios.post(`${process.env.REACT_APP_API_APP_URL}/acmanagerjob/uploadjobdocs/${jobId}`,fileData,{headers:{"Content-Type":'multipart/form-data'}})
+         if([...fileData.entries()].length!==0) await axios.post(`${process.env.REACT_APP_API_APP_URL}/job/uploadjobdocs/${jobId}`,fileData,{headers:{"Content-Type":'multipart/form-data'}})
       }
 
       //step-7 create job screening questions
       if (Object.keys(formData.form5).length > 0)
         await axios.post(
-          `${process.env.REACT_APP_API_APP_URL}/acmanagerjob/jobsq/${res.data._id}`,
+          `${process.env.REACT_APP_API_APP_URL}/job/jobsq/${res.data._id}`,
           formData.form5
         );
+
+      //Step-8 allocating job to acmanager
+      await axios.post(`${process.env.REACT_APP_API_APP_URL}/job/allocateacjobtoacmanager/${res.data._id}/${userData._id}`)
+
       return true;
     } catch (err) {
       await getRevertChanges()

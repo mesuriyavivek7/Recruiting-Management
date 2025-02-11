@@ -50,7 +50,7 @@ const AdminAllJobData = () => {
           const accountManager = await fetchAccountManager(jobDetails?.alloted_account_manager);
 
           //Fetching details of enterprise member
-          const enterpriseMember = await fetchEnterpriseMemberDetails(jobDetails.enterprise_member_id)
+          const enterpriseMember = await fetchEnterpriseMemberDetails(jobDetails?.enterprise_member_id)
 
           //Fetching job basinc details
           const basicjobDetails = await fetchJobBasicDetailsByJobId(jobDetails.job_id);

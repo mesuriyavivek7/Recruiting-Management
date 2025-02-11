@@ -60,7 +60,7 @@ export const columns = [
       return (
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <div style={{ width: 32, height: 32, borderRadius: '50%', backgroundColor: '#3f51b5', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: 8 }}>
-            {enterprise.charAt(0).toUpperCase()}
+            {enterprise==="By Acmanager"?"A":enterprise.charAt(0).toUpperCase()}
           </div>
           {enterprise}
         </div>
@@ -309,7 +309,7 @@ export const acmanagerJobsCols = [
 
 export const getAllAcmanagerJobs = async (acid) =>{
    try{
-     const response = await axios.get(`${process.env.REACT_APP_API_APP_URL}/acmanagerjob/${acid}`)
+     const response = await axios.get(`${process.env.REACT_APP_API_APP_URL}/job/getacmanagerjob/${acid}`)
      return response.data.data
    }catch(err){
     throw err

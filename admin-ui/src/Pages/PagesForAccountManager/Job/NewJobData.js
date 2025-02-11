@@ -54,7 +54,7 @@ const NewJobData = () => {
           const jobDetails = await fetchJobDetailsById(jobId);
     
           // Fetch recruiter asynchronously
-          const enterprise_member=await fetchEnterpriseMemberDetails(jobDetails.enterprise_member_id)
+          const enterprise_member=await fetchEnterpriseMemberDetails(jobDetails?.enterprise_member_id)
     
           const basicjobDetails = await fetchJobBasicDetailsByJobId(jobDetails.job_id);
     

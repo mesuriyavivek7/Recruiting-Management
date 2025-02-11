@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Box, Button, Card, CircularProgress, IconButton, InputAdornment, TextField } from '@mui/material';
+import { Box, Button, Card, IconButton, InputAdornment, TextField } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { FaSearch } from 'react-icons/fa';
 import { cstatus } from '../../../constants/jobStatusMapping';
@@ -124,7 +124,7 @@ const AllCandidateDataForEachJob = ({ jobId }) => {
                     </div>
                 </div>
             }
-            <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} gap={2} pt={4}>
+            <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} gap={2} pt={4} px={4}>
                 <TextField
                     label="Search..."
                     variant="outlined"
@@ -184,7 +184,7 @@ const AllCandidateDataForEachJob = ({ jobId }) => {
 
             </Box>
          
-                <Card className='mt-8 border p-2 font-sans'>
+                <div className='mt-8 px-6 font-sans'>
                     <p className='text-lg xl:text-2xl'>All Candidates</p>
                     <div style={{ height: 600, width: '100%' }} className='pt-4'>
 
@@ -255,7 +255,7 @@ const AllCandidateDataForEachJob = ({ jobId }) => {
                             }}
                         />
                     </div>
-                </Card>
+                </div>
         </div>
     );
 };

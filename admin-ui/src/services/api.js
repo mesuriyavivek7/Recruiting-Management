@@ -64,6 +64,7 @@ export const fetchEnterpriseTeam = async (enterprise_id) => {
 
 //For fetch particuler enterprise memeber details
 export const fetchEnterpriseMemberDetails = async (en_member_id) => {
+    if(!en_member_id) return ({full_name:"By AcManager"})
     try {
         const response = await axios.get(`${app_be_uri}/enterpriseteam/${en_member_id}`)
         return response.data

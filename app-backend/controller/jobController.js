@@ -29,8 +29,10 @@ export const createJobs = async (req, res, next) => {
       const newjob = new JOBS(req.body)
       await newjob.save()
       job = newjob
+    }else{
+      return res.status(409).json({message:"job is already exist"})
     }
-    res.status(200).json(job)
+    return res.status(200).json(job)
   } catch (err) {
     next(err)
   }
@@ -1282,4 +1284,193 @@ export const getResumeRequiredCount = async (req, res, next) =>{
    }catch(err){
      next(err)
    }
+}
+
+export const allocatedAcmanagerToAcJob = async (req, res, next) =>{
+  try{
+     const {orgjobid, acmanagerid} = req.params
+
+     if(!orgjobid || !acmanagerid) return res.status(404).json({message:"Org job or acmanagerid id is not found."})
+
+     const updateJob = await JOBS.findByIdAndUpdate(orgjobid,{$set:{alloted_account_manager:acmanagerid}})
+     
+     if(!updateJob) return res.status(404).json({message:"Job not found"})
+
+     return res.status(200).json({message:"acmanager job is attached with acmanager"})
+     
+  }catch(err){
+    next(err)
+  }
+}
+
+//All delete operation
+
+export const deleteJob = async (req, res, next) =>{
+  try{
+    const {jobid} = req.params
+  
+    await JOBS.findOneAndDelete({job_id:jobid})
+
+    return res.status(200).json({message:"job deleted successfully"})
+     
+  }catch(err){
+   next(err)
+  }
+}
+
+export const deleteJobBasicDetails = async (req, res, next) =>{
+  try{
+    const {jobid} = req.params
+
+    await JOBBASICDETAILS.findOneAndDelete({job_id:jobid})
+
+    return res.status(200).json({message:"Job basic details deleted"})
+  }catch(err){
+    next(err)
+  }
+}
+
+
+export const deleteJobCommissionDetails = async (req, res, next) =>{
+  try{
+     const {jobid} = req.params
+
+     await JOBCOMMISSION.findOneAndDelete({job_id:jobid})
+
+     return res.status(200).json({message:"Job commission details deleted"})
+  }catch(err){
+   next(err)
+  }
+}
+
+
+export const deleteCompanyDetails = async (req, res, next)=>{
+  try{
+   const {jobid} = req.params
+
+   await JOBCOMPANYINFO.findOneAndDelete({job_id:jobid})
+
+   return res.status(200).json({message:"Job Company details deleted"})
+  }catch(err){
+   next(err)
+  }
+}
+
+export const deleteJobSourcingDetails = async (req, res, next) =>{
+  try{
+   const {jobid} = req.params
+
+   await JOBSOURCINGDETAILS.findOneAndDelete({job_id:jobid})
+
+   return res.status(200).json({message:"Job Sourcing details deleted"})
+  }catch(err){
+   next(err)
+  }
+}
+
+export const deleteJobAttachments = async (req, res, next) =>{
+ try{
+    const {jobid} = req.params
+
+    const jobAttachments =  await JOBATTACHEMENT.findOne({folder_name:jobid})
+
+    if(!jobAttachments) return res.status(200).json("This mentioned job with jobid is not exist")
+
+   const folderPath = path.join(__dirname,'..','uploads','jobdocs',jobid)
+
+   if(!fs.existsSync(folderPath)) return res.status(404).json("Folder not found.")
+
+   fs.rm(folderPath, { recursive: true, force: true }, (err) => {
+     if (err) {
+       return res.status(500).json({ message: 'Failed to delete folder' });
+     }
+   });
+
+   await JOBATTACHEMENT.findOneAndDelete({folder_name:jobid})
+
+   return res.status(200).json({message: 'Job Attachment, files, and folder deleted successfully'})
+
+ }catch(err){
+   next(err)
+ }
+}
+
+export const deleteJobSQ = async (req, res, next) =>{
+  try{
+   const {jobid} = req.params
+
+   await JOBSQ.findOneAndDelete({job_id:jobid})
+
+   return res.status(200).json({message:"Job SQ details deleted"})
+  }catch(err){
+   next(err)
+  }
+}
+
+export const getAcManagerJob = async (req, res, next) =>{
+  try{
+    const {acid} = req.params
+
+    if(!acid) return res.status(400).json({message:"Ac manager id is not given."})
+
+    const jobs = await JOBS.find({
+      alloted_account_manager: acid,
+      $or: [
+        { enterprise_id: { $exists: false } }, 
+        { enterprise_id: null },
+        { enterprise_member_id: { $exists: false } }, 
+        { enterprise_member_id: null }
+      ]
+    }).populate('job_basic_details');
+
+    return res.status(200).json({message:"All jobs retrived",data:jobs})
+
+  }catch(err){
+   next(err)
+  }
+}
+
+
+export const getJobByJobId = async (req, res, next) =>{
+  try{
+    const {jobid} = req.params
+
+    const job = await JOBS.findOne({job_id:jobid})
+    .populate('job_basic_details')
+    .populate('job_commission_details')
+    .populate('job_company_details')
+    .populate('job_sourcing_guidelines')
+    .populate('job_attachments')
+    .populate('job_screening_questionsa')
+
+    if(!job) return res.status(200).json({message:"Job not found."})
+
+    return res.status(200).json({message:"Job retrived",data:job})
+
+  }catch(err){
+     next(err)
+  }
+}
+
+
+export const getDashboardCount = async (req, res, next) =>{
+  try{
+     const {jobid} = req.params
+
+     const job = await JOBS.findOne({job_id:jobid})
+     if(!job) return res.status(404).json({message:"Job not found."})
+
+     return res.status(200).json({
+       data:{
+         candidateCount:job.posted_candidate_profiles.length,
+         mappedRecruiterCount:job.mapped_recruiting_agency_member.length,
+         requestedRecruiterCount:job.job_request.length,
+         acceptedRecruiterCount:job.accepted_recruiting_agency.length
+       },
+       message:"All acmanager jobs counts retrived."
+     })
+
+  }catch(err){
+   next(err)
+  }
 }
