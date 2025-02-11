@@ -4,11 +4,11 @@ import mongoose from "mongoose";
 const jobSchema=new mongoose.Schema({
     enterprise_id:{
         type:String,
-        required:true
+        //required:true
     },
     enterprise_member_id:{
         type:String,
-        required:true
+        //required:true
     },
     job_id:{
         type:String,
@@ -19,19 +19,24 @@ const jobSchema=new mongoose.Schema({
         ref:'jobbasicdetail'
     },
     job_commission_details:{
-        type:String
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'jobcommission',
     },
     job_company_details:{
-        type:String
+        type: mongoose.Schema.Types.ObjectId,
+        ref:'jobcompanyinfo',
     },
     job_sourcing_guidelines:{
-        type:String
+        type: mongoose.Schema.Types.ObjectId,
+        ref:'jobsourcingdetails',
     },
     job_attachments:{
-        type:String
+        type: mongoose.Schema.Types.ObjectId,
+        ref:'jobattachment',
     },
     job_screening_questionsa:{
-        type:String
+        type: mongoose.Schema.Types.ObjectId,
+        ref:'jobsq',
     },
     isDraft:{
         type:Boolean,

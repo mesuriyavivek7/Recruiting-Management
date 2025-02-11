@@ -70,7 +70,7 @@ export default function AcceptedRecruiterMember({jobId}) {
   return (
     <>
     {notification && <Notification message={notification.message} type={notification.type} onClose={() => setNotification(null)} />}
-    <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} gap={2}>
+    <Box display="flex" justifyContent="space-between" alignItems="center" mb={2} gap={2} p={3}>
     {/* Search Bar */}
     <TextField
       label="Search..."
@@ -138,8 +138,8 @@ export default function AcceptedRecruiterMember({jobId}) {
 
 
   <div className='mt-8'>
-      <p className='text-lg xl:text-2xl'>Mapped Recruiting Member </p>
-      <Box sx={{ height: 600, width: '100%', paddingTop: '19px' }}>
+      <p className='text-lg xl:text-2xl px-[20px]'>Accepted Recruiting Member </p>
+      <Box sx={{ height: 600, width: '100%', padding: '20px' }}>
         <DataGrid
           rows={recruiterData}
           columns={columns}

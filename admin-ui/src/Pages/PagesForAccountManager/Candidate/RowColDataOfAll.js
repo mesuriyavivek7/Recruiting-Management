@@ -178,4 +178,12 @@ export const columns = (candiadteStatusChange,handleRowClick)=> [
   },
 ];
 
+//columns for candidate data on each jobs
 
+export const fetchCandidateDataForEachJob = async (jobid)=>{
+  try{
+    
+  }catch(err){
+    throw err
+  }
+}

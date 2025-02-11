@@ -44,7 +44,7 @@ export const columns = [
       return (
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <div style={{ width: 32, height: 32, borderRadius: '50%', backgroundColor: '#3f51b5', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: 8 }}>
-            {enterprise_member.charAt(0).toUpperCase()}
+            {enterprise_member==="By AcManager"?"A":enterprise_member.charAt(0).toUpperCase()}
           </div>
           {enterprise_member}
         </div>

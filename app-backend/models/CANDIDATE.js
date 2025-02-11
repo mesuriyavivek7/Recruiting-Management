@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { mongo } from "mongoose";
 
 const candidateSchema=new mongoose.Schema({
     job_id:{
@@ -10,12 +10,12 @@ const candidateSchema=new mongoose.Schema({
         required:true
      },
      recruiter_member_id:{
-        type:String,
-        required:true
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'recruitingteam'
      },
      recruiter_agency_id:{
-        type:String,
-        required:true
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'Recruiting'
      },
      candidate_status:{
         type:String,

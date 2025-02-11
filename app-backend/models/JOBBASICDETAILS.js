@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 const jobbasicdeatilsSchema=new mongoose.Schema({
     enterprise_id:{
         type:String,
-        required:true
+        // required:true
     },
     job_id:{
         type:String,

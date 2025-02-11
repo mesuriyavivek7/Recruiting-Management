@@ -106,7 +106,7 @@ function JobDetails() {
 
     const fetchJobDetails = async ()=>{
         try{
-           const response = await axios.get(`${process.env.REACT_APP_API_APP_URL}/acmanagerjob/byjobid/${id}`)
+           const response = await axios.get(`${process.env.REACT_APP_API_APP_URL}/job/getbyjobid/${id}`)
            console.log(response)
            setJobDetails(response.data.data)
         }catch(err){
@@ -363,7 +363,7 @@ function JobDetails() {
                 {
                     (jobDetails?.job_screening_questionsa?.screening_questions || []).map((question)=>(
                         <div className='flex flex-col gap-2 bg-white p-2 rounded-md'>
-                            <span>{question.id} {question.question_title} {question.madantory && <span className='text-red-500'>*</span>}</span>
+                            <span>{question.id}. {question.question_title} {question.madantory && <span className='text-red-500'>*</span>}</span>
                             {
                               question.ans_type!=="short_text" && 
                               <div className='flex items-center gap-4'>

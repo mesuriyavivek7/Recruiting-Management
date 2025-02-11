@@ -9,10 +9,10 @@ import { useParams } from "react-router-dom";
 //importing components
 import Notification from "../../../Components/Notification";
 import JobDetails from "./JobDetails";
-import AcceptedRecruiterMember from "./AcceptedRecruiterMember";
+import AcceptedRecruiterMember from "../RecruitingAgency/AcceptedRecruiterMember";
 import RequestedRecruiter from "./RequestedRecruiter";
 import MappedRecruiterMember from "./MappedRecruiterMember";
-import AllCandidateDataForEachJob from "./AllCandidateDataForEachJob";
+import AllCandidateDataForEachJob from "../Job/AllCandidateDataForEachJob";
 import axios from "axios";
 
 function AcJob() {
@@ -35,7 +35,7 @@ function AcJob() {
 
   const getDashboardCounts = async ()=>{
     try{
-       const response = await axios.get(`${process.env.REACT_APP_API_APP_URL}/acmanagerjob/getdashboardcount/${id}`)
+       const response = await axios.get(`${process.env.REACT_APP_API_APP_URL}/job/getdashboardcount/${id}`)
        console.log(response.data.data)
        setJobsCount(response.data.data)
     }catch(err){

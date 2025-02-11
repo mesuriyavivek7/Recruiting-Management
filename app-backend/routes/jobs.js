@@ -5,7 +5,7 @@ import multer from 'multer'
 import { fileURLToPath } from 'url';
 
 
-import { activateJob, getAllJobs, addCandidateProfileList, allotedJobToAcManager, createJobs, deleteJobDraftWithOtherDetails, downloadEvaluationForm, getAllJobDetails, getAllJobDraftDetails, getCandidateScreeningQue, getFrontAcceptedJobDetails, getFrontMappedJobDetails, getJobAttachmentsDetailsForCandidate, getJobBasicDetailsForPreview, getJobCompanyDetailsForPreview, getJobSourcingGuidelinesForPreview, getJobStatusForPreview, getJobCommissionDetailsForPreview, createJobUpdates, getJobUpdates, getJobAttachmentsDetailsForPreview, getAcManagerNameAndMail, viewJobAttachments, downloadJobAttachments, getJobAttachmentFileType, getJobHotMark, changeJobHotMark, getJobCandidatesForPreview, getLiveJobs, getFrontFavouriteJobs, unMapJob, addJobMapRequest, SearchJobByTitle, getJobScreeningQuestionsForPreview, SearchPastJobByTitleAndEnMemberId, getActiveJobCountForEnMember, getPendingJobCountForEnMember, searchJobRecruiter, searchJobEnterprise, getPostedCandidatesByJobId, getAllotedAcManagerId, getMainJobDetails, addCandidateIntoEnMemberReceivedList, getMappedRecruiterMemberIds, getRequestedRecruiterIds, getAcceptedRecruiterIds, addRecruiterMemberIntoMappedList, convertFromRequestedToMapped, removeRememberFromMappedList, getOrgJobId, addRememberIntoAcceptedList, getJdContent, getJobStatus, changeJobStatus, handleUploadResumeRequired, getResumeRequiredCount } from '../controller/jobController.js';
+import { activateJob, getAllJobs, addCandidateProfileList, allotedJobToAcManager, createJobs, deleteJobDraftWithOtherDetails, downloadEvaluationForm, getAllJobDetails, getAllJobDraftDetails, getCandidateScreeningQue, getFrontAcceptedJobDetails, getFrontMappedJobDetails, getJobAttachmentsDetailsForCandidate, getJobBasicDetailsForPreview, getJobCompanyDetailsForPreview, getJobSourcingGuidelinesForPreview, getJobStatusForPreview, getJobCommissionDetailsForPreview, createJobUpdates, getJobUpdates, getJobAttachmentsDetailsForPreview, getAcManagerNameAndMail, viewJobAttachments, downloadJobAttachments, getJobAttachmentFileType, getJobHotMark, changeJobHotMark, getJobCandidatesForPreview, getLiveJobs, getFrontFavouriteJobs, unMapJob, addJobMapRequest, SearchJobByTitle, getJobScreeningQuestionsForPreview, SearchPastJobByTitleAndEnMemberId, getActiveJobCountForEnMember, getPendingJobCountForEnMember, searchJobRecruiter, searchJobEnterprise, getPostedCandidatesByJobId, getAllotedAcManagerId, getMainJobDetails, addCandidateIntoEnMemberReceivedList, getMappedRecruiterMemberIds, getRequestedRecruiterIds, getAcceptedRecruiterIds, addRecruiterMemberIntoMappedList, convertFromRequestedToMapped, removeRememberFromMappedList, getOrgJobId, addRememberIntoAcceptedList, getJdContent, getJobStatus, changeJobStatus, handleUploadResumeRequired, getResumeRequiredCount, allocatedAcmanagerToAcJob, deleteJob, deleteJobBasicDetails, deleteJobCommissionDetails, deleteCompanyDetails, deleteJobSourcingDetails, deleteJobAttachments, deleteJobSQ, getAcManagerJob, getJobByJobId, getDashboardCount } from '../controller/jobController.js';
 import { craeteJobBasicDeatils, showJobDetail, getJobBasicDetails, getJobDetailsByEnId, getJobDetailsById } from '../controller/jobBasicController.js'
 import { createJobDraft, deleteJobDraft } from '../controller/jobDraftController.js'
 import { createJobCommission, showJobCommission, getJobCommissionDetails } from '../controller/jobCommissionController.js'
@@ -315,5 +315,39 @@ router.put('/update-resumerequired/:orgjobid/:resumerequired',handleUploadResume
 
 //Get job resume required count
 router.get('/resume-required/:orgjobid',getResumeRequiredCount)
+
+//Allocated AC manager to acmanager job
+router.post('/allocateacjobtoacmanager/:orgjobid/:acmanagerid',allocatedAcmanagerToAcJob)
+
+//All Delete operation
+
+//For Delete job
+router.delete('/:jobid',deleteJob)
+
+//For delete job basic details 
+router.delete('/removejobbasicdetails/:jobid',deleteJobBasicDetails)
+
+//For delete job commission details
+router.delete('/removejobcommission/:jobid',deleteJobCommissionDetails)
+
+//For delete job company info
+router.delete('/removejobcompany/:jobid',deleteCompanyDetails)
+
+//For delete job sourcing details 
+router.delete('/removejobsourcing/:jobid',deleteJobSourcingDetails)
+
+//For delete job attachments 
+router.delete('/removejobattachments/:jobid',deleteJobAttachments)
+
+//For delete job sq
+router.delete('/removejobsq/:jobid',deleteJobSQ)
+
+//For get job by acmanager id
+router.get('/getacmanagerjob/:acid',getAcManagerJob)
+
+//Get full details job with job id(populate form)
+router.get('/getbyjobid/:jobid',getJobByJobId)
+
+router.get('/getdashboardcount/:jobid',getDashboardCount)
 
 export default router
