@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 
 //importing icons
 import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined';
+import { LoaderCircle } from 'lucide-react';
 
 
 export default function ResumeUpload2({jobObj,parentFormData,candidateId,parentFormDataChange,submitPost,onPrev}) {
@@ -30,7 +31,6 @@ export default function ResumeUpload2({jobObj,parentFormData,candidateId,parentF
       try{
        setLoader(true)
        const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/job/getcandidatescreeningque/${jobObj.job_id}`)
-       console.log('data----->',res.data)
        setQuestions(res.data)
       }catch(err){
         //handle error here
@@ -70,15 +70,12 @@ export default function ResumeUpload2({jobObj,parentFormData,candidateId,parentF
 
 
   const handleParentFormDataChange=()=>{
-      if(validate()){
-        console.log("parent form data change")
          parentFormDataChange({
             candidate_id:candidateId,
             recruiting_id:user.recruiting_agency_id,
             screening_questions:questions,
             screening_answer:answer
          })
-      }
   }
 
   const handleSubmitPost=async ()=>{
@@ -101,7 +98,8 @@ export default function ResumeUpload2({jobObj,parentFormData,candidateId,parentF
   },[parentFormData])
 
   useEffect(()=>{
-      if(submit) handleParentFormDataChange()
+      if(submit && validate()) handleParentFormDataChange()
+      else setSubmit(false)
   },[submit])
 
   const handleNavigate=()=>{
@@ -265,7 +263,18 @@ export default function ResumeUpload2({jobObj,parentFormData,candidateId,parentF
           <div className='flex gap-2'>
             <button onClick={()=>setDiscardProcess(true)} className='py-1 px-4 text-base hover:bg-slate-100 transition-all rounded-sm text-black'>Cancel</button>
             <button onClick={handlePrev} className='py-1 px-4 text-base hover:bg-slate-100 transition-all rounded-sm text-black'>Previous</button>
-            <button onClick={()=>setSubmit(true)} className='py-1 px-4 text-base hover:bg-blue-400 bg-blue-500 rounded-sm text-white'>Submit</button>
+            <button disabled={submitLoader} onClick={()=>setSubmit(true)} className='py-1 px-4 text-base hover:bg-blue-400 bg-blue-500 rounded-sm text-white'>
+              {
+                submitLoader ? (
+                  <div className='flex gap-2'>
+                    <span><LoaderCircle className='animate-spin'></LoaderCircle></span>
+                    <span>Loading</span>
+                  </div>
+                ) : (
+                  <span>Submit</span>
+                )
+              }
+            </button>
           </div>
         </div>
     </div>

@@ -19,6 +19,7 @@ import KeyboardArrowUpOutlinedIcon from '@mui/icons-material/KeyboardArrowUpOutl
 import ArrowCircleDownOutlinedIcon from '@mui/icons-material/ArrowCircleDownOutlined';
 import InsertDriveFileOutlinedIcon from '@mui/icons-material/InsertDriveFileOutlined';
 import ArrowRightAltOutlinedIcon from '@mui/icons-material/ArrowRightAltOutlined';
+import { LoaderCircle } from 'lucide-react';
 
 
 import Notification from '../../../Components/Notification';
@@ -396,7 +397,17 @@ const handleApprove=async ()=>{
                  <span className='flex items-center gap-1'><small className='text-gray-500'>Ac Manager</small>{acManagerName && acManagerName.full_name}</span>
                  <span className='p-1 px-2 bg-white text-[15px] rounded-md'>{candidateStatus && cstatus.get(candidateStatus)}</span>
                </div>
-               <button disabled={assignLoad} onClick={handleApprove} className='p-2 bg-blue-500 disabled:bg-gray-100 hover:bg-blue-600 text-white tracking-wide'>Approve</button>
+               <button disabled={assignLoad} onClick={handleApprove} className='p-2 bg-blue-500 disabled:bg-gray-100 hover:bg-blue-600 text-white flex justify-center items-center tracking-wide'>
+                {
+                  assignLoad ? 
+                  <div className='flex items-center gap-2'>
+                     <span><LoaderCircle className='animate-spin'></LoaderCircle></span>
+                     <span>Loading...</span>
+                  </div>
+                  :
+                  <span>Approve</span>
+                }
+               </button>
              </div>
              </div>
              <div className='flex gap-6 px-4'>

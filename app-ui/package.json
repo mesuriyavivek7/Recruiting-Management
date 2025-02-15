@@ -20,6 +20,7 @@
     "axios": "^1.7.3",
     "jodit-react": "^4.1.2",
     "js-cookie": "^3.0.5",
+    "lucide-react": "^0.475.0",
     "mammoth": "^1.8.0",
     "multiselect-react-dropdown": "^2.0.25",
     "pdf-viewer-reactjs": "^2.2.3",
