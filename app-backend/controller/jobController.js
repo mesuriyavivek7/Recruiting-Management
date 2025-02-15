@@ -586,7 +586,7 @@ export const getJobAttachmentsDetailsForCandidate = async (req, res, next) => {
 export const downloadEvaluationForm = async (req, res, next) => {
   try {
     const doc = await JOBATTACHEMENT.findOne({ folder_name: req.params.jobid }, { evaluation_form: 1, _id: 0 })
-    if (!doc) res.status(404).json("File not found..!")
+    if (!doc) return res.status(404).json("File not found..!")
     const filepath = doc.evaluation_form.filepath
     res.download(filepath, doc.evaluation_form.filename)
   } catch (err) {

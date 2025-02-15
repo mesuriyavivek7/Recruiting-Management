@@ -858,7 +858,7 @@ export default function ResumeUpload1({jobObj,parentFormData,candidateId,parentF
                 onFileUpload={(file)=>handleAttachments("candidate_evaluation_form",file)}
                 showNotification={showNotification}
                 downloadAttachments={(jobAttachments.evaluation_form)?(jobAttachments.evaluation_form):(null)}
-                jobId="J492KY"
+                jobId={jobObj.job_id}
                ></CandidateFileDragDrop>
                {
                 errors.evaluationFrom && (<span className='text-red-500 text-sm'>{errors.evaluationFrom}</span>)
@@ -872,7 +872,7 @@ export default function ResumeUpload1({jobObj,parentFormData,candidateId,parentF
                 onFileUpload={(file)=>handleAttachments("candidate_audio",file)}
                 showNotification={showNotification}
                 downloadAttachments={(jobAttachments.audio_brief)?(jobAttachments.audio_brief):(null)}
-                jobId="J492KY"
+                jobId={jobObj.job_id}
                ></CandidateFileDragDrop>
                {
                 errors.candidateAudio && (<span className='text-red-500 text-sm'>{errors.candidateAudio}</span>)
@@ -885,7 +885,7 @@ export default function ResumeUpload1({jobObj,parentFormData,candidateId,parentF
                 accepted="image/jpeg, image/png, application/pdf, video/mpeg, video/mp4, audio/wav, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                 showNotification={showNotification}
                 downloadAttachments={(jobAttachments.other_docs)?(jobAttachments.other_docs):(null)}
-                jobId="J492KY"
+                jobId={jobObj.job_id}
                ></CandidateFileDragDrop>
                {
                 errors.otherFile && (<span className='text-red-500 text-sm'>{errors.otherFile}</span>)
