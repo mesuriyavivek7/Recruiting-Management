@@ -10,7 +10,7 @@ import RECRUITINGTEAM from "../models/RECRUITINGTEAM.js";
 import { filterOutLiveJobs } from "../helper/filterJobs.js";
 import path from 'path'
 import { fileURLToPath } from 'url';
-import fs from 'fs'
+import fs, { stat } from 'fs'
 import pdfparse from 'pdf-parse'
 import mammoth from 'mammoth'
 
@@ -607,8 +607,9 @@ export const getCandidateScreeningQue = async (req, res, next) => {
 
 export const addCandidateProfileList = async (req, res, next) => {
   try {
-    await JOBS.findOneAndUpdate({ job_id: req.params.jobid }, { $push: { posted_candidate_profiles: req.body.orgcid } })
-    res.status(200).json("Added candidate into job candidate profile list")
+    const updatedJob = await JOBS.findByIdAndUpdate(req.params.jobid, { $addToSet: { posted_candidate_profiles: req.body.orgcid } })
+    if(!updatedJob) return res.status(404).json("Job Not found")
+    return res.status(200).json("Added candidate into job candidate profile list")
   } catch (err) {
     next(err)
   }
@@ -1094,7 +1095,15 @@ export const addCandidateIntoEnMemberReceivedList = async (req, res, next) => {
     const job = await JOBS.findById(req.body.jobid)
 
     //For adding candidate id and jobid into enterprise received list
-    await axios.put(`${process.env.APP_SERVER_URL}/enterpriseteam/addintocandidatelist/${job.enterprise_member_id}`, { candidateId: req.body.cid, jobId: req.body.jobid })
+    if(job.enterprise_id && job.enterprise_member_id){
+      try{
+        await axios.put(`${process.env.APP_SERVER_URL}/enterpriseteam/addintocandidatelist/${job.enterprise_member_id}`, { candidateId: req.body.cid, jobId: req.body.jobid })
+      }catch(err){
+        console.log(err)
+        return res.status(500).json({error:"failed to add candidate into verified list"})
+      }
+    }
+    
     res.status(200).json("Candidate added into received list")
   } catch (err) {
     next(err)
