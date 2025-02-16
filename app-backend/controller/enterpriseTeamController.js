@@ -109,7 +109,7 @@ export const addNewCandidate = async (req, res, next) => {
   try {
     const { candidateId, jobId } = req.body
     await ENTERPRISETEAM.findByIdAndUpdate(req.params.enmemberid, { $push: { received_candidates: { candidateId, jobId } } })
-    res.status(200).json("Added candidateid and jobid into received candidate list")
+    return res.status(200).json("Added candidateid and jobid into received candidate list")
   } catch (err) {
     next(err)
   }

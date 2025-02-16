@@ -188,16 +188,20 @@ export const addCandidatePendingList = async (req, res, next) => {
   }
 }
 
-
 export const addCandidateVerifiedList = async (req, res, next) => {
   try {
-    await ACCOUNTMANAGER.findByIdAndUpdate(req.params.acmanagerid, { $pull: { pending_verify_candidate_profile: req.body.orgcid }, $push: { verified_candidate_profile: req.body.orgcid } })
-    res.status(200).json("Successfully candidate profile added into verified list")
+    await ACCOUNTMANAGER.findByIdAndUpdate(
+      req.params.acmanagerid,
+      {
+        $pull: { pending_verify_candidate_profile: req.body.orgcid },
+        $addToSet: { verified_candidate_profile: req.body.orgcid } // Ensures uniqueness
+      }
+    );
+    res.status(200).json("Successfully candidate profile added into verified list");
   } catch (err) {
-    next(err)
+    next(err);
   }
-}
-
+};
 
 export const getAcmanagerMailandName = async (req, res, next) => {
   try {

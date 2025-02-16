@@ -364,6 +364,8 @@ const handleApprove=async ()=>{
        await axios.post(`${process.env.REACT_APP_API_APP_URL}/candidate/add-candidate-reteam`,{cid:currentCandidateId,jobid:currentJobId})
        //Add Candidate into enterprise member posted list
        await axios.post(`${process.env.REACT_APP_API_APP_URL}/job/add-candidate-enmember`,{cid:currentCandidateId,jobid:currentJobId})
+       //Add Candidate profile into job posted candidate profile list
+       await axios.post(`${process.env.REACT_APP_API_APP_URL}/job/addcandidateprofilelist/${currentJobId}`,{orgcid:currentCandidateId})
        handleClosePopUpBox()
        await fetchData()
        showNotification("Successfully Candidate profile approved.",'success')
@@ -397,7 +399,7 @@ const handleApprove=async ()=>{
                  <span className='flex items-center gap-1'><small className='text-gray-500'>Ac Manager</small>{acManagerName && acManagerName.full_name}</span>
                  <span className='p-1 px-2 bg-white text-[15px] rounded-md'>{candidateStatus && cstatus.get(candidateStatus)}</span>
                </div>
-               <button disabled={assignLoad} onClick={handleApprove} className='p-2 bg-blue-500 disabled:bg-gray-100 hover:bg-blue-600 text-white flex justify-center items-center tracking-wide'>
+               <button disabled={assignLoad} onClick={handleApprove} className='p-2 bg-blue-500  hover:bg-blue-600 text-white flex justify-center items-center tracking-wide'>
                 {
                   assignLoad ? 
                   <div className='flex items-center gap-2'>
