@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import asset2 from "../../assets/asset 2.png";
 import asset1 from "../../assets/asset 1.png";
+import { motion } from "framer-motion";
 import { Link,useNavigate,useLocation } from "react-router-dom";
 import Notification from "../../components/Notification";
 import axios from "axios";
@@ -33,6 +34,15 @@ const Login = () => {
         }
      }
   },[user])
+
+  const [showMessage,setShowMessage] = useState(true)
+
+    useEffect(() => {
+      const timer = setTimeout(() => {
+        setShowMessage(false);
+      }, 10000);
+      return () => clearTimeout(timer);
+    }, []);
 
   const [errors,setErrors]=useState({})
   const [formData,setFormData]=useState({
@@ -115,6 +125,18 @@ const Login = () => {
 
         <div className="login-form w-[42%] relative">
           <div className="w-8/12 h-full flex flex-col mx-auto">
+          {
+             (showMessage && location.state && location.state.message)  && 
+               <motion.div 
+               className="bg-green-100 border border-green-400 text-green-700 px-4 py-2 my-2 mb-4 rounded relative"
+               initial={{ opacity: 0, y: -20 }}
+               animate={{ opacity: 1, y: 0 }}
+               exit={{ opacity: 0, y: -20 }}
+               transition={{ duration: 0.5 }}
+               >
+                 <span className="block sm:inline">{location.state.message}</span>
+              </motion.div>
+            } 
             <div className="flex flex-col place-items-center w-full">
               <img
                 src={asset1}
@@ -123,14 +145,7 @@ const Login = () => {
               />
               <h1 className="text-3xl mt-6 font-medium text-gray-900">Login</h1>
             </div>
-            {
-              (location.state && location.state.message) && (
-                <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-2 mt-2 rounded relative" role="alert">
-                    <span className="block sm:inline">{location.state.message}</span>
-                </div>
-              )
-            }
-          
+
             <div className="w-full relative mt-8">
               <form className="flex flex-col gap-3">
                 <div className="flex-start gap-2 w-full">

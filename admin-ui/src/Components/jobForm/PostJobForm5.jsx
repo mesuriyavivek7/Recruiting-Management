@@ -9,8 +9,6 @@ import Notification from '../Notification';
 import { useNavigate } from "react-router-dom";
 import { useSelector } from 'react-redux';
 
-//importing loader
-import Loader from '../../assets/whiteloader.svg'
 
 
 //importing icons
@@ -29,11 +27,6 @@ function PostJobForm5({onSubmit, onPrev, onFormDataChange, jobid, parentFormData
   const [openSubmitPopUp,setOpenSubmitPopUp]=useState(false)
   const [jobSubmitLoad,setJobSubmitLoad]=useState(false)
   const navigate=useNavigate()
-
-   //custome box stiling
-   const boxStyle = {
-    animation: 'colorChange 5s infinite',
-  };
   
 
    //for showing notification
@@ -141,9 +134,9 @@ function PostJobForm5({onSubmit, onPrev, onFormDataChange, jobid, parentFormData
       <div className='fixed inset-0 flex justify-center bg-black z-50 bg-opacity-50 backdrop-blur-md items-center'>
       
       <div className='w-[500px] gap-4 flex flex-col items-center p-4 rounded-md bg-white'>
-        <div style={boxStyle} className='w-[450px] flex justify-center items-center rounded-sm h-60 border animation-color-change'>
+        <div className='w-[450px] border-b flex justify-center items-center rounded-sm h-36'>
           {
-            (jobSubmitLoad)?(<LoaderCircle className='animate-spin w-20 h-20 text-white'></LoaderCircle>):(<CheckCircleOutlineOutlinedIcon style={{color:"white",fontSize:'6rem'}}></CheckCircleOutlineOutlinedIcon>)
+            (jobSubmitLoad)?(<LoaderCircle className='animate-spin w-20 h-20 text-blue-500'></LoaderCircle>):(<CheckCircleOutlineOutlinedIcon className='text-blue-500' style={{fontSize:'6rem'}}></CheckCircleOutlineOutlinedIcon>)
           }
         </div>
          {
@@ -153,14 +146,6 @@ function PostJobForm5({onSubmit, onPrev, onFormDataChange, jobid, parentFormData
               </div>)
          }
       
-        <style>{`
-        @keyframes colorChange {
-          0%, 100% { background-color: #4F75FF; }  
-          25% { background-color: #00CCDD; }       
-          50% { background-color: #378CE7; }       
-          75% { background-color: #96E9C6; }     
-        }
-      `}</style>
       </div>
      </div>
     }

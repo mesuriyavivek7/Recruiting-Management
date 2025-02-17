@@ -127,14 +127,12 @@ export const validateUser = async (req, res, next) => {
 
 export const logout=async (req,res,next)=>{
       try{
-        console.log(req.cookies)
         res.clearCookie("t_user", {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
           sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
           domain: process.env.NODE_ENV === 'production' ? '.vms.uphire.in' : undefined
         }).status(200).json({ message: "Logged out successfully" });
-        console.log("all cookies value--->",req.cookies)
       }catch(err){
           next(err)
       }

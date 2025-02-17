@@ -200,7 +200,7 @@ const formats = [
                 onChange={handleChange}
               />
               <label htmlFor="agree-to-terms" className="input-label">
-                I agree to be bound by the terms of membership of UPHIRE.
+                I agree to be bound by the terms of membership of Uphire.
               </label>
               {errors.agreeToTerms && <p className="text-red-600 text-xs">{errors.agreeToTerms}</p>}
             </div>

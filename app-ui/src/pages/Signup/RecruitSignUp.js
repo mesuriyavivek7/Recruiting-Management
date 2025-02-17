@@ -17,6 +17,10 @@ import Notification from "../../components/Notification";
 //importing axios
 import axios from 'axios'
 
+//Importing icons
+import { ChevronsUp, LoaderCircle } from 'lucide-react';
+
+
 
 const RecruitSignUp = () => {
   const navigate = useNavigate();
@@ -25,6 +29,9 @@ const RecruitSignUp = () => {
     full_name: "",
     email: "",
     mobileno: "",
+    agency_type:"solo",
+    expertise_area:"it hiring",
+    year_of_experience:'',
     company_name: "",
     company_size: "",
     designation: "",
@@ -43,8 +50,6 @@ const RecruitSignUp = () => {
   const [selectedState, setSelectedState] = useState('');
   const [selectedCity, setSelectedCity] = useState('');
   const [load,setLoad]=useState(false)
-  const [checkMobileno,setCheckMobileNo]=useState(false)
-  const [emailCheck,setEmailCheck]=useState(false)
   const [firtsStepLoad,setFirstStepLoad]=useState(false)
 
 
@@ -151,6 +156,11 @@ const RecruitSignUp = () => {
     }
   };
 
+  const handleChangeAgencyType = (e) =>{
+       const {name, value} = e.target
+       setFormData((prevData)=>({...prevData,[name]:value}))
+  }
+
   const domainchange=(selectedList)=>{
        setFormData((prev)=>({...prev,domains:selectedList}))
   }
@@ -165,50 +175,33 @@ const RecruitSignUp = () => {
      }
   }
 
-  useEffect(()=>{
-      if(emailCheck) handleMobileCheck()
-  },[emailCheck])
 
-  useEffect(()=>{
-     if(checkMobileno){
-      setFirstStepLoad(false)
-      nextStep()
-     }
-  },[checkMobileno])
-
-
-  const handleCheckMail=async ()=>{
-    if(validateForm()){
-      setFirstStepLoad(true)
-      try{
-        const res=await axios.post(`${process.env.REACT_APP_API_BASE_URL}/authrecruiting/checkemail`,{email:formData.email})
-        if(res.data===false) setEmailCheck(true)
-        else {
-           setFirstStepLoad(false)
-           showNotification("Email address is already exist...!","failure")
+  const handleCheckCredentials = async ()=>{
+      if(validateForm()){
+        try{
+           setFirstStepLoad(true)
+           //check email address
+           const emailRes=await axios.post(`${process.env.REACT_APP_API_BASE_URL}/authrecruiting/checkemail`,{email:formData.email})
+           //check mobile no
+           const mobileRes=await axios.post(`${process.env.REACT_APP_API_BASE_URL}/authrecruiting/checkmobileno`,{mobileno:formData.mobileno})
+           
+           if(emailRes.data && mobileRes.data){
+             showNotification("Email address and mobile no is already exist.",'failure')
+           }else if(emailRes.data){
+             showNotification("Email address is already exist.",'failure')
+           }else if(mobileRes.data){
+            showNotification("Mobile no is already exist.",'failure')
+           }else{
+             nextStep()
+           }
+           
+        } catch(err){
+          console.log(err)
+          showNotification("There is something wrong...!","failure")
+        } finally{
+          setFirstStepLoad(false)
         }
-      }catch(err){
-        console.log("Internal error")
-        setFirstStepLoad(false)
-        showNotification("There is something wrong...!",'failure')
       }
-    }
-  }
-
-  const handleMobileCheck=async ()=>{
-    if(validateForm()){
-      try{
-        const res=await axios.post(`${process.env.REACT_APP_API_BASE_URL}/authrecruiting/checkmobileno`,{mobileno:formData.mobileno})
-        if(res.data===false) setCheckMobileNo(true)
-        else {
-           setFirstStepLoad(false)
-           showNotification("Mobile no is already exist....!","failure")
-        }
-      }catch(err){
-        setFirstStepLoad(false)
-        showNotification("There is something wrong...!","failure")
-      }
-    }
   }
   
   const validateForm = () => {
@@ -221,14 +214,15 @@ const RecruitSignUp = () => {
         else if(!emailRegex.test(formData.email)) newErrors.email="Email address is invalid."
         if (!formData.mobileno) newErrors.phoneNumber = "Phone Number is required.";
         if(formData.mobileno.length<12) newErrors.phoneNumber="Phone Number is invalid.";
+        if(!formData.agency_type) newErrors.agency_type="Agency type is required.";
         break;
       case 2:
-        if (!formData.company_name) newErrors.company = "Company Name is required.";
-        if (!formData.company_size) newErrors.size = "Company Size is required.";
-        if (!formData.designation)
-          newErrors.designation = "Designation is required";
-        if (!formData.linkedin_url)
-          newErrors.linkedinUrl = "LinkedIn Url is required";
+        if (formData.agency_type==="company" && !formData.company_name) newErrors.company = "Company Name is required.";
+        if (formData.agency_type==="company" &&  !formData.company_size) newErrors.size = "Company Size is required.";
+        if (formData.agency_type==="company" &&  !formData.designation) newErrors.designation = "Designation is required";
+        if (formData.agency_type==="solo" && !formData.year_of_experience) newErrors.year_of_experience = "Year of experience is required."
+        if (formData.agency_type==="solo" && !formData.expertise_area) newErrors.expertise_area = "Expertise area is required."
+        if (!formData.linkedin_url) newErrors.linkedinUrl = "LinkedIn Url is required";
         if(!checkURL(formData.linkedin_url)) newErrors.linkedinUrl="Linkedin URL is invalid";
         if (formData.firm_type.length === 0)
           newErrors.firm = "At least one Firm Type is required";
@@ -290,8 +284,9 @@ const RecruitSignUp = () => {
        await axios.post(`${process.env.REACT_APP_API_ADMIN_URL}/masteradmin/addragency`,{country:recruitinguser.data.country,id:recruitinguser.data._id})
 
        //navigate user to kyc page
-       navigate("/signup/supplier/kyc",{state:{recruiting_id:recruitinguser.data._id}})
+       navigate("/signup/supplier/kyc",{state:{recruiting_id:recruitinguser.data._id,agency_type:formData.agency_type}})
       }catch(err){
+        console.log(err)
         showNotification("There is something wrong","failure")
         newErrors.internal="There is something wrong...!";
         setErrors(newErrors)
@@ -318,12 +313,12 @@ const RecruitSignUp = () => {
                   type="text"
                   name="full_name"
                   id="name"
-                  value={formData.name}
+                  value={formData.full_name}
                   onChange={handleChange}
                   className="input-field"
                 />
                 {errors.name && (
-                  <p className="text-red-600 text-xs my-2">{errors.name}</p>
+                  <p className="text-red-600 text-xs ">{errors.name}</p>
                 )}
               </div>
               <div className="flex-start gap-2 w-full">
@@ -348,26 +343,67 @@ const RecruitSignUp = () => {
                 </label>
                 <PhoneInput
                   country={"in"}
-                  value={formData.phoneNumber}
+                  // value={formData.phoneNumber}
+                  value={formData.mobileno}
                   onChange={(phone) =>
                     setFormData((prevData) => ({
                       ...prevData,
                       mobileno: phone,
                     }))
                   }
+                
                   containerStyle={{ width: "100%" }}
                 />
                 {errors.phoneNumber && (
                   <p className="text-red-600 text-xs">{errors.phoneNumber}</p>
                 )}
               </div>
+              <div className="flex-start gap-2 w-full">
+                <label htmlFor="agency_type" className="input-label">
+                  Agency Type <span className="text-green-800">*</span>
+                </label>
+                <div className="flex items-center w-full gap-4">
+                  <label className="flex items-center gap-1">
+                    <input
+                      type="checkbox"
+                      name="agency_type"
+                      value="solo"
+                      checked={formData.agency_type==="solo"}
+                      onChange={handleChangeAgencyType}
+                    />
+                    <span className="pl-1">Solo</span>
+                  </label>
+                  <label className="flex items-center gap-1">
+                    <input
+                      type="checkbox"
+                      name="agency_type"
+                      value="company"
+                      checked={formData.agency_type==="company"}
+                      onChange={handleChangeAgencyType}
+                    />
+                    <span className="pl-1">Company</span>
+                  </label>
+                </div>
+                {errors.agency_type && (
+                  <p className="text-red-600 text-xs">{errors.agency_type}</p>
+                )}
+
+              </div>
               <button
                 type="button"
-                onClick={handleCheckMail}
+                onClick={handleCheckCredentials}
                 disabled={firtsStepLoad}
-                className="w-full py-3 my-3 bg-green-600 text-white rounded-md text-xl disabled:cursor-not-allowed disabled:opacity-50 "
+                className="w-full py-3 my-3 bg-green-600 text-white rounded-md flex justify-center items-center text-xl disabled:cursor-not-allowed disabled:opacity-50 "
               >
-                Next
+                {
+                  firtsStepLoad ? 
+                  <div className="flex items-center gap-2">
+                   <LoaderCircle className="animate-spin"></LoaderCircle>
+                   <span>Loading</span>
+                  </div>
+                  :
+                   <span>Next</span>
+                }
               </button>
             </form>
           </div>
@@ -379,6 +415,59 @@ const RecruitSignUp = () => {
           
           <div className="w-full relative mt-6">
             <form className="flex flex-col gap-4">
+              {
+                formData.agency_type==="solo"?
+                <div className="flex flex-col gap-4">
+                                 {/* fields for solo recruiter  */}
+              <div className="flex-start gap-2 w-full">
+                <label htmlFor="year_of_experience" className="input-label">
+                  Years Of Experience <span className="text-green-800">*</span>
+                </label>
+                <input 
+                type="number"
+                name="year_of_experience"
+                id="year_of_experience"
+                value={formData.year_of_experience}
+                onChange={handleChange}
+                className="input-field"
+                ></input>
+                {errors.year_of_experience && (
+                  <p className="text-red-600 text-xs">{errors.year_of_experience}</p>
+                )}
+              </div>
+              <div className="flex-start gap-2 w-full">
+                <label htmlFor="agency_type" className="input-label">
+                  Expertise Area <span className="text-green-800">*</span>
+                </label>
+                <div className="flex items-center w-full gap-4">
+                  <label className="flex items-center gap-1">
+                    <input
+                      type="checkbox"
+                      name="expertise_area"
+                      value="it hiring"
+                      checked={formData.expertise_area==="it hiring"}
+                      onChange={handleChangeAgencyType}
+                    />
+                    <span className="pl-1">It Hiring</span>
+                  </label>
+                  <label className="flex items-center gap-1">
+                    <input
+                      type="checkbox"
+                      name="expertise_area"
+                      value="non it hiring"
+                      checked={formData.expertise_area==="non it hiring"}
+                      onChange={handleChangeAgencyType}
+                    />
+                    <span className="pl-1">Non It Hiring</span>
+                  </label>
+                </div>
+                {errors.agency_type && (
+                  <p className="text-red-600 text-xs">{errors.agency_type}</p>
+                )}
+              </div>
+              </div>:
+            <div className="flex flex-col gap-4">
+              {/* Fields for company recruiter agency */}
               <div className="flex-start gap-2 w-full">
                 <label htmlFor="company" className="input-label">
                   Company Name <span className="text-green-800">*</span>
@@ -434,6 +523,9 @@ const RecruitSignUp = () => {
                   <p className="text-red-600 text-xs">{errors.designation}</p>
                 )}
               </div>
+                </div>
+              }
+
               <div className="flex-start gap-2 w-full">
                 <label htmlFor="linkedinUrl" className="input-label">
                   LinkedIn URL <span className="text-green-800">*</span>
