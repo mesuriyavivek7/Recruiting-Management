@@ -480,3 +480,15 @@ export const checkPassword=async (req, res, next)=>{
          next(err)
     }
 }
+
+export const withrawJobRequest = async (req, res, next) =>{
+    try{
+        const {orgjobid,rememberid} = req.body
+        await RECRUITINGTEAM.findByIdAndUpdate(rememberid,{$pull:{requested_jobs:orgjobid}})
+        await JOBS.findByIdAndUpdate(orgjobid,{$pull:{job_request:rememberid}})
+
+        return res.status(200).json("Job request withraw.")
+    }catch(err){
+        next(err)
+    }
+}

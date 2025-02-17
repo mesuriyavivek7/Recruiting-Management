@@ -223,6 +223,7 @@ function PostJobForm1({ onNext, onFormDataChange, jobId, parentFormData}) {
     const selectedCountryId = parseInt(event.target.value);
     setSelectedCountry(selectedCountryId);
     setSelectedState("");
+    setFormData((prevData)=>({...prevData,city:[]}))
     for (let i of countries) {
       if (parseInt(i.country_id) === selectedCountryId) {
         setFormData((prevData) => ({ ...prevData, country: i.country_name }));
@@ -234,6 +235,7 @@ function PostJobForm1({ onNext, onFormDataChange, jobId, parentFormData}) {
   const handleStateChange = (event) => {
     const selectedStateId = parseInt(event.target.value);
     setSelectedState(selectedStateId);
+    setFormData((prevData)=>({...prevData,city:[]}))
     for (let i of states) {
       if (parseInt(i.state_id) === selectedStateId) {
         setFormData((prevData) => ({ ...prevData, state: i.state_name }));

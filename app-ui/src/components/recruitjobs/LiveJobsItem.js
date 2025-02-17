@@ -20,6 +20,8 @@ export default function LiveJobsItem({jobObj,handleOpenPreviewBox,showNotificati
 
   const {user,isVerified}=useContext(AuthContext)
 
+  const [withrawLoader,setWithrawLoader] = useState(false)
+
   //Creating country mapping
   const country=new Map([
     ['India',INDIAFLAG],
@@ -62,6 +64,18 @@ export default function LiveJobsItem({jobObj,handleOpenPreviewBox,showNotificati
          console.log(err)
          showNotification("Something went wrong.",'failure')
       }
+  }
+
+  const handleWithrawJobRequest = async  ()=>{
+     try{
+      setWithrawLoader(true)
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/recruitingteam/withrawjobrequest`,{orgjobid:jobObj.job._id,rememberid:user._id})
+      await fetchLiveJobs()
+      showNotification("Successfully job request Withdrawal")
+     }catch(err){
+      console.log(err)
+      showNotification("Something went wrong.",'failure')
+     }
   }
 
   const handleOpenConfirmPopUpBox=()=>{
@@ -161,6 +175,7 @@ export default function LiveJobsItem({jobObj,handleOpenPreviewBox,showNotificati
            </div>
          </div>
          <div>
+            {jobObj.isRequestJob && <button onClick={handleWithrawJobRequest} className='bg-red-500 text-white p-1 rounded-sm mr-2 hover:bg-red-600 transition-colors duration-300'>Withdrawal</button>}
             <button disabled={jobObj.isRequestJob} onClick={handleOpenConfirmPopUpBox} className='bg-blue-400 disabled:cursor-not-allowed disabled:bg-slate-200 text-white p-1 text-md rounded-sm'><ArrowRightAltIcon style={{marginRight:"4px"}}></ArrowRightAltIcon> {jobObj.isRequestJob?("Mapping Request Sent"):("Request Map")}</button>
          </div>
        </div>

@@ -255,7 +255,6 @@ const PostJobForm1 = ({ onNext, onFormDataChange,jobId,handleDraftSave,parentFor
   const validate = () => {
     const newErrors = {};
     if (!formData.jobTitle) newErrors.jobTitle = "Job Title is required.";
-    else if(formData.jobTitle.length<10) newErrors.jobTitle="Job Title must be at least 10 characters"
     if (!formData.jobDescription || getTextLength(formData.jobDescription) < 100)
       newErrors.jobDescription = "Job Description must be at least 100 characters.";
     else if (formData.jobDescription.length>65000) newErrors.jobDescription="Max length of character for job description is 650000."

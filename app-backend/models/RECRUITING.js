@@ -17,9 +17,18 @@ const recruitingagencySchema=new mongoose.Schema({
         type:String,
         required:true
     },
-    company_name:{
+    agency_type:{
         type:String,
         required:true
+    },
+    expertise_area:{
+        type:String,
+    },
+    year_of_experience:{
+        type:String,
+    },
+    company_name:{
+        type:String,
     },
     company_description:{
        type:String
@@ -44,11 +53,9 @@ const recruitingagencySchema=new mongoose.Schema({
     },
     company_size:{
         type:String,
-        required:true
     },
     designation:{
         type:String,
-        required:true
     },
     linkedin_url:{
         type:String,
@@ -83,6 +90,7 @@ const recruitingagencySchema=new mongoose.Schema({
     kyc_details:{
         entity_type:String,
         pancard_number:String,
+        gst_no:String
     },
     kyc_documents:{
       filename:String,
