@@ -859,7 +859,7 @@ const RecruitSignUp = () => {
             <div className="flex flex-col place-items-start w-full">
               <img src={asset1} alt="company-logo" className="w-32" />
               <h1 className="text-3xl mt-8 font-medium text-gray-900 w-8/12 leading-9">
-                Recruiting Agency Signup
+                Recruiter Signup
               </h1>
             </div>
             <div className="w-full relative flex gap-1 mt-5 place-items-center">

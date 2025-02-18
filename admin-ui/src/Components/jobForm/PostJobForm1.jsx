@@ -268,7 +268,7 @@ function PostJobForm1({ onNext, onFormDataChange, jobId, parentFormData}) {
     if (!formData.city) newErrors.city = "City is required.";
     if (!formData.domain) newErrors.domain = "Job Domain is required.";
     if (!formData.positions) newErrors.positions="Job Positions is required."
-    else if (formData.positions<=0) newErrors.positions="Number of Position field should be greater than 0."
+    else if (formData.positions<0) newErrors.positions="Number of Position field should be greater than 0."
     if(!formData.minExperience || !formData.maxExperience) newErrors.experience="Min or Max Experience is required."
     else if (formData.minExperience && formData.maxExperience && formData.minExperience > formData.maxExperience)
       newErrors.experience = "Max Experience cannot be less than Min Experience.";
