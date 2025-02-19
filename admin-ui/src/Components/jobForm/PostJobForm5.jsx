@@ -194,7 +194,7 @@ function PostJobForm5({onSubmit, onPrev, onFormDataChange, jobid, parentFormData
      </div>
      
     </div>
-     <div className='shadow rounded-md flex w-[1300px] place-content-end fixed bottom-0 bg-white px-4 py-2'>
+     <div className='shadow rounded-md flex w-[1300px] place-content-start fixed bottom-0 bg-white px-4 py-2'>
          <div className='flex gap-4'>
          
           <button 
