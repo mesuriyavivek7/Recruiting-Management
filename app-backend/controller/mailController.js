@@ -71,9 +71,9 @@ const generateEmailHTML = (resumedetails) => {
 dotenv.config()
 
 let transpoter=nodemailer.createTransport({
-    service:'gmail',
-    host:'smtp.gmail.com',
-    port:587,
+    host:'smtp.hostinger.com',
+    port:465,
+    secure:true,
     auth:{
         user:process.env.USER_MAIL,
         pass:process.env.USER_APP_PASS
@@ -134,7 +134,7 @@ export const sendBulkMail=async (req,res,next)=>{
         let mailOption={
             from:{
                 name:"uphire",
-                address:"vivekmesuriya110@gmail.com"
+                address:process.env.USER_MAIL
             },
             to:mailpreq.email,
             subject:mailpreq.subject,
@@ -286,7 +286,7 @@ export const sendMail=async (req,res)=>{
     let mailOption={
         from:{
             name:"UpHire",
-            address:'vivekmesuriya110@gmail.com'
+            address:process.env.USER_MAIL
         },
         to:mailpreq.to,
         subject:mailpreq.subject,
@@ -417,7 +417,7 @@ export const sendTeamMemberNotifyMail=async (req,res)=>{
     let mailOption={
         from:{
             name:"UpHire",
-            address:'vivekmesuriya110@gmail.com'
+            address:process.env.USER_MAIL
         },
         to:mailpreq.to,
         subject:"Invited to UPHIRE",
@@ -675,7 +675,7 @@ export const sendVerificationMailEnterpriseTeam=async (req,res,next)=>{
     const mailConfigurations={
        from:{
         name:"Uphire",
-        address:'vivekmesuriya110@gmail.com'
+        address:process.env.USER_MAIL
        },
        to:req.body.email,
        subject:'Uphire:Verify your email address',
@@ -813,7 +813,7 @@ export const sendVerificationMailRecruiting=async (req,res,next)=>{
     const mailConfigurations={
        from:{
         name:"Uphire",
-        address:'vivekmesuriya110@gmail.com'
+        address:process.env.USER_MAIL
        },
        to:req.body.email,
        subject:'Uphire:Verify your email address',
@@ -935,7 +935,7 @@ export const sendVerificationMailRecruitingTeam=async (req,res,next)=>{
     const mailConfigurations={
        from:{
         name:"Uphire",
-        address:'vivekmesuriya110@gmail.com'
+        address:process.env.USER_MAIL
        },
        to:req.body.email,
        subject:'Uphire:Verify your email address',
@@ -1045,7 +1045,7 @@ export const sendEmailUpdateVerificationEnterprise=async (req,res,next)=>{
     const mailConfigurations={
        from:{
         name:"Uphire",
-        address:'vivekmesuriya110@gmail.com'
+        address:process.env.USER_MAIL
        },
        to:req.body.email,
        subject:'Uphire:Verify your email address',
@@ -1150,7 +1150,7 @@ export const sendEmailUpdateVerificaitonRecruiting=async (req,res,next)=>{
     const mailConfigurations={
        from:{
         name:"Uphire",
-        address:'vivekmesuriya110@gmail.com'
+        address:process.env.USER_MAIL
        },
        to:req.body.email,
        subject:'Uphire:Verify your email address',
@@ -1452,7 +1452,7 @@ export const requestResetPassword=async (req,res,next)=>{
      const mailConfigurations={
         from:{
          name:"Uphire",
-         address:'vivekmesuriya110@gmail.com'
+         address:process.env.USER_MAIL
         },
         to:email,
         subject:"Uphire, Reset Password",

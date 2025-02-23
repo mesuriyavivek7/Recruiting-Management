@@ -4,13 +4,12 @@ import dotenv from 'dotenv'
 dotenv.config()
 
 let transpoter = nodemailer.createTransport({
-    service: 'gmail',
-    host: 'smtp.gmail.com',
-    port: 587,
-    auth: {
-        user: process.env.USER_MAIL,
-        pass: process.env.USER_APP_PASS
-
+    host:'smtp.hostinger.com',
+    port:465,
+    secure:true,
+    auth:{
+        user:process.env.USER_MAIL,
+        pass:process.env.USER_APP_PASS
     }
 })
 
@@ -19,8 +18,8 @@ export const sendMail = async (req, res) => {
 
     let mailOption = {
         from: {
-            name: "UpHire",
-            address: 'vivekmesuriya110@gmail.com'
+            name: "Uphire",
+            address: process.env.USER_MAIL
         },
         to: email,
         subject: "Invitation to Join Uphire as an Account Manager",
