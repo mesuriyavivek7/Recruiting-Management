@@ -148,7 +148,7 @@ export const columns = [
         headerAlign:'left',
         renderCell: (params) =>(
             <div className="flex items-center w-full h-full">
-                <button className="bg-blue-500 hover:bg-blue-600 text-white h-10 w-28 flex justify-center items-center">Approve</button>
+                <button className="bg-blue-500 hover:bg-blue-600 text-white h-10 w-28 flex justify-center items-center">View</button>
             </div>
         )
     }

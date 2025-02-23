@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 //importing mui components
 import { Button } from "@mui/material";
 
-
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { useParams } from "react-router-dom";
 
 //importing components
@@ -19,6 +19,8 @@ function AcJob() {
   const { id } = useParams();
   const [notification, setNotification] = useState(null);
   const [activeTab, setActiveTab] = useState("Job");
+  
+  
 
   const showNotification = (message, type) => {
     setNotification({ message, type });
@@ -32,6 +34,20 @@ function AcJob() {
   });
 
   const [jobStatus,setJobStatus] = useState('Active')
+  const [inputJobStatus,setInputJobStatus] = useState(null)
+  const [openChangeStatus,setOpenChangeStatus] = useState(false)
+
+  const handleSetJobStatus = async () =>{
+    try{
+       const job_status = await axios.get(`${process.env.REACT_APP_API_APP_URL}/job/getjobstatus/${id}`)
+       console.log("job status--->",job_status)
+       setJobStatus(job_status.data)
+       setInputJobStatus(job_status.data)
+    }catch(err){
+      showNotification('There is something went wrong.','failure')
+      console.log(err)
+    }
+ }
 
   const getDashboardCounts = async ()=>{
     try{
@@ -44,8 +60,32 @@ function AcJob() {
   }
 
   useEffect(()=>{
+    handleSetJobStatus()
     getDashboardCounts()
   },[])
+
+
+  const handleChangeJobStatus = async ()=>{
+    if(inputJobStatus){
+     try{
+       await axios.put(`${process.env.REACT_APP_API_APP_URL}/job/changejobstatus/${id}/${inputJobStatus}`)
+       setInputJobStatus('')
+       await handleSetJobStatus()
+       setOpenChangeStatus(false)
+       showNotification("Successfully job status changed.",'success')
+     }catch(err){
+       showNotification("Something went wrong while changing status.",'failure')
+       console.log(err)
+     }
+   }
+ }
+  
+  const getJobStatusTheme = (jobStatus) =>{
+    if(jobStatus==='Pending') return 'red'
+    else if(jobStatus==="Active") return 'green'
+    else if(jobStatus==="Hold") return 'orange'
+    else if(jobStatus==='Close') return 'red'
+} 
 
   return (
     <>
@@ -56,6 +96,23 @@ function AcJob() {
           onClose={() => setNotification(null)}
         ></Notification>
       )}
+      {
+      openChangeStatus && 
+      <div className='fixed flex justify-center items-center inset-0 bg-black bg-opacity-50 z-40'>
+         <div className='shadow bg-white p-3 flex flex-col gap-5 w-[30%] rounded-md'>
+            <div className='flex items-center gap-1'>
+              <span className='cursor-pointer' onClick={()=>setOpenChangeStatus(false)}><ArrowBackIosIcon style={{fontSize:'1.2rem'}}></ArrowBackIosIcon></span>
+              <span className='text-lg font-sans'>Select Status</span>
+            </div>
+            <select onChange={(e)=>setInputJobStatus(e.target.value)} value={inputJobStatus} className='border p-1 outline-none'>
+               <option value='Active'>Active</option>
+               <option value='Hold'>Hold</option>
+               <option value="Close">Close</option>
+            </select>
+            <button onClick={handleChangeJobStatus} className='bg-blue-500 hover:bg-blue-600 rounded-md text-white w-32 p-1 text-base'>Change Status</button>
+         </div>
+      </div>
+     }
       <div className="flex w-full h-full flex-col gap-4">
         <div className="py-4 flex justify-between w-full">
           <div className="flex gap-0">
@@ -162,6 +219,10 @@ function AcJob() {
             >
               {jobsCount.requestedRecruiterCount} Requested Recruiter
             </Button>
+          </div>
+          <div className='flex items-center gap-2'>
+           <span className={`font-sans border border-${getJobStatusTheme(jobStatus)}-500 text-${getJobStatusTheme(jobStatus)}-500 font-semibold py-1 px-2.5 rounded-md`}>{jobStatus}</span>
+           <button onClick={()=>setOpenChangeStatus(true)} className='bg-blue-500 hover:bg-blue-600 font-sans text-white py-1 px-2 rounded-md'>Change Status</button>
           </div>
          
         </div>

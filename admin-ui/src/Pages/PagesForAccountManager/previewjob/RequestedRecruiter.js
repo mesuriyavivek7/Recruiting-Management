@@ -17,6 +17,7 @@ function RequestedRecruiter({jobId, getDashboardCounts}) {
   const [open,setOpen] = useState(false)
   const [selectedRow,setSelectedRow] = useState(null)
   const [approveLoad,setApproveLoad] = useState(false)
+  const [rejectLoad,setRejectLoad] = useState(false)
 
   const showNotification = (message, type) => {
     setNotification({ message, type });
@@ -43,6 +44,26 @@ function RequestedRecruiter({jobId, getDashboardCounts}) {
         console.log(err)
     }finally{
         setApproveLoad(false)
+    }
+  }
+
+
+  const handleReject = async (rememberid) =>{
+    setRejectLoad(true)
+    try{
+       //Get orgjobid
+       const orgjobid =await getOrgJobId(jobId)
+
+       await axios.post(`${process.env.REACT_APP_API_APP_URL}/recruitingteam/rejectrecruitermember`,{orgjobid,rememberid})
+       await getDashboardCounts()
+       await fetchData()
+       setOpen(false)
+       showNotification("Successfully Recruiter member rejected.","success")
+    }catch(err){
+      console.log(err)
+      showNotification("Something went wrong while reject job","failure")
+    } finally{
+      setRejectLoad(false)
     }
   }
 
@@ -310,6 +331,32 @@ function RequestedRecruiter({jobId, getDashboardCounts}) {
       </span>
      }
       {!approveLoad && <span>Approve</span>}
+     </Button>
+     <Button onClick={()=>handleReject(selectedRow?._id)}
+      disabled={rejectLoad}
+      sx={{
+      fontSize: { xs: "12px", sm: "14px", xl: "17px" },
+      width: { xl: "120px", sm: "100px" },
+      height: {xl: "40px", sm:"35px"},
+      //height:"30px",
+      color: 'white',
+      backgroundColor:
+        "#315370",
+      "&:hover": {
+        backgroundColor: "gray"
+     },
+      textTransform: "none",
+
+    }}>
+      {rejectLoad &&
+      <span className="absolute inset-0 flex items-center justify-center">
+        <svg className="w-5 h-5 text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l5.6-3.2a10 10 0 00-10.4 0L4 12z"></path>
+        </svg>
+      </span>
+     }
+      {!rejectLoad && <span>Reject</span>}
      </Button>
   </DialogActions>
     
