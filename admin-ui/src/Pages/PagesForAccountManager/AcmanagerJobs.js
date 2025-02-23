@@ -72,7 +72,7 @@ function AcmanagerJobs() {
             <button onClick={handleNavigate} className='bg-blue-500 hover:bg-blue-600 transition-colors duration-300 text-white rounded-md p-2'>Post New Job</button>
           </div>
        </div>
-       <div className="h-full py-5 px-4 custom-shadow rounded-md bg-white">
+       <div className="h-[580px] py-5 px-4 custom-shadow rounded-md bg-white">
           <Box
             sx={{
               height: "100%",
