@@ -492,3 +492,20 @@ export const withrawJobRequest = async (req, res, next) =>{
         next(err)
     }
 }
+
+
+export const handleRejectRecruiter = async (req, res, next)=>{
+    try{
+       const {orgjobid, rememberid} = req.body
+       
+       //Remove remember id from job job_request
+       await JOBS.findByIdAndUpdate(orgjobid,{$pull:{job_request:rememberid}})
+
+       //Remove job id form recruiter member requested_jobs
+       await RECRUITINGTEAM.findByIdAndUpdate(rememberid,{$pull:{requested_jobs:orgjobid}})
+
+       return res.status(200).json("Recruiter member rejected.")
+    }catch(err){
+        next(err)
+    }
+}
