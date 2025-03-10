@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch,useSelector } from 'react-redux';
 import axios from 'axios'
 //importing images
-import asset2 from '../../assets/asset 2.png'
+import asset2 from '../../assets/login.png'
 import { useNavigate } from "react-router-dom";
 import { setUserData } from '../../State/Admin/Action';
 import Notification from '../../Components/Notification';
+import LOGO from '../../assets/asset12.png'
 
 //importing icons
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -112,7 +113,10 @@ export default function Login() {
       <div className='w-full flex place-items-center relative'>
        <div className='login-form w-[38%] relative'>
         <div className='w-8/12 h-full flex flex-col mx-auto'>
-         <h1 className='text-3xl font-semibold text-green-500'>Login As Uphire Internal</h1>
+         <div className='flex flex-col items-center gap-6'>
+           <img src={LOGO} alt='logo-image' className='w-36'></img>
+           <h1 className='text-2xl font-semibold text-green-500'>Login As Uphire Internal</h1>
+         </div>
          <div className='w-full mt-12'>
             <form className='flex flex-col gap-6'>
               <div className='flex-start gap-2 w-full'>
@@ -188,7 +192,7 @@ export default function Login() {
          </div>
          </div>
         </div>
-         <div className="login-image w-[62%] h-screen relative bg-gradient-to-b from-blue-800 to-blue-900">
+         <div className="login-image w-[62%] h-screen relative bg-gradient-to-b from-lightblue to-darkblue">
           <img
             src={asset2}
             alt="login-image"

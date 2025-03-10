@@ -1,6 +1,7 @@
 import React,{useEffect,useState} from "react";
 import asset3 from "../../assets/asset 1.png";
 import asset10 from "../../assets/asset 10.svg";
+import SIGNUP from '../../assets/SU.png'
 import { Link, useNavigate } from "react-router-dom";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
@@ -260,9 +261,9 @@ const EnterpriseSignup = () => {
     
       <div className="recruit-content-container h-screen flex relative overflow-hidden">
        
-        <div className="login-image w-[58%] h-screen relative bg-gradient-to-b from-orange-800 via-black-900 to-black-900">
+        <div className="login-image bg-gradient-to-b from-blue-800 to-blue-900 w-[58%] h-screen relative">
         <img
-            src={asset10}
+            src={SIGNUP}
             alt="login-image"
             className="relative p-28 h-full mx-auto"
           />
