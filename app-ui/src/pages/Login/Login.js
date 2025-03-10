@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import asset2 from "../../assets/asset 2.png";
+import LOGIN from '../../assets/Login.png'
 import asset1 from "../../assets/asset 1.png";
 import { motion } from "framer-motion";
 import { Link,useNavigate,useLocation } from "react-router-dom";
@@ -117,7 +117,7 @@ const Login = () => {
         
         <div className="login-image w-[58%] h-screen relative bg-gradient-to-b from-blue-800 to-blue-900">
           <img
-            src={asset2}
+            src={LOGIN}
             alt="login-image"
             className="relative h-full object-contain mx-auto"
           />
