@@ -231,7 +231,7 @@ const Login = () => {
               </form>
               <div className="text-sm mt-7">
                 <p className="text-gray-400">
-                  Create Account as Employer? 
+                  Create Account as Enterprise? 
                   <Link to="/signup/employer" className="text-blue-400 pl-1">
                     Create Account
                   </Link>
