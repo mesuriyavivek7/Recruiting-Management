@@ -115,7 +115,7 @@ export default function Login() {
         <div className='w-8/12 h-full flex flex-col mx-auto'>
          <div className='flex flex-col items-center gap-6'>
            <img src={LOGO} alt='logo-image' className='w-36'></img>
-           <h1 className='text-2xl font-semibold text-green-500'>Login As Uphire Internal</h1>
+           <h1 className='text-2xl font-semibold'>Login</h1>
          </div>
          <div className='w-full mt-12'>
             <form className='flex flex-col gap-6'>

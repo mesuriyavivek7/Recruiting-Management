@@ -6,6 +6,10 @@ import asset7 from "../../assets/asset 7.svg";
 import asset8 from "../../assets/asset 8.svg";
 import asset9 from "../../assets/asset 9.svg";
 
+//Importing signup images
+import SIGNUP1 from '../../assets/SU.png'
+import SIGNUP2 from '../../assets/1.png'
+
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 
@@ -820,25 +824,25 @@ const RecruitSignUp = () => {
       case 1:
         return (
           <img
-            src={asset4}
+            src={SIGNUP1}
             alt="form-step-1"
-           className="relative p-20 h-full mx-auto"
+           className="relative h-full mx-auto"
           />
         );
       case 2:
         return (
           <img
-            src={asset8}
+            src={SIGNUP2}
             alt="form-step-2"
-            className="relative p-20 h-full mx-auto"
+            className="relative h-full mx-auto"
           />
         );
       case 3:
         return (
           <img
-            src={asset9}
+            src={SIGNUP1}
             alt="form-step-3"
-           className="relative p-20 h-full mx-auto"
+           className="relative h-full mx-auto"
           />
         );
       default:
@@ -850,7 +854,7 @@ const RecruitSignUp = () => {
   return (
     <main>
       <div className="recruit-content-container h-screen flex relative overflow-hidden">
-        <div className="login-image w-[58%] h-screen relative bg-gradient-to-b from-orange-800 to-black-900">
+        <div className="login-image w-[58%] h-screen relative bg-gradient-to-b from-blue-800 to-blue-900">
           {renderFormImage()}
         </div>
         <div className="recruit-form w-[42%] h-full overflow-y-scroll relative">

@@ -265,7 +265,7 @@ const EnterpriseSignup = () => {
         <img
             src={SIGNUP}
             alt="login-image"
-            className="relative p-28 h-full mx-auto"
+            className="relative h-full mx-auto"
           />
         </div>
 

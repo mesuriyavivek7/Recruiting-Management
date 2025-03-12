@@ -197,8 +197,8 @@ const Navbar = () => {
 
     <div className="w-full z-60 flex justify-between py-4 px-3 bg-blue-600">
       <div className="flex place-items-center gap-12">
-        <div className="h-[30px] flex place-items-center overflow-hidden rounded-md">
-          <img src={asset1} alt="logo" width={95} />
+        <div className="h-[34px] bg-white p-2 flex place-items-center overflow-hidden rounded-md">
+          <img src={asset1} alt="logo" width={90} />
         </div>
         <div onClick={()=>setOpenSearchBox(true)} className="search-input flex place-items-center gap-2 text-sm px-4 w-[600px] bg-white-400 py-[5px] rounded-md">
           <img src={asset15} alt="search-icon" width={15} />
