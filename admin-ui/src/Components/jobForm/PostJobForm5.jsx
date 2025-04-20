@@ -140,9 +140,9 @@ function PostJobForm5({onSubmit, onPrev, onFormDataChange, jobid, parentFormData
           }
         </div>
          {
-           (jobSubmitLoad)?(<span className='text-xl'>Job Post in Progress...</span>):(  <div className='flex flex-col gap-4'>
-                  <span className='text-xl text-center'>Your Job posted sucessfully.</span>
-                  <button onClick={handleNavigate} className='text-white bg-blue-500 hover:bg-blue-400 transition-all px-1 py-2'>View Posted Jobs</button>
+           (jobSubmitLoad)?(<span className='text-xl'>{Object.keys(parentFormData.form5).length>0?"Job Details Changing":"Job Post in Progress..."}</span>):(  <div className='flex flex-col gap-4'>
+                  <span className='text-xl text-center'>{Object.keys(parentFormData.form5).length>0?"Your Job Saved sucessfully.":"Your Job posted sucessfully."}</span>
+                  <button onClick={handleNavigate} className='text-white bg-blue-500 hover:bg-blue-400 transition-all px-1 py-2'>{Object.keys(parentFormData.form5).length>0?"View Saved Job":"View Posteed Jobs"}</button>
               </div>)
          }
       
@@ -205,7 +205,8 @@ function PostJobForm5({onSubmit, onPrev, onFormDataChange, jobid, parentFormData
             onClick={()=>setAction(true)}
             className="py-1.5 px-4 text-base bg-blue-600 rounded-sm text-white"
           >
-            Post a Job
+            {Object.keys(parentFormData.form5).length>0?"Save Changes":"Post A JOb"}
+            
           </button>
          </div>
       </div>

@@ -10,7 +10,7 @@ function PostJobForm3({ onNext, onPrev, onFormDataChange, jobid, parentFormData}
   const {userData} = useSelector((state) => state.admin);
   const [formData, setFormData] = useState({
     clientVisibility:(Object.keys(parentFormData.form3).length>0)?(parentFormData.form3.client_visibility):("Visible"),
-    clientName: "",
+    clientName: (Object.keys(parentFormData.form3).length > 0)?(parentFormData.form3.client_name):"",
     clientDescription:(Object.keys(parentFormData.form3).length>0)?(parentFormData.form3.client_description):(""),
     agreeToTerms: (Object.keys(parentFormData.form3).length>0)?(parentFormData.form3.agree_to_tearms):(false),
   });

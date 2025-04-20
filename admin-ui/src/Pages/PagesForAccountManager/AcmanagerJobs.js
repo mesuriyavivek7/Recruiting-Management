@@ -19,6 +19,10 @@ function AcmanagerJobs() {
      navigate('postjob')
   }
 
+  const handleNavigateJobEdit = (id) =>{
+    navigate('postjob',{state:id})
+  }
+
   const [acManagerJobs,setAcManagerJobs] = useState([])
   const [filterJobs,setFilterJobs] = useState([])
   const [loading, setLoading] = useState(false)
@@ -85,7 +89,7 @@ function AcmanagerJobs() {
               rowHeight={80}
               rows={filterJobs}
               onRowClick={(params) => handleRowClick(params)}
-              columns={acmanagerJobsCols}
+              columns={acmanagerJobsCols(handleNavigateJobEdit)}
               pageSize={8}
               loading={loading}
               initialState={{ pagination: { paginationModel: { page: 0, pageSize: 10 } } }}

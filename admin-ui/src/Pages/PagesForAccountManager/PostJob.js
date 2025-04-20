@@ -8,12 +8,16 @@ import PostJobForm5 from "../../Components/jobForm/PostJobForm5";
 
 import axios from "axios";
 import Loader from "../../assets/whiteloader.svg";
+import { useLocation } from "react-router-dom";
+import { LoaderCircle } from "lucide-react";
 
 
 function PostJob() {
+  const location  = useLocation()
   const { userData } = useSelector((state) => state.admin);
-  const [currentStep, setCurrentStep] = useState(1);
-  const [jobId, setJobId] = useState(null);
+  const oldjobid = location.state
+  const [currentStep, setCurrentStep] = useState((oldjobid)?(0):(1));
+  const [jobId, setJobId] = useState((oldjobid)?(oldjobid):(null));
   const [loader, setLoader] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -43,6 +47,56 @@ function PostJob() {
     setJobId(result);
   };
 
+
+  const fetchPastData = async () =>{
+    try{
+      setLoader(true)
+
+      //Fetch job Basic details
+      const basicdetails=await axios.get(`${process.env.REACT_APP_API_APP_URL}/job/getbasicjobdetails/${oldjobid}`)
+
+      //fetch job commission details
+      const commissiondetails=await axios.get(`${process.env.REACT_APP_API_APP_URL}/job/getjobcommissiondetails/${oldjobid}`)
+
+      //fetch job company details
+      const companydetails=await axios.get(`${process.env.REACT_APP_API_APP_URL}/job/getcompanydetails/${oldjobid}`)
+      
+      //fetch job sourcing guidelines
+      const sourcingdetails=await axios.get(`${process.env.REACT_APP_API_APP_URL}/job/getsourcingdetails/${oldjobid}`)
+      
+      //fetch job attachments details
+      const jobattachment=await axios.get(`${process.env.REACT_APP_API_APP_URL}/job/getjobattachmentdetails/${oldjobid}`)
+              
+      //add savedraft flag into job attachments details
+      let jobattach=jobattachment.data
+      for (let key in jobattach) {
+          // Check if the value is an object (and not null)
+          if (jobattach[key] && typeof jobattach[key] === 'object') {
+                // Add the savedDraft key-value pair
+                jobattach[key].savedDraft = true;
+          }
+      }
+      
+       //fetch job screening questions
+       const jobsq=await axios.get(`${process.env.REACT_APP_API_APP_URL}/job/getscreeningquestions/${oldjobid}`)
+              
+       console.log("screening questions----->",jobsq.data)
+       console.log("jobattach------>",jobattach)
+              
+      setFormData((prevData)=>({...prevData,form1:(basicdetails.data)?(basicdetails.data):({}),
+        form2:(commissiondetails.data)?(commissiondetails.data):({work_details:{full_time:{},contract:{}},commission_details:{}}),
+        form3:(companydetails.data)?(companydetails.data):({}),
+        form4:(sourcingdetails.data)?({...sourcingdetails.data,attachments:{...jobattach,savedDraft:true}}):({attachments:{}}),
+        form5:(jobsq.data)?({...jobsq.data}):({})}))
+      setCurrentStep(1)
+    }catch(err){
+      console.log(err)
+    }finally{
+      setLoader(false)
+    }
+  }
+
+
   //custome box stiling
   const boxStyle = {
       animation: 'colorChange 5s infinite',
@@ -51,7 +105,10 @@ function PostJob() {
 
   useEffect(() => {
     if (!jobId) handleJobId();
+    if (oldjobid) fetchPastData()
   }, []);
+
+  console.log("all formdata",formData)
 
   const handleNext = () => {
     setCurrentStep((prevStep) => prevStep + 1);
@@ -171,6 +228,12 @@ function PostJob() {
 
   const renderForm = () => {
     switch (currentStep) {
+      case 0:
+        return (
+          //this is initial setup when user open job as edit form
+          <div>Loading...</div>
+        )
+
       case 1:
         return (
           <PostJobForm1
@@ -243,7 +306,7 @@ function PostJob() {
           <div className='fixed inset-0 flex justify-center bg-black z-50 bg-opacity-50 backdrop-blur-md items-center'>
           <div className="w-[500px] gap-4 flex flex-col items-center p-4 rounded-md bg-white">
             <div style={boxStyle} className="w-[450px] flex justify-center items-center rounded-sm h-60 border animation-color-change">
-              <img src={Loader}></img>
+              <LoaderCircle className="animate-spin text-white w-16 h-16"></LoaderCircle>
             </div>
             <span className="text-xl text-gray-500">Wait For Some Few Seconds...</span>
           </div>
