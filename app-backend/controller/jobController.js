@@ -29,8 +29,6 @@ export const createJobs = async (req, res, next) => {
       const newjob = new JOBS(req.body)
       await newjob.save()
       job = newjob
-    }else{
-      return res.status(409).json({message:"job is already exist"})
     }
     return res.status(200).json(job)
   } catch (err) {

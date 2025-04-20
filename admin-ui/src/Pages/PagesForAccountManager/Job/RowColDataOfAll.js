@@ -187,11 +187,11 @@ export const columns = [
         </div>
       );
     },
-  },
+  }
 ];
 
 
-export const acmanagerJobsCols = [
+export const acmanagerJobsCols = (handleNavigateJobEdit) =>[
 
   {
     field: 'id',
@@ -303,7 +303,22 @@ export const acmanagerJobsCols = [
         </div>
       );
     },
-  }
+  },
+  {
+    field:'action',
+    headerName:'Action',
+    flex:1,
+    minWidth:150,
+    headerAlign:'left',
+    renderCell: (params) => (
+     <div className='h-full w-full flex justify-center items-center'>
+        <button onClick={(e)=>{
+          e.stopPropagation(); 
+          handleNavigateJobEdit(params?.row?.job_id)
+        }} className='bg-green-500 flex justify-center items-center h-9 w-24 rounded-md font-medium hover:bg-green-600 transition-colors duration-300 text-white p-1.5 '>Edit</button>
+     </div>
+    )
+ }
 ]
 
 
