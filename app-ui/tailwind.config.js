@@ -32,7 +32,6 @@ module.exports = {
       backgroundImage: {
         'kyc-bg': "url('/src/assets/kyc.jpg')",
       },
-      
     },
   },
   plugins: [],
