@@ -8,6 +8,9 @@ import { ReactComponent as OffersIcon } from "../../assets/asset25.svg";
 import { ReactComponent as VideosIcon } from "../../assets/asset24.svg";
 import { ReactComponent as SettingsIcon } from "../../assets/asset26.svg";
 import { ReactComponent as ChatsIcon } from "../../assets/asset27.svg";
+import { Database } from 'lucide-react';
+import { UserRoundPlus } from 'lucide-react';
+import { UserSearch } from 'lucide-react';
 import { Link, useLocation } from "react-router-dom";
 import RecruiterSupport from "../../pages/RecruiterSupport";
 import { AuthContext } from "../../context/AuthContext";
@@ -15,6 +18,8 @@ import { AuthContext } from "../../context/AuthContext";
 const SideNavbar = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isSupportVisible, setIsSupportVisible] = useState(false); // State for pop-up visibility
+
+  const [openDatabase,setOpenDataBase] = useState(false)
 
   const location=useLocation()
 
@@ -24,7 +29,6 @@ const SideNavbar = () => {
   const handleExpand = () => {
     setIsExpanded(!isExpanded);
   };
-
 
   const toggleSupportPopup = () => {
     setIsSupportVisible(!isSupportVisible); // Toggle pop-up visibility
@@ -79,6 +83,28 @@ const SideNavbar = () => {
           {isExpanded && <span className="ml-3 text-white">Offers</span>}
         </div>
       </Link>
+
+       <div className="overflow-hidden">
+        <div onClick={()=>setOpenDataBase((prev)=>!prev)} className="hover:bg-gray-400 rounded-md p-2 flex items-center">
+            <Database className="w-[24px] text-white" />
+            {isExpanded && <span className="ml-3 text-white">Database</span>}
+        </div>
+        <div className={`${openDatabase?'h-20':'h-0'} pl-2 transition-all duration-300`}>
+           <Link to={'addcandidate'}>
+             <div className="hover:bg-gray-400 cursor-pointer rounded-md p-2 flex items-center">
+              <UserRoundPlus className="w-[20px] text-white" />
+              {isExpanded && <span className="ml-3 text-sm text-white">Add Candidate</span>}
+             </div>
+           </Link>
+           <Link to={'searchcandidate'}>
+             <div className="hover:bg-gray-400 cursor-pointer rounded-md p-2 flex items-center">
+              <UserSearch className="w-[20px] text-white" />
+              {isExpanded && <span className="ml-3 text-sm text-white">Search Candidate</span>}
+             </div>
+           </Link>
+        </div>
+       </div>
+      
       
       <hr className="bg-gray-black"></hr>
       
@@ -119,9 +145,6 @@ const SideNavbar = () => {
           </div>
         </div>
       )}
-
-
-      
     </div>
 
 
