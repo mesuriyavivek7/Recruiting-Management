@@ -21,11 +21,12 @@ import { city } from '../../data/city';
 import { cityOptions } from '../../data/city';
 
 //Importing icons
-import { Plus } from 'lucide-react';
+import { LoaderCircle, Plus } from 'lucide-react';
 import { X } from 'lucide-react';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
-import Notification from '../Notification';
+
 
 const customStyles = {
   control: (base, state) => ({
@@ -169,14 +170,6 @@ function ManuallAdd() {
 
   },[])
 
-  //for showing notification
-  const [notification,setNotification]=useState(null)
-
-  //for showing notification
-  const showNotification=(message,type)=>{
-    setNotification({message,type})
-  }
-
 
   const addCandidate = async (data) =>{
      //Add new candidate into db
@@ -220,12 +213,12 @@ function ManuallAdd() {
 
      setLoader(true)
      try{
-       const response = await axios.post(`${process.env.REACT_APP_AI_URL}/edit/submit-details`,obj)
+       const response = await axios.post(`${process.env.REACT_APP_AI_URL}/add_user/submit-details`,obj)
        console.log(response)
-       showNotification("New candidate added successfully.",'success')
+       toast.success("New candidate added successfully.",'success')
        reset(defaultValues)
      }catch(err){
-      showNotification("Something went wrong while adding new candidate.","failure")
+      toast.error("Something went wrong while adding new candidate.","failure")
       console.log(err)
      }finally{
       setLoader(false)
@@ -235,7 +228,6 @@ function ManuallAdd() {
 
   return (
     <form onSubmit={handleSubmit(addCandidate)} className='w-full p-4 border border-neutral-300 rounded-md overflow-hidden bg-white custom-shadow-1 flex flex-col gap-5'>
-      {notification && <Notification message={notification.message} type={notification.type} onClose={()=>setNotification(null)}></Notification>}
        <div className='grid grid-cols-3 items-start gap-5'>
          <div className='flex flex-col gap-2'>
             <label className='text-sm font-semibold'>Candidate Name <span className='text-sm text-red-500'>*</span></label>
@@ -642,7 +634,13 @@ function ManuallAdd() {
          </div>
       </div>
       <div className='flex p-2 justify-center items-center'>
-          <button type='submit' className='bg-blue-500 hover:tracking-wider transition-all duration-300 text-white w-32 rounded-md p-2'>Submit</button>
+          <button type='submit' className='bg-blue-500 hover:tracking-wider flex justify-center items-center transition-all duration-300 text-white w-32 rounded-md p-2'>
+             {
+              loader ? 
+              <LoaderCircle className='animate-spin'></LoaderCircle>
+              :<span>Submit</span>
+             }
+          </button>
       </div>
     </form>
   )

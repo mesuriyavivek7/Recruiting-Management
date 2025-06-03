@@ -33,6 +33,7 @@ import RecruiterSettings from "./pages/RecruiterSettings";
 import RecruiterOffers from "./pages/RecruiterOffers/Offers";
 import SearchCandidate from "./pages/database/SearchCandidate";
 import AddCandidate from "./pages/database/AddCandidate";
+import CandidateResult from "./components/database/CandidateResult";
 
 const App = () => {
   const AppRouter = createBrowserRouter([
@@ -141,6 +142,10 @@ const App = () => {
         {
           path:"searchcandidate",
           element:<SearchCandidate></SearchCandidate>
+        },
+        {
+          path:'searchresult',
+          element:<CandidateResult></CandidateResult>
         },
         {
           path:'addcandidate',

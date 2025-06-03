@@ -4,7 +4,7 @@ import makeAnimated from 'react-select/animated';
 
 //Importing data
 import { fetchKeyword } from '../../data/keyword';
-import { cityOptions } from '../../data/city';
+import { city, cityOptions } from '../../data/city';
 import { fetchSkills } from '../../data/skill'
 
 //Importing icons
@@ -14,7 +14,7 @@ import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import axios from 'axios';
 
 
-function ManuallSearch() {
+function ManuallSearch({handleManuallSearchCandidate}) {
   const animatedComponents = makeAnimated();
   const [miniOpen,setMiniOpen] = useState(false)
   const [maxOpen,setMaxOpen] = useState(false)
@@ -32,6 +32,7 @@ function ManuallSearch() {
   //Selected state
   const [selectedKeyword,setSelectedKeyword] = useState([])
   const [selectedSkill,setSelectedSkill] = useState([])
+  const [selectedCity,setSelectedCity] = useState([])
 
   useEffect(()=>{
     const handleFetchSkills = async () =>{
@@ -95,7 +96,7 @@ function ManuallSearch() {
       setOpenSkillSuggetion(true)
       try{
         setSkillSuggestLoader(true)
-        const response = await axios.get(`${process.env.REACT_APP_AI_URL}/autocomplete/job_skills/?prefix=${selectedSkill[selectedSkill.length-1]}&limit=5`)
+        const response = await axios.get(`${process.env.REACT_APP_AI_URL}/autocomplete/job_skillsv1/?prefix=${selectedSkill[selectedSkill.length-1]}&limit=5`)
         setSkillSuggetion(response.data)
         if(response.data.length===0){
          setOpenSkillSuggetion(false)
@@ -187,8 +188,8 @@ function ManuallSearch() {
   let maxSalaryData = []
 
   for (let i=0;i<=100;i+=.5){
-    minSalaryData.push(`${i} Lakh`)
-    maxSalaryData.push(`${i} Lakh`)
+    minSalaryData.push({title:`${i} Lakh`,value:i})
+    maxSalaryData.push({title:`${i} Lakh`,value:i})
   }
 
   const [minSalary,setMinSalary] = useState('')
@@ -259,6 +260,12 @@ function ManuallSearch() {
     setMaxExp('')
   }
 
+  const handleSearchCandidate = () =>{
+    console.log("minsalary---->",minSalary)
+    console.log("type----->",typeof minSalary)
+    console.log("maxSalary---->",maxSalary)
+    handleManuallSearchCandidate(selectedKeyword,selectedSkill,minExp,maxExp,selectedEducation,selectedCity,minSalary,maxSalary)
+  }
 
   return (
     <div className='flex bg-white flex-col overflow-hidden rounded-md border custom-shadow-1 border-neutral-300'>
@@ -313,9 +320,11 @@ function ManuallSearch() {
             <Select
             closeMenuOnSelect={false}
             components={customComponents}
+            onChange={(city)=> setSelectedCity(city.map((item) => item.value))}
             styles={customStyles}
             isMulti
             options={cityOptions}
+            value={cityOptions.filter(option => selectedCity.includes(option.value))}
             placeholder="Type to search city and region"
             ></Select>
           </div>
@@ -372,7 +381,7 @@ function ManuallSearch() {
                   <div className='w-full bg-white h-28 overflow-scroll border flex flex-col absolute top-[100%] z-50 shadow-md'>
                    {
                     minSalaryData.map((item,index)=> (
-                      <span onClick={()=>handleSelectMinSalary(item)} key={index} className='text-sm p-2 hover:bg-slate-100 cursor-pointer'>{item}</span>
+                      <span onClick={()=>handleSelectMinSalary(item.value)} key={index} className='text-sm p-2 hover:bg-slate-100 cursor-pointer'>{item.title}</span>
                     ))
                    }
                   </div>
@@ -388,7 +397,7 @@ function ManuallSearch() {
                   <div className='w-full bg-white h-28 overflow-scroll border flex flex-col absolute top-[100%] z-50 shadow-md'>
                    {
                     maxSalaryData.map((item,index)=> (
-                      <span onClick={()=>handleSelectMaxSalary(item)} key={index} className='text-sm p-2 hover:bg-slate-100 cursor-pointer'>{item}</span>
+                      <span onClick={()=>handleSelectMaxSalary(item.value)} key={index} className='text-sm p-2 hover:bg-slate-100 cursor-pointer'>{item.title}</span>
                     ))
                    }
                   </div>
@@ -429,8 +438,8 @@ function ManuallSearch() {
                 : (
                 <div className='flex items-center gap-2 w-full flex-wrap'>
                   {
-                    skillSuggetion.map((item) => (
-                      <div className='flex items-center gap-2 p-1.5 px-2 border-neutral-300 border bg-white rounded-2xl'>
+                    skillSuggetion.map((item,index) => (
+                      <div key={index} className='flex items-center gap-2 p-1.5 px-2 border-neutral-300 border bg-white rounded-2xl'>
                         <span className='text-sm'>{item}</span>
                         <Plus onClick={()=>addSuggestedSkills(item.toLowerCase())} className='w-5 h-5 text-neutral-600 cursor-pointer'></Plus>
                        </div>
@@ -464,7 +473,7 @@ function ManuallSearch() {
           <div className='w-full col-span-2 flex place-content-end'>
             <div className='flex items-center gap-6'>
                <button onClick={handleReset} className='text-orange-500'>Reset</button>
-               <button className='p-2 text-white rounded-md flex items-center gap-2 bg-blue-500'>
+               <button onClick={handleSearchCandidate} className='p-2 text-white rounded-md flex items-center gap-2 bg-blue-500'>
                  <Search className='w-4 h-4'></Search>
                  Search Candidate
                </button>
