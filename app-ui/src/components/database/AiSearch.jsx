@@ -10,7 +10,7 @@ import { useRef } from 'react';
 import CHATBOT from '../../assets/chatbot.png'
 
 
-function AiSearch() {
+function AiSearch({handlePromptBaseSearch}) {
 
   //For Prompt Storing
   const [prompt,setPrompt] = useState("")
@@ -47,6 +47,11 @@ function AiSearch() {
   const [placeholder, setPlaceholder] = useState('');
   const [charIndex, setCharIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleSearch = () =>{
+    console.log("search candidate details")
+    handlePromptBaseSearch(prompt)
+  }
 
   useEffect(() => {
     const currentText = textArray[textIndex];
@@ -93,7 +98,7 @@ function AiSearch() {
           <div className='flex py-4 place-content-end'>
              <div className='flex items-center gap-6'>
                <button onClick={()=>setPrompt('')} className='text-orange-500'>Reset</button>
-               <button disabled={!prompt} className='text-white bg-blue-500 disabled:bg-gray-200 disabled:cursor-not-allowed  p-2 rounded-md flex items-center gap-2'>
+               <button onClick={handleSearch} disabled={!prompt} className='text-white bg-blue-500 disabled:bg-gray-200 disabled:cursor-not-allowed  p-2 rounded-md flex items-center gap-2'>
                  <WandSparkles className='w-4 h-4'></WandSparkles>
                  <span className='font-medium'>Generate</span>
                </button>

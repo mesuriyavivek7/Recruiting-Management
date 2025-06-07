@@ -33,8 +33,8 @@ function AiRecentSearch({dataType,data}) {
         </div>
         <div className='flex flex-col gap-3'>
          {
-            data.map((item) => (
-               <div className='flex flex-col gap-1 items-start'>
+            data.map((item,index) => (
+               <div key={index} className='flex flex-col gap-1 items-start'>
                <div className='flex items-center gap-2'>
                   <AutoAwesomeIcon style={{fontSize:'1.2rem'}}></AutoAwesomeIcon>
                   <p className='text-sm'>{TrimContent(item)}</p>

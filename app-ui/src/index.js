@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import { AuthContextProvider } from './context/AuthContext';
 import MessageProvider from './context/MessageContext';
+import { ToastContainer } from 'react-toastify';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -10,6 +11,7 @@ root.render(
   <MessageProvider>
     <AuthContextProvider>
        <App />
+       <ToastContainer></ToastContainer>
     </AuthContextProvider>
   </MessageProvider>
   </React.StrictMode>
