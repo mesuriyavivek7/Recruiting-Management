@@ -48,15 +48,15 @@ function SearchCandidate() {
   const handlePromptBaseSearch = async (prompt) =>{
     try{ 
       setLoader(true)
-      const response = await axios.post(`${process.env.REACT_APP_AI_URL}/ai/search`,{
+      const response = await axios.post(`${process.env.REACT_APP_AI_URL}/rag/vector-similarity-search`,{
           query:prompt,
           field: "full_text",
           num_results: 10,
           min_score: 0.2
         
       })
-      console.log('data---->',response.data)
-      navigate('/recruiter/searchresult',{state:response.data})
+      console.log('data---->',response.data.results)
+      navigate('/recruiter/searchresult',{state:response.data.results})
     }catch(err){
       console.log(err)
     }finally{
