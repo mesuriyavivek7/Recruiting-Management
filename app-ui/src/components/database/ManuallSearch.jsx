@@ -14,7 +14,7 @@ import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import axios from 'axios';
 
 
-function ManuallSearch({handleManuallSearchCandidate}) {
+function ManuallSearch({manuallRecentFilledSearch,handleManuallSearchCandidate}) {
   const animatedComponents = makeAnimated();
   const [miniOpen,setMiniOpen] = useState(false)
   const [maxOpen,setMaxOpen] = useState(false)
@@ -258,14 +258,30 @@ function ManuallSearch({handleManuallSearchCandidate}) {
     setSelectedEducation([])
     setMinExp('')
     setMaxExp('')
+    setSelectedKeyword([])
+    setSelectedCity([])
+    setSelectedSkill([])
+    setMinSalary('')
+    setMaxSalary('')
   }
 
   const handleSearchCandidate = () =>{
-    console.log("minsalary---->",minSalary)
-    console.log("type----->",typeof minSalary)
-    console.log("maxSalary---->",maxSalary)
-    handleManuallSearchCandidate(selectedKeyword,selectedSkill,minExp,maxExp,selectedEducation,selectedCity,minSalary,maxSalary)
+      handleManuallSearchCandidate(selectedKeyword,selectedSkill,minExp,maxExp,selectedEducation,selectedCity,minSalary,maxSalary)
   }
+
+
+  useEffect(()=>{
+    if(Object.keys(manuallRecentFilledSearch).length>0){
+        setSelectedKeyword(manuallRecentFilledSearch.experience_titles)
+        setSelectedCity(manuallRecentFilledSearch.locations)
+        setMaxExp(manuallRecentFilledSearch.max_experience)
+        setMinExp(manuallRecentFilledSearch.min_experience)
+        setMinSalary(manuallRecentFilledSearch.min_salary)
+        setMaxSalary(manuallRecentFilledSearch.max_salary)
+        setSelectedEducation(manuallRecentFilledSearch.min_education)
+        setSelectedSkill(manuallRecentFilledSearch.skills)
+    }
+  },[manuallRecentFilledSearch])
 
   return (
     <div className='flex bg-white flex-col overflow-hidden rounded-md border custom-shadow-1 border-neutral-300'>

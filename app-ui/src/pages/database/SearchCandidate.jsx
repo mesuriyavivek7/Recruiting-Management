@@ -1,5 +1,7 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
+import { AuthContext } from '../../context/AuthContext';
 
 //Importing icons
 import { TextSearch } from 'lucide-react';
@@ -14,30 +16,42 @@ import axios from 'axios';
 
 function SearchCandidate() {
   const navigate = useNavigate()
+  const {user} = useContext(AuthContext)
   const [activeTab,setActiveTab] = useState('manually')
 
-  let savedSearch = ['I want CA intern & CA with Expertise of GST,Internal Audit ,TAX filling ,Return','JOB DESCRIPTION – ADMIN EXECUTIVE Job Title: Admin Executive Location: Thaltej,','i want team leader for my recruitment agency at thaltej Ahmedabad must have']
-  let recentSearch = ['i want Java Developer with 2 year experience at Ahmedabad location salary upto','Job Title: Client Coordinator / HR Admin Company: Uphire Talent Solutions Location:','Job Title: Client Coordinator / HR Admin Company: Uphire Talent Solutions Location:','Job Title: Client Coordinator / HR Admin Company: Uphire Talent Solutions Location:','Job Title: Client Coordinator / HR Admin Company: Uphire Talent Solutions Location:']
+  //For recent search
+  const [PromptRecentSearch,setPromptRecentSearch] = useState([])
+  const [manuallRecentSearch,setManuallRecentSearch] = useState([])
 
-  let savedManualSearch = ['Frontend Developer, React js Developer','Ui/Ux Design, Graphic Design, Logo Design','Backend Developer, Node js Developer, Mongodb Database','Python, Data Science, Ai/Ml']
-  let recentManualSearch = ['Qa Testing, Automation','Node js Developer, Backend Developer, Rest Api','Java Develpoer, Spring Boot, Software Engineer','Git & Github, Deployment, Production, Ci/Cd Pipeline']
+  //For saved search
+  const [PromptSavedSearch,setPromptSavedSearch] = useState([])
+  const [manuallSavedSearch,setManuallSavedSearch] = useState([])
+
+  //For filled recent search
+  const [manuallRecentFilledSearch,setManuallRecentFilledSearch] = useState({})
+  const [promptRecentFilledSearch,setPromptRecentFilledSearch] = useState('')
 
   const [loader,setLoader] = useState(false)
 
   const handleManuallSearchCandidate = async (experience_titles,skills, min_experience, max_experience, min_education,locations,min_salary,max_salary) =>{
+    let payload = {
+       experience_titles,
+       skills,
+       min_experience,
+       max_experience,
+       min_education,
+       locations,
+       min_salary,
+       max_salary
+    }
     try{
        setLoader(true)
-       const response = await axios.post(`${process.env.REACT_APP_AI_URL}/manualsearch`,{
-        experience_titles,
-        skills,
-        min_experience,
-        max_experience,
-        min_education,
-        locations,
-        min_salary,
-        max_salary
+       const response = await axios.post(`${process.env.REACT_APP_AI_URL}/manualsearch`,payload)
+       await axios.post(`${process.env.REACT_APP_AI_URL}/manual_saved_recnet_search/save_recent_search`,{
+        userid:user._id,
+        ...payload
        })
-      navigate('/recruiter/searchresult',{state:response.data})
+      navigate('/recruiter/searchresult',{state:{candidate_result:response.data,payload,searchType:'manually'}})
     }catch(err){
       console.log(err)
     }finally{
@@ -55,14 +69,64 @@ function SearchCandidate() {
           min_score: 0.2
         
       })
-      console.log('data---->',response.data.results)
-      navigate('/recruiter/searchresult',{state:response.data.results})
+      //Saved recent search
+      await axios.post(`${process.env.REACT_APP_AI_URL}/ai_search_operations/save_recent_search`,{
+        user_id:user._id,
+        query:prompt
+      })
+      navigate('/recruiter/searchresult',{state:{candidate_result:response.data.results,payload:{query:prompt},searchType:'prompt'}})
     }catch(err){
       console.log(err)
     }finally{
       setLoader(false)
     }
   }
+
+
+  const handleGetAiRecentSearch = async () =>{
+    try{
+      const promptRecentSearch = await axios.get(`${process.env.REACT_APP_AI_URL}/ai_search_operations/recent_searches/${user._id}`)
+      setPromptRecentSearch(promptRecentSearch.data.searches.map((item)=>item.query))
+    }catch(err){
+      console.log(err)
+    }
+  }
+
+
+  const handleGetManuallRecentSearch = async () =>{
+    try{
+      const manuallRecentSearch = await axios.get(`${process.env.REACT_APP_AI_URL}/manual_saved_recnet_search/recent_searches/${user._id}`)
+      setManuallRecentSearch(manuallRecentSearch.data.searches.map((item) => item.search_criteria))
+    }catch(err){
+      console.log(err)
+    }
+  }
+
+  const handleGetManuallSavedSearch = async ()=>{
+    try{
+      const manuallSavedSearch = await axios.get(`${process.env.REACT_APP_AI_URL}/manual_saved_recnet_search/saved_searches/${user._id}`)
+      setManuallSavedSearch(manuallSavedSearch.data.searches.map(item => item.search_criteria))
+    }catch(err){
+      console.log(err)
+    }
+  }
+
+  const handleGetPromptSavedSearch = async ()=>{
+     try{
+       const promptSavedSearch = await axios.get(`${process.env.REACT_APP_AI_URL}/ai_search_operations/saved_searches/${user._id}`)
+       console.log('prompt saved search---->',promptSavedSearch.data.searches.map((item)=>item.query))
+       setPromptSavedSearch(promptSavedSearch.data.searches.map((item)=>item.query))
+     }catch(err){
+      console.log(err)
+     }
+  }
+
+  useEffect(()=>{
+      handleGetAiRecentSearch()
+      handleGetManuallRecentSearch()
+      handleGetManuallSavedSearch()
+      handleGetPromptSavedSearch()
+  },[])
 
   return (
     <div className='px-10 pt-10 flex flex-col gap-4'>
@@ -93,13 +157,13 @@ function SearchCandidate() {
                   loader?
                   <Loading></Loading>
                   :(activeTab==="manually"?
-                  <ManuallSearch handleManuallSearchCandidate={handleManuallSearchCandidate}></ManuallSearch>
-                  :<AiSearch handlePromptBaseSearch={handlePromptBaseSearch}></AiSearch>)
+                  <ManuallSearch manuallRecentFilledSearch={manuallRecentFilledSearch} handleManuallSearchCandidate={handleManuallSearchCandidate}></ManuallSearch>
+                  :<AiSearch promptRecentFilledSearch={promptRecentFilledSearch} handlePromptBaseSearch={handlePromptBaseSearch}></AiSearch>)
                 }       
              </div>
              <div className='w-4/12 flex flex-col gap-4'>
-               <AiRecentSearch dataType={"save"} data={activeTab==="manually"?savedManualSearch:savedSearch} ></AiRecentSearch>
-               <AiRecentSearch dataType={"recent"} data={activeTab==="manually"?recentManualSearch:recentSearch} ></AiRecentSearch>
+               <AiRecentSearch searchType={activeTab} setPromptRecentFilledSearch={setPromptRecentFilledSearch} setManuallRecentFilledSearch={setManuallRecentFilledSearch} dataType={"save"} data={activeTab==="manually"?manuallSavedSearch:PromptSavedSearch} ></AiRecentSearch>
+               <AiRecentSearch searchType={activeTab} setPromptRecentFilledSearch={setPromptRecentFilledSearch} setManuallRecentFilledSearch={setManuallRecentFilledSearch} dataType={"recent"} data={activeTab==="manually"?manuallRecentSearch:PromptRecentSearch}></AiRecentSearch>
              </div>
         </div>
     </div>

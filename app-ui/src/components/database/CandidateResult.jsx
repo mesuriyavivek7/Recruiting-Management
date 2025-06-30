@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
+import { useContext } from 'react';
+import { AuthContext } from '../../context/AuthContext';
+
+import {toast} from 'react-toastify'
 
 import FilterBox from './FilterBox';
 
 //Importing icons
-import { BriefcaseBusiness, Calendar } from 'lucide-react';
+import { BriefcaseBusiness, Calendar, LoaderCircle } from 'lucide-react';
 import { MapPin } from 'lucide-react';
 import { Mail } from 'lucide-react';
 import { Phone } from 'lucide-react';
@@ -18,13 +22,16 @@ import { ExternalLink } from 'lucide-react';
 
 //Importing images
 import PROFILE from '../../assets/profile.png'
+import axios from 'axios';
 
 function CandidateResult() {
- 
+  const {user} = useContext(AuthContext)
   const navigate = useNavigate()
   const location = useLocation()
+  const [loading,setLoading] = useState(false)
 
   const [openFilterBox,setOpenFilterBox] = useState(false)
+  const [payload,setPayload] = useState({})
 
   const [searchResults,setSearchResults] = useState([])
   const [previewCandidate,setPreviewCandidate] = useState({})
@@ -33,17 +40,11 @@ function CandidateResult() {
     if(!location.state){
         navigate('/')
     }else{
-        setSearchResults(location.state)
-        setPreviewCandidate(location.state[0])
+        setSearchResults(location.state.candidate_result)
+        setPreviewCandidate(location.state.candidate_result[0])
+        setPayload(location.state.payload)
     }
   },[])
-
-
-
- const changeUpperCase = (str) =>{
-     if(!str) return ''
-     return str.charAt(0).toUpperCase() + str.slice(1,str.length)
- }
 
  const handleGetSkills = (skills) =>{
      if(skills.length>4){
@@ -80,6 +81,28 @@ function CandidateResult() {
   return new Intl.DateTimeFormat('en-US', { month: 'short', year: 'numeric' }).format(date);
 }
 
+ const handleSaveResult = async () =>{
+   setLoading(true)
+   try{
+      if(location.state.searchType==="manually"){
+         await axios.post(`${process.env.REACT_APP_AI_URL}/manual_saved_recnet_search/save_search`,{
+          ...payload,
+          userid:user._id
+         })
+      }else{
+         await axios.post(`${process.env.REACT_APP_AI_URL}/ai_search_operations/save_search`,{
+          ...payload,
+          user_id:user._id
+         })
+      }
+     toast.success("Your search saved successfully.")
+   }catch(err){
+     toast.error("Something went wrong.")
+     console.log(err)
+   }finally{
+    setLoading(false)
+   }
+ }
 
   return (
     <div className='px-10 pt-10 scroll-smooth grid grid-cols-2 gap-8 items-start'>
@@ -171,9 +194,15 @@ function CandidateResult() {
               <div className='flex flex-col gap-2'>
                 <div className='flex justify-between items-center'>
                  <h1 className='text-2xl font-semibold'>Candidate Details</h1>
-                 <button className='p-2 px-3 hover:bg-gray-100 transition-all duration-300 border-neutral-300 border rounded-md flex items-center gap-2'>
-                   <Star size={16}></Star>
-                   <span className='text-sm font-medium'>Save</span>
+                 <button onClick={handleSaveResult} className='p-2 px-3 w-32 hover:bg-gray-100 transition-all duration-300 border-neutral-300 border rounded-md flex justify-center items-center gap-2'>
+                   {
+                    loading ? 
+                    <LoaderCircle className='animate-spin'></LoaderCircle>
+                    :<div className='flex items-center gap-2'>
+                      <Star size={16}></Star>
+                    <span className='text-sm font-medium'>Save</span>
+                    </div>
+                   }
                  </button>
                  </div>
                  <div className='flex items-center gap-2'>
