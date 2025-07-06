@@ -3,75 +3,67 @@ import { useLocation } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
 import { useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
+import SendInvite from './SendInvite';
+import Activity from './Activity';
 
 import {toast} from 'react-toastify'
 
 import FilterBox from './FilterBox';
+
+import ScheduleJob from './ScheduleJob';
 
 //Importing icons
 import { BriefcaseBusiness, Calendar, LoaderCircle } from 'lucide-react';
 import { MapPin } from 'lucide-react';
 import { Mail } from 'lucide-react';
 import { Phone } from 'lucide-react';
-import { ListFilter } from 'lucide-react';
 import { Star } from 'lucide-react';
 import { UserRound } from 'lucide-react';
 import { GraduationCap } from 'lucide-react';
 import { ExternalLink } from 'lucide-react';
+import { Copy } from 'lucide-react';
+
 
 
 //Importing images
 import PROFILE from '../../assets/profile.png'
+import Watsapp from '../../assets/whatsapp.png'
+import EMail from '../../assets/email.png'
+import WEB from '../../assets/internet.png'
+import LINK from '../../assets/linkedin.png'
+import N from '../../assets/n.png'
+
 import axios from 'axios';
+import SendAllInvite from './SendAllInvite';
 
-function CandidateResult() {
-  const {user} = useContext(AuthContext)
-  const navigate = useNavigate()
-  const location = useLocation()
-  const [loading,setLoading] = useState(false)
 
-  const [openFilterBox,setOpenFilterBox] = useState(false)
-  const [payload,setPayload] = useState({})
 
-  const [searchResults,setSearchResults] = useState([])
-  const [previewCandidate,setPreviewCandidate] = useState({})
-
-  useEffect(()=>{
-    if(!location.state){
-        navigate('/')
-    }else{
-        setSearchResults(location.state.candidate_result)
-        setPreviewCandidate(location.state.candidate_result[0])
-        setPayload(location.state.payload)
-    }
-  },[])
-
- const handleGetSkills = (skills) =>{
-     if(skills.length>4){
-        return (
-          <div className='flex items-center flex-wrap gap-2'>
-             {
-              skills.slice(0,4).map((item,index) => (
-                <span key={index} className='p-0.5 px-2 text-sm bg-gray-200 rounded-xl'>{item}</span>
-              ))
-             }
-             <span className='p-0.5 px-2 text-sm bg-white border rounded-xl'>{skills.length-4}+</span>
-          </div>
-        )
-     }else{
-       return (
-        <div className='flex items-center gap-2'>
-        { 
-        skills.map((item,index) => (
-          <span key={index} className='p-0.5 px-2 text-sm bg-gray-200 rounded-xl'>{item}</span>
-        ))
-        }
-        </div>
-       )
+const handleGetSkills = (skills) =>{
+  if(skills.length>4){
+     return (
+       <div className='flex items-center flex-wrap gap-2'>
+          {
+           skills.slice(0,4).map((item,index) => (
+             <span key={index} className='p-0.5 px-2 text-sm bg-gray-200 rounded-xl'>{item}</span>
+           ))
+          }
+          <span className='p-0.5 px-2 text-sm bg-white border rounded-xl'>{skills.length-4}+</span>
+       </div>
+     )
+  }else{
+    return (
+     <div className='flex items-center gap-2'>
+     { 
+     skills.map((item,index) => (
+       <span key={index} className='p-0.5 px-2 text-sm bg-gray-200 rounded-xl'>{item}</span>
+     ))
      }
- }
+     </div>
+    )
+  }
+}
 
- function formatDateToMonthYear(dateString) {
+function formatDateToMonthYear(dateString) {
   const date = new Date(dateString);
 
   if (isNaN(date.getTime())) {
@@ -80,6 +72,103 @@ function CandidateResult() {
   
   return new Intl.DateTimeFormat('en-US', { month: 'short', year: 'numeric' }).format(date);
 }
+
+const hideMobileNo = (mobileno) =>{
+  if(!mobileno) return ''
+   let digit = mobileno.slice(mobileno.length-2, mobileno.length)
+   return "********"+digit
+}
+
+function CandidateResult() {
+  const {user} = useContext(AuthContext)
+  const navigate = useNavigate()
+  const location = useLocation()
+  const [loading,setLoading] = useState(false)
+
+  const [openScheduleJob,setOpenScheduleJob] = useState(false)
+  const [openInviteBox,setOpenInviteBox]= useState(false)
+  const [openAllInviteBox,setOpenAllInvieBox] = useState(false)
+  const [openActivity,setOpenActivity] = useState(false)
+  const [selectedCandidate,setSelectedCandidate] = useState({})
+  const [selectedCandidates,setSelectedCandidates] = useState([])
+
+  const [payload,setPayload] = useState({})
+
+  const [searchResults,setSearchResults] = useState([])
+  const [filterSearchResults,setFilterSearchResults] = useState([])
+  const [previewCandidate,setPreviewCandidate] = useState({})
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 5; // Number of candidates per page
+  const totalPages = Math.ceil(filterSearchResults.length / pageSize);
+
+  // Paginated results
+  const paginatedResults = filterSearchResults.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
+  useEffect(()=>{
+    if(!location.state){
+        navigate('/')
+    }else{
+        setSearchResults(location.state.candidate_result)
+        setFilterSearchResults(location.state.candidate_result)
+        setPreviewCandidate(location.state.candidate_result[0])
+        setPayload(location.state.payload)
+    }
+  },[])
+
+  const handleSelectedCandidate = (item) =>{
+      if(selectedCandidates.some((candidate) => candidate._id === item._id)){
+         setSelectedCandidates((prev)=> prev.filter((candidate) => candidate._id !== item._id))
+      }else{
+        setSelectedCandidates((prev) => [...prev,item])
+      }
+  }
+
+  const [showMobileNo,setShowMobileNo] = useState(false)
+
+  const handleViewMobileNo = async () =>{
+     try{
+       const data = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/activity`,{
+        candidate_id:previewCandidate._id,
+        candidate_name:previewCandidate?.contact_details?.name,
+        recruiter_name:user?.full_name,
+        recruiter_id:user?._id
+       })
+       setShowMobileNo(true)
+     }catch(err){
+       toast.error(err?.response?.data?.message || "Something went wrong.")
+     }
+  }
+
+
+  const [selectedKeyword,setSelectedKeyword] = useState([])
+  const [selectedSkills,setSelectedSkills] = useState([])
+  const [minExp, setMinExp] = useState('')
+  const [maxExp, setMaxExp] = useState('')
+
+
+  useEffect(()=>{
+     if(!searchResults.length) return 
+
+     const filtered = searchResults.filter(candidate => {
+       const {labels = [],skills = [], total_experience } = candidate
+
+       const keyWordMatch = selectedKeyword.length === 0 ||
+       selectedKeyword.some((keyword)=> labels.map((label)=> label.toLowerCase()).includes(keyword.toLowerCase()))
+    
+       const skillMatch = selectedSkills.length === 0 ||
+       selectedSkills.some((skill) => skills.map((sk)=> sk.toLowerCase()).includes(skill))
+
+       const expMatch = (minExp === '' || total_experience>= minExp) && (maxExp === '' || total_experience<=maxExp)
+ 
+       return keyWordMatch && skillMatch && expMatch
+     })
+
+     setFilterSearchResults(filtered)
+
+  },[selectedKeyword, selectedSkills, minExp, maxExp])
+  
 
  const handleSaveResult = async () =>{
    setLoading(true)
@@ -104,30 +193,155 @@ function CandidateResult() {
    }
  }
 
+ const handleCopy = async (text) =>{
+   try{
+     await navigator.clipboard.writeText(text)
+     toast.success(`${text} copied to clipboard.`)
+   }catch(err){
+     console.error('failed to copy',err)
+   }
+ }
+
+ const handleOpenInviteBox = (candidate) =>{
+    setSelectedCandidate(candidate)
+    setOpenInviteBox(true)
+ }
+
+ const handleOpenAllInviteBox = () =>{
+    setOpenAllInvieBox(true)
+ }
+
+ const handleCloseAllInviteBox = () =>{
+    setSelectedCandidates([])
+    setOpenAllInvieBox(false)
+ }
+
+ const handleOpenActivity = () =>{
+   setSelectedCandidate(previewCandidate)
+   setOpenActivity(true)
+ } 
+
+ const handleCloseActivity = () =>{
+   setSelectedCandidate(null)
+   setOpenActivity(false)
+ }
+
+ const handleOpenScheduleJob = (candidate) =>{
+   setSelectedCandidate(candidate)
+   setOpenScheduleJob(true)
+ }
+
+ const handleCloseScheduleJob = () =>{
+  setSelectedCandidate(null)
+  setOpenScheduleJob(false)
+ }
+
+ const handlePageChange = (page) => {
+   if (page < 1 || page > totalPages) return;
+   setCurrentPage(page);
+ };
+
   return (
-    <div className='px-10 pt-10 scroll-smooth grid grid-cols-2 gap-8 items-start'>
-          {openFilterBox && <FilterBox setOpenFilterBox={setOpenFilterBox}></FilterBox>}
+    <div className='px-4 flex flex-col gap-6 pt-6 scroll-smooth '>
+      {openScheduleJob && <ScheduleJob selectedCandidate={selectedCandidate} handleCloseSchedule={handleCloseScheduleJob}></ScheduleJob>}
+      {openInviteBox && <SendInvite selectedCandidate={selectedCandidate} setSelectedCandidate={setSelectedCandidate} setOpenInviteBox={setOpenInviteBox}></SendInvite>}
+      {openActivity && <Activity selectedCandidate={selectedCandidate} handleCloseActivity={handleCloseActivity}></Activity>}
+      {openAllInviteBox && <SendAllInvite selectedCandidates={selectedCandidates} handleCloseAllInviteBox={handleCloseAllInviteBox}></SendAllInvite>}
+       <div className='p-4 flex justify-between items-center bg-white w-full rounded-xl'>
+         <div className='flex items-center gap-2'>
+           <h1 className='text-xl'>Search For</h1>
+           <span className='text-xl font-semibold'>{location.state.searchType ==="manually" ? <span>{(payload?.experience_titles || []).map((item,index) => <span key={index}>{item} {index!==payload?.experience_titles?.length-1 && ','}</span>)}</span> : <span>"{payload.query}"</span>}</span>
+         </div>
+         <div className='flex items-center gap-2'>
+           {/* Pagination Controls */}
+           <div className="flex items-center gap-1 mr-4">
+             <button
+               className={`px-2 py-1 rounded border ${currentPage === 1 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-white'}`}
+               onClick={() => handlePageChange(currentPage - 1)}
+               disabled={currentPage === 1}
+             >
+               Prev
+             </button>
+             {Array.from({ length: totalPages }, (_, i) => (
+               <button
+                 key={i + 1}
+                 className={`px-2 py-1 rounded border ${currentPage === i + 1 ? 'bg-blue-500 text-white' : 'bg-white'}`}
+                 onClick={() => handlePageChange(i + 1)}
+               >
+                 {i + 1}
+               </button>
+             ))}
+             <button
+               className={`px-2 py-1 rounded border ${currentPage === totalPages || totalPages === 0 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-white'}`}
+               onClick={() => handlePageChange(currentPage + 1)}
+               disabled={currentPage === totalPages || totalPages === 0}
+             >
+               Next
+             </button>
+           </div>
+           <button disabled={selectedCandidates.length===0} className='p-1 px-2 bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed rounded-md'>
+             <span onClick={handleOpenAllInviteBox} className='text-white font-medium'>Send Invite</span>
+           </button>
+         </div>
+       </div>
+       <div className='grid grid-cols-6 gap-4 items-start'>
+         <div className='col-span-1'>
+         <FilterBox 
+         selectedKeyword={selectedKeyword} 
+         setSelectedKeyword={setSelectedKeyword} 
+         selectedSkills={selectedSkills} 
+         setSelectedSkills={setSelectedSkills}
+         setMinExp={setMinExp}
+         minExp={minExp}
+         setMaxExp={setMaxExp}
+         maxExp={maxExp}
+         ></FilterBox>
+         </div>
+
           {/* Candidate Result Section */}
-          <div className='flex flex-col gap-4 max-h-screen hide-scrollbar overflow-y-auto'>
+          <div className='flex col-span-3 flex-col gap-4 max-h-screen hide-scrollbar overflow-y-auto'>
             {/* Candidate Search Result Header */}
             <div className='flex items-center justify-between'>
                <h1 className='font-bold text-2xl'>Search Results</h1>
-               <button onClick={()=>setOpenFilterBox(true)} className='p-2 bg-white hover:bg-gray-100 transition-all duration-300 border border-neutral-300 rounded-md flex items-center gap-3'>
-                 <ListFilter size={18}></ListFilter>
-                 <span className='text-sm font-medium'>Apply Filters</span>
-               </button>
+               <button onClick={handleSaveResult} className='p-2 px-3 w-40 hover:bg-gray-100 bg-white transition-all duration-300 border-neutral-300 border rounded-md flex justify-center items-center gap-2'>
+                   {
+                    loading ? 
+                    <LoaderCircle className='animate-spin'></LoaderCircle>
+                    :<div className='flex items-center gap-2'>
+                      <Star size={16}></Star>
+                    <span className='text-sm font-medium'>Save Search</span>
+                    </div>
+                   }
+                 </button>
             </div>
             
-            <div className='flex flex-col gap-4'>
+            <div className='flex flex-col'>
                {/* Candidate result card */}
                {
-                searchResults.map((item,index) => (
-                  <div onClick={()=>setPreviewCandidate(item)} key={index} className={`${item?._id === previewCandidate?._id ? "border-2 border-blue-500 bg-blue-50" : 'border hover:border-blue-400 border-neutral-300 bg-white'} rounded-xl p-6 custom-shadow-1 flex items-start gap-4`}>
-                  <div className='w-28 h-24 bg-white rounded-full'>
+                filterSearchResults.length === 0 ? 
+                   <div className='h-full flex justify-center items-center'>
+                     <span className='text-gray-500'>No Search Results</span>
+                   </div>
+                : paginatedResults.map((item,index) => (
+                  <div onClick={()=>{
+                    setShowMobileNo(false)
+                    setPreviewCandidate(item)}} key={index + (currentPage-1)*pageSize} className={`${item?._id === previewCandidate?._id ? "border-2 border-blue-500 bg-blue-50" : 'border hover:border-blue-400 border-neutral-300 bg-white'} p-6 relative custom-shadow-1 flex items-start gap-4`}>
+
+                   {/* CheckBox  */}
+                   <input type='checkbox' checked={selectedCandidates.some((candidate) => candidate._id===item._id)} onClick={()=>handleSelectedCandidate(item)} className='absolute top-2 left-2 h-4 w-4'></input> 
+
+                  <div className='w-24 h-20 bg-white rounded-full'>
                     <img src={PROFILE} className='w-full h-full'></img>
                   </div>
                   <div className='w-full flex flex-col gap-2.5'>
-                    <h2 className='text-xl font-medium'>{item?.contact_details?.name}</h2>
+                    <div className='flex items-center gap-4'>
+                      <h2 className='text-xl font-medium'>{item?.contact_details?.name}</h2>
+                      <div className='flex items-center gap-2'>
+                      {item?.contact_details?.linkedin_profile && <a href={item?.contact_details?.linkedin_profile} target='_blank'> <img src={LINK} className='w-6 h-6'></img></a>}
+                      {item?.contact_details?.naukri_profile && <a href={item?.contact_details?.naukri_profile} target='_blank'> <img src={N} className='w-6 h-6'></img></a>}
+                      {item?.contact_details?.portfolio_link && <a href={item?.contact_details?.portfolio_link} target='_blank'> <img src={WEB} className='w-5 h-5'></img></a>}
+                      </div>
+                    </div>
                     <div className='grid grid-cols-3 mb-2 items-center gap-4'>
                        <div className='flex items-center gap-2'>
                          <BriefcaseBusiness size={16} className='text-[#4b5563]'></BriefcaseBusiness>
@@ -149,7 +363,7 @@ function CandidateResult() {
                       </div>
                       <div className='flex col-span-2 items-center gap-2'>
                         <Phone size={16} className='text-[#4b5563]'></Phone>
-                        <span className='text-[#4b5563] text-[15px]'>{item?.contact_details?.phone}</span>
+                        <span className='text-[#4b5563] text-[15px]'>{hideMobileNo(item?.contact_details?.phone)}</span>
                       </div>
                     </div>
                     <div className='w-full flex flex-col gap-2'>
@@ -183,6 +397,14 @@ function CandidateResult() {
                       </div>
                     </div>
                   </div>
+                  <div className='flex w-12 flex-col gap-1'>
+                     <button onClick={()=>handleOpenInviteBox(item)} className='bg-green-500 mt-2 flex justify-center items-center rounded-md text-white p-1.5'>
+                         <img src={Watsapp} className='w-6 h-6 invert'></img>
+                     </button>
+                     <button onClick={()=>handleOpenInviteBox(item)} className='bg-blue-600 mt-2 flex justify-center items-center rounded-md text-white p-1.5'>
+                         <img src={EMail} className='w-6 h-6 invert'></img>
+                     </button>
+                  </div>
               </div>
                 ))
                }
@@ -190,20 +412,11 @@ function CandidateResult() {
           </div>
 
           {/* Candidate Preview Box  */}
-          <div className='sticky top-4 max-h-[calc(100vh-32px)] overflow-y-auto self-start bg-white border flex flex-col gap-6 border-neutral-300 p-6 rounded-xl custom-shadow-1'>
+          <div className='sticky col-span-2 top-4 max-h-[calc(100vh-32px)] overflow-y-auto self-start bg-white border flex flex-col gap-6 border-neutral-300 p-6 rounded-xl custom-shadow-1'>
               <div className='flex flex-col gap-2'>
                 <div className='flex justify-between items-center'>
-                 <h1 className='text-2xl font-semibold'>Candidate Details</h1>
-                 <button onClick={handleSaveResult} className='p-2 px-3 w-32 hover:bg-gray-100 transition-all duration-300 border-neutral-300 border rounded-md flex justify-center items-center gap-2'>
-                   {
-                    loading ? 
-                    <LoaderCircle className='animate-spin'></LoaderCircle>
-                    :<div className='flex items-center gap-2'>
-                      <Star size={16}></Star>
-                    <span className='text-sm font-medium'>Save</span>
-                    </div>
-                   }
-                 </button>
+                 <h1 className='text-xl font-semibold'>Candidate Details</h1>
+                 
                  </div>
                  <div className='flex items-center gap-2'>
                    <div className='flex items-center gap-2'>
@@ -214,32 +427,63 @@ function CandidateResult() {
                  </div>
               </div>
               <div className='overflow-scroll h-[600px]'>
-                <div className='flex items-center gap-4 pb-6 border-b border-neutral-300'>
-                   <div className='w-24 h-24 bg-white rounded-full'>
-                     <img src={PROFILE} alt='profile' className='w-full h-full'></img>
+                <div className='flex flex-col gap-4 pb-6 border-b border-neutral-300'>
+                   <div className='flex items-center gap-4'>
+                     <div className='w-20 h-20 bg-white rounded-full'>
+                       <img src={PROFILE} alt='profile' className='w-full h-full'></img>
+                     </div>
+                     <div className='flex flex-col'>
+                       <h1 className='text-lg font-semibold'>{previewCandidate?.contact_details?.name}</h1>
+                       <span className='text-gray-400 text-[16px]'>{previewCandidate?.total_experience} Experience</span>
+                     </div>
                    </div>
-                   <div className='flex flex-col'>
-                     <h1 className='text-xl font-semibold'>{previewCandidate?.contact_details?.name}</h1>
-                     <span className='text-gray-400 text-lg'>{previewCandidate?.total_experience} Experience</span>
+                   <div className='flex items-center gap-2'>
+                     <button className='flex-1 p-1.5 hover:bg-blue-400 transition-all duration-300 rounded-md text-white font-medium bg-blue-500'>
+                       Resume
+                     </button>
+                     <button onClick={()=>handleOpenScheduleJob(previewCandidate)} className='flex-1 p-1.5 bg-teal-400 hover:bg-teal-500 transition-all duration-300 rounded-md text-white font-medium'>
+                       Reminder
+                     </button>
+                     <button onClick={handleOpenActivity} className='flex-1 p-1.5 bg-amber-400 hover:bg-amber-500 transition-all duration-300 rounded-md text-white font-medium'>
+                       Activity
+                     </button>
                    </div>
                 </div>
-                <div className='border-b border-neutral-300 grid grid-cols-2 gap-y-6 py-6 items-center gap-4'>
+                <div className='border-b w-full border-neutral-300 grid grid-cols-2 gap-y-6 py-6 items-center gap-4'>
                   <div className='flex flex-col gap-0.5'>
                      <span className='text-base text-[#6a7280]'>Current Salary</span>
-                     <h1 className='text-lg font-semibold'>₹{Number(previewCandidate?.current_salary)} LPA</h1>
+                     <h1 className='text-[16px] font-semibold'>₹{Number(previewCandidate?.current_salary)} LPA</h1>
                   </div>
                   <div className='flex flex-col gap-0.5'>
                      <span className='text-base text-[#6a7280]'>Current City</span>
-                     <h1 className='text-lg font-semibold'>{previewCandidate?.contact_details?.current_city}</h1>
+                     <h1 className='text-[16px] font-semibold'>{previewCandidate?.contact_details?.current_city}</h1>
                   </div>
-                  <div className='flex flex-col gap-0.5'>
-                     <span className='text-sm text-[#6a7280]'>Email</span>
-                     <span className='text-sm'>{previewCandidate?.contact_details?.email}</span>
-                  </div>
-                  <div className='flex flex-col gap-0.5'>
-                     <span className='text-sm text-[#6a7280]'>Mobile</span>
-                     <span className='text-sm'>{previewCandidate?.contact_details?.phone}</span>
-                  </div>
+                  <div className='flex col-span-2 w-full flex-col gap-4'>
+                     <div className='flex w-full justify-between items-center'>
+                       <div className='flex flex-col gap-0.5'>
+                         <span className='text-sm text-[#6a7280]'>Email</span>
+                         <span className='text-sm'>{previewCandidate?.contact_details?.email}</span>
+                       </div>
+                       <button className='cursor-pointer' onClick={()=>handleCopy(previewCandidate?.contact_details?.email)}>
+                           <Copy size={18} className='text-gray-900'></Copy>
+                       </button>
+                     </div>
+                     <div className='flex justify-between items-center'>
+                       <div className='flex flex-col gap-0.5'>
+                         <span className='text-sm text-[#6a7280]'>Mobile</span>
+                         <span className='text-sm'>{showMobileNo ?  previewCandidate?.contact_details?.phone : hideMobileNo(previewCandidate?.contact_details?.phone)}</span>
+                       </div>  
+                           {
+                            showMobileNo ? 
+                            <button className='cursor-pointer' onClick={()=>handleCopy(previewCandidate?.contact_details?.phone)}>
+                            <Copy size={18} className='text-gray-900'></Copy>
+                            </button>
+                            :<button onClick={handleViewMobileNo} className='p-1 border text-white rounded-md text-sm px-2 font-medium bg-green-500'>
+                              View
+                            </button>
+                           }
+                     </div>
+                   </div>
                   <div className='col-span-2 flex flex-col gap-0.5'>
                      <span className='text-sm text-[#6a7280]'>Prefered Locations</span>
                      <span>
@@ -365,7 +609,7 @@ function CandidateResult() {
 
               </div>
           </div>
-
+          </div>
     </div>
   )
 }

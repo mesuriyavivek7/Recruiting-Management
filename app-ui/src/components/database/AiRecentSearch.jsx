@@ -17,7 +17,7 @@ const TrimContent = (item) =>{
 function AiRecentSearch({searchType,setPromptRecentFilledSearch,dataType,data,setManuallRecentFilledSearch}) {
   console.log('saved search---->',data)
   return (
-    <div className='max-h-96 overflow-scroll flex p-4 bg-white rounded-md flex-col gap-4'>
+    <div className='max-h-96 min-h-72 overflow-scroll flex p-4 bg-white rounded-md flex-col gap-4'>
         <div className='flex items-center gap-2'>
            {
             dataType==="save" ?

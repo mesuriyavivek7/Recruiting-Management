@@ -1,5 +1,5 @@
 import express from 'express'
-import { sendMail,sendVerificationMailRecruiting,sendVerificationMailEnterprise,verifyemailEnterprise,verifyemailRecruiting, sendTeamMemberNotifyMail, sendEmailUpdateVerificationEnterprise, verifyemailEnterpriseTeam, sendVerificationMailEnterpriseTeam, verifyemailRecruitingTeam, sendVerificationMailRecruitingTeam, sendBulkMail, shareResumeWithHiringManager, requestResetPassword, verifyResetPassword, sendEmailUpdateVerificaitonRecruiting } from '../controller/mailController.js'
+import { sendMail,sendVerificationMailRecruiting,sendVerificationMailEnterprise,verifyemailEnterprise,verifyemailRecruiting, sendTeamMemberNotifyMail, sendEmailUpdateVerificationEnterprise, verifyemailEnterpriseTeam, sendVerificationMailEnterpriseTeam, verifyemailRecruitingTeam, sendVerificationMailRecruitingTeam, sendBulkMail, shareResumeWithHiringManager, requestResetPassword, verifyResetPassword, sendEmailUpdateVerificaitonRecruiting, sendJDtoCandidate, sendJDtoMultipleCandidate } from '../controller/mailController.js'
 import multer from 'multer'
 import fs from 'fs'
 import path from 'path'
@@ -78,4 +78,11 @@ router.post('/request-reset-password',requestResetPassword)
 
 //For verify person for reset password
 router.post('/verify-reset-password/:token/:usertype',verifyResetPassword)
+
+//For send JD by recruiter to candidate 
+router.post('/send-jd',sendJDtoCandidate)
+
+//For send JD to multiple candidates
+router.post('/send-jd-multiple',sendJDtoMultipleCandidate)
+
 export default router
