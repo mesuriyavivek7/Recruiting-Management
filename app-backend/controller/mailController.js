@@ -1604,3 +1604,328 @@ export const verifyResetPassword=async (req,res,next)=>{
         next(err)
      }
 }
+
+
+export const sendJDtoCandidate = async (req, res, next) =>{
+    try{
+       const {candidateMail,candidateName, recruiterName, jobDescription} = req.body
+
+       if(!candidateMail || !candidateName || !recruiterName || !jobDescription) return res.status(200).json({message:"Please provide all fields",success:false})
+
+       const mailConfigurations = {
+          from:{
+            name:"Uphire",
+            address:process.env.USER_MAIL
+          },
+          to:candidateMail,
+          subject:"Exciting Job Opportunity Just for You!",
+          html: `<!DOCTYPE html>
+          <html lang="en" style="margin: 0; padding: 0;">
+            <head>
+              <meta charset="UTF-8" />
+              <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+              <title>Job Opportunity from Uphire</title>
+              <style>
+                body {
+                  margin: 0;
+                  padding: 0;
+                  font-family: Arial, sans-serif;
+                  background-color: #f4f4f4;
+                  color: #333333;
+                }
+                .container {
+                  max-width: 600px;
+                  margin: 0 auto;
+                  background-color: #ffffff;
+                  border-radius: 8px;
+                  overflow: hidden;
+                  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+                }
+                .header {
+                  background-color: #004aad;
+                  color: white;
+                  padding: 20px;
+                  text-align: center;
+                }
+                .content {
+                  padding: 20px;
+                }
+                .footer {
+                  background-color: #f1f1f1;
+                  padding: 15px;
+                  text-align: center;
+                  font-size: 12px;
+                  color: #888888;
+                }
+                @media screen and (max-width: 600px) {
+                  .container {
+                    width: 100%;
+                  }
+                  .content,
+                  .header,
+                  .footer {
+                    padding: 15px;
+                  }
+                }
+              </style>
+            </head>
+            <body>
+              <div class="container">
+                <div class="header">
+                  <h2>New Job Opportunity</h2>
+                </div>
+                <div class="content">
+                  <p>Dear <strong>${candidateName}</strong>,</p>
+          
+                  <p>
+                    I hope this message finds you well. I’m <strong>${recruiterName}</strong> from
+                    Uphire, and I’d like to share with you a new job opportunity that may be of interest to you.
+                  </p>
+          
+                  <h3>Job Description:</h3>
+                  <div style="background-color: #f9f9f9; padding: 10px; border-left: 4px solid #004aad;">
+                    ${jobDescription}
+                  </div>
+          
+                  <p>
+                    If you're interested or have any questions, feel free to reply to this email.
+                  </p>
+          
+                  <p>Best regards,<br /><strong>${recruiterName}</strong><br />Uphire Team</p>
+                </div>
+                <div class="footer">
+                  You received this email from the <strong>Uphire</strong> platform. Please do not reply to this message unless instructed.
+                </div>
+              </div>
+            </body>
+          </html>
+          `
+       }
+
+       transpoter.sendMail(mailConfigurations)
+
+       res.status(200).json({message:"Successfully send mail to candidate",succeess:true})
+    }catch(err){
+        next(err)
+    }
+}
+
+export const sendJDtoMultipleCandidate = async (req, res, next) =>{
+    try{
+        const {candidatesMail, recruiterName , jobDescription} = req.body
+
+        if(!candidatesMail) return res.status(400).json({message:"Please provide emails of candidate",success:false})
+
+        if(candidatesMail.length === 0 || !recruiterName || !jobDescription) return res.status(200).json({message:"Please provide required fields",success:false})
+
+        const mailConfigurations = {
+            from:{
+              name:"Uphire",
+              address:process.env.USER_MAIL
+            },
+            to:candidatesMail,
+            subject:"Exciting Job Opportunity Just for You!",
+            html: `<!DOCTYPE html>
+            <html lang="en" style="margin: 0; padding: 0;">
+              <head>
+                <meta charset="UTF-8" />
+                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                <title>Job Opportunity from Uphire</title>
+                <style>
+                  body {
+                    margin: 0;
+                    padding: 0;
+                    font-family: Arial, sans-serif;
+                    background-color: #f4f4f4;
+                    color: #333333;
+                  }
+                  .container {
+                    max-width: 600px;
+                    margin: 0 auto;
+                    background-color: #ffffff;
+                    border-radius: 8px;
+                    overflow: hidden;
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+                  }
+                  .header {
+                    background-color: #004aad;
+                    color: white;
+                    padding: 20px;
+                    text-align: center;
+                  }
+                  .content {
+                    padding: 20px;
+                  }
+                  .footer {
+                    background-color: #f1f1f1;
+                    padding: 15px;
+                    text-align: center;
+                    font-size: 12px;
+                    color: #888888;
+                  }
+                  @media screen and (max-width: 600px) {
+                    .container {
+                      width: 100%;
+                    }
+                    .content,
+                    .header,
+                    .footer {
+                      padding: 15px;
+                    }
+                  }
+                </style>
+              </head>
+              <body>
+                <div class="container">
+                  <div class="header">
+                    <h2>New Job Opportunity</h2>
+                  </div>
+                  <div class="content">
+                    <p>Dear <strong>Candidate</strong>,</p>
+            
+                    <p>
+                      I hope this message finds you well. I’m <strong>${recruiterName}</strong> from
+                      Uphire, and I’d like to share with you a new job opportunity that may be of interest to you.
+                    </p>
+            
+                    <h3>Job Description:</h3>
+                    <div style="background-color: #f9f9f9; padding: 10px; border-left: 4px solid #004aad;">
+                      ${jobDescription}
+                    </div>
+            
+                    <p>
+                      If you're interested or have any questions, feel free to reply to this email.
+                    </p>
+            
+                    <p>Best regards,<br /><strong>${recruiterName}</strong><br />Uphire Team</p>
+                  </div>
+                  <div class="footer">
+                    You received this email from the <strong>Uphire</strong> platform. Please do not reply to this message unless instructed.
+                  </div>
+                </div>
+              </body>
+            </html>
+            `
+         }
+  
+         transpoter.sendMail(mailConfigurations)
+  
+         res.status(200).json({message:"Successfully send mail to candidate",succeess:true})
+
+    }catch(err){
+        next(err)
+    }
+}
+
+//Helper method
+export const sendReminderEmail = async (to, message, candidatename)=>{
+   try{
+       const mailConfigurations = {
+         from : {
+            name:'Uphire',
+            address:process.env.USER_MAIL,
+         },
+         to,
+         subject:"Schedule Task Reminder",
+         html:`<!DOCTYPE html>
+         <html lang="en">
+         <head>
+           <meta charset="UTF-8">
+           <title>Scheduled Task Notification</title>
+           <meta name="viewport" content="width=device-width, initial-scale=1.0">
+           <style>
+             /* Base styles */
+             body {
+               margin: 0;
+               padding: 0;
+               background-color: #f4f6f8;
+               font-family: Arial, sans-serif;
+             }
+         
+             .container {
+               max-width: 600px;
+               margin: 30px auto;
+               background-color: #ffffff;
+               border-radius: 8px;
+               overflow: hidden;
+               box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+             }
+         
+             .header {
+               background-color: #2563eb;
+               color: white;
+               padding: 20px;
+               text-align: center;
+               font-size: 20px;
+             }
+         
+             .content {
+               padding: 20px;
+               color: #333333;
+             }
+         
+             .content h2 {
+               margin-top: 0;
+               color: #2563eb;
+             }
+         
+             .footer {
+               padding: 15px 20px;
+               text-align: center;
+               font-size: 13px;
+               color: #777;
+               background-color: #f1f1f1;
+             }
+         
+             .task-box {
+               background-color: #f9f9f9;
+               border-left: 4px solid #2563eb;
+               padding: 15px;
+               margin: 20px 0;
+               border-radius: 4px;
+             }
+         
+             @media only screen and (max-width: 600px) {
+               .container {
+                 width: 95% !important;
+               }
+         
+               .header, .content, .footer {
+                 padding: 15px !important;
+               }
+             }
+           </style>
+         </head>
+         <body>
+           <div class="container">
+             <div class="header">
+               🔔 Scheduled Task Reminder
+             </div>
+             <div class="content">
+               <h2>Hello Recruiter,</h2>
+               <p>This is a reminder for a task scheduled related to the candidate:</p>
+         
+               <div class="task-box">
+                 <strong>Candidate Name:</strong> ${candidatename}<br/>
+                 <strong>Scheduled Task:</strong> ${message}<br/>
+               </div>
+         
+               <p>Please take the necessary action on or before the scheduled time.</p>
+         
+               <p style="margin-top: 30px;">Thanks,<br/>Team <strong>Uphire</strong></p>
+             </div>
+             <div class="footer">
+               You received this email from the Uphire platform.
+             </div>
+           </div>
+         </body>
+         </html>
+         `
+       }
+
+       transpoter.sendMail(mailConfigurations)
+
+   }catch(err){
+    throw err
+   }
+}

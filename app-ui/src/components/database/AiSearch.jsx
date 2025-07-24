@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import axios from 'axios';
 
 //Importing icons
 import { Pencil } from 'lucide-react'
@@ -9,8 +10,9 @@ import { useRef } from 'react';
 //Importing images
 import CHATBOT from '../../assets/chatbot.png'
 
+import {toast} from 'react-toastify'
 
-function AiSearch({handlePromptBaseSearch}) {
+function AiSearch({handlePromptBaseSearch,promptRecentFilledSearch}) {
 
   //For Prompt Storing
   const [prompt,setPrompt] = useState("")
@@ -77,6 +79,30 @@ function AiSearch({handlePromptBaseSearch}) {
     return () => clearTimeout(timeout);
   }, [charIndex, isDeleting, textIndex, textArray]);
 
+
+  useEffect(()=>{
+    if(promptRecentFilledSearch){
+       setPrompt(promptRecentFilledSearch)
+    }
+  },[promptRecentFilledSearch])
+
+  const handleFileChange = async (e) =>{
+    const selectedFile = e.target.files[0]
+    const fileData = new FormData()
+    fileData.append('file',selectedFile)
+
+    try{
+      const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/job/getjdcontent`,fileData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+      setPrompt(response.data)
+    }catch(err){
+      console.log(err)
+      toast.error("Something went wrong while uploading JD.")
+    }
+
+  } 
+
   return (
       <div className='flex flex-col overflow-hidden rounded-md border custom-shadow-1 border-neutral-300'>
         <div className='p-4 bg-blue-200/40 flex items-center gap-4'>
@@ -93,7 +119,7 @@ function AiSearch({handlePromptBaseSearch}) {
                <CloudUpload className='group-hover:animate-bounce'></CloudUpload>
                <span>Upload JD</span>
             </label>
-            <input type='file' id='jd' className='hidden'></input>
+            <input onChange={handleFileChange}  type='file' id='jd' className='hidden' accept=".pdf, .doc, .docx"></input>
           </div>
           <div className='flex py-4 place-content-end'>
              <div className='flex items-center gap-6'>
@@ -105,7 +131,7 @@ function AiSearch({handlePromptBaseSearch}) {
              </div>
           </div>
         </div>
-        <div className='px-4 bg-white pb-8 pt-4'>
+        {/* <div className='px-4 bg-white pb-8 pt-4'>
            <div className='flex bg-gray-100 rounded-md p-4 flex-col gap-2'>
              <span className='text-sm text-[#5e6c84] font-semibold'>Recent job descriptions</span>
              <div className='flex items-center gap-4'>
@@ -119,7 +145,7 @@ function AiSearch({handlePromptBaseSearch}) {
               </div>
              </div>
            </div>
-        </div>
+        </div> */}
       </div>
   )
 }

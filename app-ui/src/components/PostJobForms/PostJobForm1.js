@@ -87,7 +87,6 @@ const PostJobForm1 = ({ onNext, onFormDataChange,jobId,handleDraftSave,parentFor
   const fileTypes = ["application/pdf","application/msword","application/vnd.openxmlformats-officedocument.wordprocessingml.document"]
 
   const handleFileChange = (e) =>{
-    console.log('File changed call')
     const selectedFile = e.target.files[0]
     if(selectedFile && fileTypes.includes(selectedFile.type) && selectedFile.size<=10*1024*1024){
       setFile(selectedFile)

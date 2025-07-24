@@ -10,6 +10,9 @@ import cors from 'cors'
 
 import cookieParser from "cookie-parser"
 
+//Scheduler job
+import './utils/scheduler/reminderJob.js'
+
 //importing routers
 import authRecruitingRoute from './routes/authRecruiting.js'
 import mailRoute from './routes/mail.js'
@@ -24,6 +27,8 @@ import candidateRoute from './routes/candidate.js'
 import messageRoute from './routes/message.js'
 import invoiceRoute from './routes/invoice.js'
 import supportRoute from './routes/support.js'
+import activityRoute from './routes/activityRoute.js'
+import taskRoute from './routes/task.js'
 
 
 // Get the directory name
@@ -113,6 +118,8 @@ app.use('/api/candidate', candidateRoute)
 app.use('/api/message', messageRoute)
 app.use('/api/invoice', invoiceRoute)
 app.use('/api/support',supportRoute)
+app.use('/api/activity',activityRoute)
+app.use('/api/task',taskRoute)
 
 
 app.get('/', (req, res) => {

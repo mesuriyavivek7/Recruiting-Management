@@ -317,6 +317,8 @@ export const getFrontAcceptedJobDetails = async (req, res, next) => {
     // getting accepted job list data for a particular recruiting team member
     const joblist = await RECRUITINGTEAM.findById(req.params.rteamid, { _id: 0, accepted_jobs: 1 });
 
+    console.log(joblist)
+
     if (!joblist) {
       return res.status(404).json({ error: "Accepted jobs not found" });
     }
@@ -326,6 +328,7 @@ export const getFrontAcceptedJobDetails = async (req, res, next) => {
         try {
           // get job id and allotted account manager id for the original job id
           const jobObj = await JOBS.findOne({_id:item,job_status:'Active'}, { job_id: 1, job_updates: 1, alloted_account_manager: 1, _id: 1 });
+
           if (!jobObj) {
             return null
           }
@@ -1481,3 +1484,55 @@ export const getDashboardCount = async (req, res, next) =>{
    next(err)
   }
 }
+
+
+export const getAcceptedJobBasicDetails = async (req, res, next) => {
+  try {
+    const { rteamid } = req.params;
+
+    if (!rteamid) {
+      return res.status(400).json({
+        message: "Please provide recruiting team ID.",
+        success: false
+      });
+    }
+
+    const rTeamMember = await RECRUITINGTEAM.findById(rteamid);
+
+    if (!rTeamMember) {
+      return res.status(404).json({
+        message: "Recruiting team member not found.",
+        success: false
+      });
+    }
+
+    if (!rTeamMember.accepted_jobs || rTeamMember.accepted_jobs.length === 0) {
+      return res.status(200).json({
+        message: "No accepted jobs found.",
+        success: true,
+        data: []
+      });
+    }
+
+    const jobs = await JOBS.find({
+      _id: { $in: rTeamMember.accepted_jobs }
+    });
+
+    const jobBasicDetailIds = jobs
+      .map(job => job.job_basic_details)
+      .filter(Boolean); // in case any is null or undefined
+
+    const jobBasicDetails = await JOBBASICDETAILS.find({
+      _id: { $in: jobBasicDetailIds }
+    });
+
+    return res.status(200).json({
+      message: "Job details retrieved.",
+      success: true,
+      data: jobBasicDetails
+    });
+
+  } catch (err) {
+    next(err);
+  }
+};
