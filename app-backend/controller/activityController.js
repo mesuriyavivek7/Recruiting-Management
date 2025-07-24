@@ -4,9 +4,9 @@ import RECRUITINGTEAM from "../models/RECRUITINGTEAM.js";
 //Create activity
 export const createActivity = async (req, res, next) =>{
     try{
-       const {candidate_id, candidate_name, recruiter_id, recruiter_name} = req.body
+       const {candidate_id, candidate_name, recruiter_id, recruiter_name, comment} = req.body
 
-       if(!candidate_id || !candidate_name || !recruiter_id || !recruiter_name) return res.status(400).json({message:"Please provide all required fields",success:false})
+       if(!candidate_id || !candidate_name || !recruiter_id || !recruiter_name || !comment) return res.status(400).json({message:"Please provide all required fields",success:false})
 
        const recruiter = await RECRUITINGTEAM.findById(recruiter_id)
 
@@ -16,7 +16,8 @@ export const createActivity = async (req, res, next) =>{
         recruiter_id,
         recruiter_name,
         candidate_id,
-        candidate_name
+        candidate_name,
+        comment
        })
 
        await newActivity.save()

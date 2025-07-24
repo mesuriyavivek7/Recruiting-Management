@@ -15,7 +15,6 @@ const TrimContent = (item) =>{
 
 
 function AiRecentSearch({searchType,setPromptRecentFilledSearch,dataType,data,setManuallRecentFilledSearch}) {
-  console.log('saved search---->',data)
   return (
     <div className='max-h-96 min-h-72 overflow-scroll flex p-4 bg-white rounded-md flex-col gap-4'>
         <div className='flex items-center gap-2'>
@@ -35,7 +34,9 @@ function AiRecentSearch({searchType,setPromptRecentFilledSearch,dataType,data,se
         <div className='flex flex-col gap-3'>
          {
             data.length===0 ? (
-               <span className='text-center text-gray-400 p-2'>{dataType==="save"?"No saved search found.":"No recent search found."}</span>
+               <div className='flex h-32 justify-center items-center'>
+                  <span className='text-center text-gray-400 p-2'>{dataType==="save"?"No saved search found.":"No recent search found."}</span>
+               </div>
             ):( 
             data.map((item,index) => (
                <div key={index} className='flex flex-col gap-1 items-start'>

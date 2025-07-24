@@ -16,6 +16,10 @@ const activitySchema = mongoose.Schema({
     recruiter_name:{
         type:String,
         required:true
+    },
+    comment:{
+       type:String,
+       required:true
     }
 },{timestamps:true})
 

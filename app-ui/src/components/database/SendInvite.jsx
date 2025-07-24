@@ -9,7 +9,7 @@ import { toast } from 'react-toastify'
 import Watsapp from '../../assets/whatsapp.png'
 import Mail from '../../assets/email.png'
 
-function SendInvite({selectedCandidate, setSelectedCandidate, setOpenInviteBox}) {
+function SendInvite({selectedCandidate, setSelectedCandidate, setOpenInviteBox, inviteType}) {
   const {user} = useContext(AuthContext)
   const [acceptedJobs,setAccptedJobs] = useState([])
   const [loading,setLoading] = useState(false)
@@ -96,15 +96,18 @@ function SendInvite({selectedCandidate, setSelectedCandidate, setOpenInviteBox})
              </div>
 
              <div className='flex items-center justify-center gap-4'>
-                <button className='p-1.5 rounded-md border w-36 flex justify-center text-white bg-green-500 items-center gap-2'>
+                {
+                  inviteType === 'whatsapp' ? 
+                  <button className='p-1.5 rounded-md border w-36 flex justify-center text-white bg-green-500 items-center gap-2'>
                     <img src={Watsapp} className='w-7 h-7 invert'></img>
                     <span className='font-medium'>Send</span>
-                </button>
-                <button onClick={handleSendMailInvite} className='p-1.5 rounded-md border w-36 flex justify-center text-white bg-blue-500 items-center gap-2'>
+                  </button>
+                  :
+                  <button onClick={handleSendMailInvite} className='p-1.5 rounded-md border w-36 flex justify-center text-white bg-blue-500 items-center gap-2'>
                     <img src={Mail} className='w-7 h-7 invert'></img>
                     <span className='font-medium'>Send</span>
-                </button>
-
+                 </button>
+                } 
              </div>
 
         </div>

@@ -79,6 +79,12 @@ const hideMobileNo = (mobileno) =>{
    return "********"+digit
 }
 
+const getScoreColor = (score) => {
+  if (score >= 85) return "#22c55e" // Green for 85%+
+  if (score >= 50) return "#eab308" // Yellow for 50-84%
+  return "#ef4444" // Red for <50%
+}
+
 function CandidateResult() {
   const {user} = useContext(AuthContext)
   const navigate = useNavigate()
@@ -87,10 +93,12 @@ function CandidateResult() {
 
   const [openScheduleJob,setOpenScheduleJob] = useState(false)
   const [openInviteBox,setOpenInviteBox]= useState(false)
+  const [inviteType, setInviteType] = useState('')
   const [openAllInviteBox,setOpenAllInvieBox] = useState(false)
   const [openActivity,setOpenActivity] = useState(false)
   const [selectedCandidate,setSelectedCandidate] = useState({})
   const [selectedCandidates,setSelectedCandidates] = useState([])
+  const [showSearchDetails,setShowSearchDetails] = useState(false)
 
   const [payload,setPayload] = useState({})
 
@@ -100,11 +108,16 @@ function CandidateResult() {
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 5; // Number of candidates per page
+  const [pageSize, setPageSize] = useState(5); // Number of candidates per page (dynamic)
   const totalPages = Math.ceil(filterSearchResults.length / pageSize);
 
   // Paginated results
   const paginatedResults = filterSearchResults.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
+  // When pageSize changes, reset to first page
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [pageSize]);
 
   useEffect(()=>{
     if(!location.state){
@@ -125,6 +138,14 @@ function CandidateResult() {
       }
   }
 
+  const handleSelectAllCandidate = () =>{
+     setSelectedCandidates([...filterSearchResults])
+  }
+
+  const handleDeselectAllCandidate = () =>{
+    setSelectedCandidates([])
+  }
+
   const [showMobileNo,setShowMobileNo] = useState(false)
 
   const handleViewMobileNo = async () =>{
@@ -133,7 +154,8 @@ function CandidateResult() {
         candidate_id:previewCandidate._id,
         candidate_name:previewCandidate?.contact_details?.name,
         recruiter_name:user?.full_name,
-        recruiter_id:user?._id
+        recruiter_id:user?._id,
+        comment:`${user.full_name} seen ${previewCandidate?.contact_details?.name} profile.`
        })
        setShowMobileNo(true)
      }catch(err){
@@ -146,6 +168,10 @@ function CandidateResult() {
   const [selectedSkills,setSelectedSkills] = useState([])
   const [minExp, setMinExp] = useState('')
   const [maxExp, setMaxExp] = useState('')
+  const [minSalary, setMinSalary] = useState('')
+  const [maxSalary, setMaxSalary] = useState('')
+  const [selectedCity,setSelectedCity] = useState([])
+  const [education,setEducation] = useState('')
 
 
   useEffect(()=>{
@@ -161,13 +187,15 @@ function CandidateResult() {
        selectedSkills.some((skill) => skills.map((sk)=> sk.toLowerCase()).includes(skill))
 
        const expMatch = (minExp === '' || total_experience>= minExp) && (maxExp === '' || total_experience<=maxExp)
+
+       const salaryMatch = (minSalary === '' || candidate.current_salary >= minSalary) && (maxSalary === '' || candidate.current_salary <= maxSalary)
  
-       return keyWordMatch && skillMatch && expMatch
+       return keyWordMatch && skillMatch && expMatch && salaryMatch
      })
 
      setFilterSearchResults(filtered)
 
-  },[selectedKeyword, selectedSkills, minExp, maxExp])
+  },[selectedKeyword, selectedSkills, minExp, maxExp, minSalary, maxSalary])
   
 
  const handleSaveResult = async () =>{
@@ -202,8 +230,9 @@ function CandidateResult() {
    }
  }
 
- const handleOpenInviteBox = (candidate) =>{
+ const handleOpenInviteBox = (candidate , type) =>{
     setSelectedCandidate(candidate)
+    setInviteType(type)
     setOpenInviteBox(true)
  }
 
@@ -241,43 +270,99 @@ function CandidateResult() {
    setCurrentPage(page);
  };
 
+ const getSearchPrompt = (prompt) =>{
+     if(!prompt) return ""
+     if(prompt.length > 35){
+      return <div className='flex items-center gap-1'>
+          {
+            showSearchDetails && (<div className='absolute p-4 shadow-lg z-50 flex flex-col gap-2 bg-white left-0 w-full top-[100%]'>
+              <h1>Showing results for</h1>
+              <span className='text-base text-gray-500'>{prompt}</span>
+            </div>)
+          }
+        <span>{prompt.slice(0,34)+'...'}</span>
+        <span onClick={()=>setShowSearchDetails((prev)=>!prev)} className='text-blue-400 text-sm cursor-pointer'>View details</span>
+      </div>
+     }else{
+      return prompt
+     }
+ }
+
+ const getSearchKeyword = (keywords) =>{
+  if(keywords.length === 0 ) return ""
+  let searchStr = keywords.map((item,index) => `${item}`).join(', ')
+  if(searchStr.length > 35){
+    return <div className='flex items-center gap-1'>
+        {
+          showSearchDetails && (<div className='absolute p-4 shadow-lg z-50 flex flex-col gap-2 bg-white left-0 w-full top-[100%]'>
+            <h1>Showing results for</h1>
+            <span className='text-base text-gray-500'>{searchStr}</span>
+          </div>)
+        }
+      <span>{searchStr.slice(0,34)+'...'}</span>
+      <span onClick={()=>setShowSearchDetails((prev)=>!prev)} className='text-blue-400 text-sm cursor-pointer'>View details</span>
+    </div>
+   }else{
+    return searchStr
+   }
+ }
+
   return (
     <div className='px-4 flex flex-col gap-6 pt-6 scroll-smooth '>
       {openScheduleJob && <ScheduleJob selectedCandidate={selectedCandidate} handleCloseSchedule={handleCloseScheduleJob}></ScheduleJob>}
-      {openInviteBox && <SendInvite selectedCandidate={selectedCandidate} setSelectedCandidate={setSelectedCandidate} setOpenInviteBox={setOpenInviteBox}></SendInvite>}
+      {openInviteBox && <SendInvite selectedCandidate={selectedCandidate} setSelectedCandidate={setSelectedCandidate} setOpenInviteBox={setOpenInviteBox} inviteType={inviteType}></SendInvite>}
       {openActivity && <Activity selectedCandidate={selectedCandidate} handleCloseActivity={handleCloseActivity}></Activity>}
       {openAllInviteBox && <SendAllInvite selectedCandidates={selectedCandidates} handleCloseAllInviteBox={handleCloseAllInviteBox}></SendAllInvite>}
-       <div className='p-4 flex justify-between items-center bg-white w-full rounded-xl'>
-         <div className='flex items-center gap-2'>
-           <h1 className='text-xl'>Search For</h1>
-           <span className='text-xl font-semibold'>{location.state.searchType ==="manually" ? <span>{(payload?.experience_titles || []).map((item,index) => <span key={index}>{item} {index!==payload?.experience_titles?.length-1 && ','}</span>)}</span> : <span>"{payload.query}"</span>}</span>
+       <div className='p-4 relative flex justify-between items-center bg-white w-full rounded-xl'>
+         <div className='flex  items-center gap-2'>
+           <h1 className='text-lg text-[#111827]'><b>{searchResults.length}</b> profiles found for</h1>
+           <span className='text-lg font-medium'>{location.state.searchType ==="manually" ? <span>{getSearchKeyword((payload?.experience_titles || []))}</span> : <span>{getSearchPrompt(payload.query)}</span>}</span>
          </div>
          <div className='flex items-center gap-2'>
-           {/* Pagination Controls */}
-           <div className="flex items-center gap-1 mr-4">
-             <button
-               className={`px-2 py-1 rounded border ${currentPage === 1 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-white'}`}
-               onClick={() => handlePageChange(currentPage - 1)}
-               disabled={currentPage === 1}
-             >
-               Prev
-             </button>
-             {Array.from({ length: totalPages }, (_, i) => (
-               <button
-                 key={i + 1}
-                 className={`px-2 py-1 rounded border ${currentPage === i + 1 ? 'bg-blue-500 text-white' : 'bg-white'}`}
-                 onClick={() => handlePageChange(i + 1)}
+           <span onClick={()=>navigate('/recruiter/searchcandidate')} className='text-blue-400 font-bold mr-2 cursor-pointer'>Modify Search</span>
+           {/* Pagination Controls and Page Size Selector */}
+           <div className="flex items-center gap-3 mr-4">
+             {/* Page Size Selector */}
+             <div className="flex items-center gap-1">
+               <label htmlFor="pageSize" className="text-sm text-gray-600">Showing</label>
+               <select
+                 id="pageSize"
+                 value={pageSize}
+                 onChange={e => setPageSize(Number(e.target.value))}
+                 className="border rounded px-2 py-1 text-sm focus:outline-none"
                >
-                 {i + 1}
+                 {[60, 120, 240, 500].map(size => (
+                   <option key={size} value={size}>{size}</option>
+                 ))}
+               </select>
+               <label htmlFor='pageSize' className='text-sm text-gray-600'>per page</label>
+             </div>
+             {/* Pagination */}
+             <div className="flex items-center gap-1">
+               <button
+                 className={`px-2 py-1 rounded border ${currentPage === 1 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-white'}`}
+                 onClick={() => handlePageChange(currentPage - 1)}
+                 disabled={currentPage === 1}
+               >
+                 Prev
                </button>
-             ))}
-             <button
-               className={`px-2 py-1 rounded border ${currentPage === totalPages || totalPages === 0 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-white'}`}
-               onClick={() => handlePageChange(currentPage + 1)}
-               disabled={currentPage === totalPages || totalPages === 0}
-             >
-               Next
-             </button>
+               {Array.from({ length: totalPages }, (_, i) => (
+                 <button
+                   key={i + 1}
+                   className={`px-2 py-1 rounded border ${currentPage === i + 1 ? 'bg-blue-500 text-white' : 'bg-white'}`}
+                   onClick={() => handlePageChange(i + 1)}
+                 >
+                   {i + 1}
+                 </button>
+               ))}
+               <button
+                 className={`px-2 py-1 rounded border ${currentPage === totalPages || totalPages === 0 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-white'}`}
+                 onClick={() => handlePageChange(currentPage + 1)}
+                 disabled={currentPage === totalPages || totalPages === 0}
+               >
+                 Next
+               </button>
+             </div>
            </div>
            <button disabled={selectedCandidates.length===0} className='p-1 px-2 bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed rounded-md'>
              <span onClick={handleOpenAllInviteBox} className='text-white font-medium'>Send Invite</span>
@@ -295,6 +380,14 @@ function CandidateResult() {
          minExp={minExp}
          setMaxExp={setMaxExp}
          maxExp={maxExp}
+         minSalary={minSalary}
+         setMinSalary={setMinSalary}
+         maxSalary={maxSalary}
+         setMaxSalary={setMaxSalary}
+         selectedCity={selectedCity}
+         setSelectedCity={setSelectedCity}
+         education={education}
+         setEducation={setEducation}
          ></FilterBox>
          </div>
 
@@ -303,6 +396,14 @@ function CandidateResult() {
             {/* Candidate Search Result Header */}
             <div className='flex items-center justify-between'>
                <h1 className='font-bold text-2xl'>Search Results</h1>
+               <div className='flex items-center gap-2'>
+                 <button onClick={selectedCandidates.length === filterSearchResults.length ? handleDeselectAllCandidate :handleSelectAllCandidate} className='p-2 px-3 w-40 hover:bg-gray-100 bg-white transition-all duration-300 border-neutral-300 border rounded-md flex justify-center items-center gap-2'>
+                   {
+                    selectedCandidates.length === filterSearchResults.length ?
+                    "Deselect All":
+                    "Select All"
+                   }
+                 </button>
                <button onClick={handleSaveResult} className='p-2 px-3 w-40 hover:bg-gray-100 bg-white transition-all duration-300 border-neutral-300 border rounded-md flex justify-center items-center gap-2'>
                    {
                     loading ? 
@@ -313,6 +414,7 @@ function CandidateResult() {
                     </div>
                    }
                  </button>
+                 </div>
             </div>
             
             <div className='flex flex-col'>
@@ -325,7 +427,48 @@ function CandidateResult() {
                 : paginatedResults.map((item,index) => (
                   <div onClick={()=>{
                     setShowMobileNo(false)
-                    setPreviewCandidate(item)}} key={index + (currentPage-1)*pageSize} className={`${item?._id === previewCandidate?._id ? "border-2 border-blue-500 bg-blue-50" : 'border hover:border-blue-400 border-neutral-300 bg-white'} p-6 relative custom-shadow-1 flex items-start gap-4`}>
+                    setPreviewCandidate(item)}} 
+                    key={index + (currentPage-1)*pageSize} 
+                    className={`${item?._id === previewCandidate?._id ? "border-2 border-blue-500 bg-blue-50" : 'border hover:border-blue-400 border-neutral-300 bg-white'} 
+                    ${index === 0 ? 'rounded-t-xl' : ''} 
+                    ${index === paginatedResults.length - 1 ? 'rounded-b-xl' : ''} 
+                    p-6 relative custom-shadow-1 flex items-start gap-4`}>
+                     {/* Circular Score Indicator with dynamic color */}
+                     <div className="absolute top-2 right-4 flex items-center justify-center" style={{ width: 55, height: 45 }}>
+                       <svg width="50" height="50" viewBox="0 0 40 40">
+                         <circle
+                           cx="20"
+                           cy="20"
+                           r="18"
+                           fill="none"
+                           stroke="#e5e7eb"
+                           strokeWidth="3"
+                         />
+                         <circle
+                           cx="20"
+                           cy="20"
+                           r="16"
+                           fill="none"
+                           stroke={getScoreColor((location.state.searchType === 'manually'?Number(item?.match_score):Number(item?.similarity_score.toFixed(2))*100) || 50)}
+                           strokeWidth="4"
+                           strokeDasharray={2 * Math.PI * 16}
+                           strokeDashoffset={2 * Math.PI * 16 * (1 - ((location.state.searchType=== 'manually'?Number(item?.match_score):Number(item?.similarity_score.toFixed(2))*100) || 50) / 100)}
+                           strokeLinecap="round"
+                           transform="rotate(-90 20 20)"
+                         />
+                         <text
+                           x="50%"
+                           y="50%"
+                           textAnchor="middle"
+                           dy="0.35em"
+                           fontSize="9"
+                           fontWeight="bold"
+                           fill={getScoreColor((location.state.searchType === 'manually'?Number(item?.match_score):Number(item?.similarity_score.toFixed(2))*100) || 50)}
+                         >
+                           {(location.state.searchType === 'manually'?Number(item?.match_score):Number(item?.similarity_score.toFixed(2))*100) || 50}%
+                         </text>
+                       </svg>
+                     </div>
 
                    {/* CheckBox  */}
                    <input type='checkbox' checked={selectedCandidates.some((candidate) => candidate._id===item._id)} onClick={()=>handleSelectedCandidate(item)} className='absolute top-2 left-2 h-4 w-4'></input> 
@@ -335,7 +478,7 @@ function CandidateResult() {
                   </div>
                   <div className='w-full flex flex-col gap-2.5'>
                     <div className='flex items-center gap-4'>
-                      <h2 className='text-xl font-medium'>{item?.contact_details?.name}</h2>
+                      <h2 className='text-[18px] font-semibold'>{item?.contact_details?.name}</h2>
                       <div className='flex items-center gap-2'>
                       {item?.contact_details?.linkedin_profile && <a href={item?.contact_details?.linkedin_profile} target='_blank'> <img src={LINK} className='w-6 h-6'></img></a>}
                       {item?.contact_details?.naukri_profile && <a href={item?.contact_details?.naukri_profile} target='_blank'> <img src={N} className='w-6 h-6'></img></a>}
@@ -368,8 +511,8 @@ function CandidateResult() {
                     </div>
                     <div className='w-full flex flex-col gap-2'>
                       <div className='flex items-center gap-2'>
-                         <span className='text-[#6a7280] text-[15px]'>Pref Locations:</span>
-                         <span className='text-[15px]'>
+                         <span className='text-[#6B7280] text-[14px]'>Pref Locations:</span>
+                         <span className='text-[14px]'>
                           {item?.contact_details?.looking_for_jobs_in.map((val,index)=>(
                             <>
                             <span>{val}</span>
@@ -381,29 +524,30 @@ function CandidateResult() {
                       {
                         item?.academic_details.length>0 && 
                         <div className='flex items-center gap-2'>
-                          <span className='text-[#6a7280] text-[15px]'>Education:</span>
-                          <span className='text-[15px]'>{item?.academic_details[0]?.education}</span>
+                          <span className='text-[#6B7280] text-[14px]'>Education:</span>
+                          <span className='text-[14px]'>{item?.academic_details[0]?.education}</span>
                          </div>
                       }
                       <div className='flex items-center gap-2'>
-                         <span className='text-[#6a7280] text-[15px]'>Pancard No:</span>
-                         <span className='text-[15px]'>{item?.contact_details?.pan_card}</span>
+                         <span className='text-[#6B7280] text-[14px]'>Pancard No:</span>
+                         <span className='text-[14px]'>{item?.contact_details?.pan_card}</span>
                       </div>
                       <div className='flex flex-col gap-1'>
-                         <span className='text-[#6a7280] text-[15px]'>Skills:</span>
+                         <span className='text-[#6B7280] text-[14px]'>Skills:</span>
                          {
                            handleGetSkills(item?.skills)
                          }
                       </div>
                     </div>
                   </div>
-                  <div className='flex w-12 flex-col gap-1'>
-                     <button onClick={()=>handleOpenInviteBox(item)} className='bg-green-500 mt-2 flex justify-center items-center rounded-md text-white p-1.5'>
+                  <div className='mt-8 flex w-12 flex-col gap-1'>
+                     <button onClick={()=>handleOpenInviteBox(item, 'whatsapp')} className='bg-green-500 mt-2 flex justify-center items-center rounded-md text-white p-1.5'>
                          <img src={Watsapp} className='w-6 h-6 invert'></img>
                      </button>
-                     <button onClick={()=>handleOpenInviteBox(item)} className='bg-blue-600 mt-2 flex justify-center items-center rounded-md text-white p-1.5'>
+                     <button onClick={()=>handleOpenInviteBox(item, 'mail')} className='bg-blue-600 mt-2 flex justify-center items-center rounded-md text-white p-1.5'>
                          <img src={EMail} className='w-6 h-6 invert'></img>
                      </button>
+                     
                   </div>
               </div>
                 ))
@@ -438,13 +582,13 @@ function CandidateResult() {
                      </div>
                    </div>
                    <div className='flex items-center gap-2'>
-                     <button className='flex-1 p-1.5 hover:bg-blue-400 transition-all duration-300 rounded-md text-white font-medium bg-blue-500'>
+                     <button className='flex-1 p-1.5 hover:bg-blue-400 hover:shadow-lg transition-all duration-300 rounded-md text-white font-medium bg-blue-500'>
                        Resume
                      </button>
-                     <button onClick={()=>handleOpenScheduleJob(previewCandidate)} className='flex-1 p-1.5 bg-teal-400 hover:bg-teal-500 transition-all duration-300 rounded-md text-white font-medium'>
+                     <button onClick={()=>handleOpenScheduleJob(previewCandidate)} className='flex-1 p-1.5 bg-teal-400 hover:bg-teal-500 hover:shadow-lg transition-all duration-300 rounded-md text-white font-medium'>
                        Reminder
                      </button>
-                     <button onClick={handleOpenActivity} className='flex-1 p-1.5 bg-amber-400 hover:bg-amber-500 transition-all duration-300 rounded-md text-white font-medium'>
+                     <button onClick={handleOpenActivity} className='flex-1 p-1.5 bg-amber-400 hover:bg-amber-500 hover:shadow-lg transition-all duration-300 rounded-md text-white font-medium'>
                        Activity
                      </button>
                    </div>
