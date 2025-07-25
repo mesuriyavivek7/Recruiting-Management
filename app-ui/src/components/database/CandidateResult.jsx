@@ -108,7 +108,7 @@ function CandidateResult() {
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5); // Number of candidates per page (dynamic)
+  const [pageSize, setPageSize] = useState(60); // Number of candidates per page (dynamic)
   const totalPages = Math.ceil(filterSearchResults.length / pageSize);
 
   // Paginated results
@@ -307,6 +307,15 @@ function CandidateResult() {
    }
  }
 
+ const getExp = (str) =>{
+  if(!str) return "NONE"
+  if(str.toLowerCase().includes("year") || str.toLowerCase().includes("years")){
+      return str
+  }else{
+      return `${str} Years`
+  }
+}
+
   return (
     <div className='px-4 flex flex-col gap-6 pt-6 scroll-smooth '>
       {openScheduleJob && <ScheduleJob selectedCandidate={selectedCandidate} handleCloseSchedule={handleCloseScheduleJob}></ScheduleJob>}
@@ -488,11 +497,11 @@ function CandidateResult() {
                     <div className='grid grid-cols-3 mb-2 items-center gap-4'>
                        <div className='flex items-center gap-2'>
                          <BriefcaseBusiness size={16} className='text-[#4b5563]'></BriefcaseBusiness>
-                         <span className='text-[15px] text-[#4b5563]'>{item?.total_experience}</span>
+                         <span className='text-[15px] text-[#4b5563]'>{getExp(item?.total_experience)}</span>
                        </div>
                        <div className='flex items-center'>
                            <span className='text-[#4b5563] text-[15px]'>₹</span>
-                           <span className='text-[#4b5563] text-[15px]'>{item?.current_salary} LPA</span>
+                           <span className='text-[#4b5563] text-[15px]'>{item?.current_salary ? `${item.current_salary} LPA` : "NONE"}</span>
                        </div>
                        <div className='flex items-center gap-2'>
                          <MapPin size={17} className='text-[#4b5563]'></MapPin>
@@ -578,7 +587,7 @@ function CandidateResult() {
                      </div>
                      <div className='flex flex-col'>
                        <h1 className='text-lg font-semibold'>{previewCandidate?.contact_details?.name}</h1>
-                       <span className='text-gray-400 text-[16px]'>{previewCandidate?.total_experience} Experience</span>
+                       <span className='text-gray-400 text-[16px]'>{getExp(previewCandidate?.total_experience)==="NONE" ? "NONE" : `${getExp(previewCandidate?.total_experience)} Experience`} </span>
                      </div>
                    </div>
                    <div className='flex items-center gap-2'>
@@ -596,7 +605,7 @@ function CandidateResult() {
                 <div className='border-b w-full border-neutral-300 grid grid-cols-2 gap-y-6 py-6 items-center gap-4'>
                   <div className='flex flex-col gap-0.5'>
                      <span className='text-base text-[#6a7280]'>Current Salary</span>
-                     <h1 className='text-[16px] font-semibold'>₹{Number(previewCandidate?.current_salary)} LPA</h1>
+                     <h1 className='text-[16px] font-semibold'> {previewCandidate?.current_salary ? `₹${Number(previewCandidate?.current_salary)} LPA` : "NONE" }</h1>
                   </div>
                   <div className='flex flex-col gap-0.5'>
                      <span className='text-base text-[#6a7280]'>Current City</span>
