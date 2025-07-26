@@ -109,12 +109,12 @@ function AiSearch({handlePromptBaseSearch,promptRecentFilledSearch}) {
           <img src={CHATBOT} className='w-10 h-10'></img>
           <div className='flex flex-col'>
              <h1 className='font-semibold text-lg'>Hello! I am Ai Intelligence</h1>
-             <p>Describe your ideal candidate or upload a JD — I’ll find the best match.</p>
+             <p>Describe your ideal candidate or upload a JD and I’ll find the best match.</p>
           </div>
         </div>
         <div className='px-4 pt-8 bg-white'>
           <div className='border-blue-300 bg-white p-2 border rounded-2xl flex flex-col gap-2'>
-            <textarea ref={textareaRef} onInput={handleInput} onChange={(e)=>setPrompt(e.target.value)} value={prompt} className='outline-none resize-none p-2' placeholder={placeholder} rows={4}></textarea>
+            <textarea ref={textareaRef} onInput={handleInput} onChange={(e)=>setPrompt(e.target.value)} value={prompt} className='outline-none resize-none p-2 text-[14px] font-medium' placeholder={placeholder} rows={4}></textarea>
             <label htmlFor='jd' className='group cursor-pointer flex w-32 items-center gap-2 p-1'>
                <CloudUpload className='group-hover:animate-bounce'></CloudUpload>
                <span>Upload JD</span>
