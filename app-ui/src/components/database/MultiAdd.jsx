@@ -45,7 +45,7 @@ function MultiAdd() {
         formData.append('files', file)
       })
 
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/resume-parser-multiple`, formData, {
+      const response = await axios.post(`${process.env.REACT_APP_AI_URL}/resume-parser-multiple`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
