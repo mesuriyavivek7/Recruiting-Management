@@ -718,24 +718,51 @@ function CandidateResult() {
                   <div className='flex flex-col gap-3'>
                      <div className='flex items-center justify-between'>
                        <span className='text-[#6a7280]'>Naukri Profile:</span>
-                       <a href={previewCandidate?.contact_details?.naukri_profile} target='_blank' className='flex items-center gap-1 text-sm text-blue-500'>
-                         View Profile
-                         <ExternalLink size={16}></ExternalLink>
-                       </a>
+                       {
+                        previewCandidate?.contact_details?.naukri_profile ? 
+                        <a href={previewCandidate?.contact_details?.naukri_profile} target='_blank' className='flex items-center gap-1 text-sm text-blue-500'>
+                          View Profile
+                          <ExternalLink size={16}></ExternalLink>
+                        </a>
+                        :
+                        <button className='flex items-center cursor-not-allowed gap-1 text-sm text-gray-400' disabled>
+                        View Profile
+                        <ExternalLink size={16}></ExternalLink>
+                        </button>
+                       }
+
                      </div>
                      <div className='flex items-center justify-between'>
                        <span className='text-[#6a7280]'>Portfolio:</span>
-                       <a href={previewCandidate?.contact_details?.portfolio_link} target='_blank' className='flex items-center gap-1 text-sm text-blue-500'>
-                         View Profile
-                         <ExternalLink size={16}></ExternalLink>
-                       </a>
+                       {
+                        previewCandidate?.contact_details?.portfolio_link ? 
+                          <a href={previewCandidate?.contact_details?.portfolio_link} target='_blank' className='flex items-center gap-1 text-sm text-blue-500'>
+                            View Profile
+                            <ExternalLink size={16}></ExternalLink>
+                          </a>
+                        :
+                        <button className='flex items-center cursor-not-allowed gap-1 text-sm text-gray-400' disabled>
+                            View Profile
+                            <ExternalLink size={16}></ExternalLink>
+                        </button>
+                       }
+                      
                      </div>
                      <div className='flex items-center justify-between'>
                        <span className='text-[#6a7280]'>Linkedin Profile:</span>
-                       <a href={previewCandidate?.contact_details?.linkedin_profile} target='_blank' className='flex items-center gap-1 text-sm text-blue-500'>
-                         View Profile
-                         <ExternalLink size={16}></ExternalLink>
-                       </a>
+                       {
+                        previewCandidate?.contact_details?.linkedin_profile ?
+                          <a href={previewCandidate?.contact_details?.linkedin_profile} target='_blank' className='flex items-center gap-1 text-sm text-blue-500'>
+                            View Profile
+                            <ExternalLink size={16}></ExternalLink>
+                          </a>
+                        :
+                         <button className='flex items-center cursor-not-allowed gap-1 text-sm text-gray-400' disabled>
+                            View Profile
+                            <ExternalLink size={16}></ExternalLink>
+                          </button>
+                       }
+
                      </div>
                      <div className='flex items-center justify-between'>
                        <span className='text-[#6a7280]'>Adharcard:</span>

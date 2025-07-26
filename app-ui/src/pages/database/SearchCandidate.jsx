@@ -150,7 +150,7 @@ function SearchCandidate() {
                     </button>
                     <button onClick={()=>setActiveTab("ai")} className={`relative z-10 flex rounded-r-md p-2 justify-center items-center gap-2.5`}>
                        <AutoAwesomeIcon></AutoAwesomeIcon>
-                       <span className='font-medium'>use Ai</span>
+                       <span className='font-medium'>UpGenie</span>
                     </button>
                     </div>
                 </div>

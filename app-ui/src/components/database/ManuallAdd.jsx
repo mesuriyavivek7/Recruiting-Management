@@ -442,7 +442,7 @@ function ManuallAdd() {
       </div>
       <div className='grid grid-cols-2 items-start gap-5'>
         <div className='flex flex-col gap-2'>
-          <label className='text-sm font-semibold'>Pancard No <span className='text-sm text-red-500'>*</span></label>
+          <label className='text-sm font-semibold'>Pan No <span className='text-sm text-red-500'>*</span></label>
           <input {...register("pancard")} type='text' placeholder='Enter pancard no' className='border outline-none border-neutral-300 px-2 py-1.5 rounded-md placeholder:text-[15px]'></input>
           {
             errors.pancard && <span className='text-sm text-red-500'>{errors.pancard.message}</span>
