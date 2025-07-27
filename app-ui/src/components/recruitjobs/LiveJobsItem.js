@@ -137,7 +137,7 @@ export default function LiveJobsItem({jobObj,handleOpenPreviewBox,showNotificati
                   <span>Position</span>
                   {
                     workType==="full_time"
-                    ?(<span>Sp Payout</span>)
+                    ?(<span>Payout Rate</span>)
                     :(<span>Sourcing Fee</span>)
                   }
                   {

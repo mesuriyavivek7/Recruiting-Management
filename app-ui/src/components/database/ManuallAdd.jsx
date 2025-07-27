@@ -336,7 +336,7 @@ function ManuallAdd() {
           {errors.duration && <span className='text-sm text-red-500'>{errors.duration.message}</span>}
         </div>
         <div className='flex flex-col gap-2'>
-          <label className='text-sm font-semibold'>Current Salary <span className='text-sm text-red-500'>*</span></label>
+          <label className='text-sm font-semibold'>Current Salary (Lacs) <span className='text-sm text-red-500'>*</span></label>
           <input {...register('current_salary')} type='number' step="0.01" className='border outline-none border-neutral-300 px-2 py-1.5 rounded-md placeholder:text-[15px]'></input>
           {errors.current_salary && <span className='text-sm text-red-500'>{errors.current_salary.message}</span>}
         </div>
@@ -346,7 +346,7 @@ function ManuallAdd() {
           {errors.hike && <span className='text-sm text-red-500'>{errors.hike.message}</span>}
         </div>
         <div className='flex flex-col gap-2'>
-          <label className='text-sm font-semibold'>Expected Salary(%) <span className='text-sm text-red-500'>*</span></label>
+          <label className='text-sm font-semibold'>Expected Salary (Lacs) <span className='text-sm text-red-500'>*</span></label>
           <input type='number' {...register('expected_salary')} step={"0.01"} className='border outline-none border-neutral-300 px-2 py-1.5 rounded-md placeholder:text-[15px]'></input>
           {errors.expected_salary && <span className='text-sm text-red-500'>{errors.expected_salary.message}</span>}
         </div>

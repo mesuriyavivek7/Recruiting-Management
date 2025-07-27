@@ -5,6 +5,7 @@ import axios from 'axios';
 import { Pencil } from 'lucide-react'
 import { CloudUpload } from 'lucide-react';
 import { WandSparkles } from 'lucide-react';
+import { X } from 'lucide-react';
 import { useRef } from 'react';
 
 //Importing images
@@ -16,6 +17,7 @@ function AiSearch({handlePromptBaseSearch,promptRecentFilledSearch}) {
 
   //For Prompt Storing
   const [prompt,setPrompt] = useState("")
+  const [selectedFile, setSelectedFile] = useState(null)
 
   const textareaRef = useRef(null);
 
@@ -87,43 +89,63 @@ function AiSearch({handlePromptBaseSearch,promptRecentFilledSearch}) {
   },[promptRecentFilledSearch])
 
   const handleFileChange = async (e) =>{
-    const selectedFile = e.target.files[0]
-    const fileData = new FormData()
-    fileData.append('file',selectedFile)
+    const file = e.target.files[0]
+    if (file) {
+      setSelectedFile(file)
+      const fileData = new FormData()
+      fileData.append('file', file)
 
-    try{
-      const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/job/getjdcontent`,fileData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      })
-      setPrompt(response.data)
-    }catch(err){
-      console.log(err)
-      toast.error("Something went wrong while uploading JD.")
+      try{
+        const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/job/getjdcontent`,fileData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        })
+        setPrompt(response.data)
+      }catch(err){
+        console.log(err)
+        toast.error("Something went wrong while uploading JD.")
+      }
     }
-
   } 
+
+  const handleRemoveFile = () => {
+    setSelectedFile(null)
+    const fileInput = document.getElementById('jd')
+    if (fileInput) {
+      fileInput.value = ''
+    }
+  }
 
   return (
       <div className='flex flex-col overflow-hidden rounded-md border custom-shadow-1 border-neutral-300'>
         <div className='p-4 bg-blue-200/40 flex items-center gap-4'>
           <img src={CHATBOT} className='w-10 h-10'></img>
           <div className='flex flex-col'>
-             <h1 className='font-semibold text-lg'>Hello! I am Ai Intelligence</h1>
-             <p>Describe your ideal candidate or upload a JD and I’ll find the best match.</p>
+             <h1 className='font-semibold text-[16px]'>Hello! I am Ai Intelligence</h1>
+             <p className='text-[14px]'>Describe your ideal candidate or upload a JD and I'll find the best match.</p>
           </div>
         </div>
         <div className='px-4 pt-8 bg-white'>
-          <div className='border-blue-300 bg-white p-2 border rounded-2xl flex flex-col gap-2'>
-            <textarea ref={textareaRef} onInput={handleInput} onChange={(e)=>setPrompt(e.target.value)} value={prompt} className='outline-none resize-none p-2 text-[14px] font-medium' placeholder={placeholder} rows={4}></textarea>
-            <label htmlFor='jd' className='group cursor-pointer flex w-32 items-center gap-2 p-1'>
-               <CloudUpload className='group-hover:animate-bounce'></CloudUpload>
-               <span>Upload JD</span>
+          <div className='border-blue-300 bg-white p-2 border rounded-2xl'>
+            <textarea ref={textareaRef} onInput={handleInput} onChange={(e)=>setPrompt(e.target.value)} value={prompt} className='outline-none resize-none p-2 text-[14px] font-medium w-full' placeholder={placeholder} rows={4}></textarea>
+          </div>
+          <div className='flex items-center gap-4 mt-4'>
+            <label htmlFor='jd' className='group cursor-pointer flex w-32 items-center gap-2 p-2 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors'>
+              <CloudUpload className='group-hover:animate-bounce'></CloudUpload>
+              <span>Upload JD</span>
             </label>
-            <input onChange={handleFileChange}  type='file' id='jd' className='hidden' accept=".pdf, .doc, .docx"></input>
+            {selectedFile && (
+              <div className='flex items-center gap-2 bg-gray-100 p-2 rounded-md'>
+                <span className='text-sm truncate max-w-[200px]'>{selectedFile.name}</span>
+                <button onClick={handleRemoveFile} className='text-gray-500 hover:text-red-500'>
+                  <X className='w-4 h-4' />
+                </button>
+              </div>
+            )}
+            <input onChange={handleFileChange} type='file' id='jd' className='hidden' accept=".pdf, .doc, .docx"></input>
           </div>
           <div className='flex py-4 place-content-end'>
              <div className='flex items-center gap-6'>
-               <button onClick={()=>setPrompt('')} className='text-orange-500'>Reset</button>
+               <button onClick={()=>{setPrompt(''); setSelectedFile(null);}} className='text-orange-500'>Reset</button>
                <button onClick={handleSearch} disabled={!prompt} className='text-white bg-blue-500 disabled:bg-gray-200 disabled:cursor-not-allowed  p-2 rounded-md flex items-center gap-2'>
                  <WandSparkles className='w-4 h-4'></WandSparkles>
                  <span className='font-medium'>Generate</span>
@@ -131,21 +153,6 @@ function AiSearch({handlePromptBaseSearch,promptRecentFilledSearch}) {
              </div>
           </div>
         </div>
-        {/* <div className='px-4 bg-white pb-8 pt-4'>
-           <div className='flex bg-gray-100 rounded-md p-4 flex-col gap-2'>
-             <span className='text-sm text-[#5e6c84] font-semibold'>Recent job descriptions</span>
-             <div className='flex items-center gap-4'>
-              <div className='flex border bg-white items-center p-1.5 border-neutral-200 gap-2'>
-                <Pencil className='w-4 h-4 cursor-pointer'></Pencil>
-                <span>i want CA intern & CA...</span>
-              </div>
-              <div className='flex bg-white items-center p-1.5 border border-neutral-200 gap-2'>
-                <Pencil className='w-4 h-4 cursor-pointer'></Pencil>
-                <span>Hiring For Frontend Dev...</span>
-              </div>
-             </div>
-           </div>
-        </div> */}
       </div>
   )
 }

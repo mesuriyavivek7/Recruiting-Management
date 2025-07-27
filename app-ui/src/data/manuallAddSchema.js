@@ -12,9 +12,13 @@ export const formSchema = z.object({
     notice_period:z.string().min(1,'notice period is required.'),
     currency:z.string().min(1,'currency is required.'),
     duration:z.string().min(1,"duration is required."),
-    current_salary:z.coerce.number({invalid_type_error:'Salary must be a number'}).positive("Salary must be a positive number."),
+    current_salary:z.coerce.number({invalid_type_error:'Salary must be a number'})
+        .positive("Salary must be a positive number.")
+        .refine((val) => val < 1000, "Salary cannot exceed 999 lacs"),
     hike:z.coerce.number({invalid_type_error:'Hike must be a number'}),
-    expected_salary:z.coerce.number({invalid_type_error:'expected salary must be a number'}).positive("Expected salary must be a positive number."),
+    expected_salary:z.coerce.number({invalid_type_error:'expected salary must be a number'})
+        .positive("Expected salary must be a positive number.")
+        .refine((val) => val < 1000, "Expected salary cannot exceed 999 lacs"),
     key_skills:z.array(z.string().min(1)).min(1,"Add at least one skill."),
     may_also_know:z.array(z.string().min(1)).min(1,'Add at least one skill.'),
     labels:z.array(z.string()).optional(),

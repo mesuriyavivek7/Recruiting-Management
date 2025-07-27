@@ -36,11 +36,11 @@ function FilterBox(
   // State to track which sections are expanded
   const [expandedSections, setExpandedSections] = useState({
     keyword: true,
-    skills: false,
-    experience: false,
-    salary: false,
-    city: false,
-    education: false
+    skills: true,
+    experience: true,
+    salary: true,
+    city: true,
+    education: true
   });
 
   const toggleSection = (section) => {
