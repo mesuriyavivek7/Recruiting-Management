@@ -178,7 +178,7 @@ export default function AcceptedJobItem({jobObj,showNotification,handleOpenPrevi
                <div className='flex gap-3 place-items-center'>
                   <div className='flex text-[13px] text-gray-500 flex-col gap-4 place-content-start'>
                       <span>Position</span>
-                      <span>{workType==="full_time"?("Sp Payout"):("Sourcing Fees")}</span>
+                      <span>{workType==="full_time"?("Payout Rate"):("Sourcing Fees")}</span>
                       <span>{workType==="full_time"?("Salary"):("Contractor Pay Rate")}</span>
                   </div>
                   {(jobObj.work_type==="full_time")?(
@@ -211,10 +211,7 @@ export default function AcceptedJobItem({jobObj,showNotification,handleOpenPrevi
                      <span>{jobObj.contract_pay_currency} {jobObj.commision_pay_out}{jobObj.commission_type==="Percentage" && "%"} {jobObj.contract_pay_cycle}</span>
                      <span>{jobObj.contract_pay_currency} {jobObj.contract_pay_rate_type==="Fixed"?(jobObj.fixed_contract_pay):(`${jobObj.min_contract_pay}-${jobObj.max_contract_pay}`)} {jobObj.contract_pay_cycle.toUpperCase()}</span>
                     </div>
-                   )}
-
-                    
-                  
+                   )} 
                </div>
                <div className='flex gap-3 place-items-center'>
                  <div className='flex flex-col text-[13px] text-gray-500 gap-4 place-content-start'>

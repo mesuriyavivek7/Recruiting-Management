@@ -298,7 +298,7 @@ const handleClosePreviewBox=()=>{
                               <span className='text-[14px] w-32 font-semibold'>{jobCommissionDetails && jobCommissionDetails.commission_details.replacement_clause} Days</span>
                             </div>
                             <div className='flex items-center gap-2'>
-                              <span className='text-sm w-32'>SP Payout</span>
+                              <span className='text-sm w-32'>Payout Rate</span>
                               <span className='text-[14px] w-32 font-semibold'>
                                {jobCommissionDetails && (jobCommissionDetails.commission_details.commission_type==="Percentage"
                                ?(`${jobCommissionDetails.commission_details.commission_percentage_pay}%`)

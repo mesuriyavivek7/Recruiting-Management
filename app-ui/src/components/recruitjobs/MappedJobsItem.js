@@ -225,7 +225,7 @@ export default function MappedJobsItem({jobObj,handleOpenPreviewBox,fetchAccepte
                   <span>Position</span>
                   {
                     workType==="full_time"
-                    ?(<span>Sp Payout</span>)
+                    ?(<span>Payout Rate</span>)
                     :(<span>Sourcing Fee</span>)
                   }
                   {

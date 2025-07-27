@@ -275,9 +275,9 @@ function CandidateResult() {
      if(prompt.length > 35){
       return <div className='flex items-center gap-1'>
           {
-            showSearchDetails && (<div className='absolute p-4 shadow-lg z-50 flex flex-col gap-2 bg-white left-0 w-full top-[100%]'>
-              <h1>Showing results for</h1>
-              <span className='text-base text-gray-500'>{prompt}</span>
+            showSearchDetails && (<div className='absolute p-4 shadow-lg z-50 flex flex-col gap-1 bg-white left-0 w-full top-[100%]'>
+              <h1 className='text-[16px] font-semibold'>Showing results for</h1>
+              <span className='text-[14px] leading-6 text-gray-500'>{prompt}</span>
             </div>)
           }
         <span>{prompt.slice(0,34)+'...'}</span>
@@ -294,9 +294,15 @@ function CandidateResult() {
   if(searchStr.length > 35){
     return <div className='flex items-center gap-1'>
         {
-          showSearchDetails && (<div className='absolute p-4 shadow-lg z-50 flex flex-col gap-2 bg-white left-0 w-full top-[100%]'>
-            <h1>Showing results for</h1>
-            <span className='text-base text-gray-500'>{searchStr}</span>
+          showSearchDetails && (<div className='absolute p-4 shadow-lg z-50 flex flex-col gap-1 bg-white left-0 w-full top-[100%]'>
+            <h1 className='text-[16px] font-semibold'>Showing results for</h1>
+            <div className='flex items-center gap-2'>
+            {
+              searchStr.split(',').map((item,index) => (
+                <span key={index} className='text-[12px] px-4 bg-[#dee1e5] rounded-md text-gray-500'>{item}</span>
+              ))
+            }
+            </div>
           </div>)
         }
       <span>{searchStr.slice(0,34)+'...'}</span>
@@ -314,6 +320,15 @@ function CandidateResult() {
   }else{
       return `${str} Years`
   }
+ }
+
+ function isValidURL(str) {
+  try {
+    new URL(str);
+    return true;
+  } catch (_) {
+    return false;
+  }
 }
 
   return (
@@ -323,12 +338,12 @@ function CandidateResult() {
       {openActivity && <Activity selectedCandidate={selectedCandidate} handleCloseActivity={handleCloseActivity}></Activity>}
       {openAllInviteBox && <SendAllInvite selectedCandidates={selectedCandidates} handleCloseAllInviteBox={handleCloseAllInviteBox}></SendAllInvite>}
        <div className='p-4 relative flex justify-between items-center bg-white w-full rounded-xl'>
-         <div className='flex  items-center gap-2'>
+         <div className='flex text-[16px] items-center gap-2'>
            <h1 className='text-lg text-[#111827]'><b>{searchResults.length}</b> profiles found for</h1>
            <span className='text-lg font-medium'>{location.state.searchType ==="manually" ? <span>{getSearchKeyword((payload?.experience_titles || []))}</span> : <span>{getSearchPrompt(payload.query)}</span>}</span>
          </div>
          <div className='flex items-center gap-2'>
-           <span onClick={()=>navigate('/recruiter/searchcandidate')} className='text-blue-400 font-bold mr-2 cursor-pointer'>Modify Search</span>
+           <span onClick={()=>navigate('/recruiter/searchcandidate')} className='text-blue-400 text-[14px] font-semibold mr-2 cursor-pointer'>Modify Search</span>
            {/* Pagination Controls and Page Size Selector */}
            <div className="flex items-center gap-3 mr-4">
              {/* Page Size Selector */}
@@ -444,7 +459,7 @@ function CandidateResult() {
                     p-6 relative custom-shadow-1 flex items-start gap-4`}>
                      {/* Circular Score Indicator with dynamic color */}
                      <div className="absolute top-2 right-4 flex items-center justify-center" style={{ width: 55, height: 45 }}>
-                       <svg width="50" height="50" viewBox="0 0 40 40">
+                       <svg width="42" height="42" viewBox="0 0 40 40">
                          <circle
                            cx="20"
                            cy="20"
@@ -489,9 +504,9 @@ function CandidateResult() {
                     <div className='flex items-center gap-4'>
                       <h2 className='text-[18px] font-semibold'>{item?.contact_details?.name}</h2>
                       <div className='flex items-center gap-2'>
-                      {item?.contact_details?.linkedin_profile && <a href={item?.contact_details?.linkedin_profile} target='_blank'> <img src={LINK} className='w-6 h-6'></img></a>}
-                      {item?.contact_details?.naukri_profile && <a href={item?.contact_details?.naukri_profile} target='_blank'> <img src={N} className='w-6 h-6'></img></a>}
-                      {item?.contact_details?.portfolio_link && <a href={item?.contact_details?.portfolio_link} target='_blank'> <img src={WEB} className='w-5 h-5'></img></a>}
+                      {isValidURL(item?.contact_details?.linkedin_profile) && <a href={item?.contact_details?.linkedin_profile} target='_blank'> <img src={LINK} className='w-6 h-6'></img></a>}
+                      {isValidURL(item?.contact_details?.naukri_profile) && <a href={item?.contact_details?.naukri_profile} target='_blank'> <img src={N} className='w-6 h-6'></img></a>}
+                      {isValidURL(item?.contact_details?.portfolio_link) && <a href={item?.contact_details?.portfolio_link} target='_blank'> <img src={WEB} className='w-5 h-5'></img></a>}
                       </div>
                     </div>
                     <div className='grid grid-cols-3 mb-2 items-center gap-4'>
@@ -508,18 +523,18 @@ function CandidateResult() {
                          <span className=' text-[#4b5563] text-[15px]'>{item?.contact_details?.current_city}</span>
                        </div>
                     </div>
-                    <div className='w-full grid grid-cols-5 items-center gap-4'>
+                    <div className='w-full flex flex-col items-start gap-2'>
                       <div className='flex col-span-3 items-center gap-2'>
                         <Mail size={16} className='text-[#4b5563]'></Mail>
                         <span className='text-[#4b5563] text-[15px]'>{item?.contact_details?.email}</span>
                       </div>
-                      <div className='flex col-span-2 items-center gap-2'>
+                      <div className='flex w-72 col-span-2 items-center gap-2'>
                         <Phone size={16} className='text-[#4b5563]'></Phone>
                         <span className='text-[#4b5563] text-[15px]'>{hideMobileNo(item?.contact_details?.phone)}</span>
                       </div>
                     </div>
                     <div className='w-full flex flex-col gap-2'>
-                      <div className='flex items-center gap-2'>
+                      <div className='flex items-start gap-2'>
                          <span className='text-[#6B7280] text-[14px]'>Pref Locations:</span>
                          <span className='text-[14px]'>
                           {item?.contact_details?.looking_for_jobs_in.map((val,index)=>(
@@ -532,7 +547,7 @@ function CandidateResult() {
                       </div>
                       {
                         item?.academic_details.length>0 && 
-                        <div className='flex items-center gap-2'>
+                        <div className='flex items-start gap-2'>
                           <span className='text-[#6B7280] text-[14px]'>Education:</span>
                           <span className='text-[14px]'>{item?.academic_details[0]?.education}</span>
                          </div>
@@ -719,7 +734,7 @@ function CandidateResult() {
                      <div className='flex items-center justify-between'>
                        <span className='text-[#6a7280]'>Naukri Profile:</span>
                        {
-                        previewCandidate?.contact_details?.naukri_profile ? 
+                        isValidURL(previewCandidate?.contact_details?.naukri_profile) ? 
                         <a href={previewCandidate?.contact_details?.naukri_profile} target='_blank' className='flex items-center gap-1 text-sm text-blue-500'>
                           View Profile
                           <ExternalLink size={16}></ExternalLink>
@@ -735,7 +750,7 @@ function CandidateResult() {
                      <div className='flex items-center justify-between'>
                        <span className='text-[#6a7280]'>Portfolio:</span>
                        {
-                        previewCandidate?.contact_details?.portfolio_link ? 
+                        isValidURL(previewCandidate?.contact_details?.portfolio_link) ? 
                           <a href={previewCandidate?.contact_details?.portfolio_link} target='_blank' className='flex items-center gap-1 text-sm text-blue-500'>
                             View Profile
                             <ExternalLink size={16}></ExternalLink>
@@ -751,7 +766,7 @@ function CandidateResult() {
                      <div className='flex items-center justify-between'>
                        <span className='text-[#6a7280]'>Linkedin Profile:</span>
                        {
-                        previewCandidate?.contact_details?.linkedin_profile ?
+                        isValidURL(previewCandidate?.contact_details?.linkedin_profile) ?
                           <a href={previewCandidate?.contact_details?.linkedin_profile} target='_blank' className='flex items-center gap-1 text-sm text-blue-500'>
                             View Profile
                             <ExternalLink size={16}></ExternalLink>
