@@ -141,7 +141,7 @@ function FilterBox(
           <div className='flex flex-col gap-1.5'>
              <div className='flex justify-between items-center cursor-pointer' onClick={() => toggleSection('keyword')}>
                <label className='text-sm font-semibold'>Keyword</label>
-               {expandedSections.keyword ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+               {expandedSections.keyword ? <ChevronUp className='text-gray-400' size={18} /> : <ChevronDown className='text-gray-400' size={18} />}
              </div>
              {expandedSections.keyword && (
                <Select
@@ -161,7 +161,7 @@ function FilterBox(
           <div className='flex flex-col gap-1.5'>
             <div className='flex justify-between items-center cursor-pointer' onClick={() => toggleSection('skills')}>
               <label className='text-sm font-semibold'>Skills</label>
-              {expandedSections.skills ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+              {expandedSections.skills ? <ChevronUp className='text-gray-400' size={18} /> : <ChevronDown className='text-gray-400' size={18} />}
             </div>
             {expandedSections.skills && (
               <Select
@@ -181,7 +181,7 @@ function FilterBox(
           <div className='flex flex-col gap-1.5'>
             <div className='flex justify-between items-center cursor-pointer' onClick={() => toggleSection('experience')}>
               <label className='text-sm font-semibold'>Experience</label>
-              {expandedSections.experience ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+              {expandedSections.experience ? <ChevronUp className='text-gray-400' size={18} /> : <ChevronDown className='text-gray-400' size={18} />}
             </div>
             {expandedSections.experience && (
               <div className='grid grid-cols-2 items-center gap-2'>
@@ -201,7 +201,7 @@ function FilterBox(
           <div className='flex flex-col gap-1.5'>
             <div className='flex justify-between items-center cursor-pointer' onClick={() => toggleSection('salary')}>
               <label className='text-sm font-semibold'>Salary</label>
-              {expandedSections.salary ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+              {expandedSections.salary ? <ChevronUp className='text-gray-400' size={18} /> : <ChevronDown className='text-gray-400' size={18} />}
             </div>
             {expandedSections.salary && (
               <div className='grid grid-cols-2 items-center gap-2'>
@@ -221,7 +221,7 @@ function FilterBox(
           <div className='flex flex-col gap-1.5'>
             <div className='flex justify-between items-center cursor-pointer' onClick={() => toggleSection('city')}>
               <label className='text-sm font-semibold'>City</label>
-              {expandedSections.city ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+              {expandedSections.city ? <ChevronUp className='text-gray-400' size={18} /> : <ChevronDown className='text-gray-400' size={18} />}
             </div>
             {expandedSections.city && (
               <Select
@@ -241,7 +241,7 @@ function FilterBox(
           <div className='flex flex-col gap-1.5'>
             <div className='flex justify-between items-center cursor-pointer' onClick={() => toggleSection('education')}>
               <label className='text-sm font-semibold'>Education</label>
-              {expandedSections.education ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+              {expandedSections.education ? <ChevronUp className='text-gray-400' size={18} /> : <ChevronDown className='text-gray-400' size={18} />}
             </div>
             {expandedSections.education && (
               <select onChange={(e)=>setEducation(e.target.value)} className='p-1 border placeholder:text-[12px] rounded-md'>

@@ -355,7 +355,7 @@ function ManuallSearch({manuallRecentFilledSearch,handleManuallSearchCandidate})
               </div>
               {
                 miniOpen && 
-                <div className='w-full bg-white h-28 overflow-scroll border flex flex-col absolute top-[100%] z-50 shadow-md'>
+                <div className='w-full bg-white h-52 overflow-scroll border flex flex-col absolute top-[100%] z-50 shadow-md'>
                  {
                   minExpData.map((item,index)=> (
                     <span onClick={()=>handleSelectMinExp(item)} key={index} className='text-sm p-2 hover:bg-slate-100 cursor-pointer'>{item}</span>
@@ -372,7 +372,7 @@ function ManuallSearch({manuallRecentFilledSearch,handleManuallSearchCandidate})
               </div>
               {
                 maxOpen && 
-               <div className='w-full bg-white h-28 overflow-scroll border flex flex-col absolute top-[100%] z-50 shadow-sm'>
+               <div className='w-full bg-white h-52 overflow-scroll border flex flex-col absolute top-[100%] z-50 shadow-sm'>
                  {
                   maxExpData.map((item,index) => (
                     <span onClick={()=>handleSelectMaxExp(item)} key={index} className='text-sm p-2 hover:bg-slate-100 cursor-pointer'>{item}</span>
@@ -394,7 +394,7 @@ function ManuallSearch({manuallRecentFilledSearch,handleManuallSearchCandidate})
                 </div>
                 {
                   minSalaryOpen && 
-                  <div className='w-full bg-white h-28 overflow-scroll border flex flex-col absolute top-[100%] z-50 shadow-md'>
+                  <div className='w-full bg-white h-52 overflow-scroll border flex flex-col absolute top-[100%] z-50 shadow-md'>
                    {
                     minSalaryData.map((item,index)=> (
                       <span onClick={()=>handleSelectMinSalary(item.value)} key={index} className='text-sm p-2 hover:bg-slate-100 cursor-pointer'>{item.title}</span>
@@ -410,7 +410,7 @@ function ManuallSearch({manuallRecentFilledSearch,handleManuallSearchCandidate})
                 </div>
                 {
                   maxSalaryOpen && 
-                  <div className='w-full bg-white h-28 overflow-scroll border flex flex-col absolute top-[100%] z-50 shadow-md'>
+                  <div className='w-full bg-white h-52 overflow-scroll border flex flex-col absolute top-[100%] z-50 shadow-md'>
                    {
                     maxSalaryData.map((item,index)=> (
                       <span onClick={()=>handleSelectMaxSalary(item.value)} key={index} className='text-sm p-2 hover:bg-slate-100 cursor-pointer'>{item.title}</span>

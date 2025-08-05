@@ -108,6 +108,7 @@ function AiSearch({handlePromptBaseSearch,promptRecentFilledSearch}) {
   } 
 
   const handleRemoveFile = () => {
+    setPrompt('')
     setSelectedFile(null)
     const fileInput = document.getElementById('jd')
     if (fileInput) {
@@ -129,9 +130,9 @@ function AiSearch({handlePromptBaseSearch,promptRecentFilledSearch}) {
             <textarea ref={textareaRef} onInput={handleInput} onChange={(e)=>setPrompt(e.target.value)} value={prompt} className='outline-none resize-none p-2 text-[14px] font-medium w-full' placeholder={placeholder} rows={4}></textarea>
           </div>
           <div className='flex items-center gap-4 mt-4'>
-            <label htmlFor='jd' className='group cursor-pointer flex w-32 items-center gap-2 p-2 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors'>
-              <CloudUpload className='group-hover:animate-bounce'></CloudUpload>
-              <span>Upload JD</span>
+            <label htmlFor='jd' className='group cursor-pointer flex items-center gap-2 p-2 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors'>
+              <CloudUpload className='group-hover:animate-bounce' size={20}></CloudUpload>
+              <span className='text-[13px]'>Upload JD <span className='text-gray-500'>(Maximum file size 1MB - TXT, PDF, DOC, DOCX)</span></span>
             </label>
             {selectedFile && (
               <div className='flex items-center gap-2 bg-gray-100 p-2 rounded-md'>
