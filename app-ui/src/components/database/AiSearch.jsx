@@ -127,7 +127,7 @@ function AiSearch({handlePromptBaseSearch,promptRecentFilledSearch}) {
         </div>
         <div className='px-4 pt-8 bg-white'>
           <div className='border-blue-300 bg-white p-2 border rounded-2xl'>
-            <textarea ref={textareaRef} onInput={handleInput} onChange={(e)=>setPrompt(e.target.value)} value={prompt} className='outline-none resize-none p-2 text-[14px] font-medium w-full' placeholder={placeholder} rows={4}></textarea>
+            <textarea ref={textareaRef} onInput={handleInput} onChange={(e)=>setPrompt(e.target.value)} value={prompt} className='outline-none resize-none p-2 text-[14px] font-medium w-full' placeholder={placeholder} rows={6}></textarea>
           </div>
           <div className='flex items-center gap-4 mt-4'>
             <label htmlFor='jd' className='group cursor-pointer flex items-center gap-2 p-2 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors'>
