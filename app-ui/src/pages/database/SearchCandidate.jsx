@@ -47,7 +47,6 @@ function SearchCandidate() {
     try{
        setLoader(true)
        const response = await axios.post(`${process.env.REACT_APP_AI_URL}/manualsearch`,payload)
-       console.log('manual search---->',response.data)
        await axios.post(`${process.env.REACT_APP_AI_URL}/manual_saved_recnet_search/save_recent_search`,{
         userid:user._id,
         ...payload
@@ -70,7 +69,6 @@ function SearchCandidate() {
           min_score: 0.2
         
       })
-      console.log('response ------->',response.data)
       //Saved recent search
       await axios.post(`${process.env.REACT_APP_AI_URL}/ai_search_operations/save_recent_search`,{
         user_id:user._id,
