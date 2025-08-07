@@ -13,7 +13,7 @@ import FilterBox from './FilterBox';
 import ScheduleJob from './ScheduleJob';
 
 //Importing icons
-import { BriefcaseBusiness, Calendar, LoaderCircle } from 'lucide-react';
+import { BriefcaseBusiness, Calendar, LoaderCircle, X } from 'lucide-react';
 import { MapPin } from 'lucide-react';
 import { Mail } from 'lucide-react';
 import { Phone } from 'lucide-react';
@@ -105,6 +105,8 @@ function CandidateResult() {
   const [searchResults,setSearchResults] = useState([])
   const [filterSearchResults,setFilterSearchResults] = useState([])
   const [previewCandidate,setPreviewCandidate] = useState({})
+  const [keywords,setKeywords] = useState([])
+  const [loader,setLoader] = useState(false)
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -127,6 +129,7 @@ function CandidateResult() {
         setFilterSearchResults(location.state.candidate_result)
         setPreviewCandidate(location.state.candidate_result[0])
         setPayload(location.state.payload)
+        if(location.state.searchType === 'manually') setKeywords(location.state.payload.experience_titles)
     }
   },[])
 
@@ -173,28 +176,31 @@ function CandidateResult() {
   const [selectedCity,setSelectedCity] = useState([])
   const [education,setEducation] = useState('')
 
+  const handleFilterSearchResults = (searchResults) => {
+    if(!searchResults.length) return 
+
+    const filtered = searchResults.filter(candidate => {
+      const {labels = [],skills = [], total_experience } = candidate
+
+      const keyWordMatch = selectedKeyword.length === 0 ||
+      selectedKeyword.some((keyword)=> labels.map((label)=> label.toLowerCase()).includes(keyword.toLowerCase()))
+   
+      const skillMatch = selectedSkills.length === 0 ||
+      selectedSkills.some((skill) => skills.map((sk)=> sk.toLowerCase()).includes(skill))
+
+      const expMatch = (minExp === '' || total_experience>= minExp) && (maxExp === '' || total_experience<=maxExp)
+
+      const salaryMatch = (minSalary === '' || candidate.current_salary >= minSalary) && (maxSalary === '' || candidate.current_salary <= maxSalary)
+
+      return keyWordMatch && skillMatch && expMatch && salaryMatch
+    })
+
+    setFilterSearchResults(filtered)
+    setPreviewCandidate(filtered[0])
+  }
 
   useEffect(()=>{
-     if(!searchResults.length) return 
-
-     const filtered = searchResults.filter(candidate => {
-       const {labels = [],skills = [], total_experience } = candidate
-
-       const keyWordMatch = selectedKeyword.length === 0 ||
-       selectedKeyword.some((keyword)=> labels.map((label)=> label.toLowerCase()).includes(keyword.toLowerCase()))
-    
-       const skillMatch = selectedSkills.length === 0 ||
-       selectedSkills.some((skill) => skills.map((sk)=> sk.toLowerCase()).includes(skill))
-
-       const expMatch = (minExp === '' || total_experience>= minExp) && (maxExp === '' || total_experience<=maxExp)
-
-       const salaryMatch = (minSalary === '' || candidate.current_salary >= minSalary) && (maxSalary === '' || candidate.current_salary <= maxSalary)
- 
-       return keyWordMatch && skillMatch && expMatch && salaryMatch
-     })
-
-     setFilterSearchResults(filtered)
-
+     handleFilterSearchResults(searchResults)
   },[selectedKeyword, selectedSkills, minExp, maxExp, minSalary, maxSalary])
   
 
@@ -288,6 +294,34 @@ function CandidateResult() {
      }
  }
 
+ const handleRefetchData = async (idx) =>{
+     let updatedKeywords = keywords.filter((item,index) => index !== idx)
+     setKeywords(updatedKeywords)
+     if(updatedKeywords.length > 0){
+      try{
+        let obj = {
+          experience_titles: updatedKeywords,
+          skills:payload.skills,
+          min_experience:payload.min_experience,
+          max_experience:payload.max_experience,
+          min_education:payload.min_education,
+          locations:payload.locations,
+          min_salary:payload.min_salary,
+          max_salary:payload.max_salary
+        }
+        setLoader(true)
+        const response = await axios.post(`${process.env.REACT_APP_AI_URL}/manualsearch`,obj)
+        setSearchResults(response.data)
+        handleFilterSearchResults(response.data)
+      }catch(err){
+        console.log(err)
+        toast.error('Something went wrong.')
+      }finally{
+        setLoader(false)
+      }
+     }
+ }
+
  const getSearchKeyword = (keywords) =>{
   if(keywords.length === 0 ) return ""
   let searchStr = keywords.map((item,index) => `${item}`).join(', ')
@@ -299,7 +333,10 @@ function CandidateResult() {
             <div className='flex items-center gap-2'>
             {
               searchStr.split(',').map((item,index) => (
-                <span key={index} className='text-[12px] px-4 bg-[#dee1e5] rounded-md text-gray-500'>{item}</span>
+                <div key={index} className='text-[12px] flex items-center gap-1 px-4 bg-[#dee1e5] rounded-md text-gray-500'>
+                  <span>{item}</span>
+                  <button onClick={()=>handleRefetchData(index)}><X size={15}></X></button>
+                </div>
               ))
             }
             </div>
@@ -340,7 +377,7 @@ function CandidateResult() {
        <div className='p-4 relative flex justify-between items-center bg-white w-full rounded-xl'>
          <div className='flex text-[16px] items-center gap-2'>
            <h1 className='text-lg text-[#111827]'><b>{searchResults.length}</b> profiles found for</h1>
-           <span className='text-lg font-medium'>{location.state.searchType ==="manually" ? <span>{getSearchKeyword((payload?.experience_titles || []))}</span> : <span>{getSearchPrompt(payload.query)}</span>}</span>
+           <span className='text-lg font-medium'>{location.state.searchType ==="manually" ? <span>{getSearchKeyword((keywords || []))}</span> : <span>{getSearchPrompt(payload.query)}</span>}</span>
          </div>
          <div className='flex items-center gap-2'>
            <span onClick={()=>navigate('/recruiter/searchcandidate')} className='text-blue-400 text-[14px] font-semibold mr-2 cursor-pointer'>Modify Search</span>
@@ -444,7 +481,11 @@ function CandidateResult() {
             <div className='flex flex-col'>
                {/* Candidate result card */}
                {
-                filterSearchResults.length === 0 ? 
+                loader ? 
+                  <div className='h-full flex justify-center items-center'>
+                    <LoaderCircle className='animate-spin text-blue-500'></LoaderCircle>
+                  </div>
+                : filterSearchResults.length === 0 ? 
                    <div className='h-full flex justify-center items-center'>
                      <span className='text-gray-500'>No Search Results</span>
                    </div>
