@@ -70,6 +70,8 @@ function ManuallAdd() {
   const animatedComponents = makeAnimated();
   const {user} = useContext(AuthContext)
   const [loader,setLoader] = useState(false)
+  const [resumeUploading, setResumeUploading] = useState(false)
+  const [selectedResumeName, setSelectedResumeName] = useState('')
 
   let defaultValues = {
     candidate_name:'',
@@ -170,6 +172,125 @@ function ManuallAdd() {
 
   },[])
 
+  const monthToNumber = (monthName) => {
+    const months = {
+      january: '01', february: '02', march: '03', april: '04', may: '05', june: '06',
+      july: '07', august: '08', september: '09', october: '10', november: '11', december: '12'
+    }
+    return months[`${monthName}`.toLowerCase()] || ''
+  }
+
+  const toYearMonth = (input) => {
+    if (!input) return ''
+    // Expect formats like "December 2020" or "2020-12"
+    const m = /([A-Za-z]+)\s+(\d{4})/.exec(input)
+    if (m) {
+      const month = monthToNumber(m[1])
+      const year = m[2]
+      if (month && year) return `${year}-${month}`
+    }
+    // Try if input is already yyyy-mm
+    const m2 = /(\d{4})-(\d{2})/.exec(input)
+    if (m2) return input
+    return ''
+  }
+
+  const extractYear = (input) => {
+    if (!input) return ''
+    const m = /(19|20)\d{2}/.exec(`${input}`)
+    return m ? m[0] : ''
+  }
+
+  const normalize = (v, fallback = '') => (v === null || v === undefined ? fallback : v)
+
+  const mapParsedToForm = (parsed) => {
+    const cd = parsed?.contact_details || {}
+    return {
+      candidate_name: normalize(cd.name),
+      mobile_no: normalize(cd.phone),
+      email: normalize(cd.email),
+      current_city: normalize(cd.current_city),
+      prefered_locations: Array.isArray(cd.looking_for_jobs_in) ? cd.looking_for_jobs_in.filter(Boolean) : [],
+      total_experience: normalize(parsed?.total_experience),
+      notice_period: normalize(parsed?.notice_period),
+      currency: normalize(parsed?.currency),
+      duration: normalize(parsed?.pay_duration),
+      current_salary: normalize(parsed?.current_salary),
+      hike: normalize(parsed?.hike),
+      expected_salary: normalize(parsed?.expected_salary),
+      key_skills: Array.isArray(parsed?.skills) ? parsed.skills.filter(Boolean) : [],
+      may_also_know: Array.isArray(parsed?.may_also_known_skills) ? parsed.may_also_known_skills.filter(Boolean) : [],
+      labels: Array.isArray(parsed?.labels) ? parsed.labels.filter(Boolean) : [],
+      experience: Array.isArray(parsed?.experience) ? parsed.experience.map((e) => ({
+        company: normalize(e.company),
+        title: normalize(e.title),
+        from_date: toYearMonth(e.from_date),
+        to: toYearMonth(e.to),
+      })) : [],
+      academic_details: Array.isArray(parsed?.academic_details) ? parsed.academic_details.map((a) => ({
+        education: normalize(a.education),
+        college: normalize(a.college),
+        pass_year: extractYear(a.pass_year),
+      })) : [],
+      naukri_profile: normalize(cd.naukri_profile),
+      linkedin_profile: normalize(cd.linkedin_profile),
+      portfolio_link: normalize(cd.portfolio_link),
+      source: normalize(parsed?.source),
+      alternate_phone_number: normalize(cd.alternative_phone),
+      last_working_date: normalize(parsed?.last_working_day),
+      gender: normalize(cd.gender),
+      age: normalize(cd.age, ''),
+      is_tier_one_mba_college: parsed?.is_tier1_mba === null || parsed?.is_tier1_mba === undefined ? '' : (parsed.is_tier1_mba ? 'Yes' : 'No'),
+      is_tier_one_engineering_college: parsed?.is_tier1_engineering === null || parsed?.is_tier1_engineering === undefined ? '' : (parsed.is_tier1_engineering ? 'Yes' : 'No'),
+      comment: normalize(parsed?.comment),
+      exit_reason: normalize(parsed?.exit_reason),
+    }
+  }
+
+  const handleResumeUpload = async (file) => {
+    if (!file) return
+    setResumeUploading(true)
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+
+      const response = await axios.post('https://ai.uphire.in/resume-parser', formData, {
+        headers: { 'Content-Type': 'multipart/form-data', accept: 'application/json' },
+      })
+
+      const parsed = response?.data?.resume_parser
+      if (!parsed) {
+        toast.error('Could not parse resume. Please try another file.')
+        return
+      }
+
+      const mappedValues = mapParsedToForm(parsed)
+      reset({ ...defaultValues, ...mappedValues })
+      setSelectedResumeName(file.name)
+      toast.success('Resume parsed and form auto-filled')
+    } catch (err) {
+      console.log(err)
+      toast.error('Resume upload failed. Please try again.')
+    } finally {
+      setResumeUploading(false)
+    }
+  }
+
+  const onResumeInputChange = (e) => {
+    const f = e.target.files?.[0]
+    if (f) {
+      handleResumeUpload(f)
+      // clear input so user can re-upload same file if needed
+      e.target.value = ''
+    }
+  }
+
+  const clearSelectedResume = () => {
+    setSelectedResumeName('')
+    reset(defaultValues)
+    const el = document.getElementById('resumeUpload')
+    if (el) el.value = ''
+  }
 
   const addCandidate = async (data) =>{
      //Add new candidate into db
@@ -217,6 +338,7 @@ function ManuallAdd() {
        console.log(response)
        toast.success("New candidate added successfully.",'success')
        reset(defaultValues)
+       setSelectedResumeName('')
      }catch(err){
       toast.error("Something went wrong while adding new candidate.","failure")
       console.log(err)
@@ -228,6 +350,22 @@ function ManuallAdd() {
 
   return (
     <form onSubmit={handleSubmit(addCandidate)} className='w-full p-4 border border-neutral-300 rounded-md overflow-hidden bg-white custom-shadow-1 flex flex-col gap-5'>
+       <div className='flex items-center justify-between'>
+         <div className='flex items-center gap-3'>
+           <label htmlFor='resumeUpload' className='border px-3 py-2 rounded-md cursor-pointer hover:bg-blue-50 text-blue-600 border-blue-500'>
+             {resumeUploading ? 'Uploading...' : 'Upload Resume'}
+           </label>
+           {selectedResumeName && (
+             <div className='flex items-center gap-2 text-sm text-gray-700'>
+               <span className='truncate max-w-[300px]' title={selectedResumeName}>{selectedResumeName}</span>
+               <button type='button' onClick={clearSelectedResume} className='text-gray-500 hover:text-red-500'>
+                 <X className='w-4 h-4'/>
+               </button>
+             </div>
+           )}
+           <input id='resumeUpload' type='file' className='hidden' accept='.pdf,.doc,.docx' onChange={onResumeInputChange} />
+         </div>
+       </div>
        <div className='grid grid-cols-3 items-start gap-5'>
          <div className='flex flex-col gap-2'>
             <label className='text-sm font-semibold'>Candidate Name <span className='text-sm text-red-500'>*</span></label>
@@ -633,7 +771,7 @@ function ManuallAdd() {
            </div>
          </div>
       </div>
-      <div className='flex p-2 justify-center items-center'>
+      <div className='flex p-2 justify-end items-center'>
           <button type='submit' className='bg-blue-500 hover:tracking-wider flex justify-center items-center transition-all duration-300 text-white w-32 rounded-md p-2'>
              {
               loader ? 
