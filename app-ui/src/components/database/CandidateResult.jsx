@@ -22,6 +22,7 @@ import { UserRound } from 'lucide-react';
 import { GraduationCap } from 'lucide-react';
 import { ExternalLink } from 'lucide-react';
 import { Copy } from 'lucide-react';
+import { SquarePen } from 'lucide-react';
 
 
 
@@ -625,6 +626,10 @@ function CandidateResult() {
               <div className='flex flex-col gap-2'>
                 <div className='flex justify-between items-center'>
                  <h1 className='text-xl font-semibold'>Candidate Details</h1>
+
+                 <button className='text-white p-1.5 bg-blue-500 rounded-md  flex items-center gap-2' onClick={() => navigate('/recruiter/editcandidate', { state: { candidate: previewCandidate } })}>
+                   <SquarePen size={18}></SquarePen>
+                 </button>
                  
                  </div>
                  <div className='flex items-center gap-2'>
@@ -756,7 +761,7 @@ function CandidateResult() {
                     </div>
                 </div>
 
-                <div className='py-6 flex flex-col gap-4'>
+                <div className='flex flex-col gap-4 py-6'>
                    <h1 className='text-lg font-medium'>Skills</h1>
                    <div className='flex flex-wrap items-center gap-2'>
                        {

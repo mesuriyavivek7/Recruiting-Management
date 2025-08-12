@@ -66,7 +66,7 @@ const customStyles = {
 
 
 
-function ManuallAdd() {
+function ManuallAdd({ initialValues, submitLabel = 'Submit', hideResumeUpload = false }) {
   const animatedComponents = makeAnimated();
   const {user} = useContext(AuthContext)
   const [loader,setLoader] = useState(false)
@@ -117,8 +117,14 @@ function ManuallAdd() {
    } = useForm({
     resolver: zodResolver(formSchema),
     mode:'onChange',
-    defaultValues
+    defaultValues: initialValues || defaultValues
    })
+
+  useEffect(() => {
+    if (initialValues) {
+      reset(initialValues)
+    }
+  }, [initialValues, reset])
 
   const currentSalary = watch("current_salary");
   const hike = watch("hike");
@@ -265,7 +271,7 @@ function ManuallAdd() {
       }
 
       const mappedValues = mapParsedToForm(parsed)
-      reset({ ...defaultValues, ...mappedValues })
+      reset({ ...(initialValues || defaultValues), ...mappedValues })
       setSelectedResumeName(file.name)
       toast.success('Resume parsed and form auto-filled')
     } catch (err) {
@@ -280,58 +286,57 @@ function ManuallAdd() {
     const f = e.target.files?.[0]
     if (f) {
       handleResumeUpload(f)
-      // clear input so user can re-upload same file if needed
       e.target.value = ''
     }
   }
 
   const clearSelectedResume = () => {
     setSelectedResumeName('')
-    reset(defaultValues)
+    reset(initialValues || defaultValues)
     const el = document.getElementById('resumeUpload')
     if (el) el.value = ''
   }
 
-  const addCandidate = async (data) =>{
-     //Add new candidate into db
-     let obj = {
-      user_id:user._id,
-      username:user.full_name,
-      contact_details:{
-        name:data.candidate_name,
-        email:data.email,
-        phone:data.mobile_no,
-        alternative_phone:data.alternate_phone_number,
-        current_city:data.current_city,
-        looking_for_jobs_in:data.prefered_locations,
-        gender:data.gender,
-        age:data.age,
-        naukri_profile:data.naukri_profile,
-        linkedin_profile:data.linkedin_profile,
-        portfolio_link:data.portfolio_link,
-        pan_card:data.pancard,
-        aadhar_card:data.aadharcard
-      },
-      total_experience:data.total_experience,
-      notice_period:data.notice_period,
-      currency:data.currency,
-      pay_duration:data.duration,
-      current_salary:data.current_salary,
-      hike:data.hike,
-      expected_salary:data.expected_salary,
-      skills:data.key_skills,
-      may_also_known_skills:data.may_also_know,
-      labels:data.labels,
-      experience:data.experience,
-      academic_details:data.academic_details,
-      source:data.source,
-      last_working_day:data.last_working_date,
-      is_tier1_mba:data.is_tier_one_mba_college==="Yes"?true:false,
-      is_tier1_engineering:data.is_tier_one_engineering_college==="Yes"?true:false,
-      comment:data.comment,
-      exit_reason:data.exit_reason
-     }
+  const buildPayload = (data) => ({
+    user_id:user._id,
+    username:user.full_name,
+    contact_details:{
+      name:data.candidate_name,
+      email:data.email,
+      phone:data.mobile_no,
+      alternative_phone:data.alternate_phone_number,
+      current_city:data.current_city,
+      looking_for_jobs_in:data.prefered_locations,
+      gender:data.gender,
+      age:data.age,
+      naukri_profile:data.naukri_profile,
+      linkedin_profile:data.linkedin_profile,
+      portfolio_link:data.portfolio_link,
+      pan_card:data.pancard,
+      aadhar_card:data.aadharcard
+    },
+    total_experience:data.total_experience,
+    notice_period:data.notice_period,
+    currency:data.currency,
+    pay_duration:data.duration,
+    current_salary:data.current_salary,
+    hike:data.hike,
+    expected_salary:data.expected_salary,
+    skills:data.key_skills,
+    may_also_known_skills:data.may_also_know,
+    labels:data.labels,
+    experience:data.experience,
+    academic_details:data.academic_details,
+    source:data.source,
+    last_working_day:data.last_working_date,
+    is_tier1_mba:data.is_tier_one_mba_college==="Yes"?true:false,
+    is_tier1_engineering:data.is_tier_one_engineering_college==="Yes"?true:false,
+    comment:data.comment,
+    exit_reason:data.exit_reason
+  })
 
+  const handleAdd = async (data) =>{
+     const obj = buildPayload(data)
      setLoader(true)
      try{
        const response = await axios.post(`${process.env.REACT_APP_AI_URL}/add_user/submit-details`,obj)
@@ -345,27 +350,43 @@ function ManuallAdd() {
      }finally{
       setLoader(false)
      }
+  }
 
+  const handleEdit = async (data) => {
+    const obj = buildPayload(data)
+    // Place your edit API here, for example:
+    // await axios.put(`${process.env.REACT_APP_API_BASE_URL}/candidates/${candidateId}`, obj)
+    console.log(obj)
+    toast.success('Candidate details ready to update')
+  }
+
+  const onSubmit = (data) => {
+    if (submitLabel.toLowerCase() === 'edit') {
+      return handleEdit(data)
+    }
+    return handleAdd(data)
   }
 
   return (
-    <form onSubmit={handleSubmit(addCandidate)} className='w-full p-4 border border-neutral-300 rounded-md overflow-hidden bg-white custom-shadow-1 flex flex-col gap-5'>
-       <div className='flex items-center justify-between'>
-         <div className='flex items-center gap-3'>
-           <label htmlFor='resumeUpload' className='border px-3 py-2 rounded-md cursor-pointer hover:bg-blue-50 text-blue-600 border-blue-500'>
-             {resumeUploading ? 'Uploading...' : 'Upload Resume'}
-           </label>
-           {selectedResumeName && (
-             <div className='flex items-center gap-2 text-sm text-gray-700'>
-               <span className='truncate max-w-[300px]' title={selectedResumeName}>{selectedResumeName}</span>
-               <button type='button' onClick={clearSelectedResume} className='text-gray-500 hover:text-red-500'>
-                 <X className='w-4 h-4'/>
-               </button>
-             </div>
-           )}
-           <input id='resumeUpload' type='file' className='hidden' accept='.pdf,.doc,.docx' onChange={onResumeInputChange} />
+    <form onSubmit={handleSubmit(onSubmit)} className='w-full p-4 border border-neutral-300 rounded-md overflow-hidden bg-white custom-shadow-1 flex flex-col gap-5'>
+       {!hideResumeUpload && (
+         <div className='flex items-center justify-between'>
+           <div className='flex items-center gap-3'>
+             <label htmlFor='resumeUpload' className='border px-3 py-2 rounded-md cursor-pointer hover:bg-blue-50 text-blue-600 border-blue-500'>
+               {resumeUploading ? 'Uploading...' : 'Upload Resume'}
+             </label>
+             {selectedResumeName && (
+               <div className='flex items-center gap-2 text-sm text-gray-700'>
+                 <span className='truncate max-w-[300px]' title={selectedResumeName}>{selectedResumeName}</span>
+                 <button type='button' onClick={clearSelectedResume} className='text-gray-500 hover:text-red-500'>
+                   <X className='w-4 h-4'/>
+                 </button>
+               </div>
+             )}
+             <input id='resumeUpload' type='file' className='hidden' accept='.pdf,.doc,.docx' onChange={onResumeInputChange} />
+           </div>
          </div>
-       </div>
+       )}
        <div className='grid grid-cols-3 items-start gap-5'>
          <div className='flex flex-col gap-2'>
             <label className='text-sm font-semibold'>Candidate Name <span className='text-sm text-red-500'>*</span></label>
@@ -772,11 +793,11 @@ function ManuallAdd() {
          </div>
       </div>
       <div className='flex p-2 justify-end items-center'>
-          <button type='submit' className='bg-blue-500 hover:tracking-wider flex justify-center items-center transition-all duration-300 text-white w-32 rounded-md p-2'>
+          <button type='submit' className='bg-blue-500 hover:tracking-wider flex justify-center items-center transition-all duration-300 text-white w-36 rounded-md p-2'>
              {
               loader ? 
               <LoaderCircle className='animate-spin'></LoaderCircle>
-              :<span>Submit</span>
+              :<span>{submitLabel}</span>
              }
           </button>
       </div>
