@@ -35,6 +35,7 @@ function SearchCandidate() {
 
   const handleManuallSearchCandidate = async (experience_titles,skills, min_experience, max_experience, min_education,locations,min_salary,max_salary) =>{
     let payload = {
+      userid:user._id,
        experience_titles,
        skills,
        min_experience,
