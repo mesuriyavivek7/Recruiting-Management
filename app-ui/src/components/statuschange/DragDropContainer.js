@@ -15,30 +15,30 @@ export default function DragDropContainer({
   
   // Mapping of section name with candidate status
   const cstatus = new Map([
-    ['section1', 'newresume'],
-    ['section2', 'rs-cc'],
-    ['section3', 'rs-hm'],
-    ['section4', 'test-process'],
-    ['section5', 'interview-process'],
+    ['section1', 'resumesubmit'],
+    ['section2', 'sip'],
+    ['section3', 'cvshortclient'],
+    ['section4', 'cvshorthr'],
+    ['section5', 'interview-schedule'],
     ['section6', 'no-show'],
     ['section7', 'candidate-not-ins'],
     ['section8', 'candidate-not-reach'],
-    ['section9', 'rr-cc'],
-    ['section10', 'rr-hm'],
-    ['section11', 'r-test'],
-    ['section12', 'rjt-tech-itw'],
-    ['section13', 'rjt-hr-itw'],
-    ['section14', 's-f-itw'],
+    ['section9', 'cv-reject-client'],
+    ['section10', 'cv-reject-hr'],
+    ['section11', 'r-techround'],
+    ['section12', 'r-hrround'],
+    ['section13', 'short-next-round'],
+    ['section14', 's-finale-interview'],
     ['section15', 's-not-offer'],
-    ['section16', 'o-released'],
-    ['section17', 'o-accepted'],
-    ['section18', 'o-rejected'],
-    ['section19', 'c-not-joine'],
-    ['section20', 'c-joine'],
-    ['section21', 'quit-after-joine'],
-    ['section22', 'on-hold'],
-    ['section23', 'no-action'],
-    ['section24', 'use-later'],
+    ['section16', 'o-hold'],
+    ['section17', 'o-extended'],
+    ['section18', 'o-accepted'],
+    ['section19', 'o-declined'],
+    ['section20', 'not-join'],
+    ['section21', 'success-joined'],
+    ['section22', 'payout-eligible'],
+    ['section23', 'early-registration'],
+    ['section24', 'cv-rejected'],
   ]);
 
   const initialSection = {
@@ -98,8 +98,6 @@ export default function DragDropContainer({
 
     const { id } = item;
     const status = cstatus.get(sectionId);
-    console.log("candidate id---->",id)
-    console.log("candidate new status--->",status)
 
     try {
       await axios.post(`${process.env.REACT_APP_API_BASE_URL}/candidate/changecandidatestatus/${id}`, { status });
@@ -135,30 +133,30 @@ export default function DragDropContainer({
           {Array.from(cstatus.keys()).map((sectionId) => {
             // Define titles and themes for each section
             const sectionDetails = {
-              section1: { title: "New Resume", theme: 'blue' },
-              section2: { title: "Resume Select - Client Recruiter", theme: 'purple' },
-              section3: { title: "Resume Select - Hiring Manager", theme: 'purple' },
-              section4: { title: "Test in Process", theme: 'purple' },
-              section5: { title: "Interview in Process", theme: 'purple' },
+              section1: { title: "Resume Submitted", theme: 'blue' },
+              section2: { title: "Screening in Progress", theme: 'purple' },
+              section3: { title: "CV Shortlisted – Client Recruiter", theme: 'purple' },
+              section4: { title: "CV Shortlisted – Hiring Manager", theme: 'purple' },
+              section5: { title: "Interview Scheduled", theme: 'purple' },
               section6: { title: "No Show", theme: 'purple' },
               section7: { title: "Candidate Not Interested", theme: 'orange' },
               section8: { title: "Candidate Not Reachable", theme: 'orange' },
-              section9: { title: "Resume Reject - Client Recruiter", theme: 'red' },
-              section10: { title: "Resume Reject - Hiring Manager", theme: 'red' },
-              section11: { title: "Rejected in Test", theme: 'red' },
-              section12: { title: "Rejected in Tech Interview", theme: 'red' },
-              section13: { title: "Rejected in HR Interview", theme: 'red' },
+              section9: { title: "CV Rejected – Client Recruiter", theme: 'red' },
+              section10: { title: "CV Rejected – Hiring Manager", theme: 'red' },
+              section11: { title: "Rejected – Technical Round", theme: 'red' },
+              section12: { title: "Rejected – HR Round", theme: 'red' },
+              section13: { title: "Shortlisted for Next Round", theme: 'red' },
               section14: { title: "Selected in Final Interview", theme: 'green' },
-              section15: { title: "Selected - Won't be Offered", theme: 'green' },
-              section16: { title: "Offer Released", theme: 'green' },
-              section17: { title: "Offer Accepted", theme: 'green' },
-              section18: { title: "Offer Rejected", theme: 'green' },
-              section19: { title: "Candidate Not Joining", theme: 'green' },
-              section20: { title: "Candidate Joined", theme: 'green' },
-              section21: { title: "Quit After Joining", theme: 'green' },
-              section22: { title: "On Hold", theme: 'purple' },
-              section23: { title: "No Further Action", theme: 'purple' },
-              section24: { title: "Use Later", theme: 'purple' },
+              section15: { title: "Selected – Not Offered", theme: 'green' },
+              section16: { title: "On Hold", theme: 'green' },
+              section17: { title: "Offer Extended", theme:'green'},
+              section18: { title: "Offer Accepted", theme: 'green' },
+              section19: { title: "Offer Declined", theme: 'green' },
+              section20: { title: "Did Not Join", theme: 'green' },
+              section21: { title: "Successfully Joined", theme: 'green' },
+              section22: { title: "Payout Eligible", theme: 'green' },
+              section23: { title: "Early Resignation", theme: 'purple' },
+              section24: { title: "CV Rejected - In Process", theme: 'purple' },
             };
 
             const { title, theme } = sectionDetails[sectionId] || { title: "Unknown", theme: 'gray' };

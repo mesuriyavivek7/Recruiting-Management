@@ -356,8 +356,12 @@ function ManuallAdd({ initialValues, submitLabel = 'Submit', hideResumeUpload = 
     const obj = buildPayload(data)
     // Place your edit API here, for example:
     // await axios.put(`${process.env.REACT_APP_API_BASE_URL}/candidates/${candidateId}`, obj)
-    console.log(obj)
-    toast.success('Candidate details ready to update')
+    try{
+      const data = await axios.put(`${process.env.REACT_APP_AI_URL}/resumes/${initialValues?.candidate_id}?requesting_user_id=${user._id}`,obj)
+      toast.success('Candidate details ready to update')
+    }catch(err){ 
+      console.log(err)
+    }
   }
 
   const onSubmit = (data) => {

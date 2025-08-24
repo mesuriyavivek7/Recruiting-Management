@@ -36,6 +36,7 @@ const mapCandidateToForm = (candidate) => {
   if (!candidate) return null
   const cd = candidate.contact_details || {}
   return {
+    candidate_id: normalize(candidate._id),
     candidate_name: normalize(cd.name),
     mobile_no: normalize(cd.phone),
     email: normalize(cd.email),
