@@ -21,15 +21,28 @@ import KeyboardArrowUpOutlinedIcon from '@mui/icons-material/KeyboardArrowUpOutl
 import ArrowCircleDownOutlinedIcon from '@mui/icons-material/ArrowCircleDownOutlined';
 import InsertDriveFileOutlinedIcon from '@mui/icons-material/InsertDriveFileOutlined';
 import ArrowRightAltOutlinedIcon from '@mui/icons-material/ArrowRightAltOutlined';
-
+import EditIcon from '@mui/icons-material/Edit';
 
 
 
 export default function RecruiterCandidateDataShow({showNotification,loader,rows,refetchCandidateData}) {
 //  const [candidateStatusLoader,setCandidateStatusLoader]=useState(false)
  const [remarksLoader,setRemarksLoader]=useState(false)
+ const [selectedCandidate,setSelectedCandidate] = useState(null)
+ const [remarks, setRemarks] = useState('');
+ const [openRemarksForm,setOpenRemarksForm] = useState(false)
 
- const [remarks, setRemarks] = useState({});
+ const handleOpenRemarks = (candidateId,remarks) =>{
+      setSelectedCandidate(candidateId)
+      setRemarks(remarks)
+      setOpenRemarksForm(true)
+ }
+
+ const handleCloseRemarks = () =>{
+     setSelectedCandidate(null)
+     setRemarks('')
+     setOpenRemarksForm(false)
+ }
 
 const getDate=(date)=>{
   let d=new Date(date)
@@ -39,8 +52,6 @@ const getDate=(date)=>{
  
   return `${(d_ate<10)?(`0${d_ate}`):(d_ate)}-${(d_month<10)?(`0${d_month}`):(d_month)}-${d_year}`
 }
-
-
 
   const getDays = (date) => {
     const today = new Date()
@@ -113,19 +124,20 @@ const downloadCandidateResume=async (cid)=>{
   }
 
 
-  const updateCandidateRemarks = async (id) => {
+  const updateCandidateRemarks = async () => {
     try {
       setRemarksLoader(true)
-      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/candidate/updatecandidateremarks/${id}`, { remarks:remarks[id] })
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/candidate/updatecandidateremarks/${selectedCandidate}`, { remarks })
       await refetchCandidateData()
-      setRemarksLoader(false)
+      handleCloseRemarks()
       showNotification("Successfully candidate remarks changed.",'success')
     } catch (err) {
       setRemarksLoader(false)
       console.log(err)
       showNotification("Something went wrong while updating Remarks.", "failure")
+    } finally{
+      setRemarksLoader(false)
     }
-    setRemarksLoader(false)
   }
 
 
@@ -186,17 +198,6 @@ const candidateCol=[
       }
     },
     {
-      field: "updated", headerName: "Last Updated", headerClassName: 'super-app-theme--header', width: 160,
-      renderCell: (params) => {
-        return (
-          <div className="flex mt-5 h-full flex-col gap-1">
-            <span className="text-md leading-5">{getDate(params.row.updated)}</span>
-            <span className="text-sm text-gray-400">({getDays(params.row.updated)} days ago)</span>
-          </div>
-        )
-      }
-    },
-    {
       field: "notice_period", headerName: "Notice Period", headerClassName: 'super-app-theme--header', width: 170,
       renderCell: (params) => {
         return (
@@ -220,31 +221,28 @@ const candidateCol=[
       }
     },
     {
+      field: "updated", headerName: "Last Updated", headerClassName: 'super-app-theme--header', width: 160,
+      renderCell: (params) => {
+        return (
+          <div className="flex mt-5 h-full flex-col gap-1">
+            <span className="text-md leading-5">{getDate(params.row.updated)}</span>
+            <span className="text-sm text-gray-400">({getDays(params.row.updated)} days ago)</span>
+          </div>
+        )
+      }
+    }, 
+    {
       field: 'remarks', headerName: 'Remarks', headerClassName: 'super-app-theme--header', width: 200,
       renderCell: (params) => {
-        const currentRemark = remarks[params.row.id] ?? params.row.remarks;
+        const currentRemark = params.row.remarks;
       
         return (
-          <div>
-            <input
-              type="text"
-              className="input-field"
-              value={currentRemark}
-              onFocus={() =>
-                 setRemarks((prev) => ({
-                   ...prev,
-                  [params.row.id]: currentRemark,
-                 }))
-              }
-              onChange={(e) =>
-                setRemarks((prev) => ({
-                   ...prev,
-                  [params.row.id]: e.target.value,
-                }))
-              }
-              onBlur={() => updateCandidateRemarks(params.row.id)}
-              />
-            </div>
+          <div className='w-full h-full flex gap-1.5 justify-center items-center'>
+            <span className='h-10 p-2 leading-5 rounded-md border w-36'>{currentRemark}</span>
+            <button onClick={()=>handleOpenRemarks(params.row.id,currentRemark)} className='cursor-pointer rounded-md px-2 bg-green-500 h-8 flex justify-center items-center'>
+              <EditIcon className='text-white' style={{fontSize:'1.3rem'}}></EditIcon>
+            </button>
+          </div>
           );
         },
       
@@ -301,6 +299,7 @@ const handleSetFileName=async (cid)=>{
 const handleFetchCandidateDetails=async (cid)=>{
     try{
       const res=await axios.get(`${process.env.REACT_APP_API_BASE_URL}/candidate/getcandidatealldetails/${cid}`)
+      
       if(res.data){
         if(res.data.candidateBasicDetails) setCandidateBasicDetails(res.data.candidateBasicDetails)
         if(res.data.candidateAttachments) setCandidateAttachments(res.data.candidateAttachments)
@@ -493,6 +492,25 @@ const handleClosePopUpBox=async ()=>{
             <p>Please wait till we update candidate remarks.</p>
          </div>
        </div>
+     }
+     {
+      openRemarksForm && 
+      <div className='fixed inset-0 flex justify-center bg-black z-50 bg-opacity-50 backdrop-blur-md items-center'>
+        <div className='custom-div bg-[#F1F5F9] overflow-hidden p-0 w-96'>
+            <div className='flex w-full p-2 bg-white items-center gap-2'>
+               <span className='cursor-pointer' onClick={handleCloseRemarks}><ChevronLeftIcon></ChevronLeftIcon></span>
+               <h1 className='text-xl font-medium'>Add Remarks</h1>
+            </div>
+            <div className='p-2 w-full'>
+              <div className='bg-white p-2 rounded-md flex gap-2 flex-col'>
+                 <label>Remarks</label>
+                 <textarea onChange={(e)=>setRemarks(e.target.value)} value={remarks} rows={5} className='border p-2 rounded-md resize-none outline-none border-neutral-300'></textarea>
+                 <button onClick={updateCandidateRemarks} className='p-2 bg-blue-400 hover:bg-blue-500 transition-all duration-300 text-white mt-2'>Submit</button>
+              </div>
+            </div>
+           
+        </div>
+      </div>
      }
      {
       openProfilePopup &&(

@@ -509,3 +509,12 @@ export const handleRejectRecruiter = async (req, res, next)=>{
         next(err)
     }
 }
+
+export const updateDetails = async (req, res, next) =>{
+    try{
+        const {recruitingId} = req.params 
+
+    }catch(err){
+        next(err)
+    }
+}

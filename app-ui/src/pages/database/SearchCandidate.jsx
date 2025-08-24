@@ -64,6 +64,7 @@ function SearchCandidate() {
     try{ 
       setLoader(true)
       const response = await axios.post(`${process.env.REACT_APP_AI_URL}/rag/vector-similarity-search`,{
+          user_id:user._id,
           query:prompt,
           field: "full_text",
           num_results: 10,
