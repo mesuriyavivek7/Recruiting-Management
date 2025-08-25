@@ -22,7 +22,8 @@ import ArrowCircleDownOutlinedIcon from '@mui/icons-material/ArrowCircleDownOutl
 import InsertDriveFileOutlinedIcon from '@mui/icons-material/InsertDriveFileOutlined';
 import ArrowRightAltOutlinedIcon from '@mui/icons-material/ArrowRightAltOutlined';
 import EditIcon from '@mui/icons-material/Edit';
-
+import CloseIcon from '@mui/icons-material/Close';
+import UploadFileIcon from '@mui/icons-material/UploadFile';
 
 
 export default function RecruiterCandidateDataShow({showNotification,loader,rows,refetchCandidateData}) {
@@ -31,6 +32,28 @@ export default function RecruiterCandidateDataShow({showNotification,loader,rows
  const [selectedCandidate,setSelectedCandidate] = useState(null)
  const [remarks, setRemarks] = useState('');
  const [openRemarksForm,setOpenRemarksForm] = useState(false)
+
+ // Edit candidate popup states
+ const [openEditPopup, setOpenEditPopup] = useState(false)
+ const [editLoader, setEditLoader] = useState(false)
+ const [editFormData, setEditFormData] = useState({
+   first_name: '',
+   last_name: '',
+   country: '',
+   current_location: '',
+   primary_email_id: '',
+   primary_contact_number: '',
+   current_company: '',
+   experience: '',
+   current_annual_salary: '',
+   expected_annual_salary: '',
+   notice_period: '',
+   education_qualification: '',
+   candidate_toc: true
+ })
+ const [editResumeFile, setEditResumeFile] = useState(null)
+ const [editResumeFileName, setEditResumeFileName] = useState('')
+ const [showResumeUpload, setShowResumeUpload] = useState(false)
 
  const handleOpenRemarks = (candidateId,remarks) =>{
       setSelectedCandidate(candidateId)
@@ -42,6 +65,139 @@ export default function RecruiterCandidateDataShow({showNotification,loader,rows
      setSelectedCandidate(null)
      setRemarks('')
      setOpenRemarksForm(false)
+ }
+
+ // Edit candidate popup handlers
+ const handleOpenEditPopup = async (params) => {
+   try {
+     setEditLoader(true)
+     setOpenEditPopup(true)
+     
+     // Fetch candidate details
+     const res = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/candidate/getcandidatealldetails/${params.row.candidate_id}`)
+     
+     if (res.data && res.data.candidateBasicDetails) {
+       const details = res.data.candidateBasicDetails
+       setEditFormData({
+         first_name: details.first_name || '',
+         last_name: details.last_name || '',
+         country: details.country || '',
+         current_location: details.current_location || '',
+         primary_email_id: details.primary_email_id || '',
+         primary_contact_number: details.primary_contact_number || '',
+         current_company: details.current_company || '',
+         experience: details.experience || '',
+         current_annual_salary: details.current_annual_salary || '',
+         expected_annual_salary: details.expected_annual_salary || '',
+         notice_period: details.notice_period || '',
+         education_qualification: details.education_qualification || '',
+         candidate_toc: details.candidate_toc || true
+       })
+     }
+     
+     // Fetch resume filename
+     try {
+       const resumeRes = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/candidate/getresumefilename/${params.row.candidate_id}`)
+       if (resumeRes.data) {
+         setEditResumeFileName(resumeRes.data)
+         setShowResumeUpload(false)
+       }
+     } catch (err) {
+       setShowResumeUpload(true)
+     }
+     
+     setSelectedCandidate(params.row.candidate_id)
+   } catch (err) {
+     console.log(err)
+     showNotification("Something went wrong while fetching candidate details.", "failure")
+   } finally {
+     setEditLoader(false)
+   }
+ }
+
+ const handleCloseEditPopup = () => {
+   setOpenEditPopup(false)
+   setEditFormData({
+     first_name: '',
+     last_name: '',
+     country: '',
+     current_location: '',
+     primary_email_id: '',
+     primary_contact_number: '',
+     current_company: '',
+     experience: '',
+     current_annual_salary: '',
+     expected_annual_salary: '',
+     notice_period: '',
+     education_qualification: '',
+     candidate_toc: true
+   })
+   setEditResumeFile(null)
+   setEditResumeFileName('')
+   setShowResumeUpload(false)
+   setSelectedCandidate(null)
+ }
+
+ const handleEditFormChange = (e) => {
+   const { name, value } = e.target
+   setEditFormData(prev => ({
+     ...prev,
+     [name]: value
+   }))
+ }
+
+ const handleResumeFileChange = (e) => {
+   const file = e.target.files[0]
+   if (file) {
+     setEditResumeFile(file)
+     setEditResumeFileName(file.name)
+   }
+ }
+
+ const handleRemoveResume = () => {
+   setEditResumeFileName('')
+   setEditResumeFile(null)
+   setShowResumeUpload(true)
+ }
+
+ const handleUpdateCandidate = async () => {
+   try {
+     setEditLoader(true)
+     
+     // Get the candidate to find the orgcid (candidate's _id)
+    //  const candidateRes = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/candidate/${selectedCandidate}`)
+     
+    //  if (candidateRes.data) {
+    //    // Add candidate_id and recruiter_id to the form data
+    //    const formDataWithId = {
+    //      ...editFormData,
+    //      candidate_id: selectedCandidate,
+    //      recruiter_id: candidateRes.data.recruiter_agency_id || candidateRes.data.recruiter_member_id,
+    //      candidate_toc: true // Required field
+    //    }
+       
+    //    // Update candidate basic details using the candidate's _id as orgcid
+    //    await axios.post(`${process.env.REACT_APP_API_BASE_URL}/candidate/createcandidatebasicdetails/${candidateRes.data._id}`, formDataWithId)
+    //  }
+     
+    //  // Upload new resume if selected
+    //  if (editResumeFile) {
+    //    const formData = new FormData()
+    //    formData.append('resume', editResumeFile)
+    //    await axios.post(`${process.env.REACT_APP_API_BASE_URL}/candidate/resumedocs/${selectedCandidate}`, formData, {
+    //      headers: { "Content-Type": "multipart/form-data" }
+    //    })
+    //  }
+     
+    //  await refetchCandidateData()
+    //  handleCloseEditPopup()
+     showNotification("Candidate details updated successfully.", "success")
+   } catch (err) {
+     console.log(err)
+     showNotification("Something went wrong while updating candidate details.", "failure")
+   } finally {
+     setEditLoader(false)
+   }
  }
 
 const getDate=(date)=>{
@@ -238,7 +394,7 @@ const candidateCol=[
       
         return (
           <div className='w-full h-full flex gap-1.5 justify-center items-center'>
-            <span className='h-10 p-2 leading-5 rounded-md border w-36'>{currentRemark}</span>
+            <span className='h-10 p-2 overflow-hidden leading-5 rounded-md border w-36'>{currentRemark}</span>
             <button onClick={()=>handleOpenRemarks(params.row.id,currentRemark)} className='cursor-pointer rounded-md px-2 bg-green-500 h-8 flex justify-center items-center'>
               <EditIcon className='text-white' style={{fontSize:'1.3rem'}}></EditIcon>
             </button>
@@ -246,6 +402,16 @@ const candidateCol=[
           );
         },
       
+    },
+    {
+      field:'action',headerName:'Action',headerClassName:'super-app-theme--header',width:100,
+      renderCell:(params)=>{
+        return (
+          <div className='w-full h-full flex justify-center items-center'>
+            <button onClick={() => handleOpenEditPopup(params)} className='text-white leading-5 p-2 bg-blue-400 rounded-md cursor-pointer hover:bg-blue-500 transition-colors'><EditIcon style={{fontSize:'1.2rem'}}></EditIcon></button>
+          </div>
+        )
+      }
     }
   ]
 
@@ -509,6 +675,243 @@ const handleClosePopUpBox=async ()=>{
               </div>
             </div>
            
+        </div>
+      </div>
+     }
+
+     {/* Edit Candidate Popup */}
+     {
+      openEditPopup && 
+      <div className='fixed inset-0 flex justify-center bg-black z-50 bg-opacity-50 backdrop-blur-md items-center'>
+        <div className='bg-white rounded-lg shadow-xl w-[90%] max-w-4xl max-h-[90vh] overflow-y-auto'>
+          <div className='flex w-full p-4 bg-gradient-to-r from-blue-500 to-blue-600 items-center justify-between text-white'>
+            <div className='flex items-center gap-2'>
+              <span className='cursor-pointer' onClick={handleCloseEditPopup}><ChevronLeftIcon></ChevronLeftIcon></span>
+              <h1 className='text-xl font-medium'>Edit Candidate Details</h1>
+            </div>
+            <button onClick={handleCloseEditPopup} className='text-white hover:text-gray-200'>
+              <CloseIcon></CloseIcon>
+            </button>
+          </div>
+          
+          {editLoader ? (
+            <div className='flex w-full justify-center h-64 items-center'>
+              <img src={WhiteLoader} className='w-10 h-10'></img>
+            </div>
+          ) : (
+            <div className='p-6'>
+              <form className='space-y-6'>
+                {/* Personal Information */}
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                  <div>
+                    <label className='block text-sm font-medium text-gray-700 mb-1'>First Name *</label>
+                    <input
+                      type='text'
+                      name='first_name'
+                      value={editFormData.first_name}
+                      onChange={handleEditFormChange}
+                      className='w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className='block text-sm font-medium text-gray-700 mb-1'>Last Name *</label>
+                    <input
+                      type='text'
+                      name='last_name'
+                      value={editFormData.last_name}
+                      onChange={handleEditFormChange}
+                      className='w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className='block text-sm font-medium text-gray-700 mb-1'>Country *</label>
+                    <input
+                      type='text'
+                      name='country'
+                      value={editFormData.country}
+                      onChange={handleEditFormChange}
+                      className='w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className='block text-sm font-medium text-gray-700 mb-1'>Current Location *</label>
+                    <input
+                      type='text'
+                      name='current_location'
+                      value={editFormData.current_location}
+                      onChange={handleEditFormChange}
+                      className='w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
+                      required
+                    />
+                  </div>
+                </div>
+
+                {/* Contact Information */}
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                  <div>
+                    <label className='block text-sm font-medium text-gray-700 mb-1'>Primary Email ID *</label>
+                    <input
+                      type='email'
+                      name='primary_email_id'
+                      value={editFormData.primary_email_id}
+                      onChange={handleEditFormChange}
+                      className='w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className='block text-sm font-medium text-gray-700 mb-1'>Primary Contact Number *</label>
+                    <input
+                      type='text'
+                      name='primary_contact_number'
+                      value={editFormData.primary_contact_number}
+                      onChange={handleEditFormChange}
+                      className='w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
+                      required
+                    />
+                  </div>
+                </div>
+
+                {/* Professional Information */}
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                  <div>
+                    <label className='block text-sm font-medium text-gray-700 mb-1'>Current Company *</label>
+                    <input
+                      type='text'
+                      name='current_company'
+                      value={editFormData.current_company}
+                      onChange={handleEditFormChange}
+                      className='w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className='block text-sm font-medium text-gray-700 mb-1'>Experience (Years) *</label>
+                    <input
+                      type='text'
+                      name='experience'
+                      value={editFormData.experience}
+                      onChange={handleEditFormChange}
+                      className='w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className='block text-sm font-medium text-gray-700 mb-1'>Current Annual Salary</label>
+                    <input
+                      type='text'
+                      name='current_annual_salary'
+                      value={editFormData.current_annual_salary}
+                      onChange={handleEditFormChange}
+                      className='w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
+                    />
+                  </div>
+                  <div>
+                    <label className='block text-sm font-medium text-gray-700 mb-1'>Expected Annual Salary *</label>
+                    <input
+                      type='text'
+                      name='expected_annual_salary'
+                      value={editFormData.expected_annual_salary}
+                      onChange={handleEditFormChange}
+                      className='w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className='block text-sm font-medium text-gray-700 mb-1'>Notice Period (Days) *</label>
+                    <input
+                      type='text'
+                      name='notice_period'
+                      value={editFormData.notice_period}
+                      onChange={handleEditFormChange}
+                      className='w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className='block text-sm font-medium text-gray-700 mb-1'>Education *</label>
+                    <input
+                      type='text'
+                      name='education_qualification'
+                      value={editFormData.education_qualification}
+                      onChange={handleEditFormChange}
+                      className='w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
+                      required
+                    />
+                  </div>
+                </div>
+
+                {/* Resume Section */}
+                <div className='border-t pt-6'>
+                  <h3 className='text-lg font-medium text-gray-900 mb-4'>Resume</h3>
+                  
+                  {editResumeFileName && !showResumeUpload ? (
+                    <div className='flex items-center justify-between p-3 bg-gray-50 rounded-md'>
+                      <div className='flex items-center gap-2'>
+                        <DescriptionIcon className='text-blue-500'></DescriptionIcon>
+                        <span className='text-sm text-gray-700'>{editResumeFileName}</span>
+                      </div>
+                      <div className='flex gap-2'>
+                        <button
+                          type='button'
+                          onClick={() => window.open(`${process.env.REACT_APP_API_BASE_URL}/candidate/viewcandidateattachments/${selectedCandidate}/${editResumeFileName}`, '_blank')}
+                          className='text-blue-500 hover:text-blue-700'
+                        >
+                          <DescriptionIcon style={{fontSize:'1.2rem'}}></DescriptionIcon>
+                        </button>
+                        <button
+                          type='button'
+                          onClick={handleRemoveResume}
+                          className='text-red-500 hover:text-red-700'
+                        >
+                          <CloseIcon style={{fontSize:'1.2rem'}}></CloseIcon>
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className='border-2 border-dashed border-gray-300 rounded-md p-6 text-center'>
+                      <UploadFileIcon className='mx-auto h-12 w-12 text-gray-400'></UploadFileIcon>
+                      <div className='mt-2'>
+                        <label htmlFor='resume-upload' className='cursor-pointer'>
+                          <span className='text-blue-500 hover:text-blue-700 font-medium'>Upload Resume</span>
+                          <span className='text-gray-500'> or drag and drop</span>
+                        </label>
+                        <input
+                          id='resume-upload'
+                          type='file'
+                          accept='.pdf,.doc,.docx'
+                          onChange={handleResumeFileChange}
+                          className='hidden'
+                        />
+                      </div>
+                      <p className='text-xs text-gray-500 mt-1'>PDF, DOC, DOCX up to 10MB</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Action Buttons */}
+                <div className='flex justify-end gap-3 pt-6 border-t'>
+                  <button
+                    type='button'
+                    onClick={handleCloseEditPopup}
+                    className='px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors'
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type='button'
+                    onClick={handleUpdateCandidate}
+                    className='px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors'
+                  >
+                    Update Candidate
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
         </div>
       </div>
      }
