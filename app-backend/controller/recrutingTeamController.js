@@ -12,7 +12,6 @@ import axios from 'axios';
 //creating team member
 
 export const createteammember=async (req,res,next)=>{
-
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync('uphire', salt);
 
@@ -513,6 +512,42 @@ export const handleRejectRecruiter = async (req, res, next)=>{
 export const updateDetails = async (req, res, next) =>{
     try{
         const {recruitingId} = req.params 
+
+        if(!recruitingId) return res.status(400).json({message:"Please provide recruiter member id.",success:false})
+
+        const recruiterMember = await RECRUITINGTEAM.findById(recruitingId)
+
+        if(!recruiterMember) return res.status(404).json({message:"Recruiter member not found.",success:false})
+
+        const {full_name, email, mobileno, hide_commision} = req.body 
+
+        if(email && recruiterMember.email !== email){
+            const existingMember = await RECRUITINGTEAM.findOne({email})
+
+            if(existingMember) return res.status(409).json({message:"Recruiter member is already exist with same email address.",success:false})
+
+            recruiterMember.email = email
+        }
+
+        if(mobileno && recruiterMember.mobileno !== mobileno){
+            const existingMember = await RECRUITINGTEAM.findOne({mobileno})
+
+            if(existingMember) return res.status(409).json({message:"Recruiter member is already exist with same email address.",success:false})
+
+            recruiterMember.mobileno = mobileno
+        } 
+
+        if(full_name){
+            recruiterMember.full_name = full_name
+        }
+
+        if(hide_commision !== null && hide_commision !== undefined){
+            recruiterMember.hide_commision = hide_commision
+        }
+
+        await recruiterMember.save()
+
+        return res.status(200).json({message:"Recruiter member details updated successfully.",success:true})
 
     }catch(err){
         next(err)
