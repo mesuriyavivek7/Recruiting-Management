@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url';
 
 
 import { cancelProcess, checkParseDetails, createAndParseResume, downloadResumeDocs, getResumeFileName, getResumeFilePath, marksAsCompleted, removeResumeFile } from '../controller/resumeController.js';
-import { addAcManager, addCandidateIntoRecruiterSubmitList, approveCandidate, changeCandidateStatus, changeMultipleCandidateStatus, createCandidate, downloadCandidateAttachments, exportDataEnterprise, exportDataRecruiter, getAcManagerName, getAllCandidates, getCandidate, getCandidateAllDetails, getCandidateAttachmentFileType, getCandidateAttachments, getCandidateBasicDetailsById, getCandidateConsentProofs, getCandidateForMultipleAction, getCandidateResumes, getCandidateStatusById, getJobBasicDetails, getJobCandidateForPreview, getJobResumeSubmitCount, getRecruiterMemberIds, getScreeingQuesionsAnswers, searchEnterpriseCandidate, searchRecruiterCandidate, updateCandidateRemarks, viewCandidateAttachments } from '../controller/candidateController.js';
+import { addAcManager, addCandidateIntoRecruiterSubmitList, approveCandidate, changeCandidateStatus, changeMultipleCandidateStatus, createCandidate, downloadCandidateAttachments, exportDataEnterprise, exportDataRecruiter, getAcManagerName, getAllCandidates, getCandidate, getCandidateAllDetails, getCandidateAttachmentFileType, getCandidateAttachments, getCandidateBasicDetailsById, getCandidateConsentProofs, getCandidateForMultipleAction, getCandidateResumes, getCandidateStatusById, getJobBasicDetails, getJobCandidateForPreview, getJobResumeSubmitCount, getRecruiterMemberIds, getScreeingQuesionsAnswers, searchEnterpriseCandidate, searchRecruiterCandidate, updateCandidateDetails, updateCandidateRemarks, viewCandidateAttachments } from '../controller/candidateController.js';
 import { checkEmailAndMobile, createCandidateBasicDetails, getCandidateBasicDetailsByRecruiterId, getCandidateDetailsById } from '../controller/candidateBasicController.js';
 import { uploadCandidateAttachments } from '../controller/candidateAttachmentsController.js';
 import { uploadCandidateConsetProof } from '../controller/candidateConsetController.js';
@@ -198,6 +198,8 @@ router.get('/getconsentproof/:candidate_id', getCandidateConsentProofs)
 //for getting screening question ans answers by candidate id
 router.get('/getsqanswers/:candidate_id', getScreeingQuesionsAnswers);
 
+//For update candidate details
+router.put('/:candidateId', upload.single('resume'), updateCandidateDetails )
 
 export default router
 

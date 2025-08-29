@@ -8,7 +8,7 @@ import INVOICE from "../models/INVOICE.js";
 import axios from "axios";
 import path from 'path'
 import { fileURLToPath } from 'url';
-import fs from 'fs'
+import fs, { stat, unlink } from 'fs'
 import exceljs from 'exceljs'
 import { cstatus } from "../helper/candidateStatusMapping.js";
 import RESUMEDOCS from "../models/RESUMEDOCS.js";
@@ -37,7 +37,7 @@ export const addAcManager = async (req, res, next) => {
 
 export const approveCandidate = async (req, res, next) => {
   try {
-    await CANDIDATE.findByIdAndUpdate(req.params.orgcid, { $set: { candidate_status: "newresume" } })
+    await CANDIDATE.findByIdAndUpdate(req.params.orgcid, { $set: { candidate_status: "resumesubmit" } })
     res.status(200).json("Candidate Approve.")
   } catch (err) {
     next(err)
@@ -624,5 +624,54 @@ export const getScreeingQuesionsAnswers = async (req, res, next) => {
       return res.status(200).json(SQAnswers);
   } catch (error) {
     next(error);
+  }
+}
+
+export const updateCandidateDetails = async (req, res, next) =>{
+  try {
+    const updatedData = req.body 
+
+    const {candidateId} = req.params 
+
+    if(!candidateId) return res.status(400).json({message:"Candidate id is required.",success:false})
+
+    const candidateBasic = await CANDIDATEBASICDETAILS.findOne({candidate_id:candidateId})
+
+    if(!candidateBasic) return res.status(400).json({message:"Candidate not found.",success:false})
+
+    await CANDIDATEBASICDETAILS.findOneAndUpdate({candidate_id:candidateId},{$set:{...updatedData}})
+
+    if(req.file){
+       const resumeDoc = await RESUMEDOCS.findOne({candidate_id:candidateId})
+
+       if(resumeDoc){
+
+        fs.unlink(resumeDoc.filepath, (err)=> {
+          if(err){
+             console.log("Error while deleting old resume doc.")
+          }
+        })
+
+        resumeDoc.filename = path.basename(req.file.path)
+        resumeDoc.filetype = path.extname(req.file.path)
+        const stats = fs.statSync(req.file.path)
+        resumeDoc.filesize = stats.size
+        resumeDoc.filepath = req.file.path
+
+        await resumeDoc.save()
+       }else{
+        fs.unlink(req.file.path, (err)=> {
+          if(err){
+            console.log("Error while deleting resume doc.")
+          }
+        })
+       }
+    }
+
+    return res.status(200).json({message:"Candidate details updated successfully.",success:true})
+
+
+  }catch(err){
+    next(err)
   }
 }

@@ -21,6 +21,7 @@ import KeyboardArrowUpOutlinedIcon from '@mui/icons-material/KeyboardArrowUpOutl
 import ArrowCircleDownOutlinedIcon from '@mui/icons-material/ArrowCircleDownOutlined';
 import InsertDriveFileOutlinedIcon from '@mui/icons-material/InsertDriveFileOutlined';
 import ArrowRightAltOutlinedIcon from '@mui/icons-material/ArrowRightAltOutlined';
+import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
 import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
@@ -53,7 +54,6 @@ export default function RecruiterCandidateDataShow({showNotification,loader,rows
  })
  const [editResumeFile, setEditResumeFile] = useState(null)
  const [editResumeFileName, setEditResumeFileName] = useState('')
- const [showResumeUpload, setShowResumeUpload] = useState(false)
 
  const handleOpenRemarks = (candidateId,remarks) =>{
       setSelectedCandidate(candidateId)
@@ -94,17 +94,7 @@ export default function RecruiterCandidateDataShow({showNotification,loader,rows
          candidate_toc: details.candidate_toc || true
        })
      }
-     
-     // Fetch resume filename
-     try {
-       const resumeRes = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/candidate/getresumefilename/${params.row.candidate_id}`)
-       if (resumeRes.data) {
-         setEditResumeFileName(resumeRes.data)
-         setShowResumeUpload(false)
-       }
-     } catch (err) {
-       setShowResumeUpload(true)
-     }
+    
      
      setSelectedCandidate(params.row.candidate_id)
    } catch (err) {
@@ -134,7 +124,6 @@ export default function RecruiterCandidateDataShow({showNotification,loader,rows
    })
    setEditResumeFile(null)
    setEditResumeFileName('')
-   setShowResumeUpload(false)
    setSelectedCandidate(null)
  }
 
@@ -157,40 +146,28 @@ export default function RecruiterCandidateDataShow({showNotification,loader,rows
  const handleRemoveResume = () => {
    setEditResumeFileName('')
    setEditResumeFile(null)
-   setShowResumeUpload(true)
  }
 
  const handleUpdateCandidate = async () => {
    try {
      setEditLoader(true)
+
+     let formData = new FormData()
+
+     if(editResumeFile) formData.append('resume',editResumeFile)
+
+     for (let i in editFormData){
+       formData.append(i, editFormData[i])
+     }
+
+     const response = await axios.put(`${process.env.REACT_APP_API_BASE_URL}/candidate/${selectedCandidate}`, formData,{
+      headers: {
+        "Content-Type": "multipart/form-data"
+      }
+     })
      
-     // Get the candidate to find the orgcid (candidate's _id)
-    //  const candidateRes = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/candidate/${selectedCandidate}`)
-     
-    //  if (candidateRes.data) {
-    //    // Add candidate_id and recruiter_id to the form data
-    //    const formDataWithId = {
-    //      ...editFormData,
-    //      candidate_id: selectedCandidate,
-    //      recruiter_id: candidateRes.data.recruiter_agency_id || candidateRes.data.recruiter_member_id,
-    //      candidate_toc: true // Required field
-    //    }
-       
-    //    // Update candidate basic details using the candidate's _id as orgcid
-    //    await axios.post(`${process.env.REACT_APP_API_BASE_URL}/candidate/createcandidatebasicdetails/${candidateRes.data._id}`, formDataWithId)
-    //  }
-     
-    //  // Upload new resume if selected
-    //  if (editResumeFile) {
-    //    const formData = new FormData()
-    //    formData.append('resume', editResumeFile)
-    //    await axios.post(`${process.env.REACT_APP_API_BASE_URL}/candidate/resumedocs/${selectedCandidate}`, formData, {
-    //      headers: { "Content-Type": "multipart/form-data" }
-    //    })
-    //  }
-     
-    //  await refetchCandidateData()
-    //  handleCloseEditPopup()
+     await refetchCandidateData()
+     handleCloseEditPopup()
      showNotification("Candidate details updated successfully.", "success")
    } catch (err) {
      console.log(err)
@@ -394,10 +371,12 @@ const candidateCol=[
       
         return (
           <div className='w-full h-full flex gap-1.5 justify-center items-center'>
-            <span className='h-10 p-2 overflow-hidden leading-5 rounded-md border w-36'>{currentRemark}</span>
-            <button onClick={()=>handleOpenRemarks(params.row.id,currentRemark)} className='cursor-pointer rounded-md px-2 bg-green-500 h-8 flex justify-center items-center'>
-              <EditIcon className='text-white' style={{fontSize:'1.3rem'}}></EditIcon>
+            <div className='flex px-1 items-center border overflow-hidden w-40 rounded-md gap-1'>
+            <span className='h-10 p-2 w-36  overflow-hidden leading-5 rounded-md'>{currentRemark}</span>
+            <button onClick={()=>handleOpenRemarks(params.row.id,currentRemark)} className='cursor-pointer rounded-md px-2 bg-gray-200 h-8 flex justify-center items-center'>
+              <DriveFileRenameOutlineIcon className='text-black' style={{fontSize:'1.1rem'}}></DriveFileRenameOutlineIcon>
             </button>
+            </div>
           </div>
           );
         },
@@ -848,7 +827,7 @@ const handleClosePopUpBox=async ()=>{
                 <div className='border-t pt-6'>
                   <h3 className='text-lg font-medium text-gray-900 mb-4'>Resume</h3>
                   
-                  {editResumeFileName && !showResumeUpload ? (
+                  {editResumeFileName  ? (
                     <div className='flex items-center justify-between p-3 bg-gray-50 rounded-md'>
                       <div className='flex items-center gap-2'>
                         <DescriptionIcon className='text-blue-500'></DescriptionIcon>
