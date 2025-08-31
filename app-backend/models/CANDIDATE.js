@@ -44,6 +44,22 @@ const candidateSchema=new mongoose.Schema({
      candidate_question_answer:{
       type:mongoose.Schema.Types.ObjectId,
       ref:'candidatesqanswer'
+     },
+     //Details which will fill after candidate joined to company
+     designation:{
+      type:String,
+     },
+     job_location:{
+      type:String,
+     },
+     offer_ctc:{
+      type:String,
+     },
+     billing_type:{
+      type:String
+     },
+     joining_date:{
+      type:Date
      }
 },{timestamps:true})
 

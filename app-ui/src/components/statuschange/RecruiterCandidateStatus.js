@@ -34,6 +34,9 @@ export default function RecruiterCandidateStatus({
     ['section22', 'payout-eligible'],
     ['section23', 'early-registration'],
     ['section24', 'cv-rejected'],
+    ['section25', 'invoice-raised'],
+    ['section26', 'payment-received'],
+    ['section27', 'credit-note']
   ]);
 
   const initialSection = {

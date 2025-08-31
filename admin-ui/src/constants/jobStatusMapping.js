@@ -24,5 +24,8 @@ export const cstatus = new Map([
   ['success-joined','Successfully Joined'],
   ['payout-eligible','Payout Eligible'],
   ['early-registration','Early Resignation'],
-  ['cv-rejected','CV Rejected - In Process']
+  ['cv-rejected','CV Rejected - In Process'],
+  ['invoice-raised','Invoice Raised'],
+  ['payment-received', 'Payment Received'],
+  ['creditnote','Credit Note']
   ]);
