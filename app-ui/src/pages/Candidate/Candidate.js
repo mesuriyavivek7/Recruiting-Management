@@ -297,6 +297,9 @@ export default function Candidate() {
                 <option value="payout-eligible">Payout Eligible</option>
                 <option value="early-registration">Early Resignation</option>
                 <option value="cv-rejected">CV Rejected - In Process</option>
+                <option value="invoice-raised">Invoice Raised</option>
+                <option value="payment-received">Payment Received</option>
+                <option value="creditnote">Credit Note</option>
               </select>
             </div>
             <div className="overflow-y-scroll h-[380px] mt-4 ">

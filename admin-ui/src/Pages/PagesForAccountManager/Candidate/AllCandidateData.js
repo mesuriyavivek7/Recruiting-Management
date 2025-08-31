@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Box, Button, Card, IconButton, InputAdornment, TextField } from '@mui/material';
+import { Box, Button, Card, IconButton, InputAdornment, TextField, Dialog, DialogTitle, DialogContent, DialogActions, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { columns } from './RowColDataOfAll'; // Import columns configuration
 import { FaSearch } from 'react-icons/fa';
@@ -29,6 +29,17 @@ const AllCandidateData = () => {
   const [filteredRows, setFilteredRows] = useState([]);
 
   const [notification, setNotification] = useState(null)
+
+  // Successfully Joined popup states
+  const [showSuccessJoinedPopup, setShowSuccessJoinedPopup] = useState(false);
+  const [selectedCandidateId, setSelectedCandidateId] = useState(null);
+  const [successJoinedFormData, setSuccessJoinedFormData] = useState({
+    designation: '',
+    jobLocation: '',
+    offerCtc: '',
+    billingType: '',
+    joiningDate: ''
+  });
 
   //for showing notification
   const showNotification = (message, type) => {
@@ -102,9 +113,18 @@ const AllCandidateData = () => {
   }, [searchTerm, filterStatus]);
 
   const candiadteStatusChange = async (e, id) => {
+    const selectedStatus = e.target.value;
+    
+    // If status is success-joined, show popup instead of making API call
+    if (selectedStatus === 'success-joined') {
+      setSelectedCandidateId(id);
+      setShowSuccessJoinedPopup(true);
+      return;
+    }
+
     try {
       setCandidateStatusLoader(true)
-      await axios.post(`${process.env.REACT_APP_API_APP_URL}/candidate/changecandidatestatus/${id}`, { status: e.target.value })
+      await axios.post(`${process.env.REACT_APP_API_APP_URL}/candidate/changecandidatestatus/${id}`, { status: selectedStatus })
       await fetchData()
       showNotification("Successfully candidate status changed.", 'success')
     } catch (err) {
@@ -114,6 +134,58 @@ const AllCandidateData = () => {
     }
     setCandidateStatusLoader(false)
   }
+
+  const handleSuccessfullyJoined = async () => {
+    try {
+      setCandidateStatusLoader(true);
+      
+      // First update the candidate status
+      await axios.post(`${process.env.REACT_APP_API_APP_URL}/candidate/changecandidatestatus/${selectedCandidateId}`, { 
+        status: 'success-joined',
+        ...successJoinedFormData 
+      });
+      
+      // Refresh data
+      await fetchData();
+      
+      // Close popup and reset form
+      setShowSuccessJoinedPopup(false);
+      setSuccessJoinedFormData({
+        designation: '',
+        jobLocation: '',
+        offerCtc: '',
+        billingType: '',
+        joiningDate: ''
+      });
+      setSelectedCandidateId(null);
+      
+      showNotification("Successfully candidate status changed and details saved.", 'success');
+    } catch (err) {
+      setCandidateStatusLoader(false);
+      showNotification("Something wrong while changing candidate status.", "failure");
+      console.log(err);
+    }
+    setCandidateStatusLoader(false);
+  };
+
+  const handleFormInputChange = (field, value) => {
+    setSuccessJoinedFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleClosePopup = () => {
+    setShowSuccessJoinedPopup(false);
+    setSuccessJoinedFormData({
+      designation: '',
+      jobLocation: '',
+      offerCtc: '',
+      billingType: '',
+      joiningDate: ''
+    });
+    setSelectedCandidateId(null);
+  };
 
 
   return (
@@ -261,6 +333,139 @@ const AllCandidateData = () => {
           </div>
         </Card>
 
+        {/* Successfully Joined Popup */}
+        <Dialog 
+          open={showSuccessJoinedPopup} 
+          onClose={handleClosePopup}
+          maxWidth="sm"
+          fullWidth
+        >
+          <DialogTitle style={{ backgroundColor: '#315370', color: 'white', textAlign: 'center' }}>
+            Successfully Joined - Additional Details
+          </DialogTitle>
+          <DialogContent style={{ padding: '24px' }}>
+            <Box display="flex" flexDirection="column" gap={3}>
+              <TextField
+                label="Designation"
+                variant="outlined"
+                value={successJoinedFormData.designation}
+                onChange={(e) => handleFormInputChange('designation', e.target.value)}
+                fullWidth
+                required
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    '& fieldset': { borderColor: 'gray' },
+                    '&:hover fieldset': { borderColor: '#315370' },
+                    '&.Mui-focused fieldset': { borderColor: '#315370' },
+                  },
+                }}
+              />
+              
+              <TextField
+                label="Job Location"
+                variant="outlined"
+                value={successJoinedFormData.jobLocation}
+                onChange={(e) => handleFormInputChange('jobLocation', e.target.value)}
+                fullWidth
+                required
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    '& fieldset': { borderColor: 'gray' },
+                    '&:hover fieldset': { borderColor: '#315370' },
+                    '&.Mui-focused fieldset': { borderColor: '#315370' },
+                  },
+                }}
+              />
+              
+              <TextField
+                label="Offer CTC"
+                variant="outlined"
+                value={successJoinedFormData.offerCtc}
+                onChange={(e) => handleFormInputChange('offerCtc', e.target.value)}
+                fullWidth
+                required
+                type="number"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    '& fieldset': { borderColor: 'gray' },
+                    '&:hover fieldset': { borderColor: '#315370' },
+                    '&.Mui-focused fieldset': { borderColor: '#315370' },
+                  },
+                }}
+              />
+              
+              <FormControl fullWidth required>
+                <InputLabel>Billing Type</InputLabel>
+                <Select
+                  value={successJoinedFormData.billingType}
+                  onChange={(e) => handleFormInputChange('billingType', e.target.value)}
+                  label="Billing Type"
+                  sx={{
+                    '& .MuiOutlinedInput-notchedOutline': { borderColor: 'gray' },
+                    '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#315370' },
+                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: '#315370' },
+                  }}
+                >
+                  <MenuItem value="Fixed">Fixed</MenuItem>
+                  <MenuItem value="Variable">Variable</MenuItem>
+                </Select>
+              </FormControl>
+              
+              <TextField
+                label="Joining Date"
+                variant="outlined"
+                value={successJoinedFormData.joiningDate}
+                onChange={(e) => handleFormInputChange('joiningDate', e.target.value)}
+                fullWidth
+                required
+                type="date"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    '& fieldset': { borderColor: 'gray' },
+                    '&:hover fieldset': { borderColor: '#315370' },
+                    '&.Mui-focused fieldset': { borderColor: '#315370' },
+                  },
+                }}
+              />
+            </Box>
+          </DialogContent>
+          <DialogActions style={{ padding: '16px 24px', gap: '12px' }}>
+            <Button 
+              onClick={handleClosePopup}
+              variant="outlined"
+              sx={{
+                borderColor: 'gray',
+                color: 'gray',
+                '&:hover': {
+                  borderColor: '#315370',
+                  color: '#315370',
+                },
+              }}
+            >
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleSuccessfullyJoined}
+              variant="contained"
+              disabled={!successJoinedFormData.designation || !successJoinedFormData.jobLocation || !successJoinedFormData.offerCtc || !successJoinedFormData.billingType || !successJoinedFormData.joiningDate}
+              sx={{
+                backgroundColor: '#315370',
+                '&:hover': {
+                  backgroundColor: '#315380',
+                },
+                '&:disabled': {
+                  backgroundColor: '#e0e0e0',
+                  color: 'gray',
+                },
+              }}
+            >
+              Submit
+            </Button>
+          </DialogActions>
+        </Dialog>
 
     </div>
   );

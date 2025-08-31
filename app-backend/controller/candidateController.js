@@ -55,31 +55,29 @@ export const getCandidate = async (req, res, next) => {
 //
 export const changeCandidateStatus = async (req, res, next) => {
   try {
-    await CANDIDATE.findByIdAndUpdate(req.params.orgcid, { $set: { candidate_status: req.body.status } })
-    const candidateInvoice = await INVOICE.findOne({ candidate_id: req.params.orgcid })
-    if (req.body.status === "c-joine") {
-      if (!candidateInvoice) {
-        const candidate = await CANDIDATE.findById(req.params.orgcid)
-        const candidateBasicDetails = await CANDIDATEBASICDETAILS.findOne({ candidate_id: candidate.candidate_id })
-        const jobBasicDetails = await JOBBASICDETAILS.findOne({ job_id: candidate.job_id })
-        const invoice = new INVOICE({
-          candidate_id: candidate._id,
-          c_id: candidate.candidate_id,
-          candidate_name: `${candidateBasicDetails.first_name} ${candidateBasicDetails.last_name}`,
-          candidate_email: candidateBasicDetails.primary_email_id,
-          candidate_mobile_no: candidateBasicDetails.primary_contact_number,
-          job_id: candidate.job_id,
-          job_name: jobBasicDetails.job_title,
-          submited_recruiter_member_id: candidate.recruiter_member_id
-        })
 
-        await invoice.save()
-      }
-    } else {
-      if (candidateInvoice) {
-        await INVOICE.findOneAndDelete({ candidate_id: req.params.orgcid })
-      }
+    const {status, designation, jobLocation, offerCtc, billingType, joiningDate} = req.body 
+
+    const {orgcid} = req.params
+
+    const candidate = await CANDIDATE.findById(orgcid)
+
+    if(status === "success-joined" || status==="payout-eligible" || status==="invoice-raised" || status==="payment-received"){
+       if(status === 'success-joined'){
+        if(!candidate.designation && !candidate.job_location && !candidate.offer_ctc && !candidate.billing_type && !candidate.joining_date){
+          await CANDIDATE.findByIdAndUpdate(orgcid, { $set: { designation, job_location:jobLocation, offer_ctc: offerCtc, billing_type: billingType, joining_date:joiningDate } })
+        }
+       }else{
+        if(!candidate.designation && !candidate.job_location && !candidate.offer_ctc && !candidate.billing_type && !candidate.joining_date){
+           return res.status(400).json({message:"Please provide candidate offers related details.",success:false})
+        }
+       }
+    }else{
+         await CANDIDATE.findByIdAndUpdate(orgcid, { $set: { designation:'', job_location:'', offer_ctc:'', billing_type:'', joining_date:'' }})
     }
+
+    await CANDIDATE.findByIdAndUpdate(req.params.orgcid, { $set: { candidate_status: req.body.status } })
+    
     res.status(200).json("Candidate status changed.")
   } catch (err) {
     next(err)

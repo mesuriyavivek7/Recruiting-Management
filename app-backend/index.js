@@ -75,15 +75,13 @@ app.options("*", cors(corsOptions)); // Allow OPTIONS for all routes
 //middleware for using cors
 app.use(cors(corsOptions));
 
-
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 //this middleware for authentication
 app.use(cookieParser())
 //using json middleware where we can easily get our json data
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
-
-
 
 
 //connecting with mongodb atlas
