@@ -12,12 +12,12 @@ function AddCandidate() {
   const [activeTab,setActiveTab] = useState('manually')
 
   return (
-    <div className='px-10 transition- pt-10 flex flex-col gap-4'>
+    <div className='px-7 transition- pt-7 flex flex-col gap-4'>
     <div className=''>
         <h1 className='text-3xl tracking-wide text-blue-600 font-bold'>Add Candidates</h1>
     </div>
     <div className='flex flex-col w-full h-full gap-4 items-start'> 
-            <div className='bg-white w-4/6 p-1.5 overflow-hidden relative rounded-md'>
+            <div className='bg-white w-5/6 p-1.5 overflow-hidden relative rounded-md'>
                 <div className='relative grid grid-cols-2 items-center'>
                 <div
                  className={`absolute top-0 h-full left-0 bottom-2 border border-neutral-300 w-1/2 bg-gray-400/20 rounded-md transition-all duration-300 ease-in-out z-0`}

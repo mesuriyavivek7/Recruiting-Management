@@ -296,7 +296,7 @@ const candidateCol=[
       }
   },
   {
-      field: "jobid&title", headerName: 'Uphire Job Id/Name', headerClassName: 'super-app-theme--header', width: 250,
+      field: "jobid&title", headerName: 'Job id/Name', headerClassName: 'super-app-theme--header', width: 250,
       renderCell: (params) => {
         return (
           <div className='flex w-full h-full items-center'>
@@ -315,7 +315,7 @@ const candidateCol=[
       field: "cstatus", headerName: "Candidate Status", headerClassName: 'super-app-theme--header', width: 250,
       renderCell: (params) => {
         return (
-          <span className={`p-2 border  ${params.row.candidate_status === 'Pending' ? ("border-yellow-500 bg-yellow-100") : ("border-orange-400 bg-orange-200")}  rounded-md`}>{cstatus.get(params.row.candidate_status)}</span>
+          <span className={`p-1.5 border ${params.row.candidate_status === 'Pending' ? ("border-yellow-500 bg-yellow-100") : ("border-orange-400 bg-orange-200")}  rounded-md`}>{cstatus.get(params.row.candidate_status)}</span>
         )
       }
     },
@@ -1304,7 +1304,7 @@ const handleClosePopUpBox=async ()=>{
       }}>
         <DataGrid
           getRowId={(rows) => rows.id} // Specify the custom ID field
-          rowHeight={90}
+          rowHeight={70}
           rows={rows}
           columns={candidateCol}
           loading={loader}

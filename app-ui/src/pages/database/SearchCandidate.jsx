@@ -63,13 +63,11 @@ function SearchCandidate() {
   const handlePromptBaseSearch = async (prompt) =>{
     try{ 
       setLoader(true)
-      const response = await axios.post(`${process.env.REACT_APP_AI_URL}/rag/vector-similarity-search`,{
+      const response = await axios.post(`${process.env.REACT_APP_AI_URL}/rag/llm-context-search`,{
           user_id:user._id,
           query:prompt,
-          field: "full_text",
-          num_results: 10,
-          min_score: 0.2
-        
+          context_size:10,
+          relevant_score:40
       })
       //Saved recent search
       await axios.post(`${process.env.REACT_APP_AI_URL}/ai_search_operations/save_recent_search`,{
@@ -130,7 +128,7 @@ function SearchCandidate() {
   },[])
 
   return (
-    <div className='px-10 pt-10 flex flex-col gap-4'>
+    <div className='px-7 pt-7 flex flex-col gap-4'>
         <div className=''>
             <h1 className='text-3xl tracking-wide text-blue-600 font-bold'>Search Candidates</h1>
         </div>
