@@ -503,22 +503,22 @@ function CandidateResult() {
                      <div className="absolute top-2 right-4 flex items-center justify-center" style={{ width: 55, height: 45 }}>
                        <svg width="42" height="42" viewBox="0 0 40 40">
                          <circle
-                           cx="20"
-                           cy="20"
+                           cx="22"
+                           cy="22"
                            r="18"
                            fill="none"
                            stroke="#e5e7eb"
                            strokeWidth="3"
                          />
                          <circle
-                           cx="20"
-                           cy="20"
+                           cx="22"
+                           cy="22"
                            r="16"
                            fill="none"
-                           stroke={getScoreColor((location.state.searchType === 'manually'?Number(item?.match_score):Number(item?.similarity_score.toFixed(2))*100) || 50)}
+                           stroke={getScoreColor((location.state.searchType === 'manually'?Number(item?.match_score):Number(item?.similarity_score)) || 50)}
                            strokeWidth="4"
                            strokeDasharray={2 * Math.PI * 16}
-                           strokeDashoffset={2 * Math.PI * 16 * (1 - ((location.state.searchType=== 'manually'?Number(item?.match_score):Number(item?.similarity_score.toFixed(2))*100) || 50) / 100)}
+                           strokeDashoffset={2 * Math.PI * 16 * (1 - ((location.state.searchType=== 'manually'?Number(item?.match_score):Number(item?.similarity_score)) || 50) / 100)}
                            strokeLinecap="round"
                            transform="rotate(-90 20 20)"
                          />
@@ -527,11 +527,11 @@ function CandidateResult() {
                            y="50%"
                            textAnchor="middle"
                            dy="0.35em"
-                           fontSize="9"
+                           fontSize="6"
                            fontWeight="bold"
-                           fill={getScoreColor((location.state.searchType === 'manually'?Number(item?.match_score):Number(item?.similarity_score.toFixed(2))*100) || 50)}
+                           fill={getScoreColor((location.state.searchType === 'manually'?Number(item?.match_score):Number(item?.similarity_score)) || 50)}
                          >
-                           {(location.state.searchType === 'manually'?Number(item?.match_score):Number(item?.similarity_score.toFixed(2))*100) || 50}%
+                           {(location.state.searchType === 'manually'?Number(item?.match_score):Number(item?.similarity_score)) || 50}%
                          </text>
                        </svg>
                      </div>

@@ -1,4 +1,4 @@
-import mongoose, { mongo } from "mongoose";
+import mongoose from "mongoose";
 
 const candidateSchema=new mongoose.Schema({
     job_id:{

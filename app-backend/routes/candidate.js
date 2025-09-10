@@ -69,6 +69,7 @@ const uploadConsent = multer({ storage: consentStorage })
 //for attaching candidate resume and parsign it
 router.post('/resumedocs/:cid', upload.single('resume'), createAndParseResume)
 
+
 //check resuem parse details
 router.post('/checkparsedetails/:cid', checkParseDetails)
 

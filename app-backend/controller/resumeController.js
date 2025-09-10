@@ -8,38 +8,48 @@ import path from "path";
 import pdfparse from 'pdf-parse'
 import emailRegax from 'email-regex'
 import phoneRegax from 'phone-regex'
+import dotenv from 'dotenv'
+import axios from 'axios'
+import FormData from 'form-data'
+
+dotenv.config()
 
 export const createAndParseResume=async (req,res,next)=>{
      try{
         const filepath=req.file.path
         const fileType=req.file.mimetype
- 
-        if(fileType==="application/pdf"){
-         const dataBuffer=fs.readFileSync(filepath)
-         pdfparse(dataBuffer).then(function(data) {
-            parseResumeText(filepath,data, res);
-        });
-        }else if(fileType==="application/vnd.openxmlformats-officedocument.wordprocessingml.document"){
-         const docxBuffer=fs.readFileSync(filepath)
-         mammoth.extractRawText({buffer:docxBuffer}).then(result=>{
-            const text=result.value
-            parseResumeText(filepath,text,res)
-         })
-        }else if(fileType==="application/msword"){
-         textract.fromFileWithPath(filepath,(error)=>{
-            if (error) {
-               return res.status(500).send("Error parsing Word Document")
-            }
-            parseResumeText(filepath,text,rex)
-         })
-        }else{
-          res.status(400).json("Unsupported file type")
-        }
+        const file = req.file;
+
+
+      //using ai server for parsing resume
+      const formData = new FormData();
+      formData.append('file', fs.createReadStream(file.path), file.originalname);
+      const response = await axios.post(`${process.env.AI_SERVER_URL}/resume-parser`, formData, {  
+         headers: {
+            ...formData.getHeaders()
+         }
+      });   
+
+      const candidateDetails = response.data.resume_parser.contact_details
+      const educationDetails = response.data.resume_parser.academic_details[0].education
+
+      let first_name = candidateDetails.name.split(" ")[0]
+      let last_name = candidateDetails.name.split(" ")[1]
+
+      return res.status(200).json({
+         firstName: first_name,
+         lastName: last_name,
+         mobile: candidateDetails.phone, 
+         email: candidateDetails.email,
+         education: educationDetails,
+         filepath
+      })
 
      }catch(err){
         next(err)
      }
 }
+
 
 const cleanMobileNumber=(mobilenum)=>{
      let ans=""
