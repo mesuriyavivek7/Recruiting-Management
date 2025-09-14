@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 
@@ -15,9 +15,12 @@ import axios from 'axios';
 
 
 function SearchCandidate() {
+  const location = useLocation()
   const navigate = useNavigate()
   const {user} = useContext(AuthContext)
-  const [activeTab,setActiveTab] = useState('manually')
+
+
+  const [activeTab,setActiveTab] = useState(location.state)
 
   //For recent search
   const [PromptRecentSearch,setPromptRecentSearch] = useState([])

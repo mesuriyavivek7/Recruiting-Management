@@ -5,7 +5,7 @@ import Box from '@mui/material/Box';
 import axios from 'axios';
 
 //import candidate status mapping
-import { cstatus } from '../statuschange/StatusMapping';
+import { cstatus, statusStyle } from '../statuschange/StatusMapping';
 import HtmlContent from '../HtmlContent';
 import CopyToClipBoard from '../CopyToClipBoard';
 
@@ -312,10 +312,12 @@ const candidateCol=[
       }
     },
     {
-      field: "cstatus", headerName: "Candidate Status", headerClassName: 'super-app-theme--header', width: 250,
+      field: "cstatus", headerName: "Candidate Status", headerClassName: 'super-app-theme--header', width: 280,
       renderCell: (params) => {
         return (
-          <span className={`p-1.5 border ${params.row.candidate_status === 'Pending' ? ("border-yellow-500 bg-yellow-100") : ("border-orange-400 bg-orange-200")}  rounded-md`}>{cstatus.get(params.row.candidate_status)}</span>
+          <div className='w-full h-full flex justify-center items-center '>
+            <span className={`p-1.5 min-w-60 text-center leading-5 border ${statusStyle.get(params.row.candidate_status)}  rounded-md`}>{cstatus.get(params.row.candidate_status)}</span>
+          </div>
         )
       }
     },

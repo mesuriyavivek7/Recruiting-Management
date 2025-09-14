@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
+import CreatableSelect from 'react-select/creatable';
 
 //Importing data
 import { fetchKeyword } from '../../data/keyword';
@@ -287,17 +288,37 @@ function ManuallSearch({manuallRecentFilledSearch,handleManuallSearchCandidate})
     <div className='flex bg-white flex-col overflow-hidden rounded-md border custom-shadow-1 border-neutral-300'>
        <div className='p-4 grid grid-cols-2 gap-6 items-center'>
           <div className='col-span-2 flex flex-col gap-2'>
-            <label className='tracking-wide font-semibold'>Keywords <span className='text-sm text-red-500'>*</span></label>
-            <Select
+            <div className='flex items-center justify-between'>
+              <label className='tracking-wide font-semibold'>Keywords <span className='text-sm text-red-500'>*</span></label>
+              {selectedKeyword.length > 0 && (
+                <button
+                  onClick={() => setSelectedKeyword([])}
+                  className='text-sm text-red-500 hover:text-red-700 font-medium px-2 py-1 rounded hover:bg-red-50 transition-colors'
+                >
+                  Clear All
+                </button>
+              )}
+            </div>
+            <CreatableSelect
             closeMenuOnSelect={true}
             components={customComponents}
             styles={customStyles}
             onChange={(keyword)=> setSelectedKeyword(keyword.map((item) => item.value))}
+            onCreateOption={(inputValue) => {
+              const newKeyword = {
+                value: inputValue,
+                label: inputValue
+              };
+              setKeywords(prev => [...prev, newKeyword]);
+              setSelectedKeyword(prev => [...prev, inputValue]);
+            }}
             isMulti
             options={keywords}
             value={keywords.filter(option => selectedKeyword.includes(option.value))}
             placeholder="Enter Keyword such as job title, skills etc"
-            ></Select>
+            formatCreateLabel={(inputValue) => `Create "${inputValue}"`}
+            noOptionsMessage={() => "Type to create a new keyword"}
+            ></CreatableSelect>
             {
             openKeywordSuggetion && 
             <div className='w-full flex flex-col gap-4 bg-gray-100 rounded-md p-4'>
@@ -423,16 +444,26 @@ function ManuallSearch({manuallRecentFilledSearch,handleManuallSearchCandidate})
 
           <div className='col-span-2 flex flex-col gap-2'>
             <label className='font-semibold tracking-wide'>Skills</label>
-            <Select
+            <CreatableSelect
             closeMenuOnSelect={true}
             onChange={(skills)=>setSelectedSkill(skills.map((skill)=>skill.value))}
+            onCreateOption={(inputValue) => {
+              const newSkill = {
+                value: inputValue,
+                label: inputValue
+              };
+              setSkills(prev => [...prev, newSkill]);
+              setSelectedSkill(prev => [...prev, inputValue]);
+            }}
             components={customComponents}
             styles={customStyles}
             isMulti
             options={skills}
             value={skills.filter(option => selectedSkill.includes(option.value))}
             placeholder="Type to search skillset"
-            ></Select>
+            formatCreateLabel={(inputValue) => `Create "${inputValue}"`}
+            noOptionsMessage={() => "Type to create a new skill"}
+            ></CreatableSelect>
             {
             openSkillSuggetion && 
             <div className='w-full flex flex-col gap-4 bg-gray-100 rounded-md p-4'>

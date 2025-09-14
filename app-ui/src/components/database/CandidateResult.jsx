@@ -23,6 +23,7 @@ import { GraduationCap } from 'lucide-react';
 import { ExternalLink } from 'lucide-react';
 import { Copy } from 'lucide-react';
 import { SquarePen } from 'lucide-react';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 
 
 
@@ -381,7 +382,7 @@ function CandidateResult() {
            <span className='text-lg font-medium'>{location.state.searchType ==="manually" ? <span>{getSearchKeyword((keywords || []))}</span> : <span>{getSearchPrompt(payload.query)}</span>}</span>
          </div>
          <div className='flex items-center gap-2'>
-           <span onClick={()=>navigate('/recruiter/searchcandidate')} className='text-blue-400 text-[14px] font-semibold mr-2 cursor-pointer'>Modify Search</span>
+           <span onClick={()=>navigate('/recruiter/searchcandidate', {state:location.state.searchType==="manually" ? "manually" : "ai"})} className='text-blue-400 text-[14px] font-semibold mr-2 cursor-pointer'>Modify Search</span>
            {/* Pagination Controls and Page Size Selector */}
            <div className="flex items-center gap-3 mr-4">
              {/* Page Size Selector */}
@@ -500,40 +501,17 @@ function CandidateResult() {
                     ${index === paginatedResults.length - 1 ? 'rounded-b-xl' : ''} 
                     p-6 relative custom-shadow-1 flex items-start gap-4`}>
                      {/* Circular Score Indicator with dynamic color */}
-                     <div className="absolute top-2 right-4 flex items-center justify-center" style={{ width: 55, height: 45 }}>
-                       <svg width="42" height="42" viewBox="0 0 40 40">
-                         <circle
-                           cx="22"
-                           cy="22"
-                           r="18"
-                           fill="none"
-                           stroke="#e5e7eb"
-                           strokeWidth="3"
-                         />
-                         <circle
-                           cx="22"
-                           cy="22"
-                           r="16"
-                           fill="none"
-                           stroke={getScoreColor((location.state.searchType === 'manually'?Number(item?.match_score):Number(item?.similarity_score)) || 50)}
-                           strokeWidth="4"
-                           strokeDasharray={2 * Math.PI * 16}
-                           strokeDashoffset={2 * Math.PI * 16 * (1 - ((location.state.searchType=== 'manually'?Number(item?.match_score):Number(item?.similarity_score)) || 50) / 100)}
-                           strokeLinecap="round"
-                           transform="rotate(-90 20 20)"
-                         />
-                         <text
-                           x="50%"
-                           y="50%"
-                           textAnchor="middle"
-                           dy="0.35em"
-                           fontSize="6"
-                           fontWeight="bold"
-                           fill={getScoreColor((location.state.searchType === 'manually'?Number(item?.match_score):Number(item?.similarity_score)) || 50)}
-                         >
-                           {(location.state.searchType === 'manually'?Number(item?.match_score):Number(item?.similarity_score)) || 50}%
-                         </text>
-                       </svg>
+                     <div className="absolute top-2 right-4 flex items-center justify-center">
+                       {/* Matched Button with Star Icon */}
+                       <div className="bg-blue-50 border border-blue-200 rounded-full px-3 py-1.5 flex items-center gap-2 shadow-sm">
+                         {/* Star Icon */}
+                         <AutoAwesomeIcon style={{fontSize:'1.2rem'}} className='text-indigo-600'></AutoAwesomeIcon>
+                         <span className='text-sm text-indigo-500'>{(location.state.searchType === 'manually'?Number(item?.match_score):Number(item?.similarity_score)) || 50}%</span>
+                         {/* Gradient Text */}
+                         <span className="text-sm font-medium bg-gradient-to-r from-blue-700 via-indigo-800 to-purple-800 bg-clip-text text-transparent">
+                           Matched
+                         </span>
+                       </div>
                      </div>
 
                    {/* CheckBox  */}
@@ -551,7 +529,7 @@ function CandidateResult() {
                       {isValidURL(item?.contact_details?.portfolio_link) && <a href={item?.contact_details?.portfolio_link} target='_blank'> <img src={WEB} className='w-5 h-5'></img></a>}
                       </div>
                     </div>
-                    <div className='grid grid-cols-3 mb-2 items-center gap-4'>
+                    <div className='flex items-center mb-2 items-center gap-6'>
                        <div className='flex items-center gap-2'>
                          <BriefcaseBusiness size={16} className='text-[#4b5563]'></BriefcaseBusiness>
                          <span className='text-[15px] text-[#4b5563]'>{getExp(item?.total_experience)}</span>
