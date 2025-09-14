@@ -29,3 +29,34 @@ export const cstatus = new Map([
     ['payment-received', 'Payment Received'],
     ['credit-note', 'Credit Note']
   ]);
+
+export const statusStyle = new Map([
+    ['Pending', 'border-yellow-500 bg-yellow-100'],
+    ['resumesubmit', 'border-green-500 bg-green-100'],
+    ['sip', 'border-yellow-500 bg-yellow-100'],
+    ['cvshortclient', 'border-orange-500 bg-orange-100'],
+    ['interview-schedule', 'border-orange-500 bg-orange-100'],
+    ['no-show', 'border-red-500 bg-red-100'],
+    ['candidate-not-ins', 'border-red-500 bg-red-100'],
+    ['candidate-not-reach', 'border-red-500 bg-red-100'],
+    ['cv-reject-client', 'border-red-500 bg-red-100'],
+    ['cv-reject-hr', 'border-red-500 bg-red-100'],
+    ['r-techround','border-red-500 bg-red-100'],
+    ['r-hrround', 'border-red-500 bg-red-100'],
+    ['short-next-round', 'border-orange-500 bg-orange-100'],
+    ['s-finale-interview', 'border-green-500 bg-green-100'],
+    ['s-not-offer', 'border-red-500 bg-red-100'],
+    ['o-hold', 'border-red-500 bg-red-100'],
+    ['o-extended', 'border-red-500 bg-red-100'],
+    ['o-accepted', 'border-green-500 bg-green-100'],
+    ['o-declined', 'border-red-500 bg-red-100'],
+    ['not-join', 'border-red-500 bg-red-100'],
+    ['success-joined','border-green-500 bg-green-100'],
+    ['payout-eligible', 'border-green-500 bg-green-100'],
+    ['early-registration', 'border-red-500 bg-red-100'],
+    ['cv-rejected','border-red-500 bg-red-100'],
+    ['invoice-raised', 'border-orange-500 bg-orange-100'],
+    ['payment-received','border-green-500 bg-green-100'],
+    ['credit-note', 'border-red-500 bg-red-100']
+])
+

@@ -83,7 +83,7 @@ const SideNavbar = () => {
           <div
             className={`${
               openDatabase ? "h-28" : "h-0"
-            } pl-4 transition-all duration-300`}
+            } ${isExpanded ? "pl-4" : "pl-2"} transition-all duration-300`}
           >
             <Link to="candidate">
               <div

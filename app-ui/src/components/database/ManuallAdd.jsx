@@ -504,19 +504,19 @@ function ManuallAdd({ initialValues, submitLabel = 'Submit', hideResumeUpload = 
           {errors.current_salary && <span className='text-sm text-red-500'>{errors.current_salary.message}</span>}
         </div>
         <div className='flex flex-col gap-2'>
-          <label className='text-sm font-semibold'>Hike(%) <span className='text-sm text-red-500'>*</span></label>
+          <label className='text-sm font-semibold'>Hike(%)</label>
           <input {...register('hike')} type='number' className='border outline-none border-neutral-300 px-2 py-1.5 rounded-md placeholder:text-[15px]'></input>
           {errors.hike && <span className='text-sm text-red-500'>{errors.hike.message}</span>}
         </div>
         <div className='flex flex-col gap-2'>
-          <label className='text-sm font-semibold'>Expected Salary (Lacs) <span className='text-sm text-red-500'>*</span></label>
+          <label className='text-sm font-semibold'>Expected Salary (Lacs) </label>
           <input type='number' {...register('expected_salary')} step={"0.01"} className='border outline-none border-neutral-300 px-2 py-1.5 rounded-md placeholder:text-[15px]'></input>
           {errors.expected_salary && <span className='text-sm text-red-500'>{errors.expected_salary.message}</span>}
         </div>
       </div>
       <div className='grid grid-cols-3 items-start gap-5'>
          <div className='flex flex-col gap-2'>
-           <label className='text-sm font-semibold'>Key Skills<span className='text-sm text-red-500'>*</span></label>
+           <label className='text-sm font-semibold'>Key Skills</label>
            <Controller
              control={control}
              name="key_skills"
@@ -545,7 +545,7 @@ function ManuallAdd({ initialValues, submitLabel = 'Submit', hideResumeUpload = 
              />
          </div>
          <div className='flex flex-col gap-2'>
-           <label className='text-sm font-semibold'>May also know<span className='text-sm text-red-500'>*</span></label>
+           <label className='text-sm font-semibold'>May also know</label>
            <Controller
              control={control}
              name="may_also_know"
@@ -605,7 +605,7 @@ function ManuallAdd({ initialValues, submitLabel = 'Submit', hideResumeUpload = 
       </div>
       <div className='grid grid-cols-2 items-start gap-5'>
         <div className='flex flex-col gap-2'>
-          <label className='text-sm font-semibold'>Pan No <span className='text-sm text-red-500'>*</span></label>
+          <label className='text-sm font-semibold'>Pan No </label>
           <input {...register("pancard")} type='text' placeholder='Enter pancard no' className='border outline-none border-neutral-300 px-2 py-1.5 rounded-md placeholder:text-[15px]'></input>
           {
             errors.pancard && <span className='text-sm text-red-500'>{errors.pancard.message}</span>
