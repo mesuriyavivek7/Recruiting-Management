@@ -13,6 +13,7 @@ import { ChevronDown, Minus, Plus, Search } from 'lucide-react';
 import { ChevronUp } from 'lucide-react';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 
 function ManuallSearch({manuallRecentFilledSearch,handleManuallSearchCandidate}) {
@@ -267,6 +268,8 @@ function ManuallSearch({manuallRecentFilledSearch,handleManuallSearchCandidate})
   }
 
   const handleSearchCandidate = () =>{
+      if(selectedKeyword.length === 0) return toast.error('Please enter at least one keyword.')
+      if(!minSalary || !maxSalary) handleManuallSearchCandidate(selectedKeyword,selectedSkill,minExp,maxExp,selectedEducation,selectedCity,0,10)
       handleManuallSearchCandidate(selectedKeyword,selectedSkill,minExp,maxExp,selectedEducation,selectedCity,minSalary,maxSalary)
   }
 

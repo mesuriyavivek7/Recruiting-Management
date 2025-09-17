@@ -44,8 +44,8 @@ function AiRecentSearch({searchType,setPromptRecentFilledSearch,dataType,data,se
                   <AutoAwesomeIcon style={{fontSize:'1.2rem'}}></AutoAwesomeIcon>
                   {
                      dataType==="save" ? 
-                     (searchType==="manually" ? <p>{item.experience_titles.map((keyword, i)=> <span>{keyword} {i!==item.experience_titles.length-1 && ","} </span>)}</p>: <p className='text-sm'>{TrimContent(item)}</p>)
-                     : (searchType==="manually" ? <p>{item.experience_titles.map((keyword, i)=> <span>{keyword} {i!==item.experience_titles.length-1 && ","} </span>)}</p> : <p className='text-sm'>{TrimContent(item)}</p>)
+                     (searchType==="manually" ? <p>{item.experience_titles.map((keyword, i)=> <span key={i}>{keyword} {i!==item.experience_titles.length-1 && ","} </span>)}</p>: <p className='text-sm'>{TrimContent(item)}</p>)
+                     : (searchType==="manually" ? <p>{item.experience_titles.map((keyword, i)=> <span key={i}>{keyword} {i!==item.experience_titles.length-1 && ","} </span>)}</p> : <p className='text-sm'>{TrimContent(item)}</p>)
                   }
                   
                </div>

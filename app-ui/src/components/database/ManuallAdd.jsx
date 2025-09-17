@@ -270,6 +270,8 @@ function ManuallAdd({ initialValues, submitLabel = 'Submit', hideResumeUpload = 
         return
       }
 
+      console.log('parsed data---->',parsed)
+
       const mappedValues = mapParsedToForm(parsed)
       reset({ ...(initialValues || defaultValues), ...mappedValues })
       setSelectedResumeName(file.name)
@@ -399,7 +401,7 @@ function ManuallAdd({ initialValues, submitLabel = 'Submit', hideResumeUpload = 
          </div>
          <div className='flex flex-col gap-2'>
             <label className='text-sm font-semibold'>Mobile No <span className='text-sm text-red-500'>*</span></label>
-            <input {...register("mobile_no")} type='number' className='border outline-none border-neutral-300 px-2 py-1.5 rounded-md placeholder:text-[15px]' placeholder='Enter mobileno'></input>
+            <input {...register("mobile_no")} type='tel' className='border outline-none border-neutral-300 px-2 py-1.5 rounded-md placeholder:text-[15px]' placeholder='Enter mobileno'></input>
             {errors.mobile_no && <span className='text-sm text-red-500'>{errors.mobile_no.message}</span>}
          </div>
          <div className='flex flex-col gap-2'>

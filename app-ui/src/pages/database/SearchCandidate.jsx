@@ -12,6 +12,7 @@ import AiRecentSearch from '../../components/database/AiRecentSearch';
 import ManuallSearch from '../../components/database/ManuallSearch';
 import Loading from '../../components/database/Loading';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 
 function SearchCandidate() {
@@ -55,7 +56,13 @@ function SearchCandidate() {
         userid:user._id,
         ...payload
        })
-      navigate('/recruiter/searchresult',{state:{candidate_result:response.data,payload,searchType:'manually'}})
+      console.log('result data----->',response.data)
+      if(!response || !response.data || response.data.length === 0 || !response.data[0] || !response.data[0].results ||  response.data[0].results.length === 0){
+        toast.error("There is no search results for given keywords.")
+      } else{
+        navigate('/recruiter/searchresult',{state:{candidate_result:response.data,payload,searchType:'manually'}})
+      }
+      
     }catch(err){
       console.log(err)
     }finally{
@@ -77,7 +84,13 @@ function SearchCandidate() {
         user_id:user._id,
         query:prompt
       })
-      navigate('/recruiter/searchresult',{state:{candidate_result:response.data.results,payload:{query:prompt},searchType:'prompt'}})
+      console.log('response data----->',response)
+      if(!response || !response.data || !response.data.results || response.data.results.length === 0){
+        toast.error("There is no search results for given keywords.")
+      }else{
+        navigate('/recruiter/searchresult',{state:{candidate_result:response.data.results,payload:{query:prompt},searchType:'prompt'}})
+      }
+      
     }catch(err){
       console.log(err)
     }finally{
