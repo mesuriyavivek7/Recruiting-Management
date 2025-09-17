@@ -21,7 +21,7 @@ function SearchCandidate() {
   const {user} = useContext(AuthContext)
 
 
-  const [activeTab,setActiveTab] = useState(location.state)
+  const [activeTab,setActiveTab] = useState(location.state || 'manually')
 
   //For recent search
   const [PromptRecentSearch,setPromptRecentSearch] = useState([])
