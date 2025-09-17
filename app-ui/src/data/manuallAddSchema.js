@@ -4,7 +4,7 @@ import {z} from 'zod'
 
 export const formSchema = z.object({
     candidate_name:z.string().min(1,'candidate name is required.'),
-    mobile_no:z.string().regex(/^[0-9]{10}$/, "Mobile number must be 10 digits"),
+    mobile_no:z.string(),
     email:z.string().email("Invalid email address"),
     current_city:z.string().min(1,'Current city is required.'),
     prefered_locations:z.array(z.string().min(1)).min(1,"Select at least one prefered location"),

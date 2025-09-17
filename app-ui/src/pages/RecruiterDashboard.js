@@ -7,6 +7,8 @@ import { useNavigate } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import { TrendingUp, Calendar, ChevronDown } from 'lucide-react';
+
 
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
@@ -19,6 +21,10 @@ import { AuthContext } from "../context/AuthContext";
 import Bar from "./Charts/Bar";
 import PieLabel from "./Charts/PieLabel";
 import Gauge from "./Charts/Gauge";
+import RecruitmentPieChart from "./Charts/RecruitmentPieChart";
+
+// dashboard components
+import ScheduledInterviewsTable from "./Dashboard/ScheduledInterviewsTable";
 
 // Charts Data
 
@@ -44,6 +50,11 @@ export default function RecruiterDashboard() {
   });
 
   const [isEmailVerified, setIsEmailVerified] = useState(true);
+  const [dateRange, setDateRange] = useState({
+    startDate: '',
+    endDate: ''
+  });
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const handleCheckIsMailVerified = async () => {
     try {
@@ -189,6 +200,20 @@ export default function RecruiterDashboard() {
     fetchDashBoardCount();
     handleCheckIsMailVerified();
   }, []);
+
+  // Close date picker when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showDatePicker && !event.target.closest('.date-picker-container')) {
+        setShowDatePicker(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showDatePicker]);
 
   const handleNavigateCandidate = () => {
     navigate("/recruiter/candidate");
@@ -366,245 +391,171 @@ export default function RecruiterDashboard() {
           </p>
         </div>
       )}
-      <div className="custom-div py-4 flex flex-row items-center justify-between">
-        <div className="flex gap-4 text-gray-600 items-center">
-          <span className="text-sm cursor-pointer">My Dashboard</span>
-          <VideocamOutlinedIcon
-            style={{ fontSize: "1.4rem" }}
-            className="cursor-pointer"
-          ></VideocamOutlinedIcon>
-        </div>
-        <div className="flex gap-6">
-          <button className="text-gray-600 cursor-pointer flex gap-2  items-center">
-            <span>
-              <BackupTableOutlinedIcon
-                style={{ fontSize: "1.4rem" }}
-              ></BackupTableOutlinedIcon>
-            </span>
-            <span className="text-sm">Export</span>
-          </button>
-          <button className="text-gray-600 cursor-pointer flex gap-2  items-center">
-            <span>
-              <ArticleOutlinedIcon
-                style={{ fontSize: "1.4rem" }}
-              ></ArticleOutlinedIcon>
-            </span>
-            <span className="text-sm">Guidelines</span>
-          </button>
-          <button
-            onClick={() => setOpenPopUp(true)}
-            className="text-gray-600 cursor-pointer flex gap-2 items-center"
-          >
-            <span>
-              <AddIcon style={{ fontSize: "1.4rem" }}></AddIcon>
-            </span>
-            <span className="text-sm">Add Member</span>
-          </button>
+
+      {/* Greeting And Motivationl Quote section */}
+      <div className="bg-gradient-to-r from-blue-50 to-indigo-100 rounded-xl mb-2 p-6 border border-blue-200">
+        <div className="flex flex-col space-y-2">
+          <div className="flex items-center space-x-3">
+              <h1 className="text-2xl font-bold text-gray-800">
+                Welcome Back, {user?.full_name || 'User'}!
+              </h1>
+          </div>
+          
+          <blockquote className="text-gray-700 italic text-lg leading-relaxed">
+                  "Success in recruiting is not just about filling positions, it's about building careers and shaping futures. Every candidate you place is a life changed."
+            </blockquote>
         </div>
       </div>
-
+      
       {/* add section for charts */}
 
-      <div className="custom-div py-2 gap-4">
-        <h1 className="text-xl font-bold">Key Indicators</h1>
-        <div className="w-full flex gap-4 pb-2">
-
-          <div className="relative custom-div gap-12 flex-1">
-            <h1 className="font-medium">Relevency Relation</h1>
-            <div className="absolute top-28 left-10">
-              <span className="text-sm text-red-600">Low</span>
-            </div>
-            <div className="absolute left-36 top-14">
-              <span className="text-sm text-green-600">Medium</span>
-            </div>
-            <div className="absolute bottom-20 right-8">
-              <span className="text-sm text-blue-500">Good</span>
-            </div>
-            <div className="h-28">
-              <Gauge></Gauge>
-            </div>
+      {/* Date Range Filter */}
+      <div className="">
+        <div className="flex items-center justify-between">
+          <div className="relative date-picker-container">
+            <button
+              onClick={() => setShowDatePicker(!showDatePicker)}
+              className="flex items-center gap-3 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors shadow-sm"
+            >
+              <Calendar className="w-5 h-5 text-gray-600" />
+              <span className="text-gray-700 font-medium">
+                {dateRange.startDate && dateRange.endDate 
+                  ? `${dateRange.startDate} - ${dateRange.endDate}`
+                  : 'Select Date Range'
+                }
+              </span>
+              <ChevronDown className="w-4 h-4 text-gray-500" />
+            </button>
+            
+            {showDatePicker && (
+              <div className="absolute top-full left-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-50 p-4 min-w-[400px]">
+                <div className="flex flex-col gap-4">
+                  <div className="flex items-center gap-4">
+                    <div className="flex-1">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                      <input
+                        type="date"
+                        value={dateRange.startDate}
+                        onChange={(e) => setDateRange(prev => ({ ...prev, startDate: e.target.value }))}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                      <input
+                        type="date"
+                        value={dateRange.endDate}
+                        onChange={(e) => setDateRange(prev => ({ ...prev, endDate: e.target.value }))}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between pt-2 border-t border-gray-200">
+                    <button
+                      onClick={() => {
+                        setDateRange({ startDate: '', endDate: '' });
+                        setShowDatePicker(false);
+                      }}
+                      className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-md transition-colors"
+                    >
+                      Clear
+                    </button>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setShowDatePicker(false)}
+                        className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-md transition-colors"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={() => setShowDatePicker(false)}
+                        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm transition-colors"
+                      >
+                        Apply Filter
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
-
-          <div className="flex-1 h-64 flex justify-center items-center shadow p-4">
-            <Bar></Bar>
-          </div>
-
-          <div className="h-64 flex-1 p-4 shadow">
-            <PieLabel></PieLabel>
-          </div>
+        
         </div>
       </div>
+
+      <div className="grid grid-cols-3 items-stretch gap-4 h-[400px]">
+        {/* First Column - Achievement Cards */}
+        <div className="flex flex-col gap-4 h-full">
+          <div className="p-6 rounded-lg bg-gradient-to-r from-green-50 to-blue-50 border border-gray-200 flex flex-col gap-4 flex-1">
+             <div className="flex flex-col gap-2">
+                <h1 className="text-2xl font-bold text-gray-800">Congratulations Harsh Gajera 🎉</h1>
+                <span className="text-gray-600 text-sm">Best Recruiter of the month</span>
+             </div>
+             <div className="flex flex-col gap-3">
+               <div className="flex items-center justify-between">
+                 <span className="text-2xl font-bold text-green-600">₹7,80,000</span>
+                 <span className="text-sm text-gray-500 bg-green-50 px-3 py-1 rounded-full">Revenue</span>
+               </div>
+               <div className="flex items-center justify-between">
+                 <span className="text-2xl font-semibold text-blue-600">78%</span>
+                 <span className="text-sm text-gray-500 bg-blue-50 px-3 py-1 rounded-full">Of Milestone</span>
+               </div>
+             </div>
+          </div>
+
+          <div className="p-6 rounded-lg bg-white border border-gray-200 flex flex-col gap-4 flex-1">
+             <div className="flex flex-col gap-2">
+              <h1 className="text-2xl font-bold text-gray-800">Weekly Overview</h1>
+              <span className="text-gray-600 text-sm">Well Done Champ!</span>
+             </div>
+             <div className="flex flex-col gap-4">
+               <h2 className="text-lg font-semibold text-gray-700">Your Performance</h2>
+               <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <TrendingUp className="text-green-500 w-5 h-5"></TrendingUp>
+                    <span className="text-2xl font-bold text-green-600">45%</span>
+                  </div>
+                  <span className="text-sm text-gray-500 bg-green-50 px-3 py-1 rounded-full">Better This Week</span>
+               </div>
+             </div>
+          </div>
+        </div>
+
+        {/* Second Column - Pie Chart */}
+        <div className="h-full">
+          <RecruitmentPieChart />
+        </div>
+
+        {/* Third Column - Stats and Gauge */}
+        <div className="flex flex-col gap-4 h-full">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-white flex p-6 justify-center flex-col gap-3 items-center rounded-lg border border-gray-200">
+                <h1 className="text-4xl font-bold text-blue-600">7</h1>
+                <span className="font-semibold text-gray-700 text-center">Offered Candidates</span>
+            </div>
+            <div className="bg-white flex p-6 justify-center flex-col gap-3 items-center rounded-lg border border-gray-200">
+              <h1 className="text-3xl font-bold text-green-600">₹8,50,000</h1>
+              <span className="font-semibold text-gray-700 text-center">Total Revenue</span>
+            </div>
+          </div>
+
+          <div className="h-full">
+            <Gauge></Gauge>
+          </div>
+        </div>
+
+       </div>
+
+      {/* Scheduled Interviews Table */}
+      <div className="mt-8">
+      <ScheduledInterviewsTable />
+      </div>
+  
+    
       {/* Finish section*/}
 
-      <div className="custom-div py-4 gap-4">
-        <h1>Jobs</h1>
-        <div className="w-full flex gap-4">
-          <div
-            onClick={handleNavigateCandidate}
-            className="cursor-pointer custom-div flex-1"
-          >
-            <div className="flex w-full flex-col gap-1">
-              <div className="flex gap-2 items-center">
-                <div className="h-2 w-2 bg-green-400 rounded-full"></div>
-                <h1 className="text-black-200 text-2xl">
-                  {dashBoardCount.job_accepted_count}
-                </h1>
-              </div>
-              <p className="text-sm text-gray-400">Accepted</p>
-            </div>
-            <div className="flex justify-between w-full">
-              <div className="flex gap-1 items-center">
-                <span>0</span>
-                <span className="text-gray-400 text-[.8rem]">Active</span>
-              </div>
-              <div className="flex gap-1 items-center">
-                <span>0</span>
-                <span className="text-gray-400 text-[.8rem]">Paused</span>
-              </div>
-            </div>
-          </div>
-          <div
-            onClick={handleNavigateCandidate}
-            className="cursor-pointer custom-div  flex-1"
-          >
-            <div className="flex w-full flex-col gap-1">
-              <div className="flex gap-2 items-center">
-                <div className="h-2 w-2 bg-orange-400 rounded-full"></div>
-                <h1 className="text-black-200 text-2xl">
-                  {dashBoardCount.submited_candidate_profile_count}
-                </h1>
-              </div>
-              <p className="text-sm text-gray-400">Resume Submitted</p>
-            </div>
-            <div className="flex justify-between w-full">
-              <div className="flex gap-1 items-center">
-                <span>0</span>
-                <span className="text-gray-400 text-[.8rem]">Active</span>
-              </div>
-              <div className="flex gap-1 items-center">
-                <span>0</span>
-                <span className="text-gray-400 text-[.8rem]">Paused</span>
-              </div>
-            </div>
-          </div>
-          <div
-            onClick={handleNavigateCandidate}
-            className="cursor-pointer custom-div flex-1"
-          >
-            <div className="flex w-full flex-col gap-1">
-              <div className="flex gap-2 items-center">
-                <div className="h-2 w-2 bg-orange-200 rounded-full"></div>
-                <h1 className="text-black-200 text-2xl">
-                  {dashBoardCount.pending_candidate_count}
-                </h1>
-              </div>
-              <p className="text-sm text-gray-400">Pending Acceptance</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="custom-div py-4 gap-4">
-        <h1>Resumes</h1>
-        <div className="w-full flex gap-4">
-          <div className="custom-div flex-1">
-            <div className="flex flex-col gap-1">
-              <div className="flex gap-2 items-center">
-                <div className="h-2 w-2 bg-orange-400 rounded-full"></div>
-                <h1 className="text-2xl">0</h1>
-              </div>
-              <p className="text-sm text-gray-400">
-                Total Resumes <br></br>(No Duplicates)
-              </p>
-            </div>
-            <div className="flex justify-between w-full">
-              <div className="flex gap-1 items-center">
-                <span>0</span>
-                <span className="text-gray-400 text-[.8rem]">Active</span>
-              </div>
-              <div className="flex gap-1 items-center">
-                <span>0</span>
-                <span className="text-gray-400 text-[.8rem]">Paused</span>
-              </div>
-            </div>
-          </div>
-          <div className="custom-div flex-1">
-            <div className="flex flex-col gap-1">
-              <div className="flex gap-2 items-center">
-                <div className="h-2 w-2 bg-blue-400 rounded-full"></div>
-                <h1 className="text-2xl">0</h1>
-              </div>
-              <p className="text-sm text-gray-400">New Resumes</p>
-            </div>
-            <div className="flex justify-between w-full">
-              <div className="flex gap-1 items-center">
-                <span>0</span>
-                <span className="text-gray-400 text-[.8rem]">Active</span>
-              </div>
-              <div className="flex gap-1 items-center">
-                <span>0</span>
-                <span className="text-gray-400 text-[.8rem]">Paused</span>
-              </div>
-            </div>
-          </div>
-          <div className="custom-div flex-1">
-            <div className="flex flex-col gap-1">
-              <div className="flex gap-2 items-center">
-                <div className="h-2 w-2 bg-green-400 rounded-full"></div>
-                <h1 className="text-2xl">0</h1>
-              </div>
-              <p className="text-sm text-gray-400">Under Process</p>
-            </div>
-            <div className="flex justify-between w-full">
-              <div className="flex gap-1 items-center">
-                <span>0</span>
-                <span className="text-gray-400 text-[.8rem]">Active</span>
-              </div>
-              <div className="flex gap-1 items-center">
-                <span>0</span>
-                <span className="text-gray-400 text-[.8rem]">Paused</span>
-              </div>
-            </div>
-          </div>
-          <div className="custom-div flex-1">
-            <div className="flex flex-col gap-1">
-              <div className="flex gap-2 items-center">
-                <div className="h-2 w-2 bg-violet-400 rounded-full"></div>
-                <h1 className="text-2xl">0</h1>
-              </div>
-              <p className="text-sm text-gray-400">Selected</p>
-            </div>
-            <div className="flex justify-between w-full">
-              <div className="flex gap-1 items-center">
-                <span>0</span>
-                <span className="text-gray-400 text-[.8rem]">Active</span>
-              </div>
-              <div className="flex gap-1 items-center">
-                <span>0</span>
-                <span className="text-gray-400 text-[.8rem]">Paused</span>
-              </div>
-            </div>
-          </div>
-          <div className="custom-div flex-1">
-            <div className="flex flex-col gap-1">
-              <div className="flex gap-2 items-center">
-                <div className="h-2 w-2 bg-red-400 rounded-full"></div>
-                <h1 className="text-2xl">0</h1>
-              </div>
-              <p className="text-sm text-gray-400">Rejected</p>
-            </div>
-            <div className="flex justify-between w-full">
-              <div className="flex gap-1 items-center">
-                <span>0</span>
-                <span className="text-gray-400 text-[.8rem]">Active</span>
-              </div>
-              <div className="flex gap-1 items-center">
-                <span>0</span>
-                <span className="text-gray-400 text-[.8rem]">Paused</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+     
+      
     </div>
   );
 }
